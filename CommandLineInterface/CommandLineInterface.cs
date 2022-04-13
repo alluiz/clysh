@@ -1,30 +1,20 @@
 namespace CommandLineInterface
 {
-    public interface ICommandLineInterface
-    {
-        string Title { get; set; }
-        ICommand RootCommand { get; }
-        string? AskFor(string text);
-        bool Confirm(string text = "Do you agree? (Y/n): ", string yes = "Y");
-        ICommand CreateCommand(string name, string description, Action<ICommand, Options, ICommandLineInterface> action);
-        void EmptyLine();
-        void Execute(string[] args);
-        void ExecuteHelp(ICommand command, Exception? exception);
-        void ExecuteHelp(ICommand command);
-        void Show(string text, bool emptyLine = false);
-        void ShowNoBreak(string text);
-    }
-
     public class CommandLineInterface : ICommandLineInterface
     {
         public string Title { get; set; }
         public ICommand RootCommand { get; private set; }
 
+        public const string QUESTION_MUST_BE_NOT_BLANK = "Question must be not blank";
+
         private readonly IConsoleManager console;
 
-        public CommandLineInterface(IConsoleManager consoleManager, Metadata metadata, Action<ICommand, Options, ICommandLineInterface> defaultAction)
+        public CommandLineInterface(
+            IConsoleManager console!!,
+            Metadata metadata!!,
+            Action<ICommand, Options, ICommandLineInterface> defaultAction!!)
         {
-            console = consoleManager;
+            this.console = console;
             Title = metadata.Title;
 
             RootCommand = CreateRootCommand(defaultAction, metadata);
@@ -84,11 +74,19 @@ namespace CommandLineInterface
                                         argumentIndex = 0;
                                         waitingForArguments = lastOption.Arguments.Length;
 
-                                        while (waitingForArguments > 0)
+                                        try
                                         {
-                                            lastOption.Arguments[argumentIndex].Value = args[i + 1];
-                                            argumentIndex++;
-                                            waitingForArguments--;
+                                            while (waitingForArguments > 0)
+                                            {
+                                                lastOption.Arguments[argumentIndex].Value = args[i + 1];
+                                                argumentIndex++;
+                                                waitingForArguments--;
+                                            }
+
+                                        }
+                                        catch (System.IndexOutOfRangeException)
+                                        {
+                                            throw new InvalidOperationException($"Required argument index {lastOption.Arguments?.Length - waitingForArguments} missing for option: {lastOption.Name}");
                                         }
                                     }
 
@@ -116,8 +114,11 @@ namespace CommandLineInterface
                         }
                         else
                         {
-                            lastCommand = GetCommandFromArg(lastCommand, arg);
-                            commandsToExecute.Add(lastCommand);
+                            if (!string.IsNullOrEmpty(arg) && !string.IsNullOrWhiteSpace(arg))
+                            {
+                                lastCommand = GetCommandFromArg(lastCommand, arg);
+                                commandsToExecute.Add(lastCommand);
+                            }
                         }
                     }
                 }
@@ -153,18 +154,21 @@ namespace CommandLineInterface
             return lastCommand;
         }
 
-        public string? AskFor(string text)
+        public string AskFor(string question!!, bool sensitive = false)
         {
-            ShowNoBreak(text);
-            return console.ReadLine();
+            if (string.IsNullOrWhiteSpace(question))
+                throw new ArgumentException(QUESTION_MUST_BE_NOT_BLANK, nameof(question));
+
+            Print($"{question}:");
+            return sensitive ? console.ReadSensitive() : console.ReadLine();
         }
 
-        public bool Confirm(string text = "Do you agree? (Y/n): ", string yes = "Y")
+        public bool Confirm(string question = "Do you agree?", string yes = "Y")
         {
-            return AskFor(text)?.ToUpper() == yes.ToUpper();
+            return AskFor($"{question} ({yes}/n)").ToUpper() == yes.ToUpper();
         }
 
-        public void ShowNoBreak(string text)
+        public void Print(string text)
         {
             console.Write(text);
         }
@@ -173,12 +177,12 @@ namespace CommandLineInterface
         {
             if (exception != null)
             {
-                Show(exception.ToString());
+                PrintWithBreak(exception.ToString());
                 console.Separator();
             }
 
-            EmptyLine();
-            Show(Title, true);
+            PrintEmptyLine();
+            PrintWithBreak(Title, true);
 
             command.ActionHelp(this);
         }
@@ -188,7 +192,7 @@ namespace CommandLineInterface
             ExecuteHelp(command, null);
         }
 
-        public void EmptyLine()
+        public void PrintEmptyLine()
         {
             console.EmptyLine();
         }
@@ -203,12 +207,17 @@ namespace CommandLineInterface
             return arg.StartsWith("--");
         }
 
-        public void Show(string text, bool emptyLine = false)
+        public void PrintWithBreak(string text, bool emptyLineAfterPrint = false)
         {
             console.WriteLine(text);
 
-            if (emptyLine)
-                EmptyLine();
+            if (emptyLineAfterPrint)
+                PrintEmptyLine();
+        }
+
+        public string AskForSensitive(string question)
+        {
+            return AskFor(question, true);
         }
     }
 }

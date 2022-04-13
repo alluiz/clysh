@@ -37,7 +37,7 @@ namespace CommandLineInterface
 
         private readonly Dictionary<string, string> abbreviationToOption;
 
-        public Command(string name, string description, Action<ICommand, Options, ICommandLineInterface> action)
+        public Command(string name!!, string description!!, Action<ICommand, Options, ICommandLineInterface> action!!)
         {
             this.abbreviationToOption = new Dictionary<string, string>();
             this.Commands = new Dictionary<string, ICommand>();
@@ -135,10 +135,10 @@ namespace CommandLineInterface
 
             bool hasCommands = HasCommands();
 
-            cli.Show($"Usage: {parentCommands}{this.Name} [options] {(hasCommands ? "[commands]" : "")}");
-            cli.EmptyLine();
-            cli.Show(this.Description, true);
-            cli.Show("[options]:".PadRight(44) + "Description".PadRight(55) + "Arguments", true);
+            cli.PrintWithBreak($"Usage: {parentCommands}{this.Name} [options] {(hasCommands ? "[commands]" : "")}");
+            cli.PrintEmptyLine();
+            cli.PrintWithBreak(this.Description, true);
+            cli.PrintWithBreak("[options]:".PadRight(44) + "Description".PadRight(55) + "Arguments", true);
 
             foreach (var item in this.AvailableOptions.Map.OrderBy(x => x.Key))
             {
@@ -152,24 +152,24 @@ namespace CommandLineInterface
                     }
                 }
 
-                cli.Show($"    {(item.Value.Abbreviation == null ? "" : "-" + item.Value.Abbreviation).PadRight(10)}--{item.Key.PadRight(28)}{item.Value.Description.PadRight(55)}{args}");
+                cli.PrintWithBreak($"    {(item.Value.Abbreviation == null ? "" : "-" + item.Value.Abbreviation).PadRight(10)}--{item.Key.PadRight(28)}{item.Value.Description.PadRight(55)}{args}");
             }
 
-            cli.EmptyLine();
+            cli.PrintEmptyLine();
 
             if (hasCommands)
             {
-                cli.Show("[commands]:", true);
+                cli.PrintWithBreak("[commands]:", true);
 
                 foreach (var item in this.Commands.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value))
                 {
                     if (item.Key != this.Name)
                     {
-                        cli.Show($"    {item.Key.PadRight(40)}{item.Value.Description}");
+                        cli.PrintWithBreak($"    {item.Key.PadRight(40)}{item.Value.Description}");
                     }
                 }
 
-                cli.EmptyLine();
+                cli.PrintEmptyLine();
             }
         }
 
