@@ -15,7 +15,7 @@ public class Tests
     [SetUp]
     public void Setup()
     {
-        consoleMock = new Mock<IConsoleManager>();
+        consoleMock.Reset();
     }
 
     [Test]
