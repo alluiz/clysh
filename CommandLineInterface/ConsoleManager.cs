@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace CommandLineInterface
 {
     public interface IConsoleManager
@@ -12,6 +14,11 @@ namespace CommandLineInterface
         string ReadSensitive();
     }
 
+    /*
+        This code is only for wrapper static System.Console class
+        Therefore, it cannot be tested.
+    */
+    [ExcludeFromCodeCoverage]
     public class ConsoleManager : IConsoleManager
     {
         public int CursorTop { get; set; }
@@ -41,6 +48,15 @@ namespace CommandLineInterface
             System.Console.WriteLine(text);
         }
 
+        /// <summary>
+        /// Read sensitive data from console without print at screen
+        /// </summary>
+        /// <remarks>
+        /// It manipulate the cursor position if user press backspace.
+        /// </remarks>
+        /// <returns>
+        /// The sensitive content
+        /// </returns>
         public string ReadSensitive()
         {
             string data = "";
