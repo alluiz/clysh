@@ -131,19 +131,25 @@ namespace CommandLineInterface
         private void PrintOptions(ICommand command)
         {
             this.PrintWithBreak("[options]:", true);
-            this.PrintWithBreak("   Abbrev.".PadRight(14) + "Option".PadRight(28) + "Description".PadRight(55) + "Parameters", true);
+            this.PrintWithBreak("   Abbrev.".PadRight(14) + "Option".PadRight(28) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional = Length", true);
 
             foreach (var item in command.AvailableOptions.Itens.OrderBy(x => x.Key))
             {
-                string args = "";
+                string paramsText = "";
 
-                foreach (var parameter in item.Value.Parameters.Itens.ToList().Where(x => x != null).OrderBy(x => x.Required).ThenBy(x => x.Id))
+                Parameter[] parameters = item.Value.Parameters.Itens;
+
+                for (int i = 0; i < parameters.Length; i++)
                 {
-                    string type = parameter.Required ? "Required" : "Optional";
-                    args += $"<{parameter.Id}:{type}>";
+                    Parameter parameter = parameters[i];
+                    string type = parameter.Required ? "R" : "O";
+                    paramsText += $"{i}:<{parameter.Id}:{type}>{(i < parameters.Length - 1 ? ", " : "")}";
                 }
 
-                this.PrintWithBreak($"  {(item.Value.Abbreviation == null ? "" : "-" + item.Value.Abbreviation),-10}--{item.Key,-28}{item.Value.Description,-55}{args}");
+                if (parameters.Length > 0)
+                   paramsText = $"[{paramsText}]: {parameters.Length}";
+
+                this.PrintWithBreak($"  {(item.Value.Abbreviation == null ? "" : "-" + item.Value.Abbreviation),-10}--{item.Key,-28}{item.Value.Description,-55}{paramsText}");
             }
 
             this.PrintEmptyLine();

@@ -1,6 +1,8 @@
+using System.Collections;
+
 namespace CommandLineInterface
 {
-    public class Parameters
+    public class Parameters: IEnumerable<Parameter>
     {
         private int lastIndexRetrieved = 0;
         private int lastIndexAdd = 0;
@@ -28,22 +30,22 @@ namespace CommandLineInterface
 
         public bool WaitingForRequired()
         {
-            return Itens.Any(x => x != null && x.Required && x.Data == null);
+            return Itens.Any(x => x.Required && x.Data == null);
         }
 
         public bool WaitingForAny()
         {
-            return Itens.Any(x => x != null && x.Data == null);
+            return Itens.Any(x => x.Data == null);
         }
 
         public Parameter Get(string id)
         {
-            return this.Itens.Single(x => x != null && x.Id == id);
+            return this.Itens.Single(x => x.Id == id);
         }
 
         public bool Has(string id)
         {
-            return Itens.Any(x => x != null && x.Id == id);
+            return Itens.Any(x => x.Id == id);
         }
 
         public Parameter Last()
@@ -58,12 +60,25 @@ namespace CommandLineInterface
         {
             string s = "";
 
-            this.Itens.Where(x => x != null && x.Required).ToList().ForEach(k => s += k.Id + ",");
+            this.Itens.Where(x => x.Required).ToList().ForEach(k => s += k.Id + ",");
 
             if (s.Length > 1)
                 s = s[..^1];
 
             return s;
+        }
+
+        public IEnumerator<Parameter> GetEnumerator()
+        {
+            foreach (Parameter parameter in this.Itens)
+            {
+                yield return parameter;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
     }
 }
