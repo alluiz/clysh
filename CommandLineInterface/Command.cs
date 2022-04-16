@@ -11,9 +11,8 @@ namespace CommandLineInterface
         ICommand? Parent { get; set; }
         Dictionary<string, ICommand> Commands { get; }
         ICommand AddCommand(ICommand command);
-        ICommand AddOption(string name, string abbreviation, string description);
         ICommand AddOption(string name, string description);
-        ICommand AddOption(string name, string abbreviation, string description, Arguments arguments);
+        ICommand AddOption(string name, string description, string abbreviation);
         ICommand AddOption(string name, string description, Arguments arguments);
         void AddSelectedOption(Option optionSelected);
         ICommand GetCommand(string name);
@@ -50,22 +49,6 @@ namespace CommandLineInterface
             this.AddOption("help", "Show help on screen");
         }
 
-        public ICommand AddOption(string name, string abbreviation, string description)
-        {
-            Option option = new Option(name, abbreviation, description);
-            this.AvailableOptions.Add(option);
-            this.abbreviationToOption.Add(abbreviation, option.Id);
-
-            return this;
-        }
-
-        public ICommand AddCommand(ICommand command)
-        {
-            command.Parent = this;
-            this.Commands.Add(command.Name, command);
-            return this;
-        }
-
         public ICommand AddOption(string name, string description)
         {
             Option option = new Option(name, description);
@@ -74,9 +57,9 @@ namespace CommandLineInterface
             return this;
         }
 
-        public ICommand AddOption(string name, string abbreviation, string description, Arguments arguments)
+        public ICommand AddOption(string name, string description, string abbreviation)
         {
-            Option option = new Option(name, abbreviation, description, arguments);
+            Option option = new Option(name, description, abbreviation);
             this.AvailableOptions.Add(option);
             this.abbreviationToOption.Add(abbreviation, option.Id);
 
@@ -88,6 +71,13 @@ namespace CommandLineInterface
             Option option = new Option(name, description, arguments);
             this.AvailableOptions.Add(option);
 
+            return this;
+        }
+
+        public ICommand AddCommand(ICommand command)
+        {
+            command.Parent = this;
+            this.Commands.Add(command.Name, command);
             return this;
         }
 

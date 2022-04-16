@@ -22,7 +22,7 @@ namespace CommandLineInterface
             this.Arguments = new Arguments();
         }
 
-        public Option(string id!!, string abbreviation!!, string description!!) : base(id)
+        public Option(string id!!, string description!!, string abbreviation!!) : base(id)
         {
             Validate(nameof(id), id, MinName, MaxName);
             Validate(nameof(abbreviation), abbreviation, MinAbbrev, MaxAbbrev);
@@ -31,17 +31,6 @@ namespace CommandLineInterface
             Abbreviation = abbreviation;
             Description = description;
             this.Arguments = new Arguments();
-        }
-
-        public Option(string id!!, string abbreviation!!, string description!!, Arguments arguments!!) : base(id)
-        {
-            Validate(nameof(id), id, MinName, MaxName);
-            Validate(nameof(abbreviation), abbreviation, MinAbbrev, MaxAbbrev);
-            Validate(nameof(description), description, MinDescription, MaxDescription);
-
-            Abbreviation = abbreviation;
-            Description = description;
-            this.Arguments = arguments;
         }
 
         public Option(string id!!, string description!!, Arguments arguments!!) : base(id)
