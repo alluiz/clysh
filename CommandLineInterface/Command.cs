@@ -36,7 +36,7 @@ namespace CommandLineInterface
 
         private readonly Dictionary<string, string> abbreviationToOption;
 
-        public Command(string name!!, string description!!, Action<Map<Option>, ICommandLineInterfaceFront> action!!)
+        private Command(string name!!, string description!!, Action<Map<Option>, ICommandLineInterfaceFront> action!!)
         {
             this.abbreviationToOption = new Dictionary<string, string>();
             this.Commands = new Dictionary<string, ICommand>();
@@ -92,8 +92,6 @@ namespace CommandLineInterface
                 return this.AvailableOptions.Get(this.abbreviationToOption[arg]);
             }
         }
-
-
         public Option GetSelectedOption(string key)
         {
             return this.SelectedOptions.Get(key);
@@ -102,6 +100,11 @@ namespace CommandLineInterface
         public void AddSelectedOption(Option optionSelected)
         {
             this.SelectedOptions.Add(optionSelected);
+        }
+
+        public static ICommand CreateCommand(string name, string description, Action<Map<Option>, ICommandLineInterfaceFront> action)
+        {
+            return new Command(name, description, action);
         }
 
         public ICommand GetCommand(string name)

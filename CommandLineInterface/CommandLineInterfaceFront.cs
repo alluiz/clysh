@@ -3,16 +3,21 @@ namespace CommandLineInterface
     public class CommandLineInterfaceFront : ICommandLineInterfaceFront
     {
         public Metadata Metadata { get; set; }
+        public int PrintedLines { get; private set; }
+
         public const string QUESTION_MUST_BE_NOT_BLANK = "Question must be not blank";
 
         private readonly IConsoleManager console;
+        private readonly bool printLineNumber;
 
         public CommandLineInterfaceFront(
             IConsoleManager console!!,
-            Metadata metadata!!)
+            Metadata metadata!!,
+            bool printLineNumber = false)
         {
             this.console = console;
             Metadata = metadata;
+            this.printLineNumber = printLineNumber;
         }
 
         public string AskFor(string question!!, bool sensitive = false)
@@ -31,16 +36,27 @@ namespace CommandLineInterface
 
         public void Print(string text)
         {
-            console.Write(text);
+            PrintedLines++;
+            
+            if (printLineNumber)
+                console.Write(text, PrintedLines);
+            else
+                console.Write(text);
         }
 
         public void PrintEmptyLine()
         {
-            console.EmptyLine();
+            PrintWithBreak("");
         }
+
         public void PrintWithBreak(string text, bool emptyLineAfterPrint = false)
         {
-            console.WriteLine(text);
+            PrintedLines++;
+
+            if (printLineNumber)
+                console.WriteLine(text, PrintedLines);
+            else
+                console.WriteLine(text);
 
             if (emptyLineAfterPrint)
                 PrintEmptyLine();
@@ -60,7 +76,6 @@ namespace CommandLineInterface
         public void PrintHelp(ICommand command, Exception exception)
         {
             PrintException(exception);
-            PrintTitle();
             PrintHelp(command);
         }
 
@@ -72,13 +87,17 @@ namespace CommandLineInterface
 
         private void PrintException(Exception exception)
         {
-            PrintWithBreak($"{exception.GetType().Name}: {exception.Message}");
+            PrintEmptyLine();
+            PrintSeparator();
+            PrintEmptyLine();
+            PrintWithBreak($"Error: {exception.GetType().Name}: {exception.Message}");
+            PrintEmptyLine();
             PrintSeparator();
         }
 
         public void PrintSeparator()
         {
-            console.Separator();
+            PrintWithBreak("-----------#-----------");
         }
 
         private void PrintCommand(ICommand command)
@@ -97,7 +116,8 @@ namespace CommandLineInterface
             this.PrintWithBreak($"Usage: {parentCommands}{command.Name} [options] {(hasCommands ? "[commands]" : "")}");
             this.PrintEmptyLine();
             this.PrintWithBreak(command.Description, true);
-            this.PrintWithBreak("[options]:".PadRight(44) + "Description".PadRight(55) + "Arguments", true);
+            this.PrintWithBreak("[options]:", true);
+            this.PrintWithBreak("   Abbrev.".PadRight(14) + "Option".PadRight(28) + "Description".PadRight(55) + "Arguments", true);
 
             foreach (var item in command.AvailableOptions.Itens.OrderBy(x => x.Key))
             {
@@ -114,7 +134,7 @@ namespace CommandLineInterface
                 }
 
 
-                this.PrintWithBreak($"    {(item.Value.Abbreviation == null ? "" : "-" + item.Value.Abbreviation).PadRight(10)}--{item.Key.PadRight(28)}{item.Value.Description.PadRight(55)}{args}");
+                this.PrintWithBreak($"  {(item.Value.Abbreviation == null ? "" : "-" + item.Value.Abbreviation).PadRight(10)}--{item.Key.PadRight(28)}{item.Value.Description.PadRight(55)}{args}");
             }
 
             this.PrintEmptyLine();
@@ -127,7 +147,7 @@ namespace CommandLineInterface
                 {
                     if (item.Key != command.Name)
                     {
-                        this.PrintWithBreak($"    {item.Key.PadRight(40)}{item.Value.Description}");
+                        this.PrintWithBreak($"   {item.Key.PadRight(39)}{item.Value.Description}");
                     }
                 }
 

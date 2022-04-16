@@ -6,23 +6,6 @@ namespace CommandLineInterface
         public ICommandLineInterfaceFront Front { get; }
 
         public CommandLineInterface(
-            Action<Map<Option>, ICommandLineInterfaceFront> defaultAction!!,
-            IConsoleManager console!!,
-            Metadata metadata!!)
-        {
-            RootCommand = CreateRootCommand(defaultAction);
-            Front = new CommandLineInterfaceFront(console, metadata);
-        }
-
-        public CommandLineInterface(
-            Action<Map<Option>, ICommandLineInterfaceFront> defaultAction!!,
-            ICommandLineInterfaceFront front!!)
-        {
-            RootCommand = CreateRootCommand(defaultAction);
-            Front = front;
-        }
-
-        public CommandLineInterface(
             ICommand rootCommand!!,
             IConsoleManager console!!,
             Metadata metadata!!)
@@ -37,17 +20,6 @@ namespace CommandLineInterface
         {
             RootCommand = rootCommand;
             Front = front;
-        }
-
-
-        public ICommand CreateCommand(string name, string description, Action<Map<Option>, ICommandLineInterfaceFront> action)
-        {
-            return new Command(name, description, action);
-        }
-
-        protected ICommand CreateRootCommand(Action<Map<Option>, ICommandLineInterfaceFront> action)
-        {
-            return CreateCommand("root", "The root command (default)", action);
         }
 
         public void Execute(string[] args)
@@ -82,22 +54,6 @@ namespace CommandLineInterface
                                 for (int j = 1; j < arg.Length; j++)
                                 {
                                     lastOption = GetOptionFromCommand(lastCommand, arg[j].ToString());
-
-                                    try
-                                    {
-                                        while (lastOption.Arguments.Waiting())
-                                        {
-                                            if (!ArgIsArgument(arg))
-                                                throwRequiredArgumentsError(lastOption);
-
-                                            ProcessArgument(lastOption, args[i + 1]);
-                                        }
-                                    }
-                                    catch (System.IndexOutOfRangeException)
-                                    {
-                                        throwRequiredArgumentsError(lastOption);
-                                    }
-
                                     lastCommand.AddSelectedOption(lastOption);
                                 }
                             }

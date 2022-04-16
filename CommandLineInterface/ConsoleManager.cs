@@ -4,13 +4,11 @@ namespace CommandLineInterface
 {
     public interface IConsoleManager
     {
-        int CursorTop { get; set; }
-
-        void WriteLine(string text = "");
-        void Separator();
-        void EmptyLine();
+        void WriteLine(string text);
+        void WriteLine(string text, int lineNumber);
         string ReadLine();
         void Write(string text);
+        void Write(string text, int lineNumber);
         string ReadSensitive();
     }
 
@@ -21,31 +19,19 @@ namespace CommandLineInterface
     [ExcludeFromCodeCoverage]
     public class ConsoleManager : IConsoleManager
     {
-        public int CursorTop { get; set; }
-
-        public void EmptyLine()
-        {
-            System.Console.WriteLine("");
-        }
-
         public string ReadLine()
         {
             return System.Console.ReadLine() ?? "";
         }
 
-        public void Separator()
+        public void Write(string text, int lineNumber)
         {
-            System.Console.WriteLine("-----------#-----------");
+            System.Console.Write($"{lineNumber}.   {text}");
         }
 
-        public void Write(string text)
+        public void WriteLine(string text, int lineNumber)
         {
-            System.Console.Write(text);
-        }
-
-        public void WriteLine(string text = "")
-        {
-            System.Console.WriteLine(text);
+            System.Console.WriteLine($"{lineNumber}.   {text}");
         }
 
         /// <summary>
@@ -93,6 +79,16 @@ namespace CommandLineInterface
             Console.WriteLine();
 
             return data;
+        }
+
+        public void WriteLine(string text)
+        {
+            System.Console.WriteLine(text);
+        }
+
+        public void Write(string text)
+        {
+            System.Console.Write(text);
         }
     }
 }
