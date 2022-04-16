@@ -29,9 +29,9 @@ namespace CommandLineInterface
             return sensitive ? console.ReadSensitive() : console.ReadLine();
         }
 
-        public bool Confirm(string question = "Do you agree?", string yes = "Y")
+        public bool Confirm(string question = "Do you agree?", string yes = "Y", string no = "n")
         {
-            return AskFor($"{question} ({yes}/n)").ToUpper() == yes.ToUpper();
+            return AskFor($"{question} ({yes}/{no})").ToUpper() == yes.ToUpper();
         }
 
         public void Print(string text)

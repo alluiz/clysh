@@ -9,7 +9,7 @@ namespace CommandLineInterface
             this.Itens = new Dictionary<string, T>();
         }
 
-        public T Get(string name)
+        public T GetByName(string name)
         {
             return this.Itens[name];
         }

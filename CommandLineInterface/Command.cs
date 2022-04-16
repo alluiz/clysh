@@ -96,16 +96,16 @@ namespace CommandLineInterface
         {
             try
             {
-                return this.AvailableOptions.Get(arg);
+                return this.AvailableOptions.GetByName(arg);
             }
             catch (System.Exception)
             {
-                return this.AvailableOptions.Get(this.abbreviationToOption[arg]);
+                return this.AvailableOptions.GetByName(this.abbreviationToOption[arg]);
             }
         }
         public Option GetSelectedOption(string key)
         {
-            return this.SelectedOptions.Get(key);
+            return this.SelectedOptions.GetByName(key);
         }
 
         public void AddSelectedOption(Option optionSelected)

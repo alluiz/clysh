@@ -3,7 +3,7 @@ namespace CommandLineInterface
     public interface ICommandLineInterfaceFront
     {
         Metadata Metadata { get; set; }
-        bool Confirm(string text = "Do you agree?", string yes = "Y");
+        bool Confirm(string text = "Do you agree?", string yes = "Y", string no = "n");
         string AskFor(string text, bool sensitive = false);
         string AskForSensitive(string text);
         void Print(string text);
