@@ -51,11 +51,7 @@ namespace CommandLineInterface
 
                             if (IsMultiOption(arg))
                             {
-                                for (int j = 1; j < arg.Length; j++)
-                                {
-                                    lastOption = GetOptionFromCommand(lastCommand, arg[j].ToString());
-                                    lastCommand.AddSelectedOption(lastOption);
-                                }
+                                processMultiOption(lastCommand, arg);
                             }
                             else
                             {
@@ -90,6 +86,15 @@ namespace CommandLineInterface
 
         }
 
+        private void processMultiOption(ICommand lastCommand, string arg)
+        {
+            for (int j = 1; j < arg.Length; j++)
+            {
+                Option lastOption = GetOptionFromCommand(lastCommand, arg[j].ToString());
+                lastCommand.AddSelectedOption(lastOption);
+            }
+        }
+
         private Option GetOptionFromCommand(ICommand lastCommand, string arg)
         {
             Option? lastOption;
@@ -110,7 +115,7 @@ namespace CommandLineInterface
         private void ProcessArgument(Option? lastOption, string arg)
         {
             if (lastOption == null)
-                throw new InvalidOperationException($"You can't put arguments without any option");
+                throw new InvalidOperationException("You can't put arguments without any option that accept it.");
 
             string[] argument = arg.Split(":");
             string id = argument[0];

@@ -187,7 +187,7 @@ public class CommandLineInterfaceTests
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, new Arguments()
-                .Add("testarg"));
+                .Add("testarg", 6, 10));
 
         cli.Execute(args);
 
@@ -228,9 +228,9 @@ public class CommandLineInterfaceTests
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, new Arguments()
-                .Add("testarg")
-                .Add("testarg2")
-                .Add("testarg3"));
+                .Add("testarg", 6, 10)
+                .Add("testarg2", 6, 10)
+                .Add("testarg3", 6, 10));
 
         cli.Execute(args);
 
@@ -273,7 +273,7 @@ public class CommandLineInterfaceTests
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, new Arguments()
-                .Add("testarg", false));
+                .Add("testarg", 6, 10, false));
 
         cli.Execute(args);
 
@@ -314,9 +314,9 @@ public class CommandLineInterfaceTests
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, new Arguments()
-                .Add("testarg", false)
-                .Add("testarg2", false)
-                .Add("testarg3", false));
+                .Add("testarg", 6, 10, false)
+                .Add("testarg2", 6, 10, false)
+                .Add("testarg3", 6, 10, false));
 
         cli.Execute(args);
 
@@ -359,8 +359,8 @@ public class CommandLineInterfaceTests
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, new Arguments()
-                .Add("testarg", false)
-                .Add("testreq"));
+                .Add("testarg", 6, 10, false)
+                .Add("testreq", 5, 10));
 
         cli.Execute(args);
 
@@ -402,11 +402,11 @@ public class CommandLineInterfaceTests
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, new Arguments()
-                .Add("testarg", false)
-                .Add("testarg2")
-                .Add("testarg3", false)
-                .Add("testarg4", false)
-                .Add("testarg5"));
+                .Add("testarg", 6, 10, false)
+                .Add("testarg2", 6, 10)
+                .Add("testarg3", 6, 10, false)
+                .Add("testarg4", 6, 10, false)
+                .Add("testarg5", 6, 10));
 
         cli.Execute(args);
 
@@ -454,12 +454,12 @@ public class CommandLineInterfaceTests
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, new Arguments()
-                .Add("testarg", false)
-                .Add("testarg2"))
+                .Add("testarg", 6, 10, false)
+                .Add("testarg2", 6, 10))
             .AddOption(someOption2, someOptionDescription2, new Arguments()
-                .Add("testarg3", false)
-                .Add("testarg4", false)
-                .Add("testarg5"));
+                .Add("testarg3", 6, 10, false)
+                .Add("testarg4", 6, 10, false)
+                .Add("testarg5", 6, 10));
 
         cli.Execute(args);
 
@@ -513,9 +513,9 @@ public class CommandLineInterfaceTests
 
                 })
                 .AddOption(someOption2, someOptionDescription2, new Arguments()
-                    .Add("testarg3", false)
-                    .Add("testarg4", false)
-                    .Add("testarg5"));
+                    .Add("testarg3", 6, 10, false)
+                    .Add("testarg4", 6, 10, false)
+                    .Add("testarg5", 6, 10));
 
         ICommand rootCommand = Command
             .CreateCommand("root", "root command", (o, c) =>
@@ -524,8 +524,8 @@ public class CommandLineInterfaceTests
                     expectedCliFront = c;
                 })
                 .AddOption(someOption, someOptionDescription, new Arguments()
-                        .Add("testarg", false)
-                        .Add("testarg2"))
+                        .Add("testarg", 6, 10, false)
+                        .Add("testarg2", 6, 10))
                 .AddCommand(customCommand);
 
         CommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
@@ -701,7 +701,7 @@ public class CommandLineInterfaceTests
         CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
         rootCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
-        rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(new Option("some-option", "some option", new Arguments().Add("arg1")));
+        rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(new Option("some-option", "some option", new Arguments().Add("arg1", 6, 10)));
 
         cli.Execute(args);
 
@@ -723,7 +723,7 @@ public class CommandLineInterfaceTests
 
         rootCommandMock.Setup(x => x.GetCommand("test")).Returns(customCommandMock.Object);
         customCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
-        customCommandMock.Setup(x => x.GetOption(someOption)).Returns(new Option("some-option", "some option", new Arguments().Add("arg1")));
+        customCommandMock.Setup(x => x.GetOption(someOption)).Returns(new Option("some-option", "some option", new Arguments().Add("arg1", 6, 10)));
 
         cli.Execute(args);
 
@@ -761,7 +761,7 @@ public class CommandLineInterfaceTests
 
         cli.Execute(args);
 
-        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(x => x.Message == "You can't put arguments without any option")), Times.Once);
+        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(x => x.Message == "You can't put arguments without any option that accept it.")), Times.Once);
     }
 
     [Test]

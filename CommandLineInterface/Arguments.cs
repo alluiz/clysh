@@ -12,9 +12,9 @@ namespace CommandLineInterface
             this.Required = new Map<Argument>();
         }
 
-        public Arguments Add(string name, bool required = true)
+        public Arguments Add(string name, int minLength, int maxLength, bool required = true)
         {
-            Argument argument = new Argument(name, required);
+            Argument argument = new Argument(name, minLength, maxLength, required);
 
             if (required)
                 this.Required.Add(argument);

@@ -8,14 +8,14 @@ namespace CommandLineInterface
 
         private const int MaxDescription = 50;
         private const int MinDescription = 10;
-        private const int MinName = 3;
-        private const int MaxName = 20;
+        private const int MinId = 3;
+        private const int MaxId = 20;
         private const int MinAbbrev = 1;
         private const int MaxAbbrev = 1;
 
         public Option(string id!!, string description!!) : base(id)
         {
-            Validate(nameof(id), id, MinName, MaxName);
+            Validate(nameof(id), id, MinId, MaxId);
             Validate(nameof(description), description, MinDescription, MaxDescription);
 
             Description = description;
@@ -24,7 +24,7 @@ namespace CommandLineInterface
 
         public Option(string id!!, string description!!, string abbreviation!!) : base(id)
         {
-            Validate(nameof(id), id, MinName, MaxName);
+            Validate(nameof(id), id, MinId, MaxId);
             Validate(nameof(abbreviation), abbreviation, MinAbbrev, MaxAbbrev);
             Validate(nameof(description), description, MinDescription, MaxDescription);
 
@@ -35,7 +35,7 @@ namespace CommandLineInterface
 
         public Option(string id!!, string description!!, Arguments arguments!!) : base(id)
         {
-            Validate(nameof(id), id, MinName, MaxName);
+            Validate(nameof(id), id, MinId, MaxId);
             Validate(nameof(description), description, MinDescription, MaxDescription);
 
             Description = description;
