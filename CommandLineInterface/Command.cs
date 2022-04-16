@@ -53,7 +53,7 @@ namespace CommandLineInterface
 
         public ICommand AddOption(string name, string description)
         {
-            Option option = new Option(name, description);
+            Option option = new(name, description);
             this.AvailableOptions.Add(option);
 
             return this;
@@ -61,7 +61,7 @@ namespace CommandLineInterface
 
         public ICommand AddOption(string name, string description, string abbreviation)
         {
-            Option option = new Option(name, description, abbreviation);
+            Option option = new(name, description, abbreviation);
             this.AvailableOptions.Add(option);
             this.abbreviationToOption.Add(abbreviation, option.Id);
 
@@ -70,7 +70,7 @@ namespace CommandLineInterface
 
         public ICommand AddOption(string name, string description, string abbreviation, Parameters parameters)
         {
-            Option option = new Option(name, description, abbreviation, parameters);
+            Option option = new(name, description, abbreviation, parameters);
             this.AvailableOptions.Add(option);
             this.abbreviationToOption.Add(abbreviation, option.Id);
 
@@ -79,7 +79,7 @@ namespace CommandLineInterface
 
         public ICommand AddOption(string name, string description, Parameters parameters)
         {
-            Option option = new Option(name, description, parameters);
+            Option option = new(name, description, parameters);
             this.AvailableOptions.Add(option);
 
             return this;

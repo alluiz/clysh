@@ -29,8 +29,10 @@ namespace CommandLineInterface
             bool isOptionHelp = false;
 
             RootCommand.Order = 0;
-            List<ICommand> commandsToExecute = new List<ICommand>();
-            commandsToExecute.Add(RootCommand);
+            List<ICommand> commandsToExecute = new()
+            {
+                RootCommand
+            };
 
             try
             {
@@ -73,10 +75,10 @@ namespace CommandLineInterface
 
         }
 
-        private Option GetOptionFromCommand(ICommand lastCommand, string arg)
+        private static Option GetOptionFromCommand(ICommand lastCommand, string arg)
         {
             Option? lastOption;
-            string key = ArgIsOptionFull(arg) ? arg.Substring(2) : arg.Substring(1);
+            string key = ArgIsOptionFull(arg) ? arg[2..] : arg[1..];
 
             if (!lastCommand.HasOption(key))
                 throw new InvalidOperationException($"The option '{arg}' is invalid.");
@@ -85,7 +87,7 @@ namespace CommandLineInterface
             return lastOption;
         }
 
-        private void ProcessParameter(Option? lastOption, string arg)
+        private static void ProcessParameter(Option? lastOption, string arg)
         {
             if (lastOption == null)
                 throw new InvalidOperationException("You can't put parameters without any option that accept it.");
@@ -116,20 +118,20 @@ namespace CommandLineInterface
             }
         }
 
-        private void CheckLastOptionStatus(Option? lastOption)
+        private static void CheckLastOptionStatus(Option? lastOption)
         {
             if (lastOption != null && lastOption.Parameters.WaitingForRequired())
-                throwRequiredParametersError(lastOption);
+                ThrowRequiredParametersError(lastOption);
         }
 
-        private void throwRequiredParametersError(Option lastOption)
+        private static void ThrowRequiredParametersError(Option lastOption)
         {
-            throw new InvalidOperationException($"Required parameters [{lastOption.Parameters.ToString()}] is missing for option: {lastOption.Id}");
+            throw new InvalidOperationException($"Required parameters [{lastOption.Parameters}] is missing for option: {lastOption.Id}");
         }
 
-        private bool ArgIsParameter(string arg)
+        private static bool ArgIsParameter(string arg)
         {
-            return arg.Contains(":");
+            return arg.Contains(':');
         }
 
         private void Execute(List<ICommand> commandsToExecute)
@@ -138,7 +140,7 @@ namespace CommandLineInterface
                 command.Action(command.SelectedOptions, this.Front);
         }
 
-        private ICommand GetCommandFromArg(ICommand lastCommand, string arg)
+        private static ICommand GetCommandFromArg(ICommand lastCommand, string arg)
         {
             int order = lastCommand.Order + 1;
             lastCommand = lastCommand.GetCommand(arg);
@@ -156,12 +158,12 @@ namespace CommandLineInterface
             Front.PrintHelp(command);
         }
 
-        private bool ArgIsOption(string arg)
+        private static bool ArgIsOption(string arg)
         {
             return arg.StartsWith("-");
         }
 
-        private bool ArgIsOptionFull(string arg)
+        private static bool ArgIsOptionFull(string arg)
         {
             return arg.StartsWith("--");
         }

@@ -121,7 +121,7 @@ namespace CommandLineInterface
             {
                 if (item.Key != command.Name)
                 {
-                    this.PrintWithBreak($"   {item.Key.PadRight(39)}{item.Value.Description}");
+                    this.PrintWithBreak($"   {item.Key,-39}{item.Value.Description}");
                 }
             }
 
@@ -137,13 +137,13 @@ namespace CommandLineInterface
             {
                 string args = "";
 
-                foreach (var parameter in item.Value.Parameters.Itens.ToList().Where(x => x != null).OrderBy(x=>x.Required).ThenBy(x=>x.Id))
+                foreach (var parameter in item.Value.Parameters.Itens.ToList().Where(x => x != null).OrderBy(x => x.Required).ThenBy(x => x.Id))
                 {
                     string type = parameter.Required ? "Required" : "Optional";
                     args += $"<{parameter.Id}:{type}>";
                 }
 
-                this.PrintWithBreak($"  {(item.Value.Abbreviation == null ? "" : "-" + item.Value.Abbreviation).PadRight(10)}--{item.Key.PadRight(28)}{item.Value.Description.PadRight(55)}{args}");
+                this.PrintWithBreak($"  {(item.Value.Abbreviation == null ? "" : "-" + item.Value.Abbreviation),-10}--{item.Key,-28}{item.Value.Description,-55}{args}");
             }
 
             this.PrintEmptyLine();

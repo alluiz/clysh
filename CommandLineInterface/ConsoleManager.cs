@@ -26,12 +26,12 @@ namespace CommandLineInterface
 
         public void Write(string text, int lineNumber)
         {
-            System.Console.Write($"{(lineNumber+".").PadRight(5)}{text}");
+            System.Console.Write($"{lineNumber + ".",-5}{text}");
         }
 
         public void WriteLine(string text, int lineNumber)
         {
-            System.Console.WriteLine($"{(lineNumber+".").PadRight(5)}{text}");
+            System.Console.WriteLine($"{lineNumber + ".",-5}{text}");
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace CommandLineInterface
                     if (!string.IsNullOrEmpty(data))
                     {
                         // remove one character from the list of password characters
-                        data = data.Substring(0, data.Length - 1);
+                        data = data[..^1];
                         // get the location of the cursor
                         int pos = Console.CursorLeft;
                         // move the cursor to the left by one character

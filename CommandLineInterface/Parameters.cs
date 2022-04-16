@@ -14,7 +14,7 @@ namespace CommandLineInterface
 
         public Parameters Add(string name, int minLength, int maxLength, bool required = true)
         {
-            Parameter parameter = new Parameter(name, minLength, maxLength, required);
+            Parameter parameter = new(name, minLength, maxLength, required);
 
             this.Itens[lastIndexAdd] = parameter;
 
@@ -25,12 +25,12 @@ namespace CommandLineInterface
 
         public bool WaitingForRequired()
         {
-            return this.Itens.Count(x => x != null && x.Required && x.Data == null) > 0;
+            return Itens.Any(x => x != null && x.Required && x.Data == null);
         }
 
         public bool WaitingForAny()
         {
-            return this.Itens.Count(x => x != null && x.Data == null) > 0;
+            return Itens.Any(x => x != null && x.Data == null);
         }
 
         public Parameter Get(string id)
@@ -40,7 +40,7 @@ namespace CommandLineInterface
 
         public bool Has(string id)
         {
-            return this.Itens.Count(x => x != null && x.Id == id) > 0;
+            return Itens.Any(x => x != null && x.Id == id);
         }
 
         public Parameter Last()
@@ -58,7 +58,7 @@ namespace CommandLineInterface
             this.Itens.Where(x => x != null && x.Required).ToList().ForEach(k => s += k.Id + ",");
 
             if (s.Length > 1)
-                s = s.Substring(0, s.Length - 1);
+                s = s[..^1];
 
             return s;
         }

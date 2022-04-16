@@ -8,8 +8,8 @@ namespace CommandLineInterface.Tests;
 
 public class CommandLineInterfaceTests
 {
-    private Mock<ICommandLineInterfaceFront> frontMock = new Mock<ICommandLineInterfaceFront>();
-    private Mock<ICommand> rootCommandMock = new Mock<ICommand>();
+    private readonly Mock<ICommandLineInterfaceFront> frontMock = new();
+    private readonly Mock<ICommand> rootCommandMock = new();
 
 
     [SetUp]
@@ -22,7 +22,7 @@ public class CommandLineInterfaceTests
     [Test]
     public void SuccessfulCreateCLIAndRootCommand()
     {
-        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
         Assert.AreEqual(rootCommandMock.Object, cli.RootCommand);
         Assert.AreEqual(frontMock.Object, cli.Front);
     }
@@ -31,34 +31,16 @@ public class CommandLineInterfaceTests
     public void SuccessfulCreateCLIAndFront()
     {
         IConsoleManager consoleManager = new ConsoleManager();
-        Metadata metadata = new Metadata(title: "Test");
-        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, consoleManager, metadata);
+        Metadata metadata = new(title: "Test");
+        ICommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, consoleManager, metadata);
         Assert.AreEqual(rootCommandMock.Object, cli.RootCommand);
         Assert.AreEqual(metadata, cli.Front.Metadata);
     }
 
     [Test]
-    public void CreateCLIWithRootAndNullFrontError()
-    {
-        Assert.Throws<ArgumentNullException>(() => new CommandLineInterface(rootCommandMock.Object, null));
-    }
-
-    [Test]
-    public void CreateCLIWithNullRootAndFrontError()
-    {
-        Assert.Throws<ArgumentNullException>(() => new CommandLineInterface(null, frontMock.Object));
-    }
-
-    [Test]
-    public void CreateCLIWithNullRootAndNullFrontError()
-    {
-        Assert.Throws<ArgumentNullException>(() => new CommandLineInterface(null, null));
-    }
-
-    [Test]
     public void SuccessfulCreateCommand()
     {
-        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
         Action<Map<Option>, ICommandLineInterfaceFront> newAction = (x, y) => { };
         string name = "new";
@@ -75,9 +57,9 @@ public class CommandLineInterfaceTests
     [Test]
     public void SuccessfulExecuteRootWithNoArgs()
     {
-        string[] args = new string[] { };
+        string[] args = Array.Empty<string>();
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
         cli.Execute(args);
 
@@ -89,7 +71,7 @@ public class CommandLineInterfaceTests
     {
         string[] args = new string[] { "" };
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
         cli.Execute(args);
 
@@ -101,7 +83,7 @@ public class CommandLineInterfaceTests
     {
         string[] args = new string[] { "  " };
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
         cli.Execute(args);
 
@@ -113,7 +95,7 @@ public class CommandLineInterfaceTests
     {
         string[] args = new string[] { "  ", "   ", "         ", "  " };
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
         cli.Execute(args);
 
@@ -135,15 +117,15 @@ public class CommandLineInterfaceTests
         Map<Option>? expectedOptions = null;
         ICommandLineInterfaceFront? expectedCliFront = null;
 
-        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        void action(Map<Option> options, ICommandLineInterfaceFront cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
-        };
+        }
 
         ICommand rootCommand = Command.CreateCommand("root", "root command", action);
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, someAbbrevOption);
@@ -175,15 +157,15 @@ public class CommandLineInterfaceTests
         Map<Option>? expectedOptions = null;
         ICommandLineInterfaceFront? expectedCliFront = null;
 
-        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        void action(Map<Option> options, ICommandLineInterfaceFront cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
-        };
+        }
 
         ICommand rootCommand = Command.CreateCommand("root", "root command", action);
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, new Parameters()
@@ -216,15 +198,15 @@ public class CommandLineInterfaceTests
         Map<Option>? expectedOptions = null;
         ICommandLineInterfaceFront? expectedCliFront = null;
 
-        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        void action(Map<Option> options, ICommandLineInterfaceFront cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
-        };
+        }
 
         ICommand rootCommand = Command.CreateCommand("root", "root command", action);
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, new Parameters()
@@ -257,15 +239,15 @@ public class CommandLineInterfaceTests
         Map<Option>? expectedOptions = null;
         ICommandLineInterfaceFront? expectedCliFront = null;
 
-        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        void action(Map<Option> options, ICommandLineInterfaceFront cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
-        };
+        }
 
         ICommand rootCommand = Command.CreateCommand("root", "root command", action);
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, new Parameters()
@@ -302,15 +284,15 @@ public class CommandLineInterfaceTests
         Map<Option>? expectedOptions = null;
         ICommandLineInterfaceFront? expectedCliFront = null;
 
-        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        void action(Map<Option> options, ICommandLineInterfaceFront cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
-        };
+        }
 
         ICommand rootCommand = Command.CreateCommand("root", "root command", action);
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, new Parameters()
@@ -343,15 +325,15 @@ public class CommandLineInterfaceTests
         Map<Option>? expectedOptions = null;
         ICommandLineInterfaceFront? expectedCliFront = null;
 
-        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        void action(Map<Option> options, ICommandLineInterfaceFront cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
-        };
+        }
 
         ICommand rootCommand = Command.CreateCommand("root", "root command", action);
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, new Parameters()
@@ -388,15 +370,15 @@ public class CommandLineInterfaceTests
         Map<Option>? expectedOptions = null;
         ICommandLineInterfaceFront? expectedCliFront = null;
 
-        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        void action(Map<Option> options, ICommandLineInterfaceFront cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
-        };
+        }
 
         ICommand rootCommand = Command.CreateCommand("root", "root command", action);
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, new Parameters()
@@ -431,15 +413,15 @@ public class CommandLineInterfaceTests
         Map<Option>? expectedOptions = null;
         ICommandLineInterfaceFront? expectedCliFront = null;
 
-        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        void action(Map<Option> options, ICommandLineInterfaceFront cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
-        };
+        }
 
         ICommand rootCommand = Command.CreateCommand("root", "root command", action);
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, new Parameters()
@@ -483,15 +465,15 @@ public class CommandLineInterfaceTests
         Map<Option>? expectedOptions = null;
         ICommandLineInterfaceFront? expectedCliFront = null;
 
-        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        void action(Map<Option> options, ICommandLineInterfaceFront cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
-        };
+        }
 
         ICommand rootCommand = Command.CreateCommand("root", "root command", action);
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, new Parameters()
@@ -569,7 +551,7 @@ public class CommandLineInterfaceTests
                         .Add("testarg2", 6, 10))
                 .AddCommand(customCommand);
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
 
         cli.Execute(args);
 
@@ -615,15 +597,15 @@ public class CommandLineInterfaceTests
         Map<Option>? expectedOptions = null;
         ICommandLineInterfaceFront? expectedCliFront = null;
 
-        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        void action(Map<Option> options, ICommandLineInterfaceFront cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
-        };
+        }
 
         ICommand rootCommand = Command.CreateCommand("root", "root command", action);
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, someAbbrevOption);
@@ -651,7 +633,7 @@ public class CommandLineInterfaceTests
 
         string[] args = new string[] { invalidOptionWithDashes };
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
         rootCommandMock.Setup(x => x.HasOption(invalidOption)).Returns(false);
 
@@ -669,7 +651,7 @@ public class CommandLineInterfaceTests
 
         string[] args = new string[] { invalidOptionWithDashes };
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
         rootCommandMock.Setup(x => x.HasOption(invalidOption)).Returns(false);
 
@@ -687,7 +669,7 @@ public class CommandLineInterfaceTests
 
         string[] args = new string[] { someOptionWithDashes };
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
         rootCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
         rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(new Option("some-option", "some option", new Parameters().Add("arg1", 6, 10)));
@@ -706,9 +688,9 @@ public class CommandLineInterfaceTests
 
         string[] args = new string[] { "test", someOptionWithDashes };
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
-        Mock<ICommand> customCommandMock = new Mock<ICommand>();
+        Mock<ICommand> customCommandMock = new();
 
         rootCommandMock.Setup(x => x.GetCommand("test")).Returns(customCommandMock.Object);
         rootCommandMock.Setup(x => x.HasCommand("test")).Returns(true);
@@ -729,9 +711,9 @@ public class CommandLineInterfaceTests
 
         string[] args = new string[] { helpOptionWithDashes };
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
-        Mock<ICommand> customCommandMock = new Mock<ICommand>();
+        Mock<ICommand> customCommandMock = new();
 
         rootCommandMock.Setup(x => x.HasOption(helpOption)).Returns(true);
         rootCommandMock.Setup(x => x.GetOption(helpOption)).Returns(new Option(helpOption, "Show help on screen", "h"));
@@ -747,7 +729,7 @@ public class CommandLineInterfaceTests
 
         string[] args = new string[] { "testarg:mytest" };
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
         cli.Execute(args);
 
@@ -763,7 +745,7 @@ public class CommandLineInterfaceTests
 
         string[] args = new string[] { someOptionWithDashes, "testarg:mytest" };
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
         rootCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
         rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(new Option(someOption, "some option"));
@@ -782,7 +764,7 @@ public class CommandLineInterfaceTests
 
         string[] args = new string[] { someOptionWithDashes, "testarg" };
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
         rootCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
         rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(new Option(someOption, "some option"));
@@ -805,15 +787,15 @@ public class CommandLineInterfaceTests
         Map<Option>? expectedOptions = null;
         ICommandLineInterfaceFront? expectedCliFront = null;
 
-        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        void action(Map<Option> options, ICommandLineInterfaceFront cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
-        };
+        }
 
         ICommand rootCommand = Command.CreateCommand("root", "root command", action);
 
-        CommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
+        ICommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
 
         cli.RootCommand
             .AddOption(someOption, someOptionDescription, new Parameters()

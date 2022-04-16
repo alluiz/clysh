@@ -9,10 +9,8 @@ namespace CommandLineInterface.Tests;
 public class CommandLineInterfaceFrontTests
 {
 
-    private Metadata metadata = new Metadata("Testfront");
-    private Mock<IConsoleManager> consoleMock = new Mock<IConsoleManager>();
-    private Mock<ICommand> rootCommandMock = new Mock<ICommand>();
-
+    private readonly Metadata metadata = new("Testfront");
+    private readonly Mock<IConsoleManager> consoleMock = new();
 
     [SetUp]
     public void Setup()
@@ -26,7 +24,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "Y";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        ICommandLineInterfaceFront front = new CommandLineInterfaceFront(consoleMock.Object, metadata);
+        CommandLineInterfaceFront front = new(consoleMock.Object, metadata);
 
         string question = "Do you agree? (Y/n):";
         bool answer = front.Confirm();
@@ -43,7 +41,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "n";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new CommandLineInterfaceFront(consoleMock.Object, metadata);
+        CommandLineInterfaceFront front = new(consoleMock.Object, metadata);
 
         string question = "Do you agree? (Y/n):";
         bool answer = front.Confirm();
@@ -60,7 +58,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "xxxxx";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new CommandLineInterfaceFront(consoleMock.Object, metadata);
+        CommandLineInterfaceFront front = new(consoleMock.Object, metadata);
 
         string question = "Do you agree? (Y/n):";
         bool answer = front.Confirm();
@@ -77,7 +75,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new CommandLineInterfaceFront(consoleMock.Object, metadata);
+        CommandLineInterfaceFront front = new(consoleMock.Object, metadata);
 
         string question = "Do you agree? (Y/n):";
         bool answer = front.Confirm();
@@ -94,7 +92,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "I'm agree";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new CommandLineInterfaceFront(consoleMock.Object, metadata);
+        CommandLineInterfaceFront front = new(consoleMock.Object, metadata);
 
         string question = "Do you agree? (I'm agree/n):";
         bool answer = front.Confirm(yes: "I'm agree");
@@ -111,7 +109,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "NO";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new CommandLineInterfaceFront(consoleMock.Object, metadata);
+        CommandLineInterfaceFront front = new(consoleMock.Object, metadata);
 
         string question = "Do you agree? (I'm agree/n):";
         bool answer = front.Confirm(yes: "I'm agree");
@@ -128,7 +126,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "Y";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new CommandLineInterfaceFront(consoleMock.Object, metadata);
+        CommandLineInterfaceFront front = new(consoleMock.Object, metadata);
 
         string question = "Are you kidding me? (Y/n):";
         bool answer = front.Confirm(question: "Are you kidding me?");
@@ -145,7 +143,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "test answer";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new CommandLineInterfaceFront(consoleMock.Object, metadata);
+        CommandLineInterfaceFront front = new(consoleMock.Object, metadata);
 
         string question = "test question:";
         string answer = front.AskFor("test question");
@@ -155,23 +153,11 @@ public class CommandLineInterfaceFrontTests
         Assert.AreEqual(answerExpected, answer);
     }
 
-    [Test]
-    public void AskForWithNullError()
-    {
-        CommandLineInterfaceFront front = new CommandLineInterfaceFront(consoleMock.Object, metadata);
-
-        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() => front.AskFor(null));
-
-        Assert.IsTrue(exception?.Message.Contains("Value cannot be null"));
-
-        consoleMock.Verify(x => x.Write(It.IsAny<string>()), Times.Never);
-        consoleMock.Verify(x => x.ReadLine(), Times.Never);
-    }
 
     [Test]
     public void AskForWithWhitespaceError()
     {
-        CommandLineInterfaceFront front = new CommandLineInterfaceFront(consoleMock.Object, metadata);
+        CommandLineInterfaceFront front = new(consoleMock.Object, metadata);
 
         string question = "     ";
         ArgumentException? exception = Assert.Throws<ArgumentException>(() => front.AskFor(question));
@@ -188,7 +174,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "x1A";
         consoleMock.Setup(x => x.ReadSensitive()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new CommandLineInterfaceFront(consoleMock.Object, metadata, true);
+        CommandLineInterfaceFront front = new(consoleMock.Object, metadata, true);
 
         string question = "test question:";
         string answer = front.AskForSensitive("test question");

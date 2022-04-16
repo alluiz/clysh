@@ -39,7 +39,7 @@ namespace CommandLineInterface
             this.Parameters = parameters;
         }
 
-        private void Validate(string field, string value, int min, int max)
+        private static void Validate(string field, string value, int min, int max)
         {
             if (value.Trim().Length < min || value.Trim().Length > max)
                 throw new ArgumentException($"Option {field} must be not null or empty and between {min} and {max} chars.", field);
