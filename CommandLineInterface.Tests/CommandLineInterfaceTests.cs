@@ -204,6 +204,47 @@ public class CommandLineInterfaceTests
     }
 
     [Test]
+    public void SuccessfulExecuteRootWithSomeOptionAndParameterByPosition()
+    {
+        const string someOption = "some-option";
+        const string someOptionDescription = "awesome option";
+
+        const string someOptionWithDashes = $"--{someOption}";
+
+        string[] args = new string[] { someOptionWithDashes, "mytest" };
+
+        Map<Option>? expectedOptions = null;
+        ICommandLineInterfaceFront? expectedCliFront = null;
+
+        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        {
+            expectedOptions = options;
+            expectedCliFront = cliFront;
+        };
+
+        ICommand rootCommand = Command.CreateCommand("root", "root command", action);
+
+        CommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
+
+        cli.RootCommand
+            .AddOption(someOption, someOptionDescription, new Parameters()
+                .Add("testarg", 6, 10));
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedCliFront);
+        Assert.NotNull(expectedOptions);
+
+        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.IsTrue(expectedOptions?.Has(someOption));
+        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
+        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
+
+        Assert.AreEqual(cli.Front, expectedCliFront);
+    }
+
+    [Test]
     public void SuccessfulExecuteRootWithSomeOptionAndMultiParameter()
     {
         const string someOption = "some-option";
@@ -730,5 +771,56 @@ public class CommandLineInterfaceTests
         cli.Execute(args);
 
         frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(x => x.Message == $"The parameter 'testarg' is invalid for option: {someOption}.")), Times.Once);
+    }
+
+    [Test]
+    public void ExecuteRootWithSomeOptionAndInvalidArgsByPositionError()
+    {
+        const string someOption = "some-option";
+
+        const string someOptionWithDashes = $"--{someOption}";
+
+        string[] args = new string[] { someOptionWithDashes, "testarg" };
+
+        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+
+        rootCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
+        rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(new Option(someOption, "some option"));
+
+        cli.Execute(args);
+
+        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(x => x.Message == $"The parameter data 'testarg' is out of bound for option: {someOption}.")), Times.Once);
+    }
+
+    [Test]
+    public void ExecuteRootWithSomeOptionAndParameterByPositionAlreadyFilledError()
+    {
+        const string someOption = "some-option";
+        const string someOptionDescription = "awesome option";
+
+        const string someOptionWithDashes = $"--{someOption}";
+
+        string[] args = new string[] { someOptionWithDashes, "mytest", "testarg:mytest" };
+
+        Map<Option>? expectedOptions = null;
+        ICommandLineInterfaceFront? expectedCliFront = null;
+
+        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        {
+            expectedOptions = options;
+            expectedCliFront = cliFront;
+        };
+
+        ICommand rootCommand = Command.CreateCommand("root", "root command", action);
+
+        CommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
+
+        cli.RootCommand
+            .AddOption(someOption, someOptionDescription, new Parameters()
+                .Add("testarg", 6, 10));
+
+        cli.Execute(args);
+
+        frontMock.Verify(x => x.PrintHelp(rootCommand, It.Is<InvalidOperationException>(x => x.Message == $"The parameter 'testarg' is already filled for option: {someOption}.")), Times.Once);
     }
 }
