@@ -28,6 +28,16 @@ public class CommandLineInterfaceTests
     }
 
     [Test]
+    public void SuccessfulCreateCLIAndFront()
+    {
+        IConsoleManager consoleManager = new ConsoleManager();
+        Metadata metadata = new Metadata(title: "Test");
+        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, consoleManager, metadata);
+        Assert.AreEqual(rootCommandMock.Object, cli.RootCommand);
+        Assert.AreEqual(metadata, cli.Front.Metadata);
+    }
+
+    [Test]
     public void CreateCLIWithRootAndNullFrontError()
     {
         Assert.Throws<ArgumentNullException>(() => new CommandLineInterface(rootCommandMock.Object, null));
@@ -739,5 +749,37 @@ public class CommandLineInterfaceTests
         cli.Execute(args);
 
         frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object), Times.Once);
+    }
+
+    [Test]
+    public void ExecuteRootWithArgsAndNoOptionError()
+    {
+
+        string[] args = new string[] { "testarg:mytest" };
+
+        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+
+        cli.Execute(args);
+
+        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(x => x.Message == "You can't put arguments without any option")), Times.Once);
+    }
+
+    [Test]
+    public void ExecuteRootWithSomeOptionAndInvalidArgsError()
+    {
+        const string someOption = "some-option";
+
+        const string someOptionWithDashes = $"--{someOption}";
+
+        string[] args = new string[] { someOptionWithDashes, "testarg:mytest" };
+
+        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+
+        rootCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
+        rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(new Option(someOption, "some option"));
+
+        cli.Execute(args);
+
+        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(x => x.Message == $"The argument 'testarg:mytest' is invalid for option: {someOption}.")), Times.Once);
     }
 }
