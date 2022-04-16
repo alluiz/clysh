@@ -13,7 +13,7 @@ namespace CommandLineInterface
         public int MinLength { get; }
         public int MaxLength { get; }
 
-        public Parameter(string id, int minLength, int maxLength, bool required) : base(id)
+        public Parameter(string id, int minLength, int maxLength, bool required = true) : base(id)
         {
             MinLength = minLength;
             MaxLength = maxLength;

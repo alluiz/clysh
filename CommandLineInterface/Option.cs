@@ -19,14 +19,14 @@ namespace CommandLineInterface
             Validate(nameof(description), description, MinDescription, MaxDescription);
 
             Description = description;
-            this.Parameters = new Parameters();
+            this.Parameters = Parameters.Create();
         }
 
         public Option(string id!!, string description!!, string abbreviation!!) : this(id, description)
         {
             Validate(nameof(abbreviation), abbreviation, MinAbbrev, MaxAbbrev);
             Abbreviation = abbreviation;
-            this.Parameters = new Parameters();
+            this.Parameters = Parameters.Create();
         }
 
         public Option(string id!!, string description!!, Parameters parameters!!) : this(id, description)

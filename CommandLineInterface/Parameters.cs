@@ -7,20 +7,23 @@ namespace CommandLineInterface
 
         public Parameter[] Itens { get; private set; }
 
-        public Parameters()
+        private Parameters(Parameter[] itens)
         {
-            this.Itens = new Parameter[10];
+            this.Itens = itens;
         }
 
-        public Parameters Add(string name, int minLength, int maxLength, bool required = true)
+        public static Parameters Create(params Parameter[] itens)
+        {
+            return new Parameters(itens);
+        }
+
+        public void Add(string name, int minLength, int maxLength, bool required = true)
         {
             Parameter parameter = new(name, minLength, maxLength, required);
 
             this.Itens[lastIndexAdd] = parameter;
 
             lastIndexAdd++;
-
-            return this;
         }
 
         public bool WaitingForRequired()

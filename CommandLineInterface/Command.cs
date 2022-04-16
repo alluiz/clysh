@@ -113,7 +113,7 @@ namespace CommandLineInterface
             this.SelectedOptions.Add(optionSelected);
         }
 
-        public static ICommand CreateCommand(string name, string description, Action<Map<Option>, ICommandLineInterfaceFront> action)
+        public static ICommand Create(string name, string description, Action<Map<Option>, ICommandLineInterfaceFront> action)
         {
             return new Command(name, description, action);
         }
