@@ -37,7 +37,7 @@ namespace CommandLineInterface
         public void Print(string text)
         {
             PrintedLines++;
-            
+
             if (printLineNumber)
                 console.Write(text, PrintedLines);
             else
@@ -137,14 +137,10 @@ namespace CommandLineInterface
             {
                 string args = "";
 
-                foreach (var parameter in item.Value.Parameters.Required.Itens)
+                foreach (var parameter in item.Value.Parameters.Itens.ToList().Where(x => x != null).OrderBy(x=>x.Required).ThenBy(x=>x.Id))
                 {
-                    args += $"<{parameter.Value.Id}:Required>";
-                }
-
-                foreach (var parameter in item.Value.Parameters.Optional.Itens)
-                {
-                    args += $"<{parameter.Value.Id}:Required>";
+                    string type = parameter.Required ? "Required" : "Optional";
+                    args += $"<{parameter.Id}:{type}>";
                 }
 
                 this.PrintWithBreak($"  {(item.Value.Abbreviation == null ? "" : "-" + item.Value.Abbreviation).PadRight(10)}--{item.Key.PadRight(28)}{item.Value.Description.PadRight(55)}{args}");

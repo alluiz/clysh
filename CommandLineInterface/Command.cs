@@ -13,6 +13,7 @@ namespace CommandLineInterface
         ICommand AddCommand(ICommand command);
         ICommand AddOption(string name, string description);
         ICommand AddOption(string name, string description, string abbreviation);
+        ICommand AddOption(string name, string description, string abbreviation, Parameters parameters);
         ICommand AddOption(string name, string description, Parameters parameters);
         void AddSelectedOption(Option optionSelected);
         ICommand GetCommand(string name);
@@ -20,6 +21,7 @@ namespace CommandLineInterface
         Option GetSelectedOption(string key);
         bool HasOption(string key);
         bool HasCommands();
+        bool HasCommand(string arg);
     }
 
     public class Command : ICommand
@@ -60,6 +62,15 @@ namespace CommandLineInterface
         public ICommand AddOption(string name, string description, string abbreviation)
         {
             Option option = new Option(name, description, abbreviation);
+            this.AvailableOptions.Add(option);
+            this.abbreviationToOption.Add(abbreviation, option.Id);
+
+            return this;
+        }
+
+        public ICommand AddOption(string name, string description, string abbreviation, Parameters parameters)
+        {
+            Option option = new Option(name, description, abbreviation, parameters);
             this.AvailableOptions.Add(option);
             this.abbreviationToOption.Add(abbreviation, option.Id);
 
@@ -109,10 +120,7 @@ namespace CommandLineInterface
 
         public ICommand GetCommand(string name)
         {
-            if (this.Commands.ContainsKey(name))
-                return this.Commands[name];
-            else
-                throw new InvalidOperationException("Invalid command: " + name);
+            return this.Commands[name];
         }
 
         public bool HasOption(string key)
@@ -123,6 +131,11 @@ namespace CommandLineInterface
         public bool HasCommands()
         {
             return this.Commands.Count > 0;
+        }
+
+        public bool HasCommand(string name)
+        {
+            return this.Commands.ContainsKey(name);
         }
     }
 }

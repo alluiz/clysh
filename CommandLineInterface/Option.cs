@@ -22,23 +22,20 @@ namespace CommandLineInterface
             this.Parameters = new Parameters();
         }
 
-        public Option(string id!!, string description!!, string abbreviation!!) : base(id)
+        public Option(string id!!, string description!!, string abbreviation!!) : this(id, description)
         {
-            Validate(nameof(id), id, MinId, MaxId);
             Validate(nameof(abbreviation), abbreviation, MinAbbrev, MaxAbbrev);
-            Validate(nameof(description), description, MinDescription, MaxDescription);
-
             Abbreviation = abbreviation;
-            Description = description;
             this.Parameters = new Parameters();
         }
 
-        public Option(string id!!, string description!!, Parameters parameters!!) : base(id)
+        public Option(string id!!, string description!!, Parameters parameters!!) : this(id, description)
         {
-            Validate(nameof(id), id, MinId, MaxId);
-            Validate(nameof(description), description, MinDescription, MaxDescription);
+            this.Parameters = parameters;
+        }
 
-            Description = description;
+        public Option(string id!!, string description!!, string abbreviation!!, Parameters parameters!!) : this(id, description, abbreviation)
+        {
             this.Parameters = parameters;
         }
 

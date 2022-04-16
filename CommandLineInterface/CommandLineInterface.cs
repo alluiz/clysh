@@ -38,37 +38,24 @@ namespace CommandLineInterface
                 {
                     string arg = args[i];
 
-                    if (ArgIsParameter(arg))
-                    {
-                        ProcessParameter(lastOption, arg);
-                    }
-                    else
+                    if (ArgIsOption(arg))
                     {
                         CheckLastOptionStatus(lastOption);
-
-                        if (ArgIsOption(arg))
-                        {
-
-                            if (IsMultiOption(arg))
-                            {
-                                processMultiOption(lastCommand, arg);
-                            }
-                            else
-                            {
-                                lastOption = GetOptionFromCommand(lastCommand, arg);
-                                lastCommand.AddSelectedOption(lastOption);
-                                isOptionHelp = lastOption.Id.Equals("help");
-                            }
-                        }
-                        else
-                        {
-                            if (!string.IsNullOrEmpty(arg) && !string.IsNullOrWhiteSpace(arg))
-                            {
-                                lastCommand = GetCommandFromArg(lastCommand, arg);
-                                commandsToExecute.Add(lastCommand);
-                            }
-                        }
+                        lastOption = GetOptionFromCommand(lastCommand, arg);
+                        lastCommand.AddSelectedOption(lastOption);
+                        isOptionHelp = lastOption.Id.Equals("help");
                     }
+                    else if (lastCommand.HasCommand(arg))
+                    {
+                        CheckLastOptionStatus(lastOption);
+                        lastOption = null;
+                        lastCommand = GetCommandFromArg(lastCommand, arg);
+                        commandsToExecute.Add(lastCommand);
+                    }
+                    else if (string.IsNullOrEmpty(arg) || string.IsNullOrWhiteSpace(arg))
+                        continue;
+                    else
+                        ProcessParameter(lastOption, arg);
                 }
 
                 CheckLastOptionStatus(lastOption);
@@ -98,7 +85,7 @@ namespace CommandLineInterface
         private Option GetOptionFromCommand(ICommand lastCommand, string arg)
         {
             Option? lastOption;
-            string key = ArgIsOptionFull(arg) ? arg.Substring(2) : ArgIsOption(arg) ? arg.Substring(1) : arg;
+            string key = ArgIsOptionFull(arg) ? arg.Substring(2) : arg.Substring(1);
 
             if (!lastCommand.HasOption(key))
                 throw new InvalidOperationException($"The option '{arg}' is invalid.");
@@ -117,27 +104,41 @@ namespace CommandLineInterface
             if (lastOption == null)
                 throw new InvalidOperationException("You can't put parameters without any option that accept it.");
 
-            string[] parameter = arg.Split(":");
-            string id = parameter[0];
-            string value = parameter[1];
+            if (ArgIsParameter(arg))
+            {
+                string[] parameter = arg.Split(":");
 
-            if (lastOption.Parameters.Required.Has(id))
-                lastOption.Parameters.Required.Get(id).Data = value;
-            else if (lastOption.Parameters.Optional.Has(id))
-                lastOption.Parameters.Optional.Get(id).Data = value;
+                string id = parameter[0];
+                string data = parameter[1];
+
+                if (lastOption.Parameters.Has(id))
+                {
+                    if (lastOption.Parameters.Get(id).Data != null)
+                        throw new InvalidOperationException($"The parameter '{id}' is already filled for option: {lastOption.Id}.");
+
+                    lastOption.Parameters.Get(id).Data = data;
+                }
+                else
+                    throw new InvalidOperationException($"The parameter '{id}' is invalid for option: {lastOption.Id}.");
+            }
             else
-                throw new InvalidOperationException($"The parameter '{arg}' is invalid for option: {lastOption.Id}.");
+            {
+                if (!lastOption.Parameters.WaitingForAny())
+                    throw new InvalidOperationException($"The parameter data '{arg}' is out of bound for option: {lastOption.Id}.");
+
+                lastOption.Parameters.Last().Data = arg;
+            }
         }
 
         private void CheckLastOptionStatus(Option? lastOption)
         {
-            if (lastOption != null && lastOption.Parameters.Waiting())
+            if (lastOption != null && lastOption.Parameters.WaitingForRequired())
                 throwRequiredParametersError(lastOption);
         }
 
         private void throwRequiredParametersError(Option lastOption)
         {
-            throw new InvalidOperationException($"Required parameters [{lastOption.Parameters.Required.ToString()}] is missing for option: {lastOption.Id}");
+            throw new InvalidOperationException($"Required parameters [{lastOption.Parameters.ToString()}] is missing for option: {lastOption.Id}");
         }
 
         private bool ArgIsParameter(string arg)
@@ -151,7 +152,7 @@ namespace CommandLineInterface
                 command.Action(command.SelectedOptions, this.Front);
         }
 
-        private static ICommand GetCommandFromArg(ICommand lastCommand, string arg)
+        private ICommand GetCommandFromArg(ICommand lastCommand, string arg)
         {
             int order = lastCommand.Order + 1;
             lastCommand = lastCommand.GetCommand(arg);

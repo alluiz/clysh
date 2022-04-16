@@ -198,7 +198,7 @@ public class CommandLineInterfaceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Required.Get("testarg").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
 
         Assert.AreEqual(cli.Front, expectedCliFront);
     }
@@ -241,9 +241,9 @@ public class CommandLineInterfaceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Required.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters.Required.Get("testarg2").Data);
-        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Parameters.Required.Get("testarg3").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
+        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters.Get("testarg2").Data);
+        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Parameters.Get("testarg3").Data);
 
         Assert.AreEqual(cli.Front, expectedCliFront);
     }
@@ -284,7 +284,7 @@ public class CommandLineInterfaceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Optional.Get("testarg").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
 
         Assert.AreEqual(cli.Front, expectedCliFront);
     }
@@ -327,9 +327,9 @@ public class CommandLineInterfaceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Optional.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters.Optional.Get("testarg2").Data);
-        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Parameters.Optional.Get("testarg3").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
+        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters.Get("testarg2").Data);
+        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Parameters.Get("testarg3").Data);
 
         Assert.AreEqual(cli.Front, expectedCliFront);
     }
@@ -371,8 +371,8 @@ public class CommandLineInterfaceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Optional.Get("testarg").Data);
-        Assert.AreEqual("myreq", expectedOptions?.Get(someOption).Parameters.Required.Get("testreq").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
+        Assert.AreEqual("myreq", expectedOptions?.Get(someOption).Parameters.Get("testreq").Data);
 
         Assert.AreEqual(cli.Front, expectedCliFront);
     }
@@ -417,11 +417,11 @@ public class CommandLineInterfaceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Optional.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters.Required.Get("testarg2").Data);
-        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Parameters.Optional.Get("testarg3").Data);
-        Assert.AreEqual("mytest4", expectedOptions?.Get(someOption).Parameters.Optional.Get("testarg4").Data);
-        Assert.AreEqual("mytest5", expectedOptions?.Get(someOption).Parameters.Required.Get("testarg5").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
+        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters.Get("testarg2").Data);
+        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Parameters.Get("testarg3").Data);
+        Assert.AreEqual("mytest4", expectedOptions?.Get(someOption).Parameters.Get("testarg4").Data);
+        Assert.AreEqual("mytest5", expectedOptions?.Get(someOption).Parameters.Get("testarg5").Data);
 
         Assert.AreEqual(cli.Front, expectedCliFront);
     }
@@ -473,14 +473,14 @@ public class CommandLineInterfaceTests
 
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Optional.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters.Required.Get("testarg2").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
+        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters.Get("testarg2").Data);
 
         Assert.AreEqual(someOption2, expectedOptions?.Get(someOption2).Id);
         Assert.AreEqual(someOptionDescription2, expectedOptions?.Get(someOption2).Description);
-        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption2).Parameters.Optional.Get("testarg3").Data);
-        Assert.AreEqual("mytest4", expectedOptions?.Get(someOption2).Parameters.Optional.Get("testarg4").Data);
-        Assert.AreEqual("mytest5", expectedOptions?.Get(someOption2).Parameters.Required.Get("testarg5").Data);
+        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption2).Parameters.Get("testarg3").Data);
+        Assert.AreEqual("mytest4", expectedOptions?.Get(someOption2).Parameters.Get("testarg4").Data);
+        Assert.AreEqual("mytest5", expectedOptions?.Get(someOption2).Parameters.Get("testarg5").Data);
 
         Assert.AreEqual(cli.Front, expectedCliFront);
     }
@@ -543,72 +543,20 @@ public class CommandLineInterfaceTests
 
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Optional.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters.Required.Get("testarg2").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
+        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters.Get("testarg2").Data);
 
         Assert.AreEqual(someOption2, expectedOptionsCustom?.Get(someOption2).Id);
         Assert.AreEqual(someOptionDescription2, expectedOptionsCustom?.Get(someOption2).Description);
-        Assert.AreEqual("mytest3", expectedOptionsCustom?.Get(someOption2).Parameters.Optional.Get("testarg3").Data);
-        Assert.AreEqual("mytest4", expectedOptionsCustom?.Get(someOption2).Parameters.Optional.Get("testarg4").Data);
-        Assert.AreEqual("mytest5", expectedOptionsCustom?.Get(someOption2).Parameters.Required.Get("testarg5").Data);
+        Assert.AreEqual("mytest3", expectedOptionsCustom?.Get(someOption2).Parameters.Get("testarg3").Data);
+        Assert.AreEqual("mytest4", expectedOptionsCustom?.Get(someOption2).Parameters.Get("testarg4").Data);
+        Assert.AreEqual("mytest5", expectedOptionsCustom?.Get(someOption2).Parameters.Get("testarg5").Data);
 
         Assert.AreEqual(cli.Front, expectedCliFront);
         Assert.AreEqual(cli.Front, expectedCliFrontCustom);
 
         Assert.AreEqual(0, cli.RootCommand.Order);
         Assert.AreEqual(1, customCommand.Order);
-    }
-
-    [Test]
-    public void SuccessfulExecuteRootWithMultiOptionAbbrevTogether()
-    {
-        const string someOption = "some-option";
-        const string someAbbrevOption = "a";
-        const string someOptionDescription = "awesome option";
-        const string someOptionWithDashes = $"-{someAbbrevOption}";
-
-        const string someOption2 = "some-option2";
-        const string someAbbrevOption2 = "b";
-        const string someOptionDescription2 = "awesome option2";
-        const string someOptionWithDashes2 = $"-{someAbbrevOption2}";
-
-        string[] args = new string[] { "-ab" };
-
-        Map<Option>? expectedOptions = null;
-        ICommandLineInterfaceFront? expectedCliFront = null;
-
-        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
-        {
-            expectedOptions = options;
-            expectedCliFront = cliFront;
-        };
-
-        ICommand rootCommand = Command.CreateCommand("root", "root command", action);
-
-        CommandLineInterface cli = new CommandLineInterface(rootCommand, frontMock.Object);
-
-        cli.RootCommand
-            .AddOption(someOption, someOptionDescription, someAbbrevOption)
-            .AddOption(someOption2, someOptionDescription2, someAbbrevOption2);
-
-        cli.Execute(args);
-
-        Assert.NotNull(expectedCliFront);
-        Assert.NotNull(expectedOptions);
-
-        Assert.AreEqual(2, expectedOptions?.Itens.Count);
-
-        Assert.IsTrue(expectedOptions?.Has(someOption));
-
-        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
-        Assert.AreEqual(someAbbrevOption, expectedOptions?.Get(someOption).Abbreviation);
-        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-
-        Assert.AreEqual(someOption2, expectedOptions?.Get(someOption2).Id);
-        Assert.AreEqual(someAbbrevOption2, expectedOptions?.Get(someOption2).Abbreviation);
-        Assert.AreEqual(someOptionDescription2, expectedOptions?.Get(someOption2).Description);
-
-        Assert.AreEqual(cli.Front, expectedCliFront);
     }
 
     [Test]
@@ -722,6 +670,7 @@ public class CommandLineInterfaceTests
         Mock<ICommand> customCommandMock = new Mock<ICommand>();
 
         rootCommandMock.Setup(x => x.GetCommand("test")).Returns(customCommandMock.Object);
+        rootCommandMock.Setup(x => x.HasCommand("test")).Returns(true);
         customCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
         customCommandMock.Setup(x => x.GetOption(someOption)).Returns(new Option("some-option", "some option", new Parameters().Add("arg1", 6, 10)));
 
@@ -780,6 +729,6 @@ public class CommandLineInterfaceTests
 
         cli.Execute(args);
 
-        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(x => x.Message == $"The parameter 'testarg:mytest' is invalid for option: {someOption}.")), Times.Once);
+        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(x => x.Message == $"The parameter 'testarg' is invalid for option: {someOption}.")), Times.Once);
     }
 }
