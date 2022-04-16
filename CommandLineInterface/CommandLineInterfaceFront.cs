@@ -102,20 +102,34 @@ namespace CommandLineInterface
 
         private void PrintCommand(ICommand command)
         {
-            ICommand? parent = command.Parent;
-            string parentCommands = "";
-
-            while (parent != null)
-            {
-                parentCommands += parent.Name + " ";
-                parent = parent.Parent;
-            }
-
             bool hasCommands = command.HasCommands();
 
-            this.PrintWithBreak($"Usage: {parentCommands}{command.Name} [options] {(hasCommands ? "[commands]" : "")}");
+            PrintHeader(command, hasCommands);
+            PrintOptions(command);
+
+            if (hasCommands)
+            {
+                PrintChildrenCommands(command);
+            }
+        }
+
+        private void PrintChildrenCommands(ICommand command)
+        {
+            this.PrintWithBreak("[commands]:", true);
+
+            foreach (var item in command.Commands.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value))
+            {
+                if (item.Key != command.Name)
+                {
+                    this.PrintWithBreak($"   {item.Key.PadRight(39)}{item.Value.Description}");
+                }
+            }
+
             this.PrintEmptyLine();
-            this.PrintWithBreak(command.Description, true);
+        }
+
+        private void PrintOptions(ICommand command)
+        {
             this.PrintWithBreak("[options]:", true);
             this.PrintWithBreak("   Abbrev.".PadRight(14) + "Option".PadRight(28) + "Description".PadRight(55) + "Parameters", true);
 
@@ -133,26 +147,26 @@ namespace CommandLineInterface
                     args += $"<{parameter.Value.Id}:Required>";
                 }
 
-
                 this.PrintWithBreak($"  {(item.Value.Abbreviation == null ? "" : "-" + item.Value.Abbreviation).PadRight(10)}--{item.Key.PadRight(28)}{item.Value.Description.PadRight(55)}{args}");
             }
 
             this.PrintEmptyLine();
+        }
 
-            if (hasCommands)
+        private void PrintHeader(ICommand command, bool hasCommands)
+        {
+            ICommand? parent = command.Parent;
+            string parentCommands = "";
+
+            while (parent != null)
             {
-                this.PrintWithBreak("[commands]:", true);
-
-                foreach (var item in command.Commands.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value))
-                {
-                    if (item.Key != command.Name)
-                    {
-                        this.PrintWithBreak($"   {item.Key.PadRight(39)}{item.Value.Description}");
-                    }
-                }
-
-                this.PrintEmptyLine();
+                parentCommands += parent.Name + " ";
+                parent = parent.Parent;
             }
+
+            this.PrintWithBreak($"Usage: {parentCommands}{command.Name} [options] {(hasCommands ? "[commands]" : "")}");
+            this.PrintEmptyLine();
+            this.PrintWithBreak(command.Description, true);
         }
     }
 }

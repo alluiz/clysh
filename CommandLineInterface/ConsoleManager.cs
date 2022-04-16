@@ -26,12 +26,12 @@ namespace CommandLineInterface
 
         public void Write(string text, int lineNumber)
         {
-            System.Console.Write($"{lineNumber}.   {text}");
+            System.Console.Write($"{(lineNumber+".").PadRight(5)}{text}");
         }
 
         public void WriteLine(string text, int lineNumber)
         {
-            System.Console.WriteLine($"{lineNumber}.   {text}");
+            System.Console.WriteLine($"{(lineNumber+".").PadRight(5)}{text}");
         }
 
         /// <summary>
