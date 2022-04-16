@@ -3,7 +3,7 @@ namespace CommandLineInterface
     public class Option : Indexable
     {
         public string Description { get; }
-        public Arguments Arguments { get; }
+        public Parameters Parameters { get; }
         public string? Abbreviation { get; }
 
         private const int MaxDescription = 50;
@@ -19,7 +19,7 @@ namespace CommandLineInterface
             Validate(nameof(description), description, MinDescription, MaxDescription);
 
             Description = description;
-            this.Arguments = new Arguments();
+            this.Parameters = new Parameters();
         }
 
         public Option(string id!!, string description!!, string abbreviation!!) : base(id)
@@ -30,16 +30,16 @@ namespace CommandLineInterface
 
             Abbreviation = abbreviation;
             Description = description;
-            this.Arguments = new Arguments();
+            this.Parameters = new Parameters();
         }
 
-        public Option(string id!!, string description!!, Arguments arguments!!) : base(id)
+        public Option(string id!!, string description!!, Parameters parameters!!) : base(id)
         {
             Validate(nameof(id), id, MinId, MaxId);
             Validate(nameof(description), description, MinDescription, MaxDescription);
 
             Description = description;
-            this.Arguments = arguments;
+            this.Parameters = parameters;
         }
 
         private void Validate(string field, string value, int min, int max)

@@ -13,7 +13,7 @@ namespace CommandLineInterface
         ICommand AddCommand(ICommand command);
         ICommand AddOption(string name, string description);
         ICommand AddOption(string name, string description, string abbreviation);
-        ICommand AddOption(string name, string description, Arguments arguments);
+        ICommand AddOption(string name, string description, Parameters parameters);
         void AddSelectedOption(Option optionSelected);
         ICommand GetCommand(string name);
         Option GetOption(string arg);
@@ -66,9 +66,9 @@ namespace CommandLineInterface
             return this;
         }
 
-        public ICommand AddOption(string name, string description, Arguments arguments)
+        public ICommand AddOption(string name, string description, Parameters parameters)
         {
-            Option option = new Option(name, description, arguments);
+            Option option = new Option(name, description, parameters);
             this.AvailableOptions.Add(option);
 
             return this;
@@ -112,7 +112,7 @@ namespace CommandLineInterface
             if (this.Commands.ContainsKey(name))
                 return this.Commands[name];
             else
-                throw new InvalidOperationException("Invalid argument: " + name);
+                throw new InvalidOperationException("Invalid command: " + name);
         }
 
         public bool HasOption(string key)

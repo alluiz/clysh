@@ -38,9 +38,9 @@ namespace CommandLineInterface
                 {
                     string arg = args[i];
 
-                    if (ArgIsArgument(arg))
+                    if (ArgIsParameter(arg))
                     {
-                        ProcessArgument(lastOption, arg);
+                        ProcessParameter(lastOption, arg);
                     }
                     else
                     {
@@ -112,35 +112,35 @@ namespace CommandLineInterface
             return arg.Length > 2 && !ArgIsOptionFull(arg);
         }
 
-        private void ProcessArgument(Option? lastOption, string arg)
+        private void ProcessParameter(Option? lastOption, string arg)
         {
             if (lastOption == null)
-                throw new InvalidOperationException("You can't put arguments without any option that accept it.");
+                throw new InvalidOperationException("You can't put parameters without any option that accept it.");
 
-            string[] argument = arg.Split(":");
-            string id = argument[0];
-            string value = argument[1];
+            string[] parameter = arg.Split(":");
+            string id = parameter[0];
+            string value = parameter[1];
 
-            if (lastOption.Arguments.Required.Has(id))
-                lastOption.Arguments.Required.Get(id).Data = value;
-            else if (lastOption.Arguments.Optional.Has(id))
-                lastOption.Arguments.Optional.Get(id).Data = value;
+            if (lastOption.Parameters.Required.Has(id))
+                lastOption.Parameters.Required.Get(id).Data = value;
+            else if (lastOption.Parameters.Optional.Has(id))
+                lastOption.Parameters.Optional.Get(id).Data = value;
             else
-                throw new InvalidOperationException($"The argument '{arg}' is invalid for option: {lastOption.Id}.");
+                throw new InvalidOperationException($"The parameter '{arg}' is invalid for option: {lastOption.Id}.");
         }
 
         private void CheckLastOptionStatus(Option? lastOption)
         {
-            if (lastOption != null && lastOption.Arguments.Waiting())
-                throwRequiredArgumentsError(lastOption);
+            if (lastOption != null && lastOption.Parameters.Waiting())
+                throwRequiredParametersError(lastOption);
         }
 
-        private void throwRequiredArgumentsError(Option lastOption)
+        private void throwRequiredParametersError(Option lastOption)
         {
-            throw new InvalidOperationException($"Required arguments [{lastOption.Arguments.Required.ToString()}] is missing for option: {lastOption.Id}");
+            throw new InvalidOperationException($"Required parameters [{lastOption.Parameters.Required.ToString()}] is missing for option: {lastOption.Id}");
         }
 
-        private bool ArgIsArgument(string arg)
+        private bool ArgIsParameter(string arg)
         {
             return arg.Contains(":");
         }

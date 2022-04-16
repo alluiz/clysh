@@ -117,20 +117,20 @@ namespace CommandLineInterface
             this.PrintEmptyLine();
             this.PrintWithBreak(command.Description, true);
             this.PrintWithBreak("[options]:", true);
-            this.PrintWithBreak("   Abbrev.".PadRight(14) + "Option".PadRight(28) + "Description".PadRight(55) + "Arguments", true);
+            this.PrintWithBreak("   Abbrev.".PadRight(14) + "Option".PadRight(28) + "Description".PadRight(55) + "Parameters", true);
 
             foreach (var item in command.AvailableOptions.Itens.OrderBy(x => x.Key))
             {
                 string args = "";
 
-                foreach (var argument in item.Value.Arguments.Required.Itens)
+                foreach (var parameter in item.Value.Parameters.Required.Itens)
                 {
-                    args += $"<{argument.Value.Id}:Required>";
+                    args += $"<{parameter.Value.Id}:Required>";
                 }
 
-                foreach (var argument in item.Value.Arguments.Optional.Itens)
+                foreach (var parameter in item.Value.Parameters.Optional.Itens)
                 {
-                    args += $"<{argument.Value.Id}:Required>";
+                    args += $"<{parameter.Value.Id}:Required>";
                 }
 
 
