@@ -6,297 +6,741 @@ using NUnit.Framework;
 
 namespace CommandLineInterface.Tests;
 
-public class Tests
+public class CommandLineInterfaceTests
 {
+    private Mock<ICommandLineInterfaceFront> frontMock = new Mock<ICommandLineInterfaceFront>();
+    private Mock<ICommand> rootCommandMock = new Mock<ICommand>();
 
-    private Metadata metadata = new Metadata("TestCLI", "test", "test command for unit tests");
-    private Mock<IConsoleManager> consoleMock = new Mock<IConsoleManager>();
 
     [SetUp]
     public void Setup()
     {
-        consoleMock.Reset();
+        frontMock.Reset();
+        rootCommandMock.Reset();
     }
 
     [Test]
     public void SuccessfulCreateCLIAndRootCommand()
     {
-        Action<ICommand, Options, ICommandLineInterface> testAction = (x, y, z) => { };
+        Action<Map<Option>, ICommandLineInterfaceFront> testAction = (x, y) => { };
 
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, testAction);
-        Assert.AreEqual(metadata.Title, cli.Title);
-        Assert.AreEqual(metadata.RootCommandName, cli.RootCommand.Name);
-        Assert.AreEqual(metadata.Description, cli.RootCommand.Description);
+        CommandLineInterface cli = new CommandLineInterface(testAction, frontMock.Object);
         Assert.AreEqual(testAction, cli.RootCommand.Action);
+        Assert.AreEqual(frontMock.Object, cli.Front);
     }
 
     [Test]
-    public void CreateCLIWithNullConsoleError()
+    public void CreateCLIWithRootAndNullFrontError()
     {
-        Assert.Throws<ArgumentNullException>(() => new CommandLineInterface(null, metadata, (x, y, z) => { }));
+        Assert.Throws<ArgumentNullException>(() => new CommandLineInterface(rootCommandMock.Object, null));
     }
 
     [Test]
-    public void CreateCLIWithNullMetadataError()
+    public void CreateCLIWithActionAndNullFrontError()
     {
-        Assert.Throws<ArgumentNullException>(() => new CommandLineInterface(consoleMock.Object, null, (x, y, z) => { }));
-    }
-
-    [Test]
-    public void CreateCLIWithNullActionError()
-    {
-        Assert.Throws<ArgumentNullException>(() => new CommandLineInterface(consoleMock.Object, metadata, null));
+        Assert.Throws<ArgumentNullException>(() => new CommandLineInterface((x, y) => { }, null));
     }
 
     [Test]
     public void SuccessfulCreateCommand()
     {
-        Action<ICommand, Options, ICommandLineInterface> testAction = (x, y, z) => { };
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, testAction);
+        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
-
-        Action<ICommand, Options, ICommandLineInterface> newAction = (x, y, z) => { };
+        Action<Map<Option>, ICommandLineInterfaceFront> newAction = (x, y) => { };
         string name = "new";
         string description = "new command for test";
         ICommand command = cli.CreateCommand(name, description, newAction);
-    
+
         Assert.AreEqual(name, command.Name);
         Assert.AreEqual(description, command.Description);
         Assert.AreEqual(newAction, command.Action);
     }
 
-    [Test]
-    public void SuccessfulConfirmWithYesAnswer()
-    {
-        string answerExpected = "Y";
-        consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, (x, y, z) => { });
-
-        string question = "Do you agree? (Y/n):";
-        bool answer = cli.Confirm();
-
-        consoleMock.Verify(x => x.Write(question), Times.Once);
-        consoleMock.Verify(x => x.ReadLine(), Times.Once);
-        
-        Assert.IsTrue(answer);
-    }
-
-    [Test]
-    public void SuccessfulConfirmWithNoAnswer()
-    {
-        string answerExpected = "n";
-        consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
-
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, (x, y, z) => { });
-
-        string question = "Do you agree? (Y/n):";
-        bool answer = cli.Confirm();
-
-        consoleMock.Verify(x => x.Write(question), Times.Once);
-        consoleMock.Verify(x => x.ReadLine(), Times.Once);
-        
-        Assert.IsFalse(answer);
-    }
-
-    [Test]
-    public void SuccessfulConfirmWithOtherAnswer()
-    {
-        string answerExpected = "xxxxx";
-        consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
-
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, (x, y, z) => { });
-
-        string question = "Do you agree? (Y/n):";
-        bool answer = cli.Confirm();
-
-        consoleMock.Verify(x => x.Write(question), Times.Once);
-        consoleMock.Verify(x => x.ReadLine(), Times.Once);
-        
-        Assert.IsFalse(answer);
-    }
-
-    [Test]
-    public void SuccessfulConfirmWithEmptyAnswer()
-    {
-        string answerExpected = "";
-        consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
-
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, (x, y, z) => { });
-
-        string question = "Do you agree? (Y/n):";
-        bool answer = cli.Confirm();
-
-        consoleMock.Verify(x => x.Write(question), Times.Once);
-        consoleMock.Verify(x => x.ReadLine(), Times.Once);
-        
-        Assert.IsFalse(answer);
-    }
-
-    [Test]
-    public void SuccessfulConfirmWithCustomYesAnswer()
-    {
-        string answerExpected = "I'm agree";
-        consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
-
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, (x, y, z) => { });
-
-        string question = "Do you agree? (I'm agree/n):";
-        bool answer = cli.Confirm(yes: "I'm agree");
-
-        consoleMock.Verify(x => x.Write(question), Times.Once);
-        consoleMock.Verify(x => x.ReadLine(), Times.Once);
-        
-        Assert.IsTrue(answer);
-    }
-
-    [Test]
-    public void SuccessfulConfirmWithCustomNoAnswer()
-    {
-        string answerExpected = "NO";
-        consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
-
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, (x, y, z) => { });
-
-        string question = "Do you agree? (I'm agree/n):";
-        bool answer = cli.Confirm(yes: "I'm agree");
-
-        consoleMock.Verify(x => x.Write(question), Times.Once);
-        consoleMock.Verify(x => x.ReadLine(), Times.Once);
-        
-        Assert.IsFalse(answer);
-    }
-
-    [Test]
-    public void SuccessfulConfirmWithCustomQuestion()
-    {
-        string answerExpected = "Y";
-        consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
-
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, (x, y, z) => { });
-
-        string question = "Are you kidding me? (Y/n):";
-        bool answer = cli.Confirm(question: "Are you kidding me?");
-
-        consoleMock.Verify(x => x.Write(question), Times.Once);
-        consoleMock.Verify(x => x.ReadLine(), Times.Once);
-        
-        Assert.IsTrue(answer);
-    }
-
-    [Test]
-    public void SuccessfulAskFor()
-    {
-        string answerExpected = "test answer";
-        consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
-
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, (x, y, z) => { });
-
-        string question = "test question:";
-        string answer = cli.AskFor("test question");
-
-        consoleMock.Verify(x => x.Write(question), Times.Once);
-        
-        Assert.AreEqual(answerExpected, answer);
-    }
-
-    [Test]
-    public void AskForWithNullError()
-    {
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, (x, y, z) => { });
-
-        ArgumentNullException? exception = Assert.Throws<ArgumentNullException>(() => cli.AskFor(null));
-
-        Assert.IsTrue(exception?.Message.Contains("Value cannot be null"));
-
-        consoleMock.Verify(x => x.Write(It.IsAny<string>()), Times.Never);
-        consoleMock.Verify(x => x.ReadLine(), Times.Never);
-    }
-
-    [Test]
-    public void AskForWithWhitespaceError()
-    {
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, (x, y, z) => { });
-
-        string question = "     ";
-        ArgumentException? exception = Assert.Throws<ArgumentException>(() => cli.AskFor(question));
-
-        Assert.IsTrue(exception?.Message.Contains(CommandLineInterface.QUESTION_MUST_BE_NOT_BLANK));
-
-        consoleMock.Verify(x => x.Write($"{question}:"), Times.Never);
-        consoleMock.Verify(x => x.ReadLine(), Times.Never);
-    }
-
-    [Test]
-    public void SuccessfulAskForSensitive()
-    {
-        string answerExpected = "x1A";
-        consoleMock.Setup(x => x.ReadSensitive()).Returns(answerExpected);
-
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, (x, y, z) => { });
-
-        string question = "test question:";
-        string answer = cli.AskForSensitive("test question");
-
-        consoleMock.Verify(x => x.Write(question), Times.Once);
-        
-        Assert.AreEqual(answerExpected, answer);
-    }
 
     [Test]
     public void SuccessfulExecuteRootWithNoArgs()
     {
         string[] args = new string[] { };
 
-        bool actionExecuted = false;
-        Action<ICommand, Options, ICommandLineInterface> testAction = (x, y, z) => { actionExecuted = true; };
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, testAction);
+        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
         cli.Execute(args);
-        
-        Assert.IsTrue(actionExecuted);
+
+        rootCommandMock.Verify(x => x.Action, Times.Once);
     }
 
     [Test]
-    public void SuccessfulExecuteRootWithEmptyArg()
+    public void SuccessfulExecuteRootWithOneEmptyArg()
     {
         string[] args = new string[] { "" };
 
-        bool actionExecuted = false;
-        Action<ICommand, Options, ICommandLineInterface> testAction = (x, y, z) => { actionExecuted = true; };
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, testAction);
+        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
         cli.Execute(args);
-        
-        Assert.IsTrue(actionExecuted);
+
+        rootCommandMock.Verify(x => x.Action, Times.Once);
     }
 
     [Test]
-    public void SuccessfulExecuteRootWithSpacesArg()
+    public void SuccessfulExecuteRootWithOneSpaceArg()
     {
         string[] args = new string[] { "  " };
 
-        bool actionExecuted = false;
-        Action<ICommand, Options, ICommandLineInterface> testAction = (x, y, z) => { actionExecuted = true; };
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, testAction);
+        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
         cli.Execute(args);
-        
-        Assert.IsTrue(actionExecuted);
+
+        rootCommandMock.Verify(x => x.Action, Times.Once);
     }
 
     [Test]
     public void SuccessfulExecuteRootWithMultiSpacesArg()
     {
-        string[] args = new string[] { "  ", "   ", "", "  " };
+        string[] args = new string[] { "  ", "   ", "         ", "  " };
 
-        bool actionExecuted = false;
-        Action<ICommand, Options, ICommandLineInterface> testAction = (x, y, z) => { actionExecuted = true; };
-        CommandLineInterface cli = new CommandLineInterface(consoleMock.Object, metadata, testAction);
+        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
 
         cli.Execute(args);
-        
-        Assert.IsTrue(actionExecuted);
+
+        rootCommandMock.Verify(x => x.Action, Times.Once);
+
     }
 
+    [Test]
+    public void SuccessfulExecuteRootWithSomeOption()
+    {
+        const string someOption = "some-option";
+        const string someAbbrevOption = "s";
+        const string someOptionDescription = "awesome option";
+
+        const string someOptionWithDashes = $"--{someOption}";
+
+        string[] args = new string[] { someOptionWithDashes };
+
+        Map<Option>? expectedOptions = null;
+        ICommandLineInterfaceFront? expectedCliFront = null;
+
+        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        {
+            expectedOptions = options;
+            expectedCliFront = cliFront;
+        };
+
+        CommandLineInterface cli = new CommandLineInterface(action, frontMock.Object);
+
+        cli.RootCommand
+            .AddOption(someOption, someAbbrevOption, someOptionDescription);
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedOptions);
+        Assert.NotNull(expectedCliFront);
+
+        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.IsTrue(expectedOptions?.Has(someOption));
+        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
+        Assert.AreEqual(someAbbrevOption, expectedOptions?.Get(someOption).Abbreviation);
+        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
+
+        Assert.AreEqual(cli.Front, expectedCliFront);
+    }
+
+    [Test]
+    public void SuccessfulExecuteRootWithSomeOptionAndArgument()
+    {
+        const string someOption = "some-option";
+        const string someAbbrevOption = "s";
+        const string someOptionDescription = "awesome option";
+
+        const string someOptionWithDashes = $"--{someOption}";
+
+        string[] args = new string[] { someOptionWithDashes, "testarg:mytest" };
+
+        Map<Option>? expectedOptions = null;
+        ICommandLineInterfaceFront? expectedCliFront = null;
+
+        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        {
+            expectedOptions = options;
+            expectedCliFront = cliFront;
+        };
+
+        CommandLineInterface cli = new CommandLineInterface(action, frontMock.Object);
+
+        cli.RootCommand
+            .AddOption(someOption, someAbbrevOption, someOptionDescription, new Arguments()
+                .Add("testarg"));
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedCliFront);
+        Assert.NotNull(expectedOptions);
+
+        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.IsTrue(expectedOptions?.Has(someOption));
+        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
+        Assert.AreEqual(someAbbrevOption, expectedOptions?.Get(someOption).Abbreviation);
+        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Arguments.Required.Get("testarg").Value);
+
+        Assert.AreEqual(cli.Front, expectedCliFront);
+    }
+
+    [Test]
+    public void SuccessfulExecuteRootWithSomeOptionAndMultiArgument()
+    {
+        const string someOption = "some-option";
+        const string someAbbrevOption = "s";
+        const string someOptionDescription = "awesome option";
+
+        const string someOptionWithDashes = $"--{someOption}";
+
+        string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3" };
+
+        Map<Option>? expectedOptions = null;
+        ICommandLineInterfaceFront? expectedCliFront = null;
+
+        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        {
+            expectedOptions = options;
+            expectedCliFront = cliFront;
+        };
+
+        CommandLineInterface cli = new CommandLineInterface(action, frontMock.Object);
+
+        cli.RootCommand
+            .AddOption(someOption, someAbbrevOption, someOptionDescription, new Arguments()
+                .Add("testarg")
+                .Add("testarg2")
+                .Add("testarg3"));
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedCliFront);
+        Assert.NotNull(expectedOptions);
+
+        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.IsTrue(expectedOptions?.Has(someOption));
+        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
+        Assert.AreEqual(someAbbrevOption, expectedOptions?.Get(someOption).Abbreviation);
+        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Arguments.Required.Get("testarg").Value);
+        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Arguments.Required.Get("testarg2").Value);
+        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Arguments.Required.Get("testarg3").Value);
+
+        Assert.AreEqual(cli.Front, expectedCliFront);
+    }
+
+    [Test]
+    public void SuccessfulExecuteRootWithSomeOptionAndOptionalArgument()
+    {
+        const string someOption = "some-option";
+        const string someAbbrevOption = "s";
+        const string someOptionDescription = "awesome option";
+
+        const string someOptionWithDashes = $"--{someOption}";
+
+        string[] args = new string[] { someOptionWithDashes, "testarg:mytest" };
+
+        Map<Option>? expectedOptions = null;
+        ICommandLineInterfaceFront? expectedCliFront = null;
+
+        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        {
+            expectedOptions = options;
+            expectedCliFront = cliFront;
+        };
+
+        CommandLineInterface cli = new CommandLineInterface(action, frontMock.Object);
+
+        cli.RootCommand
+            .AddOption(someOption, someAbbrevOption, someOptionDescription, new Arguments()
+                .Add("testarg", false));
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedCliFront);
+        Assert.NotNull(expectedOptions);
+
+        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.IsTrue(expectedOptions?.Has(someOption));
+        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
+        Assert.AreEqual(someAbbrevOption, expectedOptions?.Get(someOption).Abbreviation);
+        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Arguments.Optional.Get("testarg").Value);
+
+        Assert.AreEqual(cli.Front, expectedCliFront);
+    }
+
+    [Test]
+    public void SuccessfulExecuteRootWithSomeOptionAndMultiOptionalArgument()
+    {
+        const string someOption = "some-option";
+        const string someAbbrevOption = "s";
+        const string someOptionDescription = "awesome option";
+
+        const string someOptionWithDashes = $"--{someOption}";
+
+        string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3" };
+
+        Map<Option>? expectedOptions = null;
+        ICommandLineInterfaceFront? expectedCliFront = null;
+
+        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        {
+            expectedOptions = options;
+            expectedCliFront = cliFront;
+        };
+
+        CommandLineInterface cli = new CommandLineInterface(action, frontMock.Object);
+
+        cli.RootCommand
+            .AddOption(someOption, someAbbrevOption, someOptionDescription, new Arguments()
+                .Add("testarg", false)
+                .Add("testarg2", false)
+                .Add("testarg3", false));
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedCliFront);
+        Assert.NotNull(expectedOptions);
+
+        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.IsTrue(expectedOptions?.Has(someOption));
+        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
+        Assert.AreEqual(someAbbrevOption, expectedOptions?.Get(someOption).Abbreviation);
+        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Arguments.Optional.Get("testarg").Value);
+        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Arguments.Optional.Get("testarg2").Value);
+        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Arguments.Optional.Get("testarg3").Value);
+
+        Assert.AreEqual(cli.Front, expectedCliFront);
+    }
+
+    [Test]
+    public void SuccessfulExecuteRootWithSomeOptionAndRequiredAndOptionalArgument()
+    {
+        const string someOption = "some-option";
+        const string someAbbrevOption = "s";
+        const string someOptionDescription = "awesome option";
+
+        const string someOptionWithDashes = $"--{someOption}";
+
+        string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testreq:myreq" };
+
+        Map<Option>? expectedOptions = null;
+        ICommandLineInterfaceFront? expectedCliFront = null;
+
+        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        {
+            expectedOptions = options;
+            expectedCliFront = cliFront;
+        };
+
+        CommandLineInterface cli = new CommandLineInterface(action, frontMock.Object);
+
+        cli.RootCommand
+            .AddOption(someOption, someAbbrevOption, someOptionDescription, new Arguments()
+                .Add("testarg", false)
+                .Add("testreq"));
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedCliFront);
+        Assert.NotNull(expectedOptions);
+
+        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.IsTrue(expectedOptions?.Has(someOption));
+        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
+        Assert.AreEqual(someAbbrevOption, expectedOptions?.Get(someOption).Abbreviation);
+        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Arguments.Optional.Get("testarg").Value);
+        Assert.AreEqual("myreq", expectedOptions?.Get(someOption).Arguments.Required.Get("testreq").Value);
+
+        Assert.AreEqual(cli.Front, expectedCliFront);
+    }
+
+    [Test]
+    public void SuccessfulExecuteRootWithSomeOptionAndMultiOptionalAndRequiredArgument()
+    {
+        const string someOption = "some-option";
+        const string someAbbrevOption = "s";
+        const string someOptionDescription = "awesome option";
+
+        const string someOptionWithDashes = $"--{someOption}";
+
+        string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5" };
+
+        Map<Option>? expectedOptions = null;
+        ICommandLineInterfaceFront? expectedCliFront = null;
+
+        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        {
+            expectedOptions = options;
+            expectedCliFront = cliFront;
+        };
+
+        CommandLineInterface cli = new CommandLineInterface(action, frontMock.Object);
+
+        cli.RootCommand
+            .AddOption(someOption, someAbbrevOption, someOptionDescription, new Arguments()
+                .Add("testarg", false)
+                .Add("testarg2")
+                .Add("testarg3", false)
+                .Add("testarg4", false)
+                .Add("testarg5"));
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedCliFront);
+        Assert.NotNull(expectedOptions);
+
+        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.IsTrue(expectedOptions?.Has(someOption));
+        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
+        Assert.AreEqual(someAbbrevOption, expectedOptions?.Get(someOption).Abbreviation);
+        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Arguments.Optional.Get("testarg").Value);
+        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Arguments.Required.Get("testarg2").Value);
+        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Arguments.Optional.Get("testarg3").Value);
+        Assert.AreEqual("mytest4", expectedOptions?.Get(someOption).Arguments.Optional.Get("testarg4").Value);
+        Assert.AreEqual("mytest5", expectedOptions?.Get(someOption).Arguments.Required.Get("testarg5").Value);
+
+        Assert.AreEqual(cli.Front, expectedCliFront);
+    }
+
+    [Test]
+    public void SuccessfulExecuteRootWithMultiOptionAndMultiOptionalAndRequiredArgument()
+    {
+        const string someOption = "some-option";
+        const string someAbbrevOption = "s";
+        const string someOptionDescription = "awesome option";
+        const string someOptionWithDashes = $"--{someOption}";
+
+        const string someOption2 = "some-option2";
+        const string someAbbrevOption2 = "b";
+        const string someOptionDescription2 = "awesome option2";
+        const string someOptionWithDashes2 = $"--{someOption2}";
+
+        string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", someOptionWithDashes2, "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5" };
+
+        Map<Option>? expectedOptions = null;
+        ICommandLineInterfaceFront? expectedCliFront = null;
+
+        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        {
+            expectedOptions = options;
+            expectedCliFront = cliFront;
+        };
+
+        CommandLineInterface cli = new CommandLineInterface(action, frontMock.Object);
+
+        cli.RootCommand
+            .AddOption(someOption, someAbbrevOption, someOptionDescription, new Arguments()
+                .Add("testarg", false)
+                .Add("testarg2"))
+            .AddOption(someOption2, someAbbrevOption2, someOptionDescription2, new Arguments()
+                .Add("testarg3", false)
+                .Add("testarg4", false)
+                .Add("testarg5"));
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedCliFront);
+        Assert.NotNull(expectedOptions);
+
+        Assert.AreEqual(2, expectedOptions?.Itens.Count);
+
+        Assert.IsTrue(expectedOptions?.Has(someOption));
+        Assert.IsTrue(expectedOptions?.Has(someOption2));
+
+        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
+        Assert.AreEqual(someAbbrevOption, expectedOptions?.Get(someOption).Abbreviation);
+        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Arguments.Optional.Get("testarg").Value);
+        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Arguments.Required.Get("testarg2").Value);
+
+        Assert.AreEqual(someOption2, expectedOptions?.Get(someOption2).Id);
+        Assert.AreEqual(someAbbrevOption2, expectedOptions?.Get(someOption2).Abbreviation);
+        Assert.AreEqual(someOptionDescription2, expectedOptions?.Get(someOption2).Description);
+        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption2).Arguments.Optional.Get("testarg3").Value);
+        Assert.AreEqual("mytest4", expectedOptions?.Get(someOption2).Arguments.Optional.Get("testarg4").Value);
+        Assert.AreEqual("mytest5", expectedOptions?.Get(someOption2).Arguments.Required.Get("testarg5").Value);
+
+        Assert.AreEqual(cli.Front, expectedCliFront);
+    }
+
+
+    [Test]
+    public void SuccessfulExecuteRootWithCustomCommandAndMultiOptionAndMultiOptionalAndRequiredArgument()
+    {
+        const string someOption = "some-option";
+        const string someAbbrevOption = "s";
+        const string someOptionDescription = "awesome option";
+        const string someOptionWithDashes = $"--{someOption}";
+
+        const string someOption2 = "some-option2";
+        const string someAbbrevOption2 = "b";
+        const string someOptionDescription2 = "awesome option2";
+        const string someOptionWithDashes2 = $"--{someOption2}";
+
+        string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "test", someOptionWithDashes2, "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5" };
+
+        Map<Option>? expectedOptions = null;
+        ICommandLineInterfaceFront? expectedCliFront = null;
+
+        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        {
+            expectedOptions = options;
+            expectedCliFront = cliFront;
+        };
+
+        CommandLineInterface cli = new CommandLineInterface(action, frontMock.Object);
+
+        Map<Option>? expectedOptionsCustom = null;
+        ICommandLineInterfaceFront? expectedCliFrontCustom = null;
+
+        ICommand customCommand = cli.CreateCommand("test", "test command description", (o, c) =>
+            {
+                expectedOptionsCustom = o;
+                expectedCliFrontCustom = c;
+
+            }).AddOption(someOption2, someAbbrevOption2, someOptionDescription2, new Arguments()
+                .Add("testarg3", false)
+                .Add("testarg4", false)
+                .Add("testarg5"));
+
+        cli.RootCommand
+            .AddOption(someOption, someAbbrevOption, someOptionDescription, new Arguments()
+                .Add("testarg", false)
+                .Add("testarg2"))
+            .AddCommand(customCommand);
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedCliFront);
+        Assert.NotNull(expectedOptions);
+
+        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.AreEqual(1, expectedOptionsCustom?.Itens.Count);
+
+        Assert.IsTrue(expectedOptions?.Has(someOption));
+        Assert.IsTrue(expectedOptionsCustom?.Has(someOption2));
+
+        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
+        Assert.AreEqual(someAbbrevOption, expectedOptions?.Get(someOption).Abbreviation);
+        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Arguments.Optional.Get("testarg").Value);
+        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Arguments.Required.Get("testarg2").Value);
+
+        Assert.AreEqual(someOption2, expectedOptionsCustom?.Get(someOption2).Id);
+        Assert.AreEqual(someAbbrevOption2, expectedOptionsCustom?.Get(someOption2).Abbreviation);
+        Assert.AreEqual(someOptionDescription2, expectedOptionsCustom?.Get(someOption2).Description);
+        Assert.AreEqual("mytest3", expectedOptionsCustom?.Get(someOption2).Arguments.Optional.Get("testarg3").Value);
+        Assert.AreEqual("mytest4", expectedOptionsCustom?.Get(someOption2).Arguments.Optional.Get("testarg4").Value);
+        Assert.AreEqual("mytest5", expectedOptionsCustom?.Get(someOption2).Arguments.Required.Get("testarg5").Value);
+
+        Assert.AreEqual(cli.Front, expectedCliFront);
+        Assert.AreEqual(cli.Front, expectedCliFrontCustom);
+    }
+
+    [Test]
+    public void SuccessfulExecuteRootWithCustomCommandAndMultiOptionAbbrevAndMultiOptionalAndRequiredArgument()
+    {
+        const string someOption = "some-option";
+        const string someAbbrevOption = "s";
+        const string someOptionDescription = "awesome option";
+        const string someOptionWithDashes = $"-{someAbbrevOption}";
+
+        const string someOption2 = "some-option2";
+        const string someAbbrevOption2 = "b";
+        const string someOptionDescription2 = "awesome option2";
+        const string someOptionWithDashes2 = $"-{someAbbrevOption2}";
+
+        string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "test", someOptionWithDashes2, "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5" };
+
+        Map<Option>? expectedOptions = null;
+        ICommandLineInterfaceFront? expectedCliFront = null;
+
+        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        {
+            expectedOptions = options;
+            expectedCliFront = cliFront;
+        };
+
+        CommandLineInterface cli = new CommandLineInterface(action, frontMock.Object);
+
+        Map<Option>? expectedOptionsCustom = null;
+        ICommandLineInterfaceFront? expectedCliFrontCustom = null;
+
+        ICommand customCommand = cli.CreateCommand("test", "test command description", (o, c) =>
+            {
+                expectedOptionsCustom = o;
+                expectedCliFrontCustom = c;
+
+            }).AddOption(someOption2, someAbbrevOption2, someOptionDescription2, new Arguments()
+                .Add("testarg3", false)
+                .Add("testarg4", false)
+                .Add("testarg5"));
+
+        cli.RootCommand
+            .AddOption(someOption, someAbbrevOption, someOptionDescription, new Arguments()
+                .Add("testarg", false)
+                .Add("testarg2"))
+            .AddCommand(customCommand);
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedCliFront);
+        Assert.NotNull(expectedOptions);
+
+        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.AreEqual(1, expectedOptionsCustom?.Itens.Count);
+
+        Assert.IsTrue(expectedOptions?.Has(someOption));
+        Assert.IsTrue(expectedOptionsCustom?.Has(someOption2));
+
+        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
+        Assert.AreEqual(someAbbrevOption, expectedOptions?.Get(someOption).Abbreviation);
+        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Arguments.Optional.Get("testarg").Value);
+        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Arguments.Required.Get("testarg2").Value);
+
+        Assert.AreEqual(someOption2, expectedOptionsCustom?.Get(someOption2).Id);
+        Assert.AreEqual(someAbbrevOption2, expectedOptionsCustom?.Get(someOption2).Abbreviation);
+        Assert.AreEqual(someOptionDescription2, expectedOptionsCustom?.Get(someOption2).Description);
+        Assert.AreEqual("mytest3", expectedOptionsCustom?.Get(someOption2).Arguments.Optional.Get("testarg3").Value);
+        Assert.AreEqual("mytest4", expectedOptionsCustom?.Get(someOption2).Arguments.Optional.Get("testarg4").Value);
+        Assert.AreEqual("mytest5", expectedOptionsCustom?.Get(someOption2).Arguments.Required.Get("testarg5").Value);
+
+        Assert.AreEqual(cli.Front, expectedCliFront);
+        Assert.AreEqual(cli.Front, expectedCliFrontCustom);
+    }
+
+    [Test]
+    public void SuccessfulExecuteRootWithMultiOptionAbbrevTogetherAndMultiOptionalAndRequiredArgument()
+    {
+        const string someOption = "some-option";
+        const string someAbbrevOption = "a";
+        const string someOptionDescription = "awesome option";
+        const string someOptionWithDashes = $"-{someAbbrevOption}";
+
+        const string someOption2 = "some-option2";
+        const string someAbbrevOption2 = "b";
+        const string someOptionDescription2 = "awesome option2";
+        const string someOptionWithDashes2 = $"-{someAbbrevOption2}";
+
+        string[] args = new string[] { "-ab" };
+
+        Map<Option>? expectedOptions = null;
+        ICommandLineInterfaceFront? expectedCliFront = null;
+
+        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        {
+            expectedOptions = options;
+            expectedCliFront = cliFront;
+        };
+
+        CommandLineInterface cli = new CommandLineInterface(action, frontMock.Object);
+
+        cli.RootCommand
+            .AddOption(someOption, someAbbrevOption, someOptionDescription)
+            .AddOption(someOption2, someAbbrevOption2, someOptionDescription2);
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedCliFront);
+        Assert.NotNull(expectedOptions);
+
+        Assert.AreEqual(2, expectedOptions?.Itens.Count);
+
+        Assert.IsTrue(expectedOptions?.Has(someOption));
+
+        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
+        Assert.AreEqual(someAbbrevOption, expectedOptions?.Get(someOption).Abbreviation);
+        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
+
+        Assert.AreEqual(someOption2, expectedOptions?.Get(someOption2).Id);
+        Assert.AreEqual(someAbbrevOption2, expectedOptions?.Get(someOption2).Abbreviation);
+        Assert.AreEqual(someOptionDescription2, expectedOptions?.Get(someOption2).Description);
+
+        Assert.AreEqual(cli.Front, expectedCliFront);
+    }
+
+    [Test]
+    public void SuccessfulExecuteRootWithSomeAbbrevOption()
+    {
+
+        const string someOption = "some-option";
+        const string someAbbrevOption = "s";
+        const string someOptionDescription = "awesome option";
+
+        const string someAbbrevOptionWithDash = $"-{someAbbrevOption}";
+
+        string[] args = new string[] { someAbbrevOptionWithDash };
+
+        Map<Option>? expectedOptions = null;
+        ICommandLineInterfaceFront? expectedCliFront = null;
+
+        Action<Map<Option>, ICommandLineInterfaceFront> action = (options, cliFront) =>
+        {
+            expectedOptions = options;
+            expectedCliFront = cliFront;
+        };
+
+        CommandLineInterface cli = new CommandLineInterface(action, frontMock.Object);
+
+        cli.RootCommand
+            .AddOption(someOption, someAbbrevOption, someOptionDescription);
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedOptions);
+        Assert.NotNull(expectedCliFront);
+
+        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.IsTrue(expectedOptions?.Has(someOption));
+        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
+        Assert.AreEqual(someAbbrevOption, expectedOptions?.Get(someOption).Abbreviation);
+        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
+
+        Assert.AreEqual(cli.Front, expectedCliFront);
+    }
+
+    [Test]
+    public void ExecuteRootWithSomeInvalidOptionError()
+    {
+        const string invalidOption = "invalid-option";
+
+        const string invalidOptionWithDashes = $"--{invalidOption}";
+
+        string[] args = new string[] { invalidOptionWithDashes };
+
+        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+
+        rootCommandMock.Setup(x => x.HasOption(invalidOption)).Returns(false);
+
+        cli.Execute(args);
+
+        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(x => x.Message == $"The option '{invalidOptionWithDashes}' is invalid.")), Times.Once);
+    }
+
+    [Test]
+    public void ExecuteRootWithSomeInvalidAbbrevOptionError()
+    {
+        const string invalidOption = "i";
+
+        const string invalidOptionWithDashes = $"-{invalidOption}";
+
+        string[] args = new string[] { invalidOptionWithDashes };
+
+        CommandLineInterface cli = new CommandLineInterface(rootCommandMock.Object, frontMock.Object);
+
+        rootCommandMock.Setup(x => x.HasOption(invalidOption)).Returns(false);
+
+        cli.Execute(args);
+
+        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(x => x.Message == $"The option '{invalidOptionWithDashes}' is invalid.")), Times.Once);
+    }
 }

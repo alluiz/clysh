@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<coverage version="1.0" date="2022-04-15_18-45-20" tag="">
+  <assembly name="CommandLineInterface">
+    <class name="CommandLineInterface.Argument" coveredlines="4" coverablelines="8" totallines="17" coveredbranches="0" totalbranches="0" coveredcodeelements="3" totalcodeelements="6" />
+    <class name="CommandLineInterface.Arguments" coveredlines="17" coverablelines="17" totallines="32" coveredbranches="6" totalbranches="6" coveredcodeelements="7" totalcodeelements="7" />
+    <class name="CommandLineInterface.Command" coveredlines="47" coverablelines="70" totallines="135" coveredbranches="4" totalbranches="6" coveredcodeelements="14" totalcodeelements="23" />
+    <class name="CommandLineInterface.CommandLineInterface" coveredlines="101" coverablelines="155" totallines="221" coveredbranches="39" totalbranches="52" coveredcodeelements="17" totalcodeelements="22" />
+    <class name="CommandLineInterface.CommandLineInterfaceFront" coveredlines="22" coverablelines="91" totallines="138" coveredbranches="4" totalbranches="48" coveredcodeelements="5" totalcodeelements="15" />
+    <class name="CommandLineInterface.Indexable" coveredlines="5" coverablelines="5" totallines="12" coveredbranches="0" totalbranches="0" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="CommandLineInterface.Map.&lt;&gt;c__DisplayClass8_0&lt;T&gt;" coveredlines="0" coverablelines="1" totallines="41" coveredbranches="0" totalbranches="0" coveredcodeelements="0" totalcodeelements="0" />
+    <class name="CommandLineInterface.Map&lt;T&gt;" coveredlines="15" coverablelines="23" totallines="41" coveredbranches="0" totalbranches="0" coveredcodeelements="5" totalcodeelements="7" />
+    <class name="CommandLineInterface.Metadata" coveredlines="6" coverablelines="9" totallines="16" coveredbranches="0" totalbranches="0" coveredcodeelements="1" totalcodeelements="7" />
+    <class name="CommandLineInterface.Option" coveredlines="31" coverablelines="39" totallines="62" coveredbranches="3" totalbranches="6" coveredcodeelements="7" totalcodeelements="8" />
+  </assembly>
+</coverage>

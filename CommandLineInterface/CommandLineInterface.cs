@@ -2,39 +2,56 @@ namespace CommandLineInterface
 {
     public class CommandLineInterface : ICommandLineInterface
     {
-        public string Title { get; set; }
         public ICommand RootCommand { get; private set; }
-
-        public const string QUESTION_MUST_BE_NOT_BLANK = "Question must be not blank";
-
-        private readonly IConsoleManager console;
+        public ICommandLineInterfaceFront Front { get; }
 
         public CommandLineInterface(
+            Action<Map<Option>, ICommandLineInterfaceFront> defaultAction!!,
             IConsoleManager console!!,
-            Metadata metadata!!,
-            Action<ICommand, Options, ICommandLineInterface> defaultAction!!)
+            Metadata metadata!!)
         {
-            this.console = console;
-            Title = metadata.Title;
-
-            RootCommand = CreateRootCommand(defaultAction, metadata);
+            RootCommand = CreateRootCommand(defaultAction);
+            Front = new CommandLineInterfaceFront(console, metadata);
         }
 
-        public ICommand CreateCommand(string name, string description, Action<ICommand, Options, ICommandLineInterface> action)
+        public CommandLineInterface(
+            Action<Map<Option>, ICommandLineInterfaceFront> defaultAction!!,
+            ICommandLineInterfaceFront front!!)
+        {
+            RootCommand = CreateRootCommand(defaultAction);
+            Front = front;
+        }
+
+        public CommandLineInterface(
+            ICommand rootCommand!!,
+            IConsoleManager console!!,
+            Metadata metadata!!)
+        {
+            RootCommand = rootCommand;
+            Front = new CommandLineInterfaceFront(console, metadata);
+        }
+
+        public CommandLineInterface(
+            ICommand rootCommand!!,
+            ICommandLineInterfaceFront front!!)
+        {
+            RootCommand = rootCommand;
+            Front = front;
+        }
+
+
+        public ICommand CreateCommand(string name, string description, Action<Map<Option>, ICommandLineInterfaceFront> action)
         {
             return new Command(name, description, action);
         }
 
-        protected ICommand CreateRootCommand(Action<ICommand, Options, ICommandLineInterface> action, Metadata metadata)
+        protected ICommand CreateRootCommand(Action<Map<Option>, ICommandLineInterfaceFront> action)
         {
-            return CreateCommand(metadata.RootCommandName, metadata.Description, action);
+            return CreateCommand("root", "The root command (default)", action);
         }
 
         public void Execute(string[] args)
         {
-            int waitingForArguments = 0;
-            int argumentIndex = 0;
-
             Option? lastOption = null;
             ICommand lastCommand = RootCommand;
             bool isOptionHelp = false;
@@ -49,45 +66,36 @@ namespace CommandLineInterface
                 {
                     string arg = args[i];
 
-                    if (waitingForArguments > 0)
+                    if (ArgIsArgument(arg))
                     {
-                        if (lastOption != null && lastOption.Arguments != null)
-                            lastOption.Arguments[argumentIndex].Value = arg;
-
-                        waitingForArguments--;
-                        argumentIndex++;
+                        ProcessArgument(lastOption, arg);
                     }
                     else
                     {
+                        CheckLastOptionStatus(lastOption);
+
                         if (ArgIsOption(arg))
                         {
-                            if (arg.Length > 2 && !ArgIsOptionFull(arg))
+
+                            if (IsMultiOption(arg))
                             {
                                 for (int j = 1; j < arg.Length; j++)
                                 {
-                                    string option = arg[j].ToString();
+                                    lastOption = GetOptionFromCommand(lastCommand, arg[j].ToString());
 
-                                    lastOption = lastCommand.GetOption(option);
-
-                                    if (lastOption.Arguments.Length > 0)
+                                    try
                                     {
-                                        argumentIndex = 0;
-                                        waitingForArguments = lastOption.Arguments.Length;
-
-                                        try
+                                        while (lastOption.Arguments.Waiting())
                                         {
-                                            while (waitingForArguments > 0)
-                                            {
-                                                lastOption.Arguments[argumentIndex].Value = args[i + 1];
-                                                argumentIndex++;
-                                                waitingForArguments--;
-                                            }
+                                            if (!ArgIsArgument(arg))
+                                                throwRequiredArgumentsError(lastOption);
 
+                                            ProcessArgument(lastOption, args[i + 1]);
                                         }
-                                        catch (System.IndexOutOfRangeException)
-                                        {
-                                            throw new InvalidOperationException($"Required argument index {lastOption.Arguments?.Length - waitingForArguments} missing for option: {lastOption.Name}");
-                                        }
+                                    }
+                                    catch (System.IndexOutOfRangeException)
+                                    {
+                                        throwRequiredArgumentsError(lastOption);
                                     }
 
                                     lastCommand.AddSelectedOption(lastOption);
@@ -95,21 +103,9 @@ namespace CommandLineInterface
                             }
                             else
                             {
-                                string key = ArgIsOptionFull(arg) ? arg.Substring(2) : arg.Substring(1);
-
-                                if (!lastCommand.HasOption(key))
-                                    throw new InvalidOperationException($"The option '{arg}' is invalid.");
-
-                                lastOption = lastCommand.GetOption(key);
-
+                                lastOption = GetOptionFromCommand(lastCommand, arg);
                                 lastCommand.AddSelectedOption(lastOption);
-                                isOptionHelp = lastOption.Name.Equals("help");
-
-                                if (lastOption.Arguments.Length > 0)
-                                {
-                                    argumentIndex = 0;
-                                    waitingForArguments = lastOption.Arguments.Length;
-                                }
+                                isOptionHelp = lastOption.Id.Equals("help");
                             }
                         }
                         else
@@ -123,9 +119,7 @@ namespace CommandLineInterface
                     }
                 }
 
-                if (waitingForArguments > 0 && lastOption != null)
-                    throw new InvalidOperationException($"Required argument index {lastOption.Arguments?.Length - waitingForArguments} missing for option: {lastOption.Name}");
-
+                CheckLastOptionStatus(lastOption);
 
                 if (isOptionHelp)
                     ExecuteHelp(lastCommand);
@@ -140,10 +134,60 @@ namespace CommandLineInterface
 
         }
 
+        private Option GetOptionFromCommand(ICommand lastCommand, string arg)
+        {
+            Option? lastOption;
+            string key = ArgIsOptionFull(arg) ? arg.Substring(2) : ArgIsOption(arg) ? arg.Substring(1) : arg;
+
+            if (!lastCommand.HasOption(key))
+                throw new InvalidOperationException($"The option '{arg}' is invalid.");
+
+            lastOption = lastCommand.GetOption(key);
+            return lastOption;
+        }
+
+        private bool IsMultiOption(string arg)
+        {
+            return arg.Length > 2 && !ArgIsOptionFull(arg);
+        }
+
+        private void ProcessArgument(Option? lastOption, string arg)
+        {
+            if (lastOption == null)
+                throw new InvalidOperationException($"You can't put arguments without any option");
+
+            string[] argument = arg.Split(":");
+            string id = argument[0];
+            string value = argument[1];
+
+            if (lastOption.Arguments.Required.Has(id))
+                lastOption.Arguments.Required.Get(id).Value = value;
+            else if (lastOption.Arguments.Optional.Has(id))
+                lastOption.Arguments.Optional.Get(id).Value = value;
+            else
+                throw new InvalidOperationException($"The argument '{arg}' is invalid for option: {lastOption.Id}.");
+        }
+
+        private void CheckLastOptionStatus(Option? lastOption)
+        {
+            if (lastOption != null && lastOption.Arguments.Waiting())
+                throwRequiredArgumentsError(lastOption);
+        }
+
+        private void throwRequiredArgumentsError(Option lastOption)
+        {
+            throw new InvalidOperationException($"Required arguments [{lastOption.Arguments.Required.ToString()}] is missing for option: {lastOption.Id}");
+        }
+
+        private bool ArgIsArgument(string arg)
+        {
+            return arg.Contains(":");
+        }
+
         private void Execute(List<ICommand> commandsToExecute)
         {
             foreach (ICommand command in commandsToExecute.OrderBy(x => x.Order))
-                command.Action(command, command.SelectedOptions, this);
+                command.Action(command.SelectedOptions, this.Front);
         }
 
         private static ICommand GetCommandFromArg(ICommand lastCommand, string arg)
@@ -154,47 +198,14 @@ namespace CommandLineInterface
             return lastCommand;
         }
 
-        public string AskFor(string question!!, bool sensitive = false)
+        public void ExecuteHelp(ICommand command, Exception exception)
         {
-            if (string.IsNullOrWhiteSpace(question))
-                throw new ArgumentException(QUESTION_MUST_BE_NOT_BLANK, nameof(question));
-
-            Print($"{question}:");
-            return sensitive ? console.ReadSensitive() : console.ReadLine();
-        }
-
-        public bool Confirm(string question = "Do you agree?", string yes = "Y")
-        {
-            return AskFor($"{question} ({yes}/n)").ToUpper() == yes.ToUpper();
-        }
-
-        public void Print(string text)
-        {
-            console.Write(text);
-        }
-
-        public void ExecuteHelp(ICommand command, Exception? exception)
-        {
-            if (exception != null)
-            {
-                PrintWithBreak(exception.ToString());
-                console.Separator();
-            }
-
-            PrintEmptyLine();
-            PrintWithBreak(Title, true);
-
-            command.ActionHelp(this);
+            Front.PrintHelp(command, exception);
         }
 
         public void ExecuteHelp(ICommand command)
         {
-            ExecuteHelp(command, null);
-        }
-
-        public void PrintEmptyLine()
-        {
-            console.EmptyLine();
+            Front.PrintHelp(command);
         }
 
         private bool ArgIsOption(string arg)
@@ -205,19 +216,6 @@ namespace CommandLineInterface
         private bool ArgIsOptionFull(string arg)
         {
             return arg.StartsWith("--");
-        }
-
-        public void PrintWithBreak(string text, bool emptyLineAfterPrint = false)
-        {
-            console.WriteLine(text);
-
-            if (emptyLineAfterPrint)
-                PrintEmptyLine();
-        }
-
-        public string AskForSensitive(string question)
-        {
-            return AskFor(question, true);
         }
     }
 }

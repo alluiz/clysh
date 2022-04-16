@@ -1,7 +1,11 @@
 namespace CommandLineInterface
 {
-    public class Option
+    public class Option : Indexable
     {
+        public string Description { get; }
+        public Arguments Arguments { get; }
+        public string? Abbreviation { get; }
+
         private const int MaxDescription = 50;
         private const int MinDescription = 10;
         private const int MinName = 3;
@@ -9,73 +13,50 @@ namespace CommandLineInterface
         private const int MinAbbrev = 1;
         private const int MaxAbbrev = 1;
 
-        public Option(string name!!, string abbreviation!!, string description!!)
+        public Option(string id!!, string description!!) : base(id)
         {
-            Validate(nameof(name), name, MinName, MaxName);
+            Validate(nameof(id), id, MinName, MaxName);
+            Validate(nameof(description), description, MinDescription, MaxDescription);
+
+            Description = description;
+            this.Arguments = new Arguments();
+        }
+
+        public Option(string id!!, string abbreviation!!, string description!!) : base(id)
+        {
+            Validate(nameof(id), id, MinName, MaxName);
             Validate(nameof(abbreviation), abbreviation, MinAbbrev, MaxAbbrev);
             Validate(nameof(description), description, MinDescription, MaxDescription);
 
-            Name = name;
             Abbreviation = abbreviation;
             Description = description;
-            this.Arguments = new Argument[0];
+            this.Arguments = new Arguments();
         }
 
-        private static void Validate(string field, string value, int min, int max)
+        public Option(string id!!, string abbreviation!!, string description!!, Arguments arguments!!) : base(id)
+        {
+            Validate(nameof(id), id, MinName, MaxName);
+            Validate(nameof(abbreviation), abbreviation, MinAbbrev, MaxAbbrev);
+            Validate(nameof(description), description, MinDescription, MaxDescription);
+
+            Abbreviation = abbreviation;
+            Description = description;
+            this.Arguments = arguments;
+        }
+
+        public Option(string id!!, string description!!, Arguments arguments!!) : base(id)
+        {
+            Validate(nameof(id), id, MinName, MaxName);
+            Validate(nameof(description), description, MinDescription, MaxDescription);
+
+            Description = description;
+            this.Arguments = arguments;
+        }
+
+        private void Validate(string field, string value, int min, int max)
         {
             if (value.Trim().Length < min || value.Trim().Length > max)
                 throw new ArgumentException($"Option {field} must be not null or empty and between {min} and {max} chars.", field);
         }
-
-        public Option(string name!!, string description!!)
-        {
-            Validate(nameof(name), name, MinName, MaxName);
-            Validate(nameof(description), description, MinDescription, MaxDescription);
-
-            Name = name;
-            Description = description;
-            this.Arguments = new Argument[0];
-        }
-
-        public Option(string name!!, string abbreviation!!, string description!!, Argument[] arguments!!)
-        {
-            Validate(nameof(name), name, MinName, MaxName);
-            Validate(nameof(abbreviation), abbreviation, MinAbbrev, MaxAbbrev);
-            Validate(nameof(description), description, MinDescription, MaxDescription);
-            Validate(arguments);
-
-            Name = name;
-            Abbreviation = abbreviation;
-            Description = description;
-            this.Arguments = arguments;
-        }
-
-        private void Validate(Argument[] arguments)
-        {
-            bool hasOptional = false;
-
-            for (int i = 0; i < arguments.Length; i++)
-            {
-                if (hasOptional && arguments[i].Required)
-                    throw new ArgumentException("Optional arguments must be on the final of the array.", "arguments");
-                
-                hasOptional = !arguments[i].Required;
-            }
-        }
-
-        public Option(string name!!, string description!!, Argument[] arguments!!)
-        {
-            Validate(nameof(name), name, MinName, MaxName);
-            Validate(nameof(description), description, MinDescription, MaxDescription);
-
-            Name = name;
-            Description = description;
-            this.Arguments = arguments;
-        }
-
-        public string Name { get; }
-        public string Description { get; }
-        public Argument[] Arguments { get; }
-        public string? Abbreviation { get; }
     }
 }

@@ -1,24 +1,17 @@
 namespace CommandLineInterface
 {
-    public class Argument
+    public class Argument: Indexable
     {
-        public string Name { get; }
         public string? Value { get; set; }
         public bool Required { get; set; }
 
-        public Argument(string name) {
-            Name = name;
-            Required = true;
-        }
-
-        public Argument(string name, bool required) {
-            Name = name;
+        public Argument(string id, bool required = true): base(id) {
             Required = required;
         }
 
         public override string ToString()
         {
-            return this.Name + ":" + this.Value;
+            return this.Id + ":" + this.Value;
         }
     }
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<coverage version="1.0" date="2022-04-15_15-34-36" tag="">
+  <assembly name="CommandLineInterface">
+    <class name="CommandLineInterface.Argument" coveredlines="0" coverablelines="14" totallines="24" coveredbranches="0" totalbranches="0" coveredcodeelements="0" totalcodeelements="8" />
+    <class name="CommandLineInterface.Command" coveredlines="41" coverablelines="70" totallines="135" coveredbranches="2" totalbranches="6" coveredcodeelements="13" totalcodeelements="23" />
+    <class name="CommandLineInterface.CommandLineInterface" coveredlines="77" coverablelines="142" totallines="197" coveredbranches="33" totalbranches="58" coveredcodeelements="12" totalcodeelements="16" />
+    <class name="CommandLineInterface.CommandLineInterfaceFront" coveredlines="22" coverablelines="90" totallines="135" coveredbranches="4" totalbranches="48" coveredcodeelements="5" totalcodeelements="15" />
+    <class name="CommandLineInterface.Metadata" coveredlines="6" coverablelines="9" totallines="16" coveredbranches="0" totalbranches="0" coveredcodeelements="1" totalcodeelements="7" />
+    <class name="CommandLineInterface.Option" coveredlines="25" coverablelines="54" totallines="81" coveredbranches="3" totalbranches="12" coveredcodeelements="7" totalcodeelements="10" />
+    <class name="CommandLineInterface.Options" coveredlines="14" coverablelines="14" totallines="26" coveredbranches="0" totalbranches="0" coveredcodeelements="5" totalcodeelements="5" />
+  </assembly>
+</coverage>
