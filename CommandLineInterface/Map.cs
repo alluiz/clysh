@@ -33,7 +33,11 @@ namespace CommandLineInterface
         public override string ToString()
         {
             string s = "";
+            
             this.Itens.Keys.ToList().ForEach(k => s += k + ",");
+
+            if (s.Length > 1)
+                s = s.Substring(0, s.Length - 1);
 
             return s;
         }

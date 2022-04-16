@@ -26,7 +26,7 @@ namespace CommandLineInterface
 
         public bool Waiting()
         {
-            return this.Required.Itens.Count(x => x.Value == null) > 0;
+            return this.Required.Itens.Count(x => x.Value.Data == null) > 0;
         }
     }
 }

@@ -161,9 +161,9 @@ namespace CommandLineInterface
             string value = argument[1];
 
             if (lastOption.Arguments.Required.Has(id))
-                lastOption.Arguments.Required.Get(id).Value = value;
+                lastOption.Arguments.Required.Get(id).Data = value;
             else if (lastOption.Arguments.Optional.Has(id))
-                lastOption.Arguments.Optional.Get(id).Value = value;
+                lastOption.Arguments.Optional.Get(id).Data = value;
             else
                 throw new InvalidOperationException($"The argument '{arg}' is invalid for option: {lastOption.Id}.");
         }
