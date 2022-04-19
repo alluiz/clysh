@@ -9,6 +9,13 @@ namespace CliSharp.Data
         /// <summary>
         /// Create a <b>CliSharpParameterData</b> object
         /// </summary>
+        public CliSharpParameterData()
+        {
+        }
+
+        /// <summary>
+        /// Create a <b>CliSharpParameterData</b> object
+        /// </summary>
         /// <param name="id">The id of parameter</param>
         /// <param name="pattern">The regular expression pattern</param>
         /// <param name="required">Indicates if is a required parameter</param>

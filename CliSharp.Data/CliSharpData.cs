@@ -8,6 +8,13 @@ namespace CliSharp.Data
         /// <summary>
         /// Create a <b>CliSharpData</b> object
         /// </summary>
+        public CliSharpData()
+        {
+        }
+
+        /// <summary>
+        /// Create a <b>CliSharpData</b> object
+        /// </summary>
         /// <param name="title">The CLI Title</param>
         /// <param name="version">The CLI Version</param>
         public CliSharpData(string? title, string? version)

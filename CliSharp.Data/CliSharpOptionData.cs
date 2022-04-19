@@ -9,6 +9,13 @@ namespace CliSharp.Data
         /// <summary>
         /// Create a <b>CliSharpOptionData</b> object
         /// </summary>
+        public CliSharpOptionData()
+        {
+        }
+
+        /// <summary>
+        /// Create a <b>CliSharpOptionData</b> object
+        /// </summary>
         /// <param name="id">The id of option</param>
         /// <param name="description">The description</param>
         /// <param name="shortcut">The CLI shortcut</param>

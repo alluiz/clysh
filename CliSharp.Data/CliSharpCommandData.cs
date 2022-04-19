@@ -7,6 +7,14 @@ namespace CliSharp.Data
     // ReSharper disable once ClassNeverInstantiated.Global
     public class CliSharpCommandData
     {
+        
+        /// <summary>
+        /// Create a <b>CliSharpCommandData</b> object
+        /// </summary>
+        public CliSharpCommandData()
+        {
+        }
+
         /// <summary>
         /// Create a <b>CliSharpCommandData</b> object
         /// </summary>
