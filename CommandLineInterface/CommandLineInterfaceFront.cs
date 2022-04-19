@@ -11,8 +11,8 @@ namespace CommandLineInterface
         private readonly bool printLineNumber;
 
         public CommandLineInterfaceFront(
-            IConsoleManager console!!,
-            Metadata metadata!!,
+            IConsoleManager console,
+            Metadata metadata,
             bool printLineNumber = false)
         {
             this.console = console;
@@ -20,7 +20,7 @@ namespace CommandLineInterface
             this.printLineNumber = printLineNumber;
         }
 
-        public string AskFor(string question!!, bool sensitive = false)
+        public string AskFor(string question, bool sensitive = false)
         {
             if (string.IsNullOrWhiteSpace(question))
                 throw new ArgumentException(QUESTION_MUST_BE_NOT_BLANK, nameof(question));
@@ -119,9 +119,9 @@ namespace CommandLineInterface
 
             foreach (var item in command.Commands.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value))
             {
-                if (item.Key != command.Name)
+                if (item.Key != command.Id)
                 {
-                    this.PrintWithBreak($"   {item.Key,-39}{item.Value.Description}");
+                    this.PrintWithBreak("".PadRight(3) + $"{item.Key,-39}{item.Value.Description}");
                 }
             }
 
@@ -131,25 +131,13 @@ namespace CommandLineInterface
         private void PrintOptions(ICommand command)
         {
             this.PrintWithBreak("[options]:", true);
-            this.PrintWithBreak("   Abbrev.".PadRight(14) + "Option".PadRight(28) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional = Length", true);
+            this.PrintWithBreak("".PadRight(3) + "Abbrev.".PadRight(11) + "Option".PadRight(28) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional = Length", true);
 
             foreach (var item in command.AvailableOptions.Itens.OrderBy(x => x.Key))
             {
-                string paramsText = "";
+                string paramsText = item.Value.Parameters.ToString();
 
-                Parameter[] parameters = item.Value.Parameters.Itens;
-
-                for (int i = 0; i < parameters.Length; i++)
-                {
-                    Parameter parameter = parameters[i];
-                    string type = parameter.Required ? "R" : "O";
-                    paramsText += $"{i}:<{parameter.Id}:{type}>{(i < parameters.Length - 1 ? ", " : "")}";
-                }
-
-                if (parameters.Length > 0)
-                   paramsText = $"[{paramsText}]: {parameters.Length}";
-
-                this.PrintWithBreak($"  {(item.Value.Abbreviation == null ? "" : "-" + item.Value.Abbreviation),-10}--{item.Key,-28}{item.Value.Description,-55}{paramsText}");
+                this.PrintWithBreak("".PadRight(2) + $"{(item.Value.Abbreviation == null ? "" : "-" + item.Value.Abbreviation),-10}--{item.Key,-28}{item.Value.Description,-55}{paramsText}");
             }
 
             this.PrintEmptyLine();
@@ -162,11 +150,11 @@ namespace CommandLineInterface
 
             while (parent != null)
             {
-                parentCommands += parent.Name + " ";
+                parentCommands = parent.Id + " " + parentCommands;
                 parent = parent.Parent;
             }
 
-            this.PrintWithBreak($"Usage: {parentCommands}{command.Name} [options] {(hasCommands ? "[commands]" : "")}");
+            this.PrintWithBreak($"Usage: {parentCommands}{command.Id} [options]{(hasCommands ? " [commands]" : "")}");
             this.PrintEmptyLine();
             this.PrintWithBreak(command.Description, true);
         }

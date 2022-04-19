@@ -6,17 +6,17 @@ namespace CommandLineInterface
         public ICommandLineInterfaceFront Front { get; }
 
         public CommandLineInterface(
-            ICommand rootCommand!!,
-            IConsoleManager console!!,
-            Metadata metadata!!)
+            ICommand rootCommand,
+            IConsoleManager console,
+            Metadata metadata)
         {
             RootCommand = rootCommand;
             Front = new CommandLineInterfaceFront(console, metadata);
         }
 
         public CommandLineInterface(
-            ICommand rootCommand!!,
-            ICommandLineInterfaceFront front!!)
+            ICommand rootCommand,
+            ICommandLineInterfaceFront front)
         {
             RootCommand = rootCommand;
             Front = front;
@@ -126,7 +126,7 @@ namespace CommandLineInterface
 
         private static void ThrowRequiredParametersError(Option lastOption)
         {
-            throw new InvalidOperationException($"Required parameters [{lastOption.Parameters}] is missing for option: {lastOption.Id}");
+            throw new InvalidOperationException($"Required parameters [{lastOption.Parameters.RequiredToString()}] is missing for option: {lastOption.Id}");
         }
 
         private static bool ArgIsParameter(string arg)
@@ -137,7 +137,13 @@ namespace CommandLineInterface
         private void Execute(List<ICommand> commandsToExecute)
         {
             foreach (ICommand command in commandsToExecute.OrderBy(x => x.Order))
+            {
+                if (command.Action == null)
+                    throw new ArgumentNullException(nameof(commandsToExecute), "Action null");
+
                 command.Action(command.SelectedOptions, this.Front);
+            }
+
         }
 
         private static ICommand GetCommandFromArg(ICommand lastCommand, string arg)

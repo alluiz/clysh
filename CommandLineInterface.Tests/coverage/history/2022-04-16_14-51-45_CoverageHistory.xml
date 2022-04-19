@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<coverage version="1.0" date="2022-04-16_14-51-45" tag="">
+  <assembly name="CommandLineInterface">
+    <class name="CommandLineInterface.Command" coveredlines="71" coverablelines="74" totallines="141" coveredbranches="4" totalbranches="4" coveredcodeelements="24" totalcodeelements="25" />
+    <class name="CommandLineInterface.CommandLineInterface" coveredlines="118" coverablelines="118" totallines="171" coveredbranches="42" totalbranches="42" coveredcodeelements="17" totalcodeelements="17" />
+    <class name="CommandLineInterface.CommandLineInterfaceFront" coveredlines="103" coverablelines="105" totallines="162" coveredbranches="42" totalbranches="44" coveredcodeelements="20" totalcodeelements="20" />
+    <class name="CommandLineInterface.Indexable" coveredlines="5" coverablelines="5" totallines="12" coveredbranches="0" totalbranches="0" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="CommandLineInterface.Map&lt;T&gt;" coveredlines="15" coverablelines="15" totallines="28" coveredbranches="0" totalbranches="0" coveredcodeelements="5" totalcodeelements="5" />
+    <class name="CommandLineInterface.Metadata" coveredlines="5" coverablelines="5" totallines="12" coveredbranches="0" totalbranches="0" coveredcodeelements="3" totalcodeelements="3" />
+    <class name="CommandLineInterface.Option" coveredlines="27" coverablelines="28" totallines="48" coveredbranches="3" totalbranches="6" coveredcodeelements="8" totalcodeelements="8" />
+    <class name="CommandLineInterface.Parameter" coveredlines="15" coverablelines="25" totallines="44" coveredbranches="6" totalbranches="12" coveredcodeelements="8" totalcodeelements="10" />
+    <class name="CommandLineInterface.Parameters" coveredlines="46" coverablelines="60" totallines="101" coveredbranches="26" totalbranches="28" coveredcodeelements="11" totalcodeelements="14" />
+  </assembly>
+</coverage>

@@ -47,7 +47,7 @@ public class CommandLineInterfaceTests
         string description = "new command for test";
         ICommand command = Command.Create(name, description, newAction);
 
-        Assert.AreEqual(name, command.Name);
+        Assert.AreEqual(name, command.Id);
         Assert.AreEqual(description, command.Description);
         Assert.AreEqual(newAction, command.Action);
     }

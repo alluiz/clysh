@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace CommandLineInterface
 {
-    public class Parameters: IEnumerable<Parameter>
+    public class Parameters : IEnumerable<Parameter>
     {
         private int lastIndexRetrieved = 0;
         private int lastIndexAdd = 0;
@@ -56,7 +56,7 @@ namespace CommandLineInterface
             return p;
         }
 
-        public override string ToString()
+        public string RequiredToString()
         {
             string s = "";
 
@@ -66,6 +66,23 @@ namespace CommandLineInterface
                 s = s[..^1];
 
             return s;
+        }
+
+        public override string ToString()
+        {
+            string paramsText = "";
+
+            for (int i = 0; i < Itens.Length; i++)
+            {
+                Parameter parameter = Itens[i];
+                string type = parameter.Required ? "R" : "O";
+                paramsText += $"{i}:<{parameter.Id}:{type}>{(i < Itens.Length - 1 ? ", " : "")}";
+            }
+
+            if (Itens.Length > 0)
+                paramsText = $"[{paramsText}]: {Itens.Length}";
+
+            return paramsText;
         }
 
         public IEnumerator<Parameter> GetEnumerator()
