@@ -9,7 +9,7 @@ namespace CliSharp.Tests;
 public class CliSharpViewTests
 {
 
-    private readonly CliSharpData metadata = new("Testfront");
+    private readonly CliSharpData metadata = new CliSharpData(title: "Auth 2 API", "1.0");
     private readonly Mock<ICliSharpConsole> consoleMock = new();
 
     [SetUp]
@@ -196,7 +196,7 @@ public class CliSharpViewTests
     [Test]
     public void SuccessfulPrintRootCommandHelp()
     {
-        ICliSharpView front = new CliSharpView(consoleMock.Object, new CliSharpData(title: "Auth 2 API - CLI v1.0"), true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, new CliSharpData(title: "Auth 2 API", "1.0"), true);
 
         ICliSharpCommand command = CliSharpDataForTest.CreateRootCommand();
         front.PrintHelp(command);
@@ -247,7 +247,7 @@ public class CliSharpViewTests
     [Test]
     public void SuccessfulPrintCustomCommandHelp()
     {
-        ICliSharpView front = new CliSharpView(consoleMock.Object, new(title: "Auth 2 API - CLI v1.0"), true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, metadata, true);
 
         ICliSharpCommand command = CliSharpDataForTest.CreateRootCommand().GetCommand("credential");
         front.PrintHelp(command);
@@ -298,7 +298,7 @@ public class CliSharpViewTests
     [Test]
     public void SuccessfulPrintCustomCommandTreeHelp()
     {
-        ICliSharpView front = new CliSharpView(consoleMock.Object, new CliSharpData(title: "Auth 2 API - CLI v1.0"), true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, metadata, true);
 
         ICliSharpCommand command = CliSharpDataForTest.CreateRootCommand().GetCommand("credential").GetCommand("test");
         front.PrintHelp(command);
@@ -333,7 +333,7 @@ public class CliSharpViewTests
     [Test]
     public void SuccessfulPrintRootCommandWithExceptionHelp()
     {
-        ICliSharpView front = new CliSharpView(consoleMock.Object, new(title: "Auth 2 API - CLI v1.0"), true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, metadata, true);
 
         ICliSharpCommand rootCommand = CliSharpDataForTest.CreateRootCommand();
 

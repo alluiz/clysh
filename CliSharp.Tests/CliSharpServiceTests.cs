@@ -30,7 +30,7 @@ public class CliSharpServiceTests
     public void SuccessfulCreateCLIAndFront()
     {
         ICliSharpConsole consoleManager = new CliSharpConsole();
-        CliSharpData metadata = new(title: "Test");
+        CliSharpData metadata = new(title: "Test", version: "1.0");
         ICliSharpService cli = new CliSharpService(rootCommandMock.Object, consoleManager, metadata);
         Assert.AreEqual(rootCommandMock.Object, cli.RootCommand);
         Assert.AreEqual(metadata, cli.Front.Data);
