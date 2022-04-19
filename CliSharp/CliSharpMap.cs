@@ -1,10 +1,10 @@
-namespace CommandLineInterface
+namespace CliSharp
 {
-    public class Map<T> where T : Indexable
+    public class CliSharpMap<T> where T : CliSharpIndexable
     {
         public Dictionary<string, T> Itens { get; }
 
-        public Map()
+        public CliSharpMap()
         {
             this.Itens = new Dictionary<string, T>();
         }
@@ -14,7 +14,7 @@ namespace CommandLineInterface
             return this.Itens[name];
         }
 
-        public Map<T> Add(T o)
+        public CliSharpMap<T> Add(T o)
         {
             this.Itens.Add(o.Id, o);
             return this;

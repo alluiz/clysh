@@ -1,11 +1,11 @@
 using System.Text.RegularExpressions;
 
-namespace CommandLineInterface
+namespace CliSharp
 {
-    public class Option : Indexable
+    public class CliSharpOption : CliSharpIndexable
     {
         public string Description { get; }
-        public Parameters Parameters { get; }
+        public CliSharpParameters Parameters { get; }
         public string? Abbreviation { get; }
 
         private const int MaxDescription = 50;
@@ -13,13 +13,13 @@ namespace CommandLineInterface
         private const int MinAbbrev = 1;
         private const int MaxAbbrev = 1;
 
-        public Option(string? id, string? description) : base(id)
+        public CliSharpOption(string? id, string? description) : base(id)
         {
             Description = Validate(nameof(description), description, MinDescription, MaxDescription);
-            this.Parameters = Parameters.Create();
+            this.Parameters = CliSharpParameters.Create();
         }
 
-        public Option(string? id, string? description, string? shortcut) : this(id, description)
+        public CliSharpOption(string? id, string? description, string? shortcut) : this(id, description)
         {
             string pattern = @"[a-z]";
 
@@ -30,15 +30,15 @@ namespace CommandLineInterface
 
             Validate(nameof(shortcut), shortcut, MinAbbrev, MaxAbbrev);
             Abbreviation = shortcut;
-            this.Parameters = Parameters.Create();
+            this.Parameters = CliSharpParameters.Create();
         }
 
-        public Option(string? id, string? description, Parameters parameters) : this(id, description)
+        public CliSharpOption(string? id, string? description, CliSharpParameters parameters) : this(id, description)
         {
             this.Parameters = parameters;
         }
 
-        public Option(string? id, string? description, string? abbreviation, Parameters parameters) : this(id, description, abbreviation)
+        public CliSharpOption(string? id, string? description, string? abbreviation, CliSharpParameters parameters) : this(id, description, abbreviation)
         {
             this.Parameters = parameters;
         }

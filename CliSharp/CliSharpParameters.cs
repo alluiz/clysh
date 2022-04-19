@@ -1,27 +1,27 @@
 using System.Collections;
 
-namespace CommandLineInterface
+namespace CliSharp
 {
-    public class Parameters : IEnumerable<Parameter>
+    public class CliSharpParameters : IEnumerable<CliSharpParameter>
     {
         private int lastIndexRetrieved = 0;
         private int lastIndexAdd = 0;
 
-        public Parameter[] Itens { get; private set; }
+        public CliSharpParameter[] Itens { get; private set; }
 
-        private Parameters(Parameter[] itens)
+        private CliSharpParameters(CliSharpParameter[] itens)
         {
             this.Itens = itens;
         }
 
-        public static Parameters Create(params Parameter[] itens)
+        public static CliSharpParameters Create(params CliSharpParameter[] itens)
         {
-            return new Parameters(itens);
+            return new CliSharpParameters(itens);
         }
 
         public void Add(string name, int minLength, int maxLength, bool required = true)
         {
-            Parameter parameter = new(name, minLength, maxLength, required);
+            CliSharpParameter parameter = new(name, minLength, maxLength, required);
 
             this.Itens[lastIndexAdd] = parameter;
 
@@ -38,7 +38,7 @@ namespace CommandLineInterface
             return Itens.Any(x => x.Data == null);
         }
 
-        public Parameter Get(string id)
+        public CliSharpParameter Get(string id)
         {
             return this.Itens.Single(x => x.Id == id);
         }
@@ -48,9 +48,9 @@ namespace CommandLineInterface
             return Itens.Any(x => x.Id == id);
         }
 
-        public Parameter Last()
+        public CliSharpParameter Last()
         {
-            Parameter p = this.Itens[lastIndexRetrieved];
+            CliSharpParameter p = this.Itens[lastIndexRetrieved];
             lastIndexRetrieved++;
 
             return p;
@@ -74,7 +74,7 @@ namespace CommandLineInterface
 
             for (int i = 0; i < Itens.Length; i++)
             {
-                Parameter parameter = Itens[i];
+                CliSharpParameter parameter = Itens[i];
                 string type = parameter.Required ? "R" : "O";
                 paramsText += $"{i}:<{parameter.Id}:{type}>{(i < Itens.Length - 1 ? ", " : "")}";
             }
@@ -85,9 +85,9 @@ namespace CommandLineInterface
             return paramsText;
         }
 
-        public IEnumerator<Parameter> GetEnumerator()
+        public IEnumerator<CliSharpParameter> GetEnumerator()
         {
-            foreach (Parameter parameter in this.Itens)
+            foreach (CliSharpParameter parameter in this.Itens)
             {
                 yield return parameter;
             }

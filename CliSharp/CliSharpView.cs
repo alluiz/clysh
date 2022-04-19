@@ -1,22 +1,24 @@
-namespace CommandLineInterface
+using CliSharp.Data;
+
+namespace CliSharp
 {
-    public class CommandLineInterfaceFront : ICommandLineInterfaceFront
+    public class CliSharpView : ICliSharpView
     {
-        public Metadata Metadata { get; set; }
+        public CliSharpData Data { get; set; }
         public int PrintedLines { get; private set; }
 
         public const string QUESTION_MUST_BE_NOT_BLANK = "Question must be not blank";
 
-        private readonly IConsoleManager console;
+        private readonly ICliSharpConsole cliSharpConsole;
         private readonly bool printLineNumber;
 
-        public CommandLineInterfaceFront(
-            IConsoleManager console,
-            Metadata metadata,
+        public CliSharpView(
+            ICliSharpConsole cliSharpConsole,
+            CliSharpData cliSharpData,
             bool printLineNumber = false)
         {
-            this.console = console;
-            Metadata = metadata;
+            this.cliSharpConsole = cliSharpConsole;
+            Data = cliSharpData;
             this.printLineNumber = printLineNumber;
         }
 
@@ -26,7 +28,7 @@ namespace CommandLineInterface
                 throw new ArgumentException(QUESTION_MUST_BE_NOT_BLANK, nameof(question));
 
             Print($"{question}:");
-            return sensitive ? console.ReadSensitive() : console.ReadLine();
+            return sensitive ? cliSharpConsole.ReadSensitive() : cliSharpConsole.ReadLine();
         }
 
         public bool Confirm(string question = "Do you agree?", string yes = "Y", string no = "n")
@@ -39,9 +41,9 @@ namespace CommandLineInterface
             PrintedLines++;
 
             if (printLineNumber)
-                console.Write(text, PrintedLines);
+                cliSharpConsole.Write(text, PrintedLines);
             else
-                console.Write(text);
+                cliSharpConsole.Write(text);
         }
 
         public void PrintEmptyLine()
@@ -54,9 +56,9 @@ namespace CommandLineInterface
             PrintedLines++;
 
             if (printLineNumber)
-                console.WriteLine(text, PrintedLines);
+                cliSharpConsole.WriteLine(text, PrintedLines);
             else
-                console.WriteLine(text);
+                cliSharpConsole.WriteLine(text);
 
             if (emptyLineAfterPrint)
                 PrintEmptyLine();
@@ -70,16 +72,16 @@ namespace CommandLineInterface
         private void PrintTitle()
         {
             PrintEmptyLine();
-            PrintWithBreak(Metadata.Title, true);
+            PrintWithBreak(Data.Title, true);
         }
 
-        public void PrintHelp(ICommand command, Exception exception)
+        public void PrintHelp(ICliSharpCommand command, Exception exception)
         {
             PrintException(exception);
             PrintHelp(command);
         }
 
-        public void PrintHelp(ICommand command)
+        public void PrintHelp(ICliSharpCommand command)
         {
             PrintTitle();
             PrintCommand(command);
@@ -100,7 +102,7 @@ namespace CommandLineInterface
             PrintWithBreak("-----------#-----------");
         }
 
-        private void PrintCommand(ICommand command)
+        private void PrintCommand(ICliSharpCommand command)
         {
             bool hasCommands = command.HasCommands();
 
@@ -113,7 +115,7 @@ namespace CommandLineInterface
             }
         }
 
-        private void PrintChildrenCommands(ICommand command)
+        private void PrintChildrenCommands(ICliSharpCommand command)
         {
             this.PrintWithBreak("[commands]:", true);
 
@@ -128,7 +130,7 @@ namespace CommandLineInterface
             this.PrintEmptyLine();
         }
 
-        private void PrintOptions(ICommand command)
+        private void PrintOptions(ICliSharpCommand command)
         {
             this.PrintWithBreak("[options]:", true);
             this.PrintWithBreak("".PadRight(3) + "Abbrev.".PadRight(11) + "Option".PadRight(28) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional = Length", true);
@@ -143,9 +145,9 @@ namespace CommandLineInterface
             this.PrintEmptyLine();
         }
 
-        private void PrintHeader(ICommand command, bool hasCommands)
+        private void PrintHeader(ICliSharpCommand command, bool hasCommands)
         {
-            ICommand? parent = command.Parent;
+            ICliSharpCommand? parent = command.Parent;
             string parentCommands = "";
 
             while (parent != null)

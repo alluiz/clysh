@@ -1,12 +1,12 @@
 using System.Text.RegularExpressions;
 
-namespace CommandLineInterface
+namespace CliSharp
 {
-    public class Indexable
+    public class CliSharpIndexable
     {
         public string Id { get; }
 
-        public Indexable(string? id)
+        public CliSharpIndexable(string? id)
         {
             string pattern = @"[a-zA-Z]+\w+";
 

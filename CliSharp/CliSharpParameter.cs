@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
 
-namespace CommandLineInterface
+namespace CliSharp
 {
-    public class Parameter : Indexable
+    public class CliSharpParameter : CliSharpIndexable
     {
         private string? data;
         public string? Data { get { return data; } set { Validate(Id, value, MinLength, MaxLength); this.data = value; } }
@@ -13,7 +13,7 @@ namespace CommandLineInterface
         public int MinLength { get; }
         public int MaxLength { get; }
 
-        public Parameter(string? id, int minLength, int maxLength, bool required = true) : base(id)
+        public CliSharpParameter(string? id, int minLength, int maxLength, bool required = true) : base(id)
         {
             if (minLength < 1)
                 throw new ArgumentException($"Invalid min length. The values must be between 1 and 1000.", nameof(minLength));
@@ -26,7 +26,7 @@ namespace CommandLineInterface
             Required = required;
         }
 
-        public Parameter(string? id, int minLength, int maxLength, bool required, string? pattern) : this(id, minLength, maxLength, required)
+        public CliSharpParameter(string? id, int minLength, int maxLength, bool required, string? pattern) : this(id, minLength, maxLength, required)
         {
             if (pattern != null)
             {

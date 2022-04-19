@@ -1,17 +1,16 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using CommandLineInterface;
+using CliSharp.Data;
 using Moq;
 using NUnit.Framework;
 
-namespace CommandLineInterface.Tests;
+namespace CliSharp.Tests;
 
 public class CommandLineInterfaceFrontTests
 {
 
-    private readonly Metadata metadata = new("Testfront");
-    private readonly Mock<IConsoleManager> consoleMock = new();
+    private readonly CliSharpData metadata = new("Testfront");
+    private readonly Mock<ICliSharpConsole> consoleMock = new();
 
     [SetUp]
     public void Setup()
@@ -25,7 +24,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "Y";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new(consoleMock.Object, metadata, true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, metadata, true);
 
         string question = "Do you agree? (Y/n):";
         bool answer = front.Confirm();
@@ -43,7 +42,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "n";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new(consoleMock.Object, metadata, true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, metadata, true);
 
         string question = "Do you agree? (Y/n):";
         bool answer = front.Confirm();
@@ -61,7 +60,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "xxxxx";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new(consoleMock.Object, metadata, true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, metadata, true);
 
         string question = "Do you agree? (Y/n):";
         bool answer = front.Confirm();
@@ -79,7 +78,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new(consoleMock.Object, metadata, true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, metadata, true);
 
         string question = "Do you agree? (Y/n):";
         bool answer = front.Confirm();
@@ -97,7 +96,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "I'm agree";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new(consoleMock.Object, metadata, true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, metadata, true);
 
         string question = "Do you agree? (I'm agree/n):";
         bool answer = front.Confirm(yes: "I'm agree");
@@ -115,7 +114,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "NO";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new(consoleMock.Object, metadata, true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, metadata, true);
 
         string question = "Do you agree? (I'm agree/n):";
         bool answer = front.Confirm(yes: "I'm agree");
@@ -133,10 +132,10 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "Y";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new(consoleMock.Object, metadata, true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, metadata, true);
 
         string question = "Are you kidding me? (Y/n):";
-        bool answer = front.Confirm(question: "Are you kidding me?");
+        bool answer = front.Confirm("Are you kidding me?");
 
         consoleMock.Verify(x => x.Write(question, 1), Times.Once);
         consoleMock.Verify(x => x.ReadLine(), Times.Once);
@@ -151,7 +150,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "test answer";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new(consoleMock.Object, metadata, true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, metadata, true);
 
         string question = "test question:";
         string answer = front.AskFor("test question");
@@ -168,7 +167,7 @@ public class CommandLineInterfaceFrontTests
         string answerExpected = "x1A";
         consoleMock.Setup(x => x.ReadSensitive()).Returns(answerExpected);
 
-        CommandLineInterfaceFront front = new(consoleMock.Object, metadata, true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, metadata, true);
 
         string question = "test question:";
         string answer = front.AskForSensitive("test question");
@@ -182,12 +181,12 @@ public class CommandLineInterfaceFrontTests
     [Test]
     public void AskForWithWhitespaceError()
     {
-        CommandLineInterfaceFront front = new(consoleMock.Object, metadata, true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, metadata, true);
 
         string question = "     ";
         ArgumentException? exception = Assert.Throws<ArgumentException>(() => front.AskFor(question));
 
-        Assert.IsTrue(exception?.Message.Contains(CommandLineInterfaceFront.QUESTION_MUST_BE_NOT_BLANK));
+        Assert.IsTrue(exception?.Message.Contains(CliSharpView.QUESTION_MUST_BE_NOT_BLANK));
 
         consoleMock.Verify(x => x.Write($"{question}:"), Times.Never);
         consoleMock.Verify(x => x.ReadLine(), Times.Never);
@@ -197,13 +196,13 @@ public class CommandLineInterfaceFrontTests
     [Test]
     public void SuccessfulPrintRootCommandHelp()
     {
-        CommandLineInterfaceFront front = new(consoleMock.Object, new Metadata(title: "Auth 2 API - CLI v1.0"), true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, new CliSharpData(title: "Auth 2 API - CLI v1.0"), true);
 
-        ICommand command = CLiConfigForTest.CreateRootCommand();
+        ICliSharpCommand command = CLiConfigForTest.CreateRootCommand();
         front.PrintHelp(command);
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
-        consoleMock.Verify(x => x.WriteLine(front.Metadata.Title, 2), Times.Once);
+        consoleMock.Verify(x => x.WriteLine(front.Data.Title, 2), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
         consoleMock.Verify(x => x.WriteLine("Usage: auth2 [options] [commands]", 4), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
@@ -248,13 +247,13 @@ public class CommandLineInterfaceFrontTests
     [Test]
     public void SuccessfulPrintCustomCommandHelp()
     {
-        CommandLineInterfaceFront front = new(consoleMock.Object, new Metadata(title: "Auth 2 API - CLI v1.0"), true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, new(title: "Auth 2 API - CLI v1.0"), true);
 
-        ICommand command = CLiConfigForTest.CreateRootCommand().GetCommand("credential");
+        ICliSharpCommand command = CLiConfigForTest.CreateRootCommand().GetCommand("credential");
         front.PrintHelp(command);
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
-        consoleMock.Verify(x => x.WriteLine(front.Metadata.Title, 2), Times.Once);
+        consoleMock.Verify(x => x.WriteLine(front.Data.Title, 2), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
         consoleMock.Verify(x => x.WriteLine("Usage: auth2 credential [options] [commands]", 4), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
@@ -299,13 +298,13 @@ public class CommandLineInterfaceFrontTests
     [Test]
     public void SuccessfulPrintCustomCommandTreeHelp()
     {
-        CommandLineInterfaceFront front = new(consoleMock.Object, new Metadata(title: "Auth 2 API - CLI v1.0"), true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, new CliSharpData(title: "Auth 2 API - CLI v1.0"), true);
 
-        ICommand command = CLiConfigForTest.CreateRootCommand().GetCommand("credential").GetCommand("test");
+        ICliSharpCommand command = CLiConfigForTest.CreateRootCommand().GetCommand("credential").GetCommand("test");
         front.PrintHelp(command);
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
-        consoleMock.Verify(x => x.WriteLine(front.Metadata.Title, 2), Times.Once);
+        consoleMock.Verify(x => x.WriteLine(front.Data.Title, 2), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
         consoleMock.Verify(x => x.WriteLine("Usage: auth2 credential test [options]", 4), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
@@ -334,13 +333,13 @@ public class CommandLineInterfaceFrontTests
     [Test]
     public void SuccessfulPrintRootCommandWithExceptionHelp()
     {
-        CommandLineInterfaceFront front = new(consoleMock.Object, new Metadata(title: "Auth 2 API - CLI v1.0"), true);
+        ICliSharpView front = new CliSharpView(consoleMock.Object, new(title: "Auth 2 API - CLI v1.0"), true);
 
-        ICommand rootCommand = CLiConfigForTest.CreateRootCommand();
+        ICliSharpCommand rootCommand = CLiConfigForTest.CreateRootCommand();
 
         try
         {
-            throw new("Test Exception");
+            throw new Exception("Test Exception");
         }
         catch (Exception exception)
         {

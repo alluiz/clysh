@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace CommandLineInterface
+namespace CliSharp
 {
-    public interface IConsoleManager
+    public interface ICliSharpConsole
     {
         void WriteLine(string text);
         void WriteLine(string text, int lineNumber);
@@ -17,7 +17,7 @@ namespace CommandLineInterface
         Therefore, it cannot be tested.
     */
     [ExcludeFromCodeCoverage]
-    public class ConsoleManager : IConsoleManager
+    public class CliSharpConsole : ICliSharpConsole
     {
         public string ReadLine()
         {

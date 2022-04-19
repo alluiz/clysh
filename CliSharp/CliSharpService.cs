@@ -1,22 +1,24 @@
-namespace CommandLineInterface
-{
-    public class CommandLineInterface : ICommandLineInterface
-    {
-        public ICommand RootCommand { get; private set; }
-        public ICommandLineInterfaceFront Front { get; }
+using CliSharp.Data;
 
-        public CommandLineInterface(
-            ICommand rootCommand,
-            IConsoleManager console,
-            Metadata metadata)
+namespace CliSharp
+{
+    public class CliSharpService : ICliSharpService
+    {
+        public ICliSharpCommand RootCommand { get; private set; }
+        public ICliSharpView Front { get; }
+
+        public CliSharpService(
+            ICliSharpCommand rootCommand,
+            ICliSharpConsole cliSharpConsole,
+            CliSharpData cliSharpData)
         {
             RootCommand = rootCommand;
-            Front = new CommandLineInterfaceFront(console, metadata);
+            Front = new CliSharpView(cliSharpConsole, cliSharpData);
         }
 
-        public CommandLineInterface(
-            ICommand rootCommand,
-            ICommandLineInterfaceFront front)
+        public CliSharpService(
+            ICliSharpCommand rootCommand,
+            ICliSharpView front)
         {
             RootCommand = rootCommand;
             Front = front;
@@ -24,12 +26,12 @@ namespace CommandLineInterface
 
         public void Execute(string[] args)
         {
-            Option? lastOption = null;
-            ICommand lastCommand = RootCommand;
+            CliSharpOption? lastOption = null;
+            ICliSharpCommand lastCommand = RootCommand;
             bool isOptionHelp = false;
 
             RootCommand.Order = 0;
-            List<ICommand> commandsToExecute = new()
+            List<ICliSharpCommand> commandsToExecute = new()
             {
                 RootCommand
             };
@@ -75,9 +77,9 @@ namespace CommandLineInterface
 
         }
 
-        private static Option GetOptionFromCommand(ICommand lastCommand, string arg)
+        private static CliSharpOption GetOptionFromCommand(ICliSharpCommand lastCommand, string arg)
         {
-            Option? lastOption;
+            CliSharpOption? lastOption;
             string key = ArgIsOptionFull(arg) ? arg[2..] : arg[1..];
 
             if (!lastCommand.HasOption(key))
@@ -87,7 +89,7 @@ namespace CommandLineInterface
             return lastOption;
         }
 
-        private static void ProcessParameter(Option? lastOption, string arg)
+        private static void ProcessParameter(CliSharpOption? lastOption, string arg)
         {
             if (lastOption == null)
                 throw new InvalidOperationException("You can't put parameters without any option that accept it.");
@@ -118,13 +120,13 @@ namespace CommandLineInterface
             }
         }
 
-        private static void CheckLastOptionStatus(Option? lastOption)
+        private static void CheckLastOptionStatus(CliSharpOption? lastOption)
         {
             if (lastOption != null && lastOption.Parameters.WaitingForRequired())
                 ThrowRequiredParametersError(lastOption);
         }
 
-        private static void ThrowRequiredParametersError(Option lastOption)
+        private static void ThrowRequiredParametersError(CliSharpOption lastOption)
         {
             throw new InvalidOperationException($"Required parameters [{lastOption.Parameters.RequiredToString()}] is missing for option: {lastOption.Id}");
         }
@@ -134,9 +136,9 @@ namespace CommandLineInterface
             return arg.Contains(':');
         }
 
-        private void Execute(List<ICommand> commandsToExecute)
+        private void Execute(List<ICliSharpCommand> commandsToExecute)
         {
-            foreach (ICommand command in commandsToExecute.OrderBy(x => x.Order))
+            foreach (ICliSharpCommand command in commandsToExecute.OrderBy(x => x.Order))
             {
                 if (command.Action == null)
                     throw new ArgumentNullException(nameof(commandsToExecute), "Action null");
@@ -146,7 +148,7 @@ namespace CommandLineInterface
 
         }
 
-        private static ICommand GetCommandFromArg(ICommand lastCommand, string arg)
+        private static ICliSharpCommand GetCommandFromArg(ICliSharpCommand lastCommand, string arg)
         {
             int order = lastCommand.Order + 1;
             lastCommand = lastCommand.GetCommand(arg);
@@ -154,12 +156,12 @@ namespace CommandLineInterface
             return lastCommand;
         }
 
-        public void ExecuteHelp(ICommand command, Exception exception)
+        public void ExecuteHelp(ICliSharpCommand command, Exception exception)
         {
             Front.PrintHelp(command, exception);
         }
 
-        public void ExecuteHelp(ICommand command)
+        public void ExecuteHelp(ICliSharpCommand command)
         {
             Front.PrintHelp(command);
         }

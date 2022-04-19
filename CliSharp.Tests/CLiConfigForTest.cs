@@ -1,19 +1,19 @@
 using System;
 
-namespace CommandLineInterface.Tests
+namespace CliSharp.Tests
 {
     public static class CLiConfigForTest
     {
-        public static ICommand CreateRootCommand()
+        public static ICliSharpCommand CreateRootCommand()
         {
             const string DEVELOPMENT_OPTION = "development";
             const string HOMOLOG_OPTION = "homolog";
             const string PRODUCTION_OPTION = "production";
 
-            ICommand login = CreateLoginCommand();
-            ICommand credential = CreateCredentialCommand();
+            ICliSharpCommand login = CreateLoginCommand();
+            ICliSharpCommand credential = CreateCredentialCommand();
 
-            return Command.Create(
+            return CliSharpCommand.Create(
                 "auth2",
                 "Execute Auth 2 API CLI Application",
                 (options, cliFront) =>
@@ -34,19 +34,19 @@ namespace CommandLineInterface.Tests
                 .AddCommand(credential);
         }
 
-        private static ICommand CreateCredentialCommand()
+        private static ICliSharpCommand CreateCredentialCommand()
         {
             const string APP_NAME_OPTION = "app-name";
             const string SCOPE_OPTION = "scope";
 
-            return Command.Create(
+            return CliSharpCommand.Create(
                 "credential",
                 "Manager a credential",
                 (options, cliFront) =>
                 {
                     if (options.Has(APP_NAME_OPTION))
                     {
-                        Option appname = options.GetByName(APP_NAME_OPTION);
+                        CliSharpOption appname = options.GetByName(APP_NAME_OPTION);
 
                         cliFront.PrintWithBreak("appname: " + appname.Parameters.Get(APP_NAME_OPTION).Data);
                     }
@@ -62,19 +62,19 @@ namespace CommandLineInterface.Tests
                         cliFront.PrintWithBreak("tags: " + options.GetByName(SCOPE_OPTION).Parameters.Itens[1].Data);
                     }
                 })
-                .AddOption(APP_NAME_OPTION, "Name of the app", Parameters.Create(
-                    new Parameter("app-name", 1, 100)))
-                .AddOption(SCOPE_OPTION, "Scopes of the app by comma", Parameters.Create(
+                .AddOption(APP_NAME_OPTION, "Name of the app", CliSharpParameters.Create(
+                    new CliSharpParameter("app-name", 1, 100)))
+                .AddOption(SCOPE_OPTION, "Scopes of the app by comma", CliSharpParameters.Create(
                         new("scope", 1, 1000),
                         new("tags", 1, 1000, false)))
                 .AddCommand(CreateTestCredentialCommand());
         }
 
-        private static ICommand CreateTestCredentialCommand()
+        private static ICliSharpCommand CreateTestCredentialCommand()
         {
             const string TIME_OPTION = "time-to-expire";
 
-            return Command.Create(
+            return CliSharpCommand.Create(
                 "test",
                 "Test credential command",
                 (options, cliFront) => 
@@ -82,15 +82,15 @@ namespace CommandLineInterface.Tests
 
                 }
             )
-            .AddOption(TIME_OPTION, "time to expire credential in hours.", "t", Parameters.Create(new Parameter("hours", 1, 2)));
+            .AddOption(TIME_OPTION, "time to expire credential in hours.", "t", CliSharpParameters.Create(new CliSharpParameter("hours", 1, 2)));
         }
 
-        private static ICommand CreateLoginCommand()
+        private static ICliSharpCommand CreateLoginCommand()
         {
             const string PROMPT_OPTION = "prompt";
             const string CREDENTIALS_OPTION = "credentials";
 
-            return Command.Create(
+            return CliSharpCommand.Create(
                 "login",
                 "User login command for system",
                 (options, cliFront) =>
@@ -102,7 +102,7 @@ namespace CommandLineInterface.Tests
                     }
                     else if (options.Has(CREDENTIALS_OPTION))
                     {
-                        Option credential = options.GetByName(CREDENTIALS_OPTION);
+                        CliSharpOption credential = options.GetByName(CREDENTIALS_OPTION);
                         cliFront.PrintWithBreak("Your credential path is: " + credential.Parameters.Itens[0].Data);
                     }
 
@@ -112,7 +112,7 @@ namespace CommandLineInterface.Tests
                         cliFront.PrintWithBreak("Aborted");
                 })
                 .AddOption(PROMPT_OPTION, "Prompt your credentials", "p")
-                .AddOption(CREDENTIALS_OPTION, "Your username credentials path", "c", Parameters.Create(new Parameter("path", 1, 10)));
+                .AddOption(CREDENTIALS_OPTION, "Your username credentials path", "c", CliSharpParameters.Create(new CliSharpParameter("path", 1, 10)));
         }
     }
 }
