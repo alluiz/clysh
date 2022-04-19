@@ -2,7 +2,7 @@ using System;
 
 namespace CliSharp.Tests
 {
-    public static class CLiConfigForTest
+    public static class CliSharpDataForTest
     {
         public static ICliSharpCommand CreateRootCommand()
         {

@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace CliSharp.Tests;
 
-public class CommandLineInterfaceFrontTests
+public class CliSharpViewTests
 {
 
     private readonly CliSharpData metadata = new("Testfront");
@@ -198,7 +198,7 @@ public class CommandLineInterfaceFrontTests
     {
         ICliSharpView front = new CliSharpView(consoleMock.Object, new CliSharpData(title: "Auth 2 API - CLI v1.0"), true);
 
-        ICliSharpCommand command = CLiConfigForTest.CreateRootCommand();
+        ICliSharpCommand command = CliSharpDataForTest.CreateRootCommand();
         front.PrintHelp(command);
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
@@ -249,7 +249,7 @@ public class CommandLineInterfaceFrontTests
     {
         ICliSharpView front = new CliSharpView(consoleMock.Object, new(title: "Auth 2 API - CLI v1.0"), true);
 
-        ICliSharpCommand command = CLiConfigForTest.CreateRootCommand().GetCommand("credential");
+        ICliSharpCommand command = CliSharpDataForTest.CreateRootCommand().GetCommand("credential");
         front.PrintHelp(command);
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
@@ -300,7 +300,7 @@ public class CommandLineInterfaceFrontTests
     {
         ICliSharpView front = new CliSharpView(consoleMock.Object, new CliSharpData(title: "Auth 2 API - CLI v1.0"), true);
 
-        ICliSharpCommand command = CLiConfigForTest.CreateRootCommand().GetCommand("credential").GetCommand("test");
+        ICliSharpCommand command = CliSharpDataForTest.CreateRootCommand().GetCommand("credential").GetCommand("test");
         front.PrintHelp(command);
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
@@ -335,7 +335,7 @@ public class CommandLineInterfaceFrontTests
     {
         ICliSharpView front = new CliSharpView(consoleMock.Object, new(title: "Auth 2 API - CLI v1.0"), true);
 
-        ICliSharpCommand rootCommand = CLiConfigForTest.CreateRootCommand();
+        ICliSharpCommand rootCommand = CliSharpDataForTest.CreateRootCommand();
 
         try
         {

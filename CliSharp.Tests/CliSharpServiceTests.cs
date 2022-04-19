@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace CliSharp.Tests;
 
-public class CommandLineInterfaceTests
+public class CliSharpServiceTests
 {
     private readonly Mock<ICliSharpView> frontMock = new();
     private readonly Mock<ICliSharpCommand> rootCommandMock = new();
