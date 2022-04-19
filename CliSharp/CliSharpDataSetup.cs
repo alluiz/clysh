@@ -6,56 +6,88 @@ namespace CliSharp
 {
     public class CliSharpDataSetup
     {
+        /// <summary>
+        /// The path of file. YAML or JSON format only
+        /// </summary>
+        public string PathOfData { get; set; }
+
+        /// <summary>
+        /// The CLI Commands list
+        /// </summary>
+        public ICliSharpCommand RootCommand { get; private set; }
+
         private readonly List<CliSharpCommandData> commandsData;
 
-        public CliSharpDataSetup()
+        /// <summary>
+        /// The <b>CliSharpDataSetup</b> object
+        /// </summary>
+        /// <param name="pathOfData">The path of file. YAML or JSON format only</param>
+        public CliSharpDataSetup(string pathOfData)
         {
-            this.commandsData = new List<CliSharpCommandData>();
+            this.PathOfData = pathOfData;
+            this.commandsData = new();
+            LoadCommandsData();
         }
 
-        public ICliSharpCommand ParseCommands(string path)
+        private void LoadCommandsData()
         {
-            CliSharpData? config;
+            CliSharpData? data;
 
-            if (!File.Exists(path))
-                throw new ArgumentException("Invalid path: CLI config file was not found.", nameof(path));
+            if (!File.Exists(PathOfData))
+                throw new ArgumentException("Invalid path: CLI data file was not found.", nameof(PathOfData));
 
-            if (Path.GetExtension(path).Equals(".json"))
-                config = JsonSerializer(path);
-            else if (Path.GetExtension(path).Equals(".yml"))
-                config = YamlSerializer(path);
+            if (Path.GetExtension(PathOfData).Equals(".json"))
+                data = JsonSerializer(PathOfData);
+            else if (Path.GetExtension(PathOfData).Equals(".yml"))
+                data = YamlSerializer(PathOfData);
             else
-                throw new ArgumentException("Invalid extension. Only JSON and YAML files are supported.", nameof(path));
+                throw new ArgumentException("Invalid extension. Only JSON and YAML files are supported.",
+                    nameof(PathOfData));
 
-            if (config == null)
-                throw new ArgumentNullException(nameof(config), "Config must be not null.");
+            if (data == null)
+                throw new ArgumentNullException(nameof(data), "Data must be not null.");
 
-            return GetCommandsTree(config);
+            LoadCommandsTree(data);
         }
 
-        private ICliSharpCommand GetCommandsTree(CliSharpData sharpData)
+        public void ParseCommands(string commandLineText, Action<CliSharpMap<CliSharpOption>, ICliSharpView> action)
+        {
+            ICliSharpCommand command = RootCommand;
+
+            if (commandLineText != command.Id)
+            {
+                string[] commandsText = commandLineText.Split(" ");
+
+                foreach (var commandId in commandsText)
+                {
+                    command = command.GetCommand(commandId);
+                }
+            }
+            
+            command.Action = action;
+        }
+
+        private void LoadCommandsTree(CliSharpData data)
         {
             try
             {
-                if (sharpData.CommandsData == null)
-                    throw new ArgumentNullException(nameof(sharpData), "Config must have at least one command and one root command.");
+                if (data.CommandsData == null)
+                    throw new ArgumentNullException(nameof(data),
+                        "Config must have at least one command and one root command.");
 
-                if (sharpData.CommandsData.DistinctBy(x => x.Id).Count() != sharpData.CommandsData.Count)
-                    throw new ArgumentException($"Invalid commandId. The id must be unique check your schema and try again.", nameof(sharpData));
+                if (data.CommandsData.DistinctBy(x => x.Id).Count() != data.CommandsData.Count)
+                    throw new ArgumentException(
+                        $"Invalid commandId. The id must be unique check your schema and try again.", nameof(data));
 
-                commandsData.AddRange(sharpData.CommandsData);
+                commandsData.AddRange(data.CommandsData);
 
-                CliSharpCommandData? rootConfig = sharpData.CommandsData.SingleOrDefault(x => x.Root);
+                CliSharpCommandData? rootConfig = data.CommandsData.SingleOrDefault(x => x.Root);
 
                 if (rootConfig == null)
-                    throw new ArgumentNullException(nameof(sharpData), "Config must have at least one command and one root command.");
+                    throw new ArgumentNullException(nameof(data),
+                        "Config must have at least one command and one root command.");
 
-                ICliSharpCommand? root = GetCommandFromTree(rootConfig.Id);
-
-                if (root == null)
-                    throw new ArgumentNullException(nameof(sharpData), "Config must have at least one command and one root command.");
-
-                return root;
+                RootCommand = LoadCommand(rootConfig.Id);
             }
             catch (Exception e)
             {
@@ -64,7 +96,7 @@ namespace CliSharp
         }
 
 
-        private ICliSharpCommand? GetCommandFromTree(string? commandId)
+        private ICliSharpCommand? LoadCommand(string? commandId)
         {
             ICliSharpCommand? command = null;
 
@@ -73,7 +105,8 @@ namespace CliSharp
                 CliSharpCommandData? commandConfig = commandsData.SingleOrDefault(x => x.Id == commandId);
 
                 if (commandConfig == null)
-                    throw new ArgumentException($"Invalid commandId. The id was not found on CLICommands list.", nameof(commandId));
+                    throw new ArgumentException($"Invalid commandId. The id was not found on CLICommands list.",
+                        nameof(commandId));
 
                 command = CliSharpCommand.Create(commandConfig.Id, commandConfig.Description);
 
@@ -83,7 +116,9 @@ namespace CliSharp
                     {
                         if (option.ParametersData != null)
                         {
-                            CliSharpParameters parameters = CliSharpParameters.Create(option.ParametersData.Select(x => new CliSharpParameter(x.Id, x.MinLength, x.MaxLength, x.Required, x.Pattern)).ToArray());
+                            CliSharpParameters parameters = CliSharpParameters.Create(option.ParametersData.Select(x =>
+                                    new CliSharpParameter(x.Id, x.MinLength, x.MaxLength, x.Required, x.Pattern))
+                                .ToArray());
                             command.AddOption(option.Id, option.Description, option.Shortcut, parameters);
                         }
                         else
@@ -97,13 +132,12 @@ namespace CliSharp
                 {
                     foreach (string childrenCommandId in commandConfig.ChildrenCommandsId)
                     {
-                        ICliSharpCommand? childrenCommand = GetCommandFromTree(childrenCommandId);
-    
+                        ICliSharpCommand? childrenCommand = LoadCommand(childrenCommandId);
+
                         if (childrenCommand != null)
                             command.AddCommand(childrenCommand);
                     }
                 }
-
             }
 
             return command;
