@@ -35,11 +35,11 @@ namespace CliSharp.Data
         /// <summary>
         /// The id of command
         /// </summary>
-        public string? Id { get; set; }
+        public string Id { get; set; }
         /// <summary>
         /// The description
         /// </summary>
-        public string? Description { get; set; }
+        public string Description { get; set; }
         /// <summary>
         /// Indicates if it is the root command
         /// </summary>

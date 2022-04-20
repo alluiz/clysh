@@ -45,6 +45,6 @@ namespace CliSharp.Data
         /// <summary>
         /// The CLI Commands list
         /// </summary>
-        public List<CliSharpCommandData>? CommandsData { get; set; }
+        public List<CliSharpCommandData> CommandsData { get; set; }
     }
 }
