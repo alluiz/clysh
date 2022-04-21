@@ -17,7 +17,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PublishTrimmed>true</PublishTrimmed>
-    <RootNamespace>CliSharp.App</RootNamespace>
+    <RootNamespace>CliSharp.Example</RootNamespace>
   </PropertyGroup>
 
 </Project>
