@@ -13,10 +13,8 @@
                 else
                     cliFront.PrintWithBreak($"mycli without test option");
             });
-
-            ICliSharpView view = new CliSharpView(new CliSharpConsole(), setup.Data, true);
-
-            ICliSharpService cli = new CliSharpService(setup.RootCommand, view);
+            
+            ICliSharpService cli = new CliSharpService(setup.RootCommand, new CliSharpConsole(), setup.Data);
 
             cli.Execute(args);
         }
