@@ -1,4 +1,4 @@
-﻿namespace CliSharp.App
+﻿namespace CliSharp.Example
 {
     public class Program
     {
