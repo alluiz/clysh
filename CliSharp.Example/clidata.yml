@@ -1,0 +1,10 @@
+Title: MyCLI
+Version: 1.0
+CommandsData:
+  - Id: mycli
+    Description: My own CLI
+    OptionsData:
+      - Description: Test option
+        Id: test
+        Shortcut: t
+    Root: true
