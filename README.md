@@ -1,5 +1,7 @@
 # CliSharp
 
+Create your own CLI on .NET 6+ with simple steps.
+
 ## Release Notes
 
 - 1.0.0 - Initial release
