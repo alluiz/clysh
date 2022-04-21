@@ -1,6 +1,6 @@
 # CliSharp
 
-Create your own CLI on .NET 6+ with simple steps.
+Create your **own CLI on .NET 6+** with simple steps.
 
 ## Release Notes
 
@@ -8,16 +8,16 @@ Create your own CLI on .NET 6+ with simple steps.
 
 ## What is?
 
-CliSharp is a library to create a .NET Command Line Interface (CLI). The main goal is to create your own CLI with only business code.
+**CliSharp** is a library to create a .NET _Command Line Interface_ (CLI). The main goal is to create your own CLI with **only business code**.
 
 ## Features
 
-CliSharp has some features to facilitate the process of create a CLI.
+CliSharp has some features to **facilitate** the process of create a CLI.
 
-- You can write your own CLI as an YAML or JSON file. Make business changes remotely with no binary update required;
-- Easy to make a command tree. You can nest commands to run in a specific order;
-- The commands can have custom options with your own shortcuts;
-- The options can have required and/or optional parameter to some user data input.
+- You can write your own CLI as an **YAML** or **JSON** file. Make business changes remotely with no binary update required;
+- Easy to **make a command tree**. You can nest commands to run in a specific order;
+- The commands can have **custom options** with your own shortcuts;
+- The options can have **required and/or optional parameter** to some user data input.
 
 ## Getting Started
 
@@ -25,7 +25,7 @@ To use CliSharp you need to install the package from NuGet.
 
 > dotnet add package clisharp
 
-Then, to start create a clidata.yml with the content below:
+Then, to start create a _clidata.yml_ with the content below:
 
 ```
 Title: MyCLI
@@ -40,7 +40,7 @@ CommandsData:
     Root: true
 ```
 
-To use this create a new Console Application, then in your main method write this:
+To use this create a new **Console Application**, then in your main method write this:
 
 ```
 public static void Main(string[] args)
@@ -54,15 +54,34 @@ public static void Main(string[] args)
         else
             cliFront.PrintWithBreak($"mycli without test option");
     });
-
-    ICliSharpView view = new CliSharpView(new CliSharpConsole(), setup.Data, true);
-
-    ICliSharpService cli = new CliSharpService(setup.RootCommand, view);
+    
+    ICliSharpService cli = new CliSharpService(setup.RootCommand, new CliSharpConsole(), setup.Data);
 
     cli.Execute(args);
 }
 ```
 
-Run the console and you will see the magic. If you need some help, pass the argument --help to your app.
+Run the console and you will see the **magic**. If you need some help, pass the argument **--help** to your app.
 
-> Note: The project of example app is available on ./CliSharp.Example folder
+The expected output:
+
+> mycli without test option
+
+With --help argument
+
+```
+MyCLI
+
+Usage: mycli [options]
+
+My own CLI
+
+[options]:
+
+   Abbrev.    Option                      Description                                            Parameters: (R)equired | (O)ptional = Length
+
+            --help                        Show help on screen                                    
+  -t        --test                        Test option      
+```
+
+**Note: The project of example app is available on ./CliSharp.Example folder**
