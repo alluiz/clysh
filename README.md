@@ -1,4 +1,8 @@
-#CliSharp
+# CliSharp
+
+## Release Notes
+
+- 1.0.0 - Initial release
 
 ## What is?
 
