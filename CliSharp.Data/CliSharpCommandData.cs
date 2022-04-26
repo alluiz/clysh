@@ -21,14 +21,14 @@ namespace CliSharp.Data
         /// <param name="id">The id of command</param>
         /// <param name="description">The description</param>
         /// <param name="root">Indicates if this is root command</param>
-        /// <param name="optionsData">The command options data</param>
+        /// <param name="options">The command options data</param>
         /// <param name="childrenCommandsId">The children commands</param>
-        public CliSharpCommandData(string? id, string? description, bool root, List<CliSharpOptionData>? optionsData, List<string>? childrenCommandsId)
+        public CliSharpCommandData(string? id, string? description, bool root, List<CliSharpOptionData>? options, List<string>? childrenCommandsId)
         {
             Id = id;
             Description = description;
             Root = root;
-            OptionsData = optionsData;
+            Options = options;
             ChildrenCommandsId = childrenCommandsId;
         }
 
@@ -47,7 +47,7 @@ namespace CliSharp.Data
         /// <summary>
         /// The command options data
         /// </summary>
-        public List<CliSharpOptionData>? OptionsData { get; set; }
+        public List<CliSharpOptionData>? Options { get; set; }
         /// <summary>
         /// The children commands
         /// </summary>

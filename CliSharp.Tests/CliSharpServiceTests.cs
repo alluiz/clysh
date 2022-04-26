@@ -23,17 +23,7 @@ public class CliSharpServiceTests
     {
         ICliSharpService cli = new CliSharpService(rootCommandMock.Object, frontMock.Object);
         Assert.AreEqual(rootCommandMock.Object, cli.RootCommand);
-        Assert.AreEqual(frontMock.Object, cli.Front);
-    }
-
-    [Test]
-    public void SuccessfulCreateCLIAndFront()
-    {
-        ICliSharpConsole consoleManager = new CliSharpConsole();
-        CliSharpData metadata = new(title: "Test", version: "1.0");
-        ICliSharpService cli = new CliSharpService(rootCommandMock.Object, consoleManager, metadata);
-        Assert.AreEqual(rootCommandMock.Object, cli.RootCommand);
-        Assert.AreEqual(metadata, cli.Front.Data);
+        Assert.AreEqual(frontMock.Object, cli.View);
     }
 
     [Test]
@@ -137,10 +127,10 @@ public class CliSharpServiceTests
         Assert.AreEqual(1, expectedOptions?.Itens.Count);
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?.GetByName(someOption).Id);
-        Assert.AreEqual(someAbbrevOption, expectedOptions?.GetByName(someOption).Abbreviation);
+        Assert.AreEqual(someAbbrevOption, expectedOptions?.GetByName(someOption).Shortcut);
         Assert.AreEqual(someOptionDescription, expectedOptions?.GetByName(someOption).Description);
 
-        Assert.AreEqual(cli.Front, expectedCliFront);
+        Assert.AreEqual(cli.View, expectedCliFront);
     }
 
     [Test]
@@ -180,7 +170,7 @@ public class CliSharpServiceTests
         Assert.AreEqual(someOptionDescription, expectedOptions?.GetByName(someOption).Description);
         Assert.AreEqual("mytest", expectedOptions?.GetByName(someOption).Parameters.Get("testarg").Data);
 
-        Assert.AreEqual(cli.Front, expectedCliFront);
+        Assert.AreEqual(cli.View, expectedCliFront);
     }
 
     [Test]
@@ -220,7 +210,7 @@ public class CliSharpServiceTests
         Assert.AreEqual(someOptionDescription, expectedOptions?.GetByName(someOption).Description);
         Assert.AreEqual("mytest", expectedOptions?.GetByName(someOption).Parameters.Get("testarg").Data);
 
-        Assert.AreEqual(cli.Front, expectedCliFront);
+        Assert.AreEqual(cli.View, expectedCliFront);
     }
 
     [Test]
@@ -264,7 +254,7 @@ public class CliSharpServiceTests
         Assert.AreEqual("mytest2", expectedOptions?.GetByName(someOption).Parameters.Get("testarg2").Data);
         Assert.AreEqual("mytest3", expectedOptions?.GetByName(someOption).Parameters.Get("testarg3").Data);
 
-        Assert.AreEqual(cli.Front, expectedCliFront);
+        Assert.AreEqual(cli.View, expectedCliFront);
     }
 
     [Test]
@@ -304,7 +294,7 @@ public class CliSharpServiceTests
         Assert.AreEqual(someOptionDescription, expectedOptions?.GetByName(someOption).Description);
         Assert.AreEqual("mytest", expectedOptions?.GetByName(someOption).Parameters.Get("testarg").Data);
 
-        Assert.AreEqual(cli.Front, expectedCliFront);
+        Assert.AreEqual(cli.View, expectedCliFront);
     }
 
     [Test]
@@ -348,7 +338,7 @@ public class CliSharpServiceTests
         Assert.AreEqual("mytest2", expectedOptions?.GetByName(someOption).Parameters.Get("testarg2").Data);
         Assert.AreEqual("mytest3", expectedOptions?.GetByName(someOption).Parameters.Get("testarg3").Data);
 
-        Assert.AreEqual(cli.Front, expectedCliFront);
+        Assert.AreEqual(cli.View, expectedCliFront);
     }
 
     [Test]
@@ -390,7 +380,7 @@ public class CliSharpServiceTests
         Assert.AreEqual("mytest", expectedOptions?.GetByName(someOption).Parameters.Get("testarg").Data);
         Assert.AreEqual("myreq", expectedOptions?.GetByName(someOption).Parameters.Get("testreq").Data);
 
-        Assert.AreEqual(cli.Front, expectedCliFront);
+        Assert.AreEqual(cli.View, expectedCliFront);
     }
 
     [Test]
@@ -438,7 +428,7 @@ public class CliSharpServiceTests
         Assert.AreEqual("mytest4", expectedOptions?.GetByName(someOption).Parameters.Get("testarg4").Data);
         Assert.AreEqual("mytest5", expectedOptions?.GetByName(someOption).Parameters.Get("testarg5").Data);
 
-        Assert.AreEqual(cli.Front, expectedCliFront);
+        Assert.AreEqual(cli.View, expectedCliFront);
     }
 
     [Test]
@@ -494,7 +484,7 @@ public class CliSharpServiceTests
         Assert.AreEqual("mytest4", expectedOptions?.GetByName(someOption2).Parameters.Get("testarg4").Data);
         Assert.AreEqual("mytest5", expectedOptions?.GetByName(someOption2).Parameters.Get("testarg5").Data);
 
-        Assert.AreEqual(cli.Front, expectedCliFront);
+        Assert.AreEqual(cli.View, expectedCliFront);
     }
 
 
@@ -562,8 +552,8 @@ public class CliSharpServiceTests
         Assert.AreEqual("mytest4", expectedOptionsCustom?.GetByName(someOption2).Parameters.Get("testarg4").Data);
         Assert.AreEqual("mytest5", expectedOptionsCustom?.GetByName(someOption2).Parameters.Get("testarg5").Data);
 
-        Assert.AreEqual(cli.Front, expectedCliFront);
-        Assert.AreEqual(cli.Front, expectedCliFrontCustom);
+        Assert.AreEqual(cli.View, expectedCliFront);
+        Assert.AreEqual(cli.View, expectedCliFrontCustom);
 
         Assert.AreEqual(0, cli.RootCommand.Order);
         Assert.AreEqual(1, customCommand.Order);
@@ -605,10 +595,10 @@ public class CliSharpServiceTests
         Assert.AreEqual(1, expectedOptions?.Itens.Count);
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?.GetByName(someOption).Id);
-        Assert.AreEqual(someAbbrevOption, expectedOptions?.GetByName(someOption).Abbreviation);
+        Assert.AreEqual(someAbbrevOption, expectedOptions?.GetByName(someOption).Shortcut);
         Assert.AreEqual(someOptionDescription, expectedOptions?.GetByName(someOption).Description);
 
-        Assert.AreEqual(cli.Front, expectedCliFront);
+        Assert.AreEqual(cli.View, expectedCliFront);
     }
 
     [Test]

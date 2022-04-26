@@ -6,41 +6,41 @@ namespace CliSharp
     {
         public string Description { get; }
         public CliSharpParameters Parameters { get; }
-        public string? Abbreviation { get; }
+        public string? Shortcut { get; }
 
         private const int MaxDescription = 50;
         private const int MinDescription = 10;
-        private const int MinAbbrev = 1;
-        private const int MaxAbbrev = 1;
+        
+        private const int MinShortcut = 1;
+        private const int MaxShortcut = 1;
 
-        public CliSharpOption(string? id, string? description) : base(id)
+        public CliSharpOption(string id, string description) : base(id)
         {
             Description = Validate(nameof(description), description, MinDescription, MaxDescription);
-            this.Parameters = CliSharpParameters.Create();
+            Parameters = CliSharpParameters.Create();
         }
 
-        public CliSharpOption(string? id, string? description, string? shortcut) : this(id, description)
+        public CliSharpOption(string id, string description, string? shortcut) : this(id, description)
         {
-            string pattern = @"[a-z]";
+            const string pattern = @"[a-zA-Z]";
 
             Regex regex = new(pattern);
 
-            if (!string.IsNullOrEmpty(shortcut) && (string.IsNullOrWhiteSpace(shortcut) || shortcut.Length > 1 || !regex.IsMatch(pattern)))
-                throw new ArgumentException($"Invalid shortcut. The shortcut must be null or follow the pattern: {pattern}", nameof(shortcut));
+            if (!string.IsNullOrEmpty(shortcut) && (shortcut.Length is < MinShortcut or > MaxShortcut || !regex.IsMatch(pattern)))
+                throw new ArgumentException($"Invalid shortcut. The shortcut must be null or follow the pattern {pattern} and between {MinShortcut} and {MaxShortcut} chars.", nameof(shortcut));
 
-            Validate(nameof(shortcut), shortcut, MinAbbrev, MaxAbbrev);
-            Abbreviation = shortcut;
-            this.Parameters = CliSharpParameters.Create();
+            Shortcut = shortcut;
+            Parameters = CliSharpParameters.Create();
         }
 
-        public CliSharpOption(string? id, string? description, CliSharpParameters parameters) : this(id, description)
+        public CliSharpOption(string id, string description, CliSharpParameters parameters) : this(id, description)
         {
-            this.Parameters = parameters;
+            Parameters = parameters;
         }
 
-        public CliSharpOption(string? id, string? description, string? abbreviation, CliSharpParameters parameters) : this(id, description, abbreviation)
+        public CliSharpOption(string id, string description, string? shortcut, CliSharpParameters parameters) : this(id, description, shortcut)
         {
-            this.Parameters = parameters;
+            Parameters = parameters;
         }
 
         private static string Validate(string? field, string? value, int min, int max)

@@ -27,41 +27,42 @@ namespace CliSharp
             if (string.IsNullOrWhiteSpace(question))
                 throw new ArgumentException(QUESTION_MUST_BE_NOT_BLANK, nameof(question));
 
-            Print($"{question}:");
+            Print($"{question}:", false, true);
+
             return sensitive ? cliSharpConsole.ReadSensitive() : cliSharpConsole.ReadLine();
         }
 
         public bool Confirm(string question = "Do you agree?", string yes = "Y", string no = "n")
         {
-            return AskFor($"{question} ({yes}/{no})").ToUpper() == yes.ToUpper();
+            return string.Equals(AskFor($"{question} ({yes}/{no})"), yes, StringComparison.CurrentCultureIgnoreCase);
         }
 
-        public void Print(string text)
+        public void PrintEmpty()
+        {
+            Print("");
+        }
+
+        public void Print(string text, bool emptyLineAfterPrint = false, bool noBreak = false)
         {
             PrintedLines++;
 
             if (printLineNumber)
-                cliSharpConsole.Write(text, PrintedLines);
+            {
+                if (noBreak)
+                    cliSharpConsole.Write(text, PrintedLines);
+                else
+                    cliSharpConsole.WriteLine(text, PrintedLines);
+            }
             else
-                cliSharpConsole.Write(text);
-        }
-
-        public void PrintEmptyLine()
-        {
-            PrintWithBreak("");
-        }
-
-        public void PrintWithBreak(string text, bool emptyLineAfterPrint = false)
-        {
-            PrintedLines++;
-
-            if (printLineNumber)
-                cliSharpConsole.WriteLine(text, PrintedLines);
-            else
-                cliSharpConsole.WriteLine(text);
+            {
+                if (noBreak)
+                    cliSharpConsole.Write(text);
+                else
+                    cliSharpConsole.WriteLine(text);
+            }
 
             if (emptyLineAfterPrint)
-                PrintEmptyLine();
+                PrintEmpty();
         }
 
         public string AskForSensitive(string question)
@@ -71,8 +72,8 @@ namespace CliSharp
 
         private void PrintTitle()
         {
-            PrintEmptyLine();
-            PrintWithBreak(Data.Title, true);
+            PrintEmpty();
+            Print($"{Data.Title}. Version: {Data.Version}", true);
         }
 
         public void PrintHelp(ICliSharpCommand command, Exception exception)
@@ -89,17 +90,17 @@ namespace CliSharp
 
         private void PrintException(Exception exception)
         {
-            PrintEmptyLine();
+            PrintEmpty();
             PrintSeparator();
-            PrintEmptyLine();
-            PrintWithBreak($"Error: {exception.GetType().Name}: {exception.Message}");
-            PrintEmptyLine();
+            PrintEmpty();
+            Print($"Error: {exception.GetType().Name}: {exception.Message}");
+            PrintEmpty();
             PrintSeparator();
         }
 
         public void PrintSeparator()
         {
-            PrintWithBreak("-----------#-----------");
+            Print("-----------#-----------");
         }
 
         private void PrintCommand(ICliSharpCommand command)
@@ -117,32 +118,36 @@ namespace CliSharp
 
         private void PrintChildrenCommands(ICliSharpCommand command)
         {
-            this.PrintWithBreak("[commands]:", true);
+            Print("[commands]:", true);
 
-            foreach (var item in command.Commands.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value))
+            foreach (var item in command.Commands.OrderBy(obj => obj.Key)
+                         .ToDictionary(obj => obj.Key, obj => obj.Value))
             {
                 if (item.Key != command.Id)
                 {
-                    this.PrintWithBreak("".PadRight(3) + $"{item.Key,-39}{item.Value.Description}");
+                    Print("".PadRight(3) + $"{item.Key,-39}{item.Value.Description}");
                 }
             }
 
-            this.PrintEmptyLine();
+            PrintEmpty();
         }
 
         private void PrintOptions(ICliSharpCommand command)
         {
-            this.PrintWithBreak("[options]:", true);
-            this.PrintWithBreak("".PadRight(3) + "Abbrev.".PadRight(11) + "Option".PadRight(28) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional = Length", true);
+            Print("[options]:", true);
+            Print(
+                "".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(28) + "Description".PadRight(55) +
+                "Parameters: (R)equired | (O)ptional = Length", true);
 
             foreach (var item in command.AvailableOptions.Itens.OrderBy(x => x.Key))
             {
                 string paramsText = item.Value.Parameters.ToString();
 
-                this.PrintWithBreak("".PadRight(2) + $"{(item.Value.Abbreviation == null ? "" : "-" + item.Value.Abbreviation),-10}--{item.Key,-28}{item.Value.Description,-55}{paramsText}");
+                Print("".PadRight(2) +
+                      $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{paramsText}");
             }
 
-            this.PrintEmptyLine();
+            PrintEmpty();
         }
 
         private void PrintHeader(ICliSharpCommand command, bool hasCommands)
@@ -156,9 +161,9 @@ namespace CliSharp
                 parent = parent.Parent;
             }
 
-            this.PrintWithBreak($"Usage: {parentCommands}{command.Id} [options]{(hasCommands ? " [commands]" : "")}");
-            this.PrintEmptyLine();
-            this.PrintWithBreak(command.Description, true);
+            Print($"Usage: {parentCommands}{command.Id} [options]{(hasCommands ? " [commands]" : "")}");
+            PrintEmpty();
+            Print(command.Description, true);
         }
     }
 }

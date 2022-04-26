@@ -40,11 +40,11 @@ namespace CliSharp
         public CliSharpDataSetup(IFileSystem fs, string pathOfData)
         {
             this.fs = fs;
-            this.PathOfData = pathOfData;
-            this.commandsData = new();
-            this.commandsLoaded = new();
-            this.Data = new CliSharpData();
-            this.RootCommand = GetRootCommandFromFilePath(PathOfData);
+            PathOfData = pathOfData;
+            commandsData = new();
+            commandsLoaded = new();
+            Data = new CliSharpData();
+            RootCommand = GetRootCommandFromFilePath(PathOfData);
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace CliSharp
                 throw new ArgumentException(InvalidExtension, nameof(path));
         }
 
-        public void SetCommandAction(string commandId, Action<CliSharpMap<CliSharpOption>, ICliSharpView> action)
+        public void MakeAction(string commandId, Action<CliSharpMap<CliSharpOption>, ICliSharpView> action)
         {
             ICliSharpCommand command = commandsLoaded[commandId];
             
@@ -107,17 +107,17 @@ namespace CliSharp
         {
             try
             {
-                if (Data.CommandsData.DistinctBy(x => x.Id).Count() != Data.CommandsData.Count)
-                    HandleIdsError(Data.CommandsData);
-                else if (Data.CommandsData.Count == 0)
+                if (Data.Commands.DistinctBy(x => x.Id).Count() != Data.Commands.Count)
+                    HandleIdsError(Data.Commands);
+                else if (Data.Commands.Count == 0)
                     throw new ArgumentException(InvalidCommandsLength, nameof(Data));
 
-                CliSharpCommandData? rootData = Data.CommandsData.SingleOrDefault(x => x.Root);
+                CliSharpCommandData? rootData = Data.Commands.SingleOrDefault(x => x.Root);
 
                 if (rootData == null)
                     throw new ArgumentNullException(nameof(Data), "Data must have at least one root command.");
 
-                commandsData.AddRange(Data.CommandsData);
+                commandsData.AddRange(Data.Commands);
 
                 ICliSharpCommand root = CliSharpCommand.Create(rootData.Id, rootData.Description);
                 commandsLoaded.Add(root.Id, root);
@@ -128,7 +128,7 @@ namespace CliSharp
             }
             catch (Exception e)
             {
-                throw new ArgumentNullException(ErrorOnCreateRoot, e);
+                throw new InvalidOperationException(ErrorOnCreateRoot, e);
             }
         }
 
@@ -151,9 +151,9 @@ namespace CliSharp
 
         private void LoadCommands(ICliSharpCommand command, CliSharpCommandData commandData)
         {
-            if (commandData.OptionsData != null)
+            if (commandData.Options != null)
             {
-                foreach (CliSharpOptionData option in commandData.OptionsData)
+                foreach (CliSharpOptionData option in commandData.Options)
                 {
                     if (option.ParametersData != null)
                     {

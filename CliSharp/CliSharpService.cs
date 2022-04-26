@@ -4,24 +4,28 @@ namespace CliSharp
 {
     public class CliSharpService : ICliSharpService
     {
+        private readonly CliSharpDataSetup setup;
         public ICliSharpCommand RootCommand { get; private set; }
-        public ICliSharpView Front { get; }
+        public ICliSharpView View { get; }
 
-        public CliSharpService(
-            ICliSharpCommand rootCommand,
-            ICliSharpConsole cliSharpConsole,
-            CliSharpData cliSharpData)
+        public CliSharpService(CliSharpDataSetup setup)
         {
-            RootCommand = rootCommand;
-            Front = new CliSharpView(cliSharpConsole, cliSharpData);
+            this.setup = setup;
+            RootCommand = setup.RootCommand;
+            View = new CliSharpView(new CliSharpConsole(), setup.Data);
+        }
+        
+        public CliSharpService(CliSharpDataSetup setup, ICliSharpConsole cliSharpConsole)
+        {
+            this.setup = setup;
+            RootCommand = setup.RootCommand;
+            View = new CliSharpView(cliSharpConsole, setup.Data);
         }
 
-        public CliSharpService(
-            ICliSharpCommand rootCommand,
-            ICliSharpView front)
+        public CliSharpService(ICliSharpCommand rootCommand, ICliSharpView view)
         {
             RootCommand = rootCommand;
-            Front = front;
+            View = view;
         }
 
         public void Execute(string[] args)
@@ -70,7 +74,7 @@ namespace CliSharp
                     Execute(commandsToExecute);
 
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 ExecuteHelp(lastCommand, e);
             }
@@ -143,7 +147,7 @@ namespace CliSharp
                 if (command.Action == null)
                     throw new ArgumentNullException(nameof(commandsToExecute), "Action null");
 
-                command.Action(command.SelectedOptions, this.Front);
+                command.Action(command.SelectedOptions, View);
             }
 
         }
@@ -158,12 +162,12 @@ namespace CliSharp
 
         public void ExecuteHelp(ICliSharpCommand command, Exception exception)
         {
-            Front.PrintHelp(command, exception);
+            View.PrintHelp(command, exception);
         }
 
         public void ExecuteHelp(ICliSharpCommand command)
         {
-            Front.PrintHelp(command);
+            View.PrintHelp(command);
         }
 
         private static bool ArgIsOption(string arg)

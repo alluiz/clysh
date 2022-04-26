@@ -17,10 +17,10 @@ namespace CliSharp.Data
         /// </summary>
         /// <param name="title">The CLI Title</param>
         /// <param name="version">The CLI Version</param>
-        public CliSharpData(string? title, string? version)
+        public CliSharpData(string title, string version)
         {
-            this.Title = title;
-            this.Version = version;
+            Title = title;
+            Version = version;
         }
         
         /// <summary>
@@ -28,23 +28,25 @@ namespace CliSharp.Data
         /// </summary>
         /// <param name="title">The CLI Title</param>
         /// <param name="version">The CLI Version</param>
-        /// <param name="commandsData">The CLI Commands list</param>
-        public CliSharpData(string? title, string? version, List<CliSharpCommandData>? commandsData) : this(title, version)
+        /// <param name="commands">The CLI Commands list</param>
+        public CliSharpData(string title, string version, List<CliSharpCommandData> commands) : this(title, version)
         {
-            this.CommandsData = commandsData;
+            Commands = commands;
         }
-        
+
         /// <summary>
         /// The CLI Title
         /// </summary>
-        public string? Title { get; set; }
+        public string Title { get; set; } = default!;
+
         /// <summary>
         /// The CLI Version
         /// </summary>
-        public string? Version { get; set; }
+        public string Version { get; set; } = default!;
+
         /// <summary>
         /// The CLI Commands list
         /// </summary>
-        public List<CliSharpCommandData> CommandsData { get; set; }
+        public List<CliSharpCommandData> Commands { get; set; } = default!;
     }
 }

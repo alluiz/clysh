@@ -19,13 +19,13 @@ namespace CliSharp.Tests
                 (options, cliFront) =>
                 {
                     if (options.Has(DEVELOPMENT_OPTION))
-                        cliFront.PrintWithBreak("Selected environment: development");
+                        cliFront.Print("Selected environment: development");
 
                     if (options.Has(HOMOLOG_OPTION))
-                        cliFront.PrintWithBreak("Selected environment: homolog");
+                        cliFront.Print("Selected environment: homolog");
 
                     if (options.Has(PRODUCTION_OPTION))
-                        cliFront.PrintWithBreak("Selected environment: production");
+                        cliFront.Print("Selected environment: production");
                 })
                 .AddOption(DEVELOPMENT_OPTION, "Development environment option. Default value.", "d")
                 .AddOption(HOMOLOG_OPTION, "Homolog environment option", "h")
@@ -48,18 +48,18 @@ namespace CliSharp.Tests
                     {
                         CliSharpOption appname = options.GetByName(APP_NAME_OPTION);
 
-                        cliFront.PrintWithBreak("appname: " + appname.Parameters.Get(APP_NAME_OPTION).Data);
+                        cliFront.Print("appname: " + appname.Parameters.Get(APP_NAME_OPTION).Data);
                     }
                     else
                     {
                         Guid guid = Guid.NewGuid();
-                        cliFront.PrintWithBreak("appname: (random) " + guid.ToString());
+                        cliFront.Print("appname: (random) " + guid.ToString());
                     }
 
                     if (options.Has(SCOPE_OPTION))
                     {
-                        cliFront.PrintWithBreak("scope: " + options.GetByName(SCOPE_OPTION).Parameters.Itens[0].Data);
-                        cliFront.PrintWithBreak("tags: " + options.GetByName(SCOPE_OPTION).Parameters.Itens[1].Data);
+                        cliFront.Print("scope: " + options.GetByName(SCOPE_OPTION).Parameters.Itens[0].Data);
+                        cliFront.Print("tags: " + options.GetByName(SCOPE_OPTION).Parameters.Itens[1].Data);
                     }
                 })
                 .AddOption(APP_NAME_OPTION, "Name of the app", CliSharpParameters.Create(
@@ -97,19 +97,19 @@ namespace CliSharp.Tests
                 {
                     if (options.Has(PROMPT_OPTION))
                     {
-                        cliFront.PrintWithBreak($"Your username is: {cliFront.AskFor("Username")}");
-                        cliFront.PrintWithBreak($"Your password is: {cliFront.AskFor("Password")}");
+                        cliFront.Print($"Your username is: {cliFront.AskFor("Username")}");
+                        cliFront.Print($"Your password is: {cliFront.AskFor("Password")}");
                     }
                     else if (options.Has(CREDENTIALS_OPTION))
                     {
                         CliSharpOption credential = options.GetByName(CREDENTIALS_OPTION);
-                        cliFront.PrintWithBreak("Your credential path is: " + credential.Parameters.Itens[0].Data);
+                        cliFront.Print("Your credential path is: " + credential.Parameters.Itens[0].Data);
                     }
 
                     if (cliFront.Confirm("Salvar login?", "Sim", "Nao"))
-                        cliFront.PrintWithBreak("OK");
+                        cliFront.Print("OK");
                     else
-                        cliFront.PrintWithBreak("Aborted");
+                        cliFront.Print("Aborted");
                 })
                 .AddOption(PROMPT_OPTION, "Prompt your credentials", "p")
                 .AddOption(CREDENTIALS_OPTION, "Your username credentials path", "c", CliSharpParameters.Create(new CliSharpParameter("path", 1, 10)));

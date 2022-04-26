@@ -21,17 +21,17 @@ namespace CliSharp
     {
         public string ReadLine()
         {
-            return System.Console.ReadLine() ?? "";
+            return Console.ReadLine() ?? "";
         }
 
         public void Write(string text, int lineNumber)
         {
-            System.Console.Write($"{lineNumber + ".",-5}{text}");
+            Console.Write($"{lineNumber + ".",-5}{text}");
         }
 
         public void WriteLine(string text, int lineNumber)
         {
-            System.Console.WriteLine($"{lineNumber + ".",-5}{text}");
+            Console.WriteLine($"{lineNumber + ".",-5}{text}");
         }
 
         /// <summary>
@@ -83,12 +83,12 @@ namespace CliSharp
 
         public void WriteLine(string text)
         {
-            System.Console.WriteLine(text);
+            Console.WriteLine(text);
         }
 
         public void Write(string text)
         {
-            System.Console.Write(text);
+            Console.Write(text);
         }
     }
 }

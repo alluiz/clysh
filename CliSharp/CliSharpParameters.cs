@@ -11,7 +11,7 @@ namespace CliSharp
 
         private CliSharpParameters(CliSharpParameter[] itens)
         {
-            this.Itens = itens;
+            Itens = itens;
         }
 
         public static CliSharpParameters Create(params CliSharpParameter[] itens)
@@ -23,7 +23,7 @@ namespace CliSharp
         {
             CliSharpParameter parameter = new(name, minLength, maxLength, required);
 
-            this.Itens[lastIndexAdd] = parameter;
+            Itens[lastIndexAdd] = parameter;
 
             lastIndexAdd++;
         }
@@ -40,7 +40,7 @@ namespace CliSharp
 
         public CliSharpParameter Get(string id)
         {
-            return this.Itens.Single(x => x.Id == id);
+            return Itens.Single(x => x.Id == id);
         }
 
         public bool Has(string id)
@@ -50,7 +50,7 @@ namespace CliSharp
 
         public CliSharpParameter Last()
         {
-            CliSharpParameter p = this.Itens[lastIndexRetrieved];
+            CliSharpParameter p = Itens[lastIndexRetrieved];
             lastIndexRetrieved++;
 
             return p;
@@ -60,7 +60,7 @@ namespace CliSharp
         {
             string s = "";
 
-            this.Itens.Where(x => x.Required).ToList().ForEach(k => s += k.Id + ",");
+            Itens.Where(x => x.Required).ToList().ForEach(k => s += k.Id + ",");
 
             if (s.Length > 1)
                 s = s[..^1];
@@ -87,7 +87,7 @@ namespace CliSharp
 
         public IEnumerator<CliSharpParameter> GetEnumerator()
         {
-            foreach (CliSharpParameter parameter in this.Itens)
+            foreach (CliSharpParameter parameter in Itens)
             {
                 yield return parameter;
             }
@@ -95,7 +95,7 @@ namespace CliSharp
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return this.GetEnumerator();
+            return GetEnumerator();
         }
     }
 }

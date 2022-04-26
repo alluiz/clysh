@@ -1,20 +1,17 @@
 ﻿namespace CliSharp.Example
 {
-    public class Program
+    public static class CliProgram
     {
         public static void Main(string[] args)
         {
             CliSharpDataSetup setup = new("clidata.yml");
 
-            setup.SetCommandAction("mycli", (options, cliFront) =>
+            setup.MakeAction("mycli", (options, view) =>
             {
-                if (options.Has("test"))
-                    cliFront.PrintWithBreak($"mycli with test option");
-                else
-                    cliFront.PrintWithBreak($"mycli without test option");
+                view.Print(options.Has("test") ? "mycli with test option" : "mycli without test option");
             });
             
-            ICliSharpService cli = new CliSharpService(setup.RootCommand, new CliSharpConsole(), setup.Data);
+            ICliSharpService cli = new CliSharpService(setup);
 
             cli.Execute(args);
         }

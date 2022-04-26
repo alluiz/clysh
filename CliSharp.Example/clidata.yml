@@ -1,10 +1,10 @@
-Title: MyCLI
+Title: MyCLI with only test command
 Version: 1.0
-CommandsData:
+Commands:
   - Id: mycli
     Description: My own CLI
-    OptionsData:
+    Options:
       - Description: Test option
         Id: test
-        Shortcut: t
+        Shortcut: T
     Root: true

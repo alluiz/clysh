@@ -36,27 +36,27 @@ namespace CliSharp
 
         public Dictionary<string, ICliSharpCommand> Commands { get; private set; }
 
-        private readonly Dictionary<string, string> abbreviationToOption;
+        private readonly Dictionary<string, string> shortcutToOption;
 
         private CliSharpCommand(string id, string description, Action<CliSharpMap<CliSharpOption>, ICliSharpView> action)
         {
-            this.abbreviationToOption = new Dictionary<string, string>();
-            this.Commands = new Dictionary<string, ICliSharpCommand>();
-            this.AvailableOptions = new CliSharpMap<CliSharpOption>();
-            this.SelectedOptions = new CliSharpMap<CliSharpOption>();
+            shortcutToOption = new Dictionary<string, string>();
+            Commands = new Dictionary<string, ICliSharpCommand>();
+            AvailableOptions = new CliSharpMap<CliSharpOption>();
+            SelectedOptions = new CliSharpMap<CliSharpOption>();
 
             Id = id;
             Description = description;
             Action = action;
-            this.AddOption("help", "Show help on screen");
+            AddOption("help", "Show help on screen");
         }
 
         private CliSharpCommand(string? id, string? description)
         {
-            this.abbreviationToOption = new Dictionary<string, string>();
-            this.Commands = new Dictionary<string, ICliSharpCommand>();
-            this.AvailableOptions = new CliSharpMap<CliSharpOption>();
-            this.SelectedOptions = new CliSharpMap<CliSharpOption>();
+            shortcutToOption = new Dictionary<string, string>();
+            Commands = new Dictionary<string, ICliSharpCommand>();
+            AvailableOptions = new CliSharpMap<CliSharpOption>();
+            SelectedOptions = new CliSharpMap<CliSharpOption>();
 
             if (id == null)
                 throw new ArgumentNullException(id);
@@ -67,13 +67,13 @@ namespace CliSharp
             Id = id;
             Description = description;
 
-            this.AddOption("help", "Show help on screen");
+            AddOption("help", "Show help on screen", "h");
         }
 
         public ICliSharpCommand AddOption(string? id, string? description)
         {
             CliSharpOption option = new(id, description);
-            this.AvailableOptions.Add(option);
+            AvailableOptions.Add(option);
 
             return this;
         }
@@ -84,8 +84,8 @@ namespace CliSharp
                 throw new ArgumentNullException(abbreviation);
 
             CliSharpOption option = new(id, description, abbreviation);
-            this.AvailableOptions.Add(option);
-            this.abbreviationToOption.Add(abbreviation, option.Id);
+            AvailableOptions.Add(option);
+            shortcutToOption.Add(abbreviation, option.Id);
 
             return this;
         }
@@ -96,8 +96,8 @@ namespace CliSharp
                 throw new ArgumentNullException(abbreviation);
 
             CliSharpOption option = new(id, description, abbreviation, parameters);
-            this.AvailableOptions.Add(option);
-            this.abbreviationToOption.Add(abbreviation, option.Id);
+            AvailableOptions.Add(option);
+            shortcutToOption.Add(abbreviation, option.Id);
 
             return this;
         }
@@ -105,7 +105,7 @@ namespace CliSharp
         public ICliSharpCommand AddOption(string? id, string? description, CliSharpParameters parameters)
         {
             CliSharpOption option = new(id, description, parameters);
-            this.AvailableOptions.Add(option);
+            AvailableOptions.Add(option);
 
             return this;
         }
@@ -113,7 +113,7 @@ namespace CliSharp
         public ICliSharpCommand AddCommand(ICliSharpCommand command)
         {
             command.Parent = this;
-            this.Commands.Add(command.Id, command);
+            Commands.Add(command.Id, command);
             return this;
         }
 
@@ -121,21 +121,21 @@ namespace CliSharp
         {
             try
             {
-                return this.AvailableOptions.GetByName(arg);
+                return AvailableOptions.GetByName(arg);
             }
-            catch (System.Exception)
+            catch (Exception)
             {
-                return this.AvailableOptions.GetByName(this.abbreviationToOption[arg]);
+                return AvailableOptions.GetByName(shortcutToOption[arg]);
             }
         }
         public CliSharpOption GetSelectedOption(string key)
         {
-            return this.SelectedOptions.GetByName(key);
+            return SelectedOptions.GetByName(key);
         }
 
         public void AddSelectedOption(CliSharpOption optionSelected)
         {
-            this.SelectedOptions.Add(optionSelected);
+            SelectedOptions.Add(optionSelected);
         }
 
         public static ICliSharpCommand Create(string id, string description, Action<CliSharpMap<CliSharpOption>, ICliSharpView> action)
@@ -150,22 +150,22 @@ namespace CliSharp
 
         public ICliSharpCommand GetCommand(string name)
         {
-            return this.Commands[name];
+            return Commands[name];
         }
 
         public bool HasOption(string key)
         {
-            return this.AvailableOptions.Has(key) || this.abbreviationToOption.ContainsKey(key);
+            return AvailableOptions.Has(key) || shortcutToOption.ContainsKey(key);
         }
 
         public bool HasCommands()
         {
-            return this.Commands.Count > 0;
+            return Commands.Count > 0;
         }
 
         public bool HasCommand(string name)
         {
-            return this.Commands.ContainsKey(name);
+            return Commands.ContainsKey(name);
         }
     }
 }

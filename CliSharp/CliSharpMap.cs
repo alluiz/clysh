@@ -6,23 +6,23 @@ namespace CliSharp
 
         public CliSharpMap()
         {
-            this.Itens = new Dictionary<string, T>();
+            Itens = new Dictionary<string, T>();
         }
 
         public T GetByName(string name)
         {
-            return this.Itens[name];
+            return Itens[name];
         }
 
         public CliSharpMap<T> Add(T o)
         {
-            this.Itens.Add(o.Id, o);
+            Itens.Add(o.Id, o);
             return this;
         }
 
         public bool Has(string name)
         {
-            return this.Itens.ContainsKey(name);
+            return Itens.ContainsKey(name);
         }
     }
 }

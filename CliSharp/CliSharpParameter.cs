@@ -5,7 +5,7 @@ namespace CliSharp
     public class CliSharpParameter : CliSharpIndexable
     {
         private string? data;
-        public string? Data { get { return data; } set { Validate(Id, value, MinLength, MaxLength); this.data = value; } }
+        public string? Data { get { return data; } set { Validate(Id, value, MinLength, MaxLength); data = value; } }
         private readonly string? pattern;
 
         public Regex? Regex { get; }
@@ -47,7 +47,7 @@ namespace CliSharp
 
         public override string ToString()
         {
-            return this.Id + ":" + this.Data;
+            return Id + ":" + Data;
         }
     }
 }
