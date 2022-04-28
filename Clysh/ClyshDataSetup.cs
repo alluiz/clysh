@@ -67,6 +67,14 @@ namespace Clysh
 
                 return CreateRootFromExtractedData();
             }
+            catch (ArgumentNullException)
+            {
+                throw;
+            }
+            catch (ArgumentException)
+            {
+                throw;
+            }
             catch (Exception e)
             {
                 throw new ArgumentException(ErrorOnLoad, nameof(path), e);
@@ -124,10 +132,18 @@ namespace Clysh
 
                 IClyshCommand root = ClyshCommand.Create(rootData.Id, rootData.Description);
                 commandsLoaded.Add(root.Id, root);
-                
+
                 LoadCommands(root, rootData);
 
                 return root;
+            }
+            catch (ArgumentNullException)
+            {
+                throw;
+            }
+            catch (ArgumentException)
+            {
+                throw;
             }
             catch (Exception e)
             {
