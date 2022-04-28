@@ -1,4 +1,6 @@
-# CliSharp
+# Clysh
+
+**CL**i in **Y**aml for **SH**ell apps
 
 Create your **own CLI on .NET 6+** with simple steps.
 
@@ -8,11 +10,11 @@ Create your **own CLI on .NET 6+** with simple steps.
 
 ## What is?
 
-**CliSharp** is a library to create a .NET _Command Line Interface_ (CLI). The main goal is to create your own CLI with **only business code**.
+**Clysh** is a library to create a .NET _Command Line Interface_ (CLI). The main goal is to create your own CLI with **only business code**.
 
 ## Features
 
-CliSharp has some features to **facilitate** the process of create a CLI.
+Clysh has some features to **facilitate** the process of create a CLI.
 
 - You can write your own CLI as an **YAML** or **JSON** file. Make business changes remotely with no binary update required;
 - Easy to **make a command tree**. You can nest commands to run in a specific order;
@@ -21,9 +23,9 @@ CliSharp has some features to **facilitate** the process of create a CLI.
 
 ## Getting Started
 
-To use CliSharp you need to install the package from NuGet.
+To use Clysh you need to install the package from NuGet.
 
-> dotnet add package clisharp
+> dotnet add package clysh
 
 Then, to start create a _clidata.yml_ with the content below:
 
@@ -45,7 +47,7 @@ To use this create a new **Console Application**, then in your main method write
 ```
 public static void Main(string[] args)
 {
-    CliSharpDataSetup setup = new("clidata.yml");
+    ClyshDataSetup setup = new("clidata.yml");
 
     setup.SetCommandAction("mycli", (options, cliFront) =>
     {
@@ -55,7 +57,7 @@ public static void Main(string[] args)
             cliFront.PrintWithBreak($"mycli without test option");
     });
     
-    ICliSharpService cli = new CliSharpService(setup.RootCommand, new CliSharpConsole(), setup.Data);
+    IClyshService cli = new ClyshService(setup.RootCommand, new ClyshConsole(), setup.Data);
 
     cli.Execute(args);
 }
@@ -84,4 +86,4 @@ My own CLI
   -t        --test                        Test option      
 ```
 
-**Note: The project of example app is available on ./CliSharp.Example folder**
+**Note: The project of example app is available on ./Clysh.Example folder**

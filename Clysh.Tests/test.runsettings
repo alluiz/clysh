@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+    <CodeCoverage>
+        <!--
+        About include/exclude lists:
+        Empty "Include" clauses imply all; empty "Exclude" clauses imply none.
+        Each element in the list is a regular expression (ECMAScript syntax). See /visualstudio/ide/using-regular-expressions-in-visual-studio.
+        An item must first match at least one entry in the include list to be included.
+        Included items must then not match any entries in the exclude list to remain included.
+        -->
+
+        <!-- Match assembly file paths: -->
+        <ModulePaths>
+            <Include>
+                <ModulePath>.*\Clysh.dll$</ModulePath>
+                <ModulePath>.*\.exe$</ModulePath>
+            </Include>
+            <Exclude>
+                <ModulePath>.*CPPUnitTestFramework.*</ModulePath>
+            </Exclude>
+        </ModulePaths>
+    </CodeCoverage>
+</Configuration>
