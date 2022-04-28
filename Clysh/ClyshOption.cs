@@ -27,8 +27,15 @@ namespace Clysh
 
             Regex regex = new(pattern);
 
-            if (!string.IsNullOrEmpty(shortcut) && (shortcut.Length is < MinShortcut or > MaxShortcut || !regex.IsMatch(pattern)))
-                throw new ArgumentException($"Invalid shortcut. The shortcut must be null or follow the pattern {pattern} and between {MinShortcut} and {MaxShortcut} chars.", nameof(shortcut));
+            if (!string.IsNullOrEmpty(shortcut))
+            {
+                if (shortcut.Length is < MinShortcut or > MaxShortcut || !regex.IsMatch(pattern))
+                    throw new ArgumentException($"Invalid shortcut. The shortcut must be null or follow the pattern {pattern} and between {MinShortcut} and {MaxShortcut} chars.",
+                    nameof(shortcut));
+
+                if (shortcut is "h")
+                    throw new ArgumentException("Shortcut 'h' is reserved to help shortcut.", nameof(shortcut));
+            }
 
             Shortcut = shortcut;
             Parameters = ClyshParameters.Create();
