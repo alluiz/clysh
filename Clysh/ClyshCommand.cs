@@ -51,7 +51,7 @@ namespace Clysh
             Id = id;
             Description = description;
             Action = action;
-            AddOption("help", "Show help on screen");
+            AddOption("help", "Show help on screen", "h");
         }
 
         private ClyshCommand(string? id, string? description)
@@ -61,14 +61,8 @@ namespace Clysh
             AvailableOptions = new ClyshMap<ClyshOption>();
             SelectedOptions = new ClyshMap<ClyshOption>();
 
-            if (id == null)
-                throw new ArgumentNullException(id);
-
-            if (description == null)
-                throw new ArgumentNullException(description);
-
-            Id = id;
-            Description = description;
+            Id = id ?? throw new ArgumentNullException(id);
+            Description = description ?? throw new ArgumentNullException(description);
 
             AddOption("help", "Show help on screen", "h");
         }

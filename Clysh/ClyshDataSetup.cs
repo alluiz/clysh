@@ -26,7 +26,7 @@ namespace Clysh
         public const string InvalidExtension = "Invalid extension. Only JSON (.json) and YAML (.yml or .yaml) files are supported.";
         public const string ErrorOnLoad = "Error on load data from file path.";
         public const string InvalidJson = "Invalid JSON: The deserialization results in null object.";
-        public const string ErrorOnCreateRoot = "Error on create root from extracted data.";
+        public const string ErrorOnCreateRoot = "Error on create root or nested commands from extracted data.";
         public const string InvalidCommandsTheIdSMustBeUnique = "Invalid commands: The id(s): $0 must be unique check your schema and try again.";
         public const string InvalidCommandsLength = $"Invalid commands: The data must contains at once one command.";
         public const string InvalidCommandTheIdWasNotFound = $"Invalid commandId. The id: $0 was not found on commands data list.";
@@ -67,17 +67,13 @@ namespace Clysh
 
                 return CreateRootFromExtractedData();
             }
-            catch (ArgumentNullException)
-            {
-                throw;
-            }
-            catch (ArgumentException)
+            catch (ClyshException)
             {
                 throw;
             }
             catch (Exception e)
             {
-                throw new ArgumentException(ErrorOnLoad, nameof(path), e);
+                throw new ClyshException(ErrorOnLoad, e);
             }
         }
 
@@ -137,17 +133,13 @@ namespace Clysh
 
                 return root;
             }
-            catch (ArgumentNullException)
-            {
-                throw;
-            }
-            catch (ArgumentException)
+            catch (ClyshException)
             {
                 throw;
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException(ErrorOnCreateRoot, e);
+                throw new ClyshException(ErrorOnCreateRoot, e);
             }
         }
 
