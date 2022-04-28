@@ -1,6 +1,6 @@
 ﻿namespace Clysh.Example
 {
-    public static class CliProgram
+    public static class ClyshProgram
     {
         public static void Main(string[] args)
         {
