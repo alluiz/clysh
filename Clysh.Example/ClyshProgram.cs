@@ -12,7 +12,7 @@ namespace Clysh.Example
                     
                 try
                 {
-                    ClyshDataSetup setup = new("clidata.yml");
+                    ClyshSetup setup = new("clidata.yml");
 
                     setup.MakeAction("mycli",
                         (options, view) =>

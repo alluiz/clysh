@@ -7,18 +7,18 @@ namespace Clysh
 {
     public class ClyshService : IClyshService
     {
-        private readonly ClyshDataSetup setup;
+        private readonly ClyshSetup setup;
         public IClyshCommand RootCommand { get; private set; }
         public IClyshView View { get; }
 
-        public ClyshService(ClyshDataSetup setup)
+        public ClyshService(ClyshSetup setup)
         {
             this.setup = setup;
             RootCommand = setup.RootCommand;
             View = new ClyshView(new ClyshConsole(), setup.Data);
         }
         
-        public ClyshService(ClyshDataSetup setup, IClyshConsole clyshConsole)
+        public ClyshService(ClyshSetup setup, IClyshConsole clyshConsole)
         {
             this.setup = setup;
             RootCommand = setup.RootCommand;

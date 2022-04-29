@@ -8,7 +8,7 @@ using YamlDotNet.Serialization;
 
 namespace Clysh
 {
-    public class ClyshDataSetup
+    public class ClyshSetup
     {
         /// <summary>
         /// The path of file. YAML or JSON format only
@@ -40,7 +40,7 @@ namespace Clysh
         /// </summary>
         /// <param name="fs">The file system object</param>
         /// <param name="pathOfData">The path of file. YAML or JSON format only</param>
-        public ClyshDataSetup(IFileSystem fs, string pathOfData)
+        public ClyshSetup(IFileSystem fs, string pathOfData)
         {
             this.fs = fs;
             PathOfData = pathOfData;
@@ -54,7 +54,7 @@ namespace Clysh
         /// The <b>ClyshDataSetup</b> object
         /// </summary>
         /// <param name="pathOfData">The path of file. YAML or JSON format only</param>
-        public ClyshDataSetup(string pathOfData) : this(new FileSystem(), pathOfData)
+        public ClyshSetup(string pathOfData) : this(new FileSystem(), pathOfData)
         {
         }
 
