@@ -5,15 +5,20 @@ namespace Clysh
 {
     public class ClyshOption : ClyshIndexable
     {
-        public string Description { get; }
-        public ClyshParameters Parameters { get; }
-        public string? Shortcut { get; }
+        public string Description { get; set; }
+        public ClyshParameters Parameters { get; set; }
+        public string? Shortcut { get; set; }
 
         private const int MaxDescription = 50;
         private const int MinDescription = 10;
         
         private const int MinShortcut = 1;
         private const int MaxShortcut = 1;
+
+        public ClyshOption(string id): base(id)
+        {
+            
+        }
 
         public ClyshOption(string id, string description) : base(id)
         {

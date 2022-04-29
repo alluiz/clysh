@@ -5,7 +5,7 @@ namespace Clysh
 {
     public class ClyshIndexable
     {
-        public string Id { get; }
+        public string Id { get; set;  }
 
         public ClyshIndexable(string? id)
         {
