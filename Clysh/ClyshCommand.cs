@@ -41,6 +41,11 @@ namespace Clysh
 
         private readonly Dictionary<string, string> shortcutToOption;
 
+        public ClyshCommand(string id)
+        {
+            Id = id;
+        }
+
         private ClyshCommand(string id, string description, Action<ClyshMap<ClyshOption>, IClyshView> action)
         {
             shortcutToOption = new Dictionary<string, string>();
