@@ -21,13 +21,13 @@ namespace Clysh.Data
         /// <param name="id">The id of option</param>
         /// <param name="description">The description</param>
         /// <param name="shortcut">The CLI shortcut</param>
-        /// <param name="parametersData">The option parameters data list</param>
-        public ClyshOptionData(string? id, string? description, string? shortcut, List<ClyshParameterData>? parametersData)
+        /// <param name="parameters">The option parameters data list</param>
+        public ClyshOptionData(string? id, string? description, string? shortcut, List<ClyshParameterData>? parameters)
         {
             Id = id;
             Description = description;
             Shortcut = shortcut;
-            ParametersData = parametersData;
+            Parameters = parameters;
         }
         
         /// <summary>
@@ -45,6 +45,6 @@ namespace Clysh.Data
         /// <summary>
         /// The option parameters data list
         /// </summary>
-        public List<ClyshParameterData>? ParametersData { get; set; }
+        public List<ClyshParameterData>? Parameters { get; set; }
     }
 }

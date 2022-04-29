@@ -18,6 +18,16 @@ namespace Clysh.Example
                         (options, view) =>
                         {
                             view.Print(options.Has("test") ? "mycli with test option" : "mycli without test option");
+
+                            if (options.Has("test"))
+                            {
+                                ClyshOption option = options.Get("test");
+
+                                string? data = option.GetParameter("ab");
+                                
+                                if (data != null)
+                                    view.Print(data);
+                            }
                         });
 
                     cli = new ClyshService(setup);

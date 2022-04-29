@@ -13,5 +13,10 @@ namespace Clysh
         {
             Parameters = ClyshParameters.Create();
         }
+
+        public string? GetParameter(string id)
+        {
+            return this.Parameters.Get(id).Data;
+        }
     }
 }
