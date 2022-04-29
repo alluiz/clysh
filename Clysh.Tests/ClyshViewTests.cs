@@ -228,7 +228,7 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("", 14 + i), Times.Once);
 
         int j = i + 1;
-        foreach (var item in command.Commands.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value))
+        foreach (var item in command.Children.Itens.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value))
         {
             if (item.Key != command.Id)
             {
@@ -249,7 +249,7 @@ public class ClyshViewTests
     {
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        IClyshCommand command = ClyshDataForTest.CreateRootCommand().GetCommand("credential");
+        IClyshCommand command = ClyshDataForTest.CreateRootCommand().Children.Get("credential");
         view.PrintHelp(command);
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
@@ -279,7 +279,7 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("", 14 + i), Times.Once);
 
         int j = i + 1;
-        foreach (var item in command.Commands.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value))
+        foreach (var item in command.Children.Itens.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value))
         {
             if (item.Key != command.Id)
             {
@@ -300,7 +300,7 @@ public class ClyshViewTests
     {
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        IClyshCommand command = ClyshDataForTest.CreateRootCommand().GetCommand("credential").GetCommand("test");
+        IClyshCommand command = ClyshDataForTest.CreateRootCommand().Children.Get("credential").Children.Get("test");
         view.PrintHelp(command);
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);

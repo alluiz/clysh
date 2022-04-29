@@ -11,7 +11,7 @@ namespace Clysh
             Itens = new Dictionary<string, T>();
         }
 
-        public T GetByName(string name)
+        public T Get(string name)
         {
             return Itens[name];
         }

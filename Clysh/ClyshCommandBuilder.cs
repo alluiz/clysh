@@ -1,29 +1,48 @@
-
 namespace Clysh;
 
 public class ClyshCommandBuilder
 {
     private ClyshCommand command;
 
-    public ClyshCommandBuilder(string id)
+    public ClyshCommandBuilder()
     {
-        command = new ClyshCommand(id);
+        command = new ClyshCommand();
     }
 
-    public ClyshCommandBuilder AddOption(ClyshOption option)
+    public ClyshCommandBuilder Option(ClyshOption option)
     {
-        command.AvailableOptions.Add(option);
+        command.AddOption(option);
         return this;
     }
 
-    public ClyshCommandBuilder AddCommand(IClyshCommand children)
+    public ClyshCommandBuilder Child(ClyshCommand children)
     {
-        command.Commands.Add(children.Id, children);
+        command.AddChild(children);
         return this;
     }
 
     public ClyshCommand Build()
     {
-        return command;
+        ClyshCommand build = command;
+        command = new ClyshCommand();
+        return build;
+    }
+
+    public ClyshCommandBuilder Description(string description)
+    {
+        this.command.Description = description;
+        return this;
+    }
+
+    public ClyshCommandBuilder Id(string id)
+    {
+        this.command.Id = id;
+        return this;
+    }
+
+    public ClyshCommandBuilder Action(Action<ClyshMap<ClyshOption>, IClyshView> action)
+    {
+        this.command.Action = action;
+        return this;
     }
 }

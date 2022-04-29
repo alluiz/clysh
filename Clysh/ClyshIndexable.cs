@@ -7,6 +7,11 @@ namespace Clysh
     {
         public string Id { get; set;  }
 
+        public ClyshIndexable()
+        {
+            
+        }
+
         public ClyshIndexable(string? id)
         {
             string pattern = @"[a-zA-Z]+\w+";

@@ -18,7 +18,7 @@ namespace Clysh
         /// <summary>
         /// The CLI Root command
         /// </summary>
-        public IClyshCommand RootCommand { get; private set; }
+        public ClyshCommand RootCommand { get; private set; }
 
         public ClyshData Data { get; set; }
 
@@ -31,7 +31,7 @@ namespace Clysh
         public const string InvalidCommandsLength = $"Invalid commands: The data must contains at once one command.";
         public const string InvalidCommandTheIdWasNotFound = $"Invalid commandId. The id: $0 was not found on commands data list.";
 
-        private readonly Dictionary<string, IClyshCommand> commandsLoaded;
+        private readonly Dictionary<string, ClyshCommand> commandsLoaded;
         private readonly List<ClyshCommandData> commandsData;
         private readonly IFileSystem fs;
 
@@ -59,7 +59,7 @@ namespace Clysh
         }
 
 
-        private IClyshCommand GetRootCommandFromFilePath(string path)
+        private ClyshCommand GetRootCommandFromFilePath(string path)
         {
             try
             {
@@ -110,7 +110,7 @@ namespace Clysh
             command.Action = action;
         }
 
-        private IClyshCommand CreateRootFromExtractedData()
+        private ClyshCommand CreateRootFromExtractedData()
         {
             try
             {
@@ -126,7 +126,12 @@ namespace Clysh
 
                 commandsData.AddRange(Data.Commands);
 
-                IClyshCommand root = ClyshCommand.Create(rootData.Id, rootData.Description);
+                ClyshCommandBuilder commandBuilder = new ClyshCommandBuilder();
+                ClyshCommand root = commandBuilder
+                    .Id(rootData.Id)
+                    .Description(rootData.Description)
+                    .Build();
+                
                 commandsLoaded.Add(root.Id, root);
 
                 LoadCommands(root, rootData);
@@ -166,17 +171,22 @@ namespace Clysh
             {
                 foreach (ClyshOptionData option in commandData.Options)
                 {
+                    ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+
+                    optionBuilder
+                        .Id(option.Id)
+                        .Description(option.Description)
+                        .Shortcut(option.Shortcut);
+                    
                     if (option.ParametersData != null)
                     {
                         ClyshParameters parameters = ClyshParameters.Create(option.ParametersData.Select(x =>
                                 new ClyshParameter(x.Id, x.MinLength, x.MaxLength, x.Required, x.Pattern))
                             .ToArray());
-                        command.AddOption(option.Id, option.Description, option.Shortcut, parameters);
+                        optionBuilder.Parameters(parameters);
                     }
-                    else
-                    {
-                        command.AddOption(option.Id, option.Description, option.Shortcut);
-                    }
+                    
+                    command.AddOption(optionBuilder.Build());
                 }
             }
 
@@ -194,12 +204,17 @@ namespace Clysh
                     VerifyParentRecursivity(command, childrenCommandData);
 
                     bool alreadyLoaded = commandsLoaded.ContainsKey(childrenCommandData.Id);
-                    
-                    IClyshCommand children = alreadyLoaded
-                        ? commandsLoaded[childrenCommandData.Id]
-                        : ClyshCommand.Create(childrenCommandData.Id, childrenCommandData.Description);
 
-                    command.AddCommand(children);
+                    ClyshCommandBuilder commandBuilder = new ClyshCommandBuilder();
+                    
+                    ClyshCommand children = alreadyLoaded
+                        ? commandsLoaded[childrenCommandData.Id]
+                        : commandBuilder
+                            .Id(childrenCommandData.Id)
+                            .Description(childrenCommandData.Description)
+                            .Build();
+
+                    command.AddChild(children);
 
                     if (!alreadyLoaded)
                     {

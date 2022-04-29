@@ -107,7 +107,7 @@ namespace Clysh
 
         private void PrintCommand(IClyshCommand command)
         {
-            bool hasCommands = command.HasCommands();
+            bool hasCommands = command.HasAnyChildren();
 
             PrintHeader(command, hasCommands);
             PrintOptions(command);
@@ -122,7 +122,7 @@ namespace Clysh
         {
             Print("[commands]:", true);
 
-            foreach (var item in command.Commands.OrderBy(obj => obj.Key)
+            foreach (var item in command.Children.Itens.OrderBy(obj => obj.Key)
                          .ToDictionary(obj => obj.Key, obj => obj.Value))
             {
                 if (item.Key != command.Id)

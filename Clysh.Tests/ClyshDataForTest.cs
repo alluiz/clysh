@@ -10,13 +10,16 @@ namespace Clysh.Tests
             const string HOMOLOG_OPTION = "homolog";
             const string PRODUCTION_OPTION = "production";
 
-            IClyshCommand login = CreateLoginCommand();
-            IClyshCommand credential = CreateCredentialCommand();
+            ClyshCommand login = CreateLoginCommand();
+            ClyshCommand credential = CreateCredentialCommand();
 
-            return ClyshCommand.Create(
-                "auth2",
-                "Execute Auth 2 API CLI Application",
-                (options, cliFront) =>
+            ClyshCommandBuilder builder = new ClyshCommandBuilder();
+            ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+
+           return builder
+                .Id("auth2")
+                .Description("Execute Auth 2 API CLI Application")
+                .Action((options, cliFront) =>
                 {
                     if (options.Has(DEVELOPMENT_OPTION))
                         cliFront.Print("Selected environment: development");
@@ -27,26 +30,39 @@ namespace Clysh.Tests
                     if (options.Has(PRODUCTION_OPTION))
                         cliFront.Print("Selected environment: production");
                 })
-                .AddOption(DEVELOPMENT_OPTION, "Development environment option. Default value.", "d")
-                .AddOption(HOMOLOG_OPTION, "Homolog environment option", "s")
-                .AddOption(PRODUCTION_OPTION, "Production environment option", "p")
-                .AddCommand(login)
-                .AddCommand(credential);
+                .Option(optionBuilder.Id(DEVELOPMENT_OPTION)
+                    .Description("Development environment option. Default value.")
+                    .Shortcut("d")
+                    .Build())
+                .Option(optionBuilder.Id(HOMOLOG_OPTION)
+                    .Description("Homolog environment option.")
+                    .Shortcut("s")
+                    .Build())
+                .Option(optionBuilder.Id(PRODUCTION_OPTION)
+                    .Description("Production environment option.")
+                    .Shortcut("p")
+                    .Build())
+                .Child(login)
+                .Child(credential)
+                .Build();
         }
 
-        private static IClyshCommand CreateCredentialCommand()
+        private static ClyshCommand CreateCredentialCommand()
         {
             const string APP_NAME_OPTION = "app-name";
             const string SCOPE_OPTION = "scope";
-
-            return ClyshCommand.Create(
-                "credential",
-                "Manager a credential",
-                (options, cliFront) =>
+            
+            ClyshCommandBuilder builder = new ClyshCommandBuilder();
+            ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+            
+            return builder
+                .Id("credential")
+                .Description("Manager a credential")
+                .Action((options, cliFront) =>
                 {
                     if (options.Has(APP_NAME_OPTION))
                     {
-                        ClyshOption appname = options.GetByName(APP_NAME_OPTION);
+                        ClyshOption appname = options.Get(APP_NAME_OPTION);
 
                         cliFront.Print("appname: " + appname.Parameters.Get(APP_NAME_OPTION).Data);
                     }
@@ -58,42 +74,59 @@ namespace Clysh.Tests
 
                     if (options.Has(SCOPE_OPTION))
                     {
-                        cliFront.Print("scope: " + options.GetByName(SCOPE_OPTION).Parameters.Itens[0].Data);
-                        cliFront.Print("tags: " + options.GetByName(SCOPE_OPTION).Parameters.Itens[1].Data);
+                        cliFront.Print("scope: " + options.Get(SCOPE_OPTION).Parameters.Itens[0].Data);
+                        cliFront.Print("tags: " + options.Get(SCOPE_OPTION).Parameters.Itens[1].Data);
                     }
                 })
-                .AddOption(APP_NAME_OPTION, "Name of the app", ClyshParameters.Create(
-                    new ClyshParameter("app-name", 1, 100)))
-                .AddOption(SCOPE_OPTION, "Scopes of the app by comma", ClyshParameters.Create(
+                .Option(optionBuilder.Id(APP_NAME_OPTION)
+                    .Description("Name of the app")
+                    .Parameters(ClyshParameters.Create(
+                        new ClyshParameter("app-name", 1, 100)))
+                    .Build())
+                .Option(optionBuilder.Id(SCOPE_OPTION)
+                    .Description("Scopes of the app by comma")
+                    .Parameters(ClyshParameters.Create(
                         new("scope", 1, 1000),
                         new("tags", 1, 1000, false)))
-                .AddCommand(CreateTestCredentialCommand());
+                    .Build())
+                .Child(CreateTestCredentialCommand())
+                .Build();
         }
 
-        private static IClyshCommand CreateTestCredentialCommand()
+        private static ClyshCommand CreateTestCredentialCommand()
         {
             const string TIME_OPTION = "time-to-expire";
-
-            return ClyshCommand.Create(
-                "test",
-                "Test credential command",
-                (options, cliFront) => 
+            
+            ClyshCommandBuilder builder = new ClyshCommandBuilder();
+            ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+            
+            return builder
+                .Id("test")
+                .Description("Test credential command")
+                .Action((options, cliFront) =>
                 {
-
-                }
-            )
-            .AddOption(TIME_OPTION, "time to expire credential in hours.", "t", ClyshParameters.Create(new ClyshParameter("hours", 1, 2)));
+                    
+                })
+                .Option(optionBuilder.Id(TIME_OPTION)
+                    .Description("time to expire credential in hours.")
+                    .Shortcut("t")
+                    .Parameters(ClyshParameters.Create(new ClyshParameter("hours", 1, 2)))
+                    .Build())
+                .Build();
         }
 
-        private static IClyshCommand CreateLoginCommand()
+        private static ClyshCommand CreateLoginCommand()
         {
             const string PROMPT_OPTION = "prompt";
             const string CREDENTIALS_OPTION = "credentials";
-
-            return ClyshCommand.Create(
-                "login",
-                "User login command for system",
-                (options, cliFront) =>
+            
+            ClyshCommandBuilder builder = new ClyshCommandBuilder();
+            ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+            
+            return builder
+                .Id("login")
+                .Description("User login command for system")
+                .Action((options, cliFront) =>
                 {
                     if (options.Has(PROMPT_OPTION))
                     {
@@ -102,7 +135,7 @@ namespace Clysh.Tests
                     }
                     else if (options.Has(CREDENTIALS_OPTION))
                     {
-                        ClyshOption credential = options.GetByName(CREDENTIALS_OPTION);
+                        ClyshOption credential = options.Get(CREDENTIALS_OPTION);
                         cliFront.Print("Your credential path is: " + credential.Parameters.Itens[0].Data);
                     }
 
@@ -111,8 +144,16 @@ namespace Clysh.Tests
                     else
                         cliFront.Print("Aborted");
                 })
-                .AddOption(PROMPT_OPTION, "Prompt your credentials", "p")
-                .AddOption(CREDENTIALS_OPTION, "Your username credentials path", "c", ClyshParameters.Create(new ClyshParameter("path", 1, 10)));
+                .Option(optionBuilder.Id(PROMPT_OPTION)
+                    .Description("Prompt your credentials")
+                    .Shortcut("p")
+                    .Build())
+                .Option(optionBuilder.Id(CREDENTIALS_OPTION)
+                    .Description("Your username credentials path")
+                    .Shortcut("c")
+                    .Parameters(ClyshParameters.Create(new ClyshParameter("path", 1, 10)))
+                    .Build())
+                .Build();
         }
     }
 }

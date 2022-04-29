@@ -56,7 +56,7 @@ namespace Clysh
                         lastCommand.AddSelectedOption(lastOption);
                         isOptionHelp = lastOption.Id.Equals("help");
                     }
-                    else if (lastCommand.HasCommand(arg))
+                    else if (lastCommand.HasChild(arg))
                     {
                         CheckLastOptionStatus(lastOption);
                         lastOption = null;
@@ -158,7 +158,7 @@ namespace Clysh
         private static IClyshCommand GetCommandFromArg(IClyshCommand lastCommand, string arg)
         {
             int order = lastCommand.Order + 1;
-            lastCommand = lastCommand.GetCommand(arg);
+            lastCommand = lastCommand.Children.Get(arg);
             lastCommand.Order = order;
             return lastCommand;
         }
