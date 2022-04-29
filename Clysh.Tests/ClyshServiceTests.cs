@@ -682,18 +682,16 @@ public class ClyshServiceTests
     [Test]
     public void ExecuteRootWithHelpOption()
     {
-        const string helpOption = "help";
+        const string HELP_OPTION = "help";
 
-        const string helpOptionWithDashes = $"--{helpOption}";
+        const string HELP_OPTION_WITH_DASHES = $"--{HELP_OPTION}";
 
-        string[] args = new string[] { helpOptionWithDashes };
+        string[] args = new string[] { HELP_OPTION_WITH_DASHES };
 
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
-        Mock<IClyshCommand> customCommandMock = new();
-
-        rootCommandMock.Setup(x => x.HasOption(helpOption)).Returns(true);
-        rootCommandMock.Setup(x => x.GetOption(helpOption)).Returns(new ClyshOption(helpOption, "Show help on screen", "h"));
+        rootCommandMock.Setup(x => x.HasOption(HELP_OPTION)).Returns(true);
+        rootCommandMock.Setup(x => x.GetOption(HELP_OPTION)).Returns(new ClyshOption(HELP_OPTION, "Show help on screen", "h"));
 
         cli.Execute(args);
 

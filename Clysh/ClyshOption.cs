@@ -38,7 +38,7 @@ namespace Clysh
                     throw new ArgumentException($"Invalid shortcut. The shortcut must be null or follow the pattern {pattern} and between {MinShortcut} and {MaxShortcut} chars.",
                     nameof(shortcut));
 
-                if (shortcut is "h")
+                if (id is not "help" && shortcut is "h")
                     throw new ArgumentException("Shortcut 'h' is reserved to help shortcut.", nameof(shortcut));
             }
 

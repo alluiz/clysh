@@ -28,7 +28,7 @@ namespace Clysh.Tests
                         cliFront.Print("Selected environment: production");
                 })
                 .AddOption(DEVELOPMENT_OPTION, "Development environment option. Default value.", "d")
-                .AddOption(HOMOLOG_OPTION, "Homolog environment option", "h")
+                .AddOption(HOMOLOG_OPTION, "Homolog environment option", "s")
                 .AddOption(PRODUCTION_OPTION, "Production environment option", "p")
                 .AddCommand(login)
                 .AddCommand(credential);
