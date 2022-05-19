@@ -2,6 +2,7 @@ using System;
 using Clysh.Data;
 using Moq;
 using NUnit.Framework;
+using ProjectHelper;
 
 namespace Clysh.Tests;
 
@@ -31,7 +32,7 @@ public class ClyshServiceTests
     {
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
-        Action<ClyshMap<ClyshOption>, IClyshView> newAction = (x, y) => { };
+        Action<Map<ClyshOption>, IClyshView> newAction = (x, y) => { };
         string name = "new";
         string description = "new command for test";
 
@@ -106,10 +107,10 @@ public class ClyshServiceTests
 
         string[] args = new string[] { someOptionWithDashes };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        Map<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(ClyshMap<ClyshOption> options, IClyshView cliFront)
+        void action(Map<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
@@ -149,10 +150,10 @@ public class ClyshServiceTests
 
         string[] args = new string[] { someOptionWithDashes, "testarg:mytest" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        Map<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(ClyshMap<ClyshOption> options, IClyshView cliFront)
+        void action(Map<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
@@ -192,10 +193,10 @@ public class ClyshServiceTests
 
         string[] args = new string[] { someOptionWithDashes, "mytest" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        Map<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(ClyshMap<ClyshOption> options, IClyshView cliFront)
+        void action(Map<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
@@ -235,10 +236,10 @@ public class ClyshServiceTests
 
         string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        Map<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(ClyshMap<ClyshOption> options, IClyshView cliFront)
+        void action(Map<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
@@ -282,10 +283,10 @@ public class ClyshServiceTests
 
         string[] args = new string[] { someOptionWithDashes, "testarg:mytest" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        Map<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(ClyshMap<ClyshOption> options, IClyshView cliFront)
+        void action(Map<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
@@ -325,10 +326,10 @@ public class ClyshServiceTests
 
         string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        Map<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(ClyshMap<ClyshOption> options, IClyshView cliFront)
+        void action(Map<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
@@ -372,10 +373,10 @@ public class ClyshServiceTests
 
         string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testreq:myreq" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        Map<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(ClyshMap<ClyshOption> options, IClyshView cliFront)
+        void action(Map<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
@@ -417,10 +418,10 @@ public class ClyshServiceTests
 
         string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        Map<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(ClyshMap<ClyshOption> options, IClyshView cliFront)
+        void action(Map<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
@@ -471,10 +472,10 @@ public class ClyshServiceTests
 
         string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", someOptionWithDashes2, "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        Map<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(ClyshMap<ClyshOption> options, IClyshView cliFront)
+        void action(Map<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
@@ -531,10 +532,10 @@ public class ClyshServiceTests
 
         string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "test", someOptionWithDashes2, "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        Map<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        ClyshMap<ClyshOption>? expectedOptionsCustom = null;
+        Map<ClyshOption>? expectedOptionsCustom = null;
         IClyshView? expectedCliFrontCustom = null;
 
         ClyshCommandBuilder builder = new ClyshCommandBuilder();
@@ -618,10 +619,10 @@ public class ClyshServiceTests
 
         string[] args = new string[] { someAbbrevOptionWithDash };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        Map<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(ClyshMap<ClyshOption> options, IClyshView cliFront)
+        void action(Map<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
@@ -811,10 +812,10 @@ public class ClyshServiceTests
 
         string[] args = new string[] { someOptionWithDashes, "mytest", "testarg:mytest" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        Map<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(ClyshMap<ClyshOption> options, IClyshView cliFront)
+        void action(Map<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;

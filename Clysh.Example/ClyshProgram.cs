@@ -12,6 +12,8 @@ namespace Clysh.Example
                     
                 try
                 {
+                    ClyshParameterBuilder builder = new ClyshParameterBuilder();
+                    
                     ClyshSetup setup = new("clidata.yml");
 
                     setup.MakeAction("mycli",

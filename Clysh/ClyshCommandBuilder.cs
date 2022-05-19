@@ -1,48 +1,36 @@
+using ProjectHelper;
+
 namespace Clysh;
 
-public class ClyshCommandBuilder
+public class ClyshCommandBuilder: Builder<ClyshCommand>
 {
-    private ClyshCommand command;
-
-    public ClyshCommandBuilder()
+    public ClyshCommandBuilder Id(string id)
     {
-        command = new ClyshCommand();
+        this.Result.Id = id;
+        return this;
     }
-
+    
+    public ClyshCommandBuilder Description(string description)
+    {
+        this.Result.Description = description;
+        return this;
+    }
+    
     public ClyshCommandBuilder Option(ClyshOption option)
     {
-        command.AddOption(option);
+        Result.AddOption(option);
         return this;
     }
 
     public ClyshCommandBuilder Child(ClyshCommand children)
     {
-        command.AddChild(children);
+        Result.AddChild(children);
         return this;
     }
 
-    public ClyshCommand Build()
+    public ClyshCommandBuilder Action(Action<Map<ClyshOption>, IClyshView> action)
     {
-        ClyshCommand build = command;
-        command = new ClyshCommand();
-        return build;
-    }
-
-    public ClyshCommandBuilder Description(string description)
-    {
-        this.command.Description = description;
-        return this;
-    }
-
-    public ClyshCommandBuilder Id(string id)
-    {
-        this.command.Id = id;
-        return this;
-    }
-
-    public ClyshCommandBuilder Action(Action<ClyshMap<ClyshOption>, IClyshView> action)
-    {
-        this.command.Action = action;
+        this.Result.Action = action;
         return this;
     }
 }

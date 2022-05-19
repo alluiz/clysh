@@ -4,12 +4,11 @@ using System.Linq;
 
 namespace Clysh
 {
-    public class ClyshParameters : IEnumerable<ClyshParameter>
+    public class ClyshParameters
     {
-        private int lastIndexRetrieved = 0;
-        private int lastIndexAdd = 0;
+        private int lastIndexRetrieved;
 
-        public ClyshParameter[] Itens { get; private set; }
+        public ClyshParameter[] Itens { get; }
 
         private ClyshParameters(ClyshParameter[] itens)
         {
@@ -19,15 +18,6 @@ namespace Clysh
         public static ClyshParameters Create(params ClyshParameter[] itens)
         {
             return new ClyshParameters(itens);
-        }
-
-        public void Add(string name, int minLength, int maxLength, bool required = true)
-        {
-            ClyshParameter parameter = new(name, minLength, maxLength, required);
-
-            Itens[lastIndexAdd] = parameter;
-
-            lastIndexAdd++;
         }
 
         public bool WaitingForRequired()
@@ -85,19 +75,6 @@ namespace Clysh
                 paramsText = $"[{paramsText}]: {Itens.Length}";
 
             return paramsText;
-        }
-
-        public IEnumerator<ClyshParameter> GetEnumerator()
-        {
-            foreach (ClyshParameter parameter in Itens)
-            {
-                yield return parameter;
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
     }
 }

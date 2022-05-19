@@ -1,15 +1,16 @@
+using ProjectHelper;
+
 namespace Clysh;
 
-public interface IClyshCommand
+public interface IClyshCommand: IIndexable<string>
 {
-    Action<ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
-    string Id { get; }
+    Action<Map<ClyshOption>, IClyshView>? Action { get; set; }
     string? Description { get; }
-    ClyshMap<ClyshOption> AvailableOptions { get; }
+    Map<ClyshOption> AvailableOptions { get; }
     int Order { get; set; }
-    ClyshMap<ClyshOption> SelectedOptions { get; }
+    Map<ClyshOption> SelectedOptions { get; }
     IClyshCommand? Parent { get; set; }
-    ClyshMap<ClyshCommand> Children { get; }
+    Map<ClyshCommand> Children { get; }
     void AddSelectedOption(ClyshOption optionSelected);
     ClyshOption GetOption(string arg);
     bool HasOption(string key);

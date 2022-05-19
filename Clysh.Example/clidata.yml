@@ -7,4 +7,9 @@ Commands:
       - Description: Test option
         Id: test
         Shortcut: T
+        Parameters:
+          - Id: ab
+            Required: true
+            MinLength: 1
+            MaxLength: 15
     Root: true

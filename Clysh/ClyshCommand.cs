@@ -1,25 +1,26 @@
 using System;
 using System.Collections.Generic;
+using ProjectHelper;
 
 namespace Clysh
 {
-    public class ClyshCommand : ClyshIndexable, IClyshCommand
+    public class ClyshCommand : SimpleIndexable, IClyshCommand
     {
-        public Action<ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
+        public Action<Map<ClyshOption>, IClyshView>? Action { get; set; }
         public string? Description { get; set; }
-        public ClyshMap<ClyshOption> AvailableOptions { get; }
+        public Map<ClyshOption> AvailableOptions { get; }
         public int Order { get; set; }
-        public ClyshMap<ClyshOption> SelectedOptions { get; }
+        public Map<ClyshOption> SelectedOptions { get; }
         public IClyshCommand? Parent { get; set; }
-        public ClyshMap<ClyshCommand> Children { get; }
+        public Map<ClyshCommand> Children { get; }
 
-        private Dictionary<string, string> shortcutToOptionId;
+        private readonly Dictionary<string, string> shortcutToOptionId;
         
         public ClyshCommand()
         {
-            AvailableOptions = new ClyshMap<ClyshOption>();
-            SelectedOptions = new ClyshMap<ClyshOption>();
-            Children = new ClyshMap<ClyshCommand>();
+            AvailableOptions = new Map<ClyshOption>();
+            SelectedOptions = new Map<ClyshOption>();
+            Children = new Map<ClyshCommand>();
             shortcutToOptionId = new Dictionary<string, string>();
             AddHelpOption();
         }

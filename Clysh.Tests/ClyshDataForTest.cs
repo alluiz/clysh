@@ -144,11 +144,13 @@ namespace Clysh.Tests
                     else
                         cliFront.Print("Aborted");
                 })
-                .Option(optionBuilder.Id(PROMPT_OPTION)
+                .Option(optionBuilder
+                    .Id(PROMPT_OPTION)
                     .Description("Prompt your credentials")
                     .Shortcut("p")
                     .Build())
-                .Option(optionBuilder.Id(CREDENTIALS_OPTION)
+                .Option(optionBuilder
+                    .Id(CREDENTIALS_OPTION)
                     .Description("Your username credentials path")
                     .Shortcut("c")
                     .Parameters(ClyshParameters.Create(new ClyshParameter("path", 1, 10)))

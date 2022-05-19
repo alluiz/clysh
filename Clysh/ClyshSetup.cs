@@ -4,6 +4,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using Clysh.Data;
 using Newtonsoft.Json;
+using ProjectHelper;
 using YamlDotNet.Serialization;
 
 namespace Clysh
@@ -103,7 +104,7 @@ namespace Clysh
                 throw new ArgumentException(InvalidExtension, nameof(path));
         }
 
-        public void MakeAction(string commandId, Action<ClyshMap<ClyshOption>, IClyshView> action)
+        public void MakeAction(string commandId, Action<Map<ClyshOption>, IClyshView> action)
         {
             IClyshCommand command = commandsLoaded[commandId];
             
