@@ -3,7 +3,7 @@ using ProjectHelper;
 
 namespace Clysh;
 
-public class ClyshParameterBuilder: Builder<ClyshParameter>
+public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
 {
     public ClyshParameterBuilder Id(string id)
     {

@@ -1,5 +1,4 @@
 using System;
-using Clysh.Data;
 using Moq;
 using NUnit.Framework;
 using ProjectHelper;
@@ -20,7 +19,7 @@ public class ClyshServiceTests
     }
 
     [Test]
-    public void SuccessfulCreateCLIAndRootCommand()
+    public void SuccessfulCreateCliAndRootCommand()
     {
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
         Assert.AreEqual(rootCommandMock.Object, cli.RootCommand);
@@ -30,19 +29,20 @@ public class ClyshServiceTests
     [Test]
     public void SuccessfulCreateCommand()
     {
-        IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
+        void NewAction(ClyshMap<ClyshOption> map, IClyshView clyshView)
+        {
+        }
 
-        Action<Map<ClyshOption>, IClyshView> newAction = (x, y) => { };
-        string name = "new";
-        string description = "new command for test";
+        var name = "new";
+        var description = "new command for test";
 
-        ClyshCommandBuilder builder = new ClyshCommandBuilder();
+        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand command = builder.Id(name).Description(description).Action(newAction).Build();
+        IClyshCommand command = builder.Id(name).Description(description).Action(NewAction).Build();
         
         Assert.AreEqual(name, command.Id);
         Assert.AreEqual(description, command.Description);
-        Assert.AreEqual(newAction, command.Action);
+        Assert.AreEqual((Action<ClyshMap<ClyshOption>, IClyshView>)NewAction, command.Action);
     }
 
 
@@ -50,7 +50,7 @@ public class ClyshServiceTests
     [Test]
     public void SuccessfulExecuteRootWithNoArgs()
     {
-        string[] args = Array.Empty<string>();
+        var args = Array.Empty<string>();
 
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
@@ -62,7 +62,7 @@ public class ClyshServiceTests
     [Test]
     public void SuccessfulExecuteRootWithOneEmptyArg()
     {
-        string[] args = new string[] { "" };
+        var args = new[] { "" };
 
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
@@ -74,7 +74,7 @@ public class ClyshServiceTests
     [Test]
     public void SuccessfulExecuteRootWithOneSpaceArg()
     {
-        string[] args = new string[] { "  " };
+        var args = new[] { "  " };
 
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
@@ -86,7 +86,7 @@ public class ClyshServiceTests
     [Test]
     public void SuccessfulExecuteRootWithMultiSpacesArg()
     {
-        string[] args = new string[] { "  ", "   ", "         ", "  " };
+        var args = new[] { "  ", "   ", "         ", "  " };
 
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
@@ -100,29 +100,29 @@ public class ClyshServiceTests
     public void SuccessfulExecuteRootWithSomeOption()
     {
         const string someOption = "some-option";
-        const string someAbbrevOption = "s";
+        const string? someAbbrevOption = "s";
         const string someOptionDescription = "awesome option";
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        string[] args = new string[] { someOptionWithDashes };
+        var args = new[] { someOptionWithDashes };
 
-        Map<ClyshOption>? expectedOptions = null;
+        ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(Map<ClyshOption> options, IClyshView cliFront)
+        void Action(ClyshMap<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
         }
         
-        ClyshCommandBuilder builder = new ClyshCommandBuilder();
+        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(action).Build();
+        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
 
         IClyshService cli = new ClyshService(rootCommand, frontMock.Object);
 
-        ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+        var optionBuilder = new ClyshOptionBuilder();
         
         cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Shortcut(someAbbrevOption).Build());
 
@@ -148,26 +148,26 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        string[] args = new string[] { someOptionWithDashes, "testarg:mytest" };
+        var args = new[] { someOptionWithDashes, "testarg:mytest" };
 
-        Map<ClyshOption>? expectedOptions = null;
+        ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(Map<ClyshOption> options, IClyshView cliFront)
+        void Action(ClyshMap<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
         }
 
-        ClyshCommandBuilder builder = new ClyshCommandBuilder();
+        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(action).Build();
+        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
 
         IClyshService cli = new ClyshService(rootCommand, frontMock.Object);
 
-        ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+        var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter("testarg", 6, 10))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10))).Build());
 
         cli.Execute(args);
 
@@ -178,7 +178,7 @@ public class ClyshServiceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -191,26 +191,26 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        string[] args = new string[] { someOptionWithDashes, "mytest" };
+        var args = new[] { someOptionWithDashes, "mytest" };
 
-        Map<ClyshOption>? expectedOptions = null;
+        ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(Map<ClyshOption> options, IClyshView cliFront)
+        void Action(ClyshMap<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
         }
 
-        ClyshCommandBuilder builder = new ClyshCommandBuilder();
+        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(action).Build();
+        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
 
         IClyshService cli = new ClyshService(rootCommand, frontMock.Object);
 
-        ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+        var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter("testarg", 6, 10))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10))).Build());
 
         cli.Execute(args);
 
@@ -221,7 +221,7 @@ public class ClyshServiceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -234,28 +234,28 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3" };
+        var args = new[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3" };
 
-        Map<ClyshOption>? expectedOptions = null;
+        ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(Map<ClyshOption> options, IClyshView cliFront)
+        void Action(ClyshMap<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
         }
 
-        ClyshCommandBuilder builder = new ClyshCommandBuilder();
+        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(action).Build();
+        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
         
         IClyshService cli = new ClyshService(rootCommand, frontMock.Object);
 
-        ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+        var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new("testarg", 6, 10)
-            , new("testarg2", 6, 10)
-            , new("testarg3", 6, 10))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new(6, 10)
+            , new(6, 10)
+            , new(6, 10))).Build());
 
         cli.Execute(args);
 
@@ -266,9 +266,9 @@ public class ClyshServiceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters.Get("testarg2").Data);
-        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Parameters.Get("testarg3").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
+        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters?.Get("testarg2").Data);
+        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Parameters?.Get("testarg3").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -281,26 +281,26 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        string[] args = new string[] { someOptionWithDashes, "testarg:mytest" };
+        var args = new[] { someOptionWithDashes, "testarg:mytest" };
 
-        Map<ClyshOption>? expectedOptions = null;
+        ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(Map<ClyshOption> options, IClyshView cliFront)
+        void Action(ClyshMap<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
         }
 
-        ClyshCommandBuilder builder = new ClyshCommandBuilder();
+        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(action).Build();
+        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
 
         IClyshService cli = new ClyshService(rootCommand, frontMock.Object);
         
-        ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+        var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter("testarg", 6, 10, false))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10, false))).Build());
 
         cli.Execute(args);
 
@@ -311,7 +311,7 @@ public class ClyshServiceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -324,28 +324,28 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3" };
+        var args = new[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3" };
 
-        Map<ClyshOption>? expectedOptions = null;
+        ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(Map<ClyshOption> options, IClyshView cliFront)
+        void Action(ClyshMap<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
         }
 
-        ClyshCommandBuilder builder = new ClyshCommandBuilder();
+        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(action).Build();
+        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
 
         IClyshService cli = new ClyshService(rootCommand, frontMock.Object);
         
-        ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+        var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter("testarg", 6, 10, false)
-            , new("testarg2", 6, 10, false)
-            , new("testarg3", 6, 10, false))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10, false)
+            , new(6, 10, false)
+            , new(6, 10, false))).Build());
 
         cli.Execute(args);
 
@@ -356,9 +356,9 @@ public class ClyshServiceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters.Get("testarg2").Data);
-        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Parameters.Get("testarg3").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
+        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters?.Get("testarg2").Data);
+        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Parameters?.Get("testarg3").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -371,27 +371,27 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testreq:myreq" };
+        var args = new[] { someOptionWithDashes, "testarg:mytest", "testreq:myreq" };
 
-        Map<ClyshOption>? expectedOptions = null;
+        ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(Map<ClyshOption> options, IClyshView cliFront)
+        void Action(ClyshMap<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
         }
 
-        ClyshCommandBuilder builder = new ClyshCommandBuilder();
+        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(action).Build();
+        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
 
         IClyshService cli = new ClyshService(rootCommand, frontMock.Object);
         
-        ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+        var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter("testarg", 6, 10, false),
-            new("testreq", 5, 10))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10, false),
+            new(5, 10))).Build());
 
         cli.Execute(args);
 
@@ -402,8 +402,8 @@ public class ClyshServiceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
-        Assert.AreEqual("myreq", expectedOptions?.Get(someOption).Parameters.Get("testreq").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
+        Assert.AreEqual("myreq", expectedOptions?.Get(someOption).Parameters?.Get("testreq").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -416,30 +416,30 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5" };
+        var args = new[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5" };
 
-        Map<ClyshOption>? expectedOptions = null;
+        ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(Map<ClyshOption> options, IClyshView cliFront)
+        void Action(ClyshMap<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
         }
 
-        ClyshCommandBuilder builder = new ClyshCommandBuilder();
+        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(action).Build();
+        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
 
         IClyshService cli = new ClyshService(rootCommand, frontMock.Object);
         
-        ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+        var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter("testarg", 6, 10, false)
-            , new("testarg2", 6, 10)
-            , new("testarg3", 6, 10, false)
-            , new("testarg4", 6, 10, false)
-            , new("testarg5", 6, 10))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10, false)
+            , new(6, 10)
+            , new(6, 10, false)
+            , new(6, 10, false)
+            , new(6, 10))).Build());
 
         cli.Execute(args);
 
@@ -450,11 +450,11 @@ public class ClyshServiceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters.Get("testarg2").Data);
-        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Parameters.Get("testarg3").Data);
-        Assert.AreEqual("mytest4", expectedOptions?.Get(someOption).Parameters.Get("testarg4").Data);
-        Assert.AreEqual("mytest5", expectedOptions?.Get(someOption).Parameters.Get("testarg5").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
+        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters?.Get("testarg2").Data);
+        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Parameters?.Get("testarg3").Data);
+        Assert.AreEqual("mytest4", expectedOptions?.Get(someOption).Parameters?.Get("testarg4").Data);
+        Assert.AreEqual("mytest5", expectedOptions?.Get(someOption).Parameters?.Get("testarg5").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -470,29 +470,29 @@ public class ClyshServiceTests
         const string someOptionDescription2 = "awesome option2";
         const string someOptionWithDashes2 = $"--{someOption2}";
 
-        string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", someOptionWithDashes2, "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5" };
+        var args = new[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", someOptionWithDashes2, "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5" };
 
-        Map<ClyshOption>? expectedOptions = null;
+        ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(Map<ClyshOption> options, IClyshView cliFront)
+        void Action(ClyshMap<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
         }
 
-        ClyshCommandBuilder builder = new ClyshCommandBuilder();
+        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(action).Build();
+        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
 
         IClyshService cli = new ClyshService(rootCommand, frontMock.Object);
         
-        ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+        var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter("testarg", 6, 10, false), new("testarg2", 6, 10))).Build());
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption2).Description(someOptionDescription2).Parameters(ClyshParameters.Create(new ClyshParameter("testarg3", 6, 10, false),
-            new("testarg4", 6, 10, false),
-            new("testarg5", 6, 10))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10, false), new(6, 10))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption2).Description(someOptionDescription2).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10, false),
+            new(6, 10, false),
+            new(6, 10))).Build());
 
         cli.Execute(args);
 
@@ -506,14 +506,14 @@ public class ClyshServiceTests
 
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters.Get("testarg2").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
+        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters?.Get("testarg2").Data);
 
         Assert.AreEqual(someOption2, expectedOptions?.Get(someOption2).Id);
         Assert.AreEqual(someOptionDescription2, expectedOptions?.Get(someOption2).Description);
-        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption2).Parameters.Get("testarg3").Data);
-        Assert.AreEqual("mytest4", expectedOptions?.Get(someOption2).Parameters.Get("testarg4").Data);
-        Assert.AreEqual("mytest5", expectedOptions?.Get(someOption2).Parameters.Get("testarg5").Data);
+        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption2).Parameters?.Get("testarg3").Data);
+        Assert.AreEqual("mytest4", expectedOptions?.Get(someOption2).Parameters?.Get("testarg4").Data);
+        Assert.AreEqual("mytest5", expectedOptions?.Get(someOption2).Parameters?.Get("testarg5").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -530,18 +530,18 @@ public class ClyshServiceTests
         const string someOptionDescription2 = "awesome option2";
         const string someOptionWithDashes2 = $"--{someOption2}";
 
-        string[] args = new string[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "test", someOptionWithDashes2, "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5" };
+        var args = new[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "test", someOptionWithDashes2, "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5" };
 
-        Map<ClyshOption>? expectedOptions = null;
+        ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        Map<ClyshOption>? expectedOptionsCustom = null;
+        ClyshMap<ClyshOption>? expectedOptionsCustom = null;
         IClyshView? expectedCliFrontCustom = null;
 
-        ClyshCommandBuilder builder = new ClyshCommandBuilder();
-        ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+        var builder = new ClyshCommandBuilder();
+        var optionBuilder = new ClyshOptionBuilder();
 
-        ClyshCommand customCommand = builder
+        var customCommand = builder
             .Id("test")
             .Description("test command description")
             .Action((o, c) =>
@@ -553,13 +553,13 @@ public class ClyshServiceTests
             .Option(optionBuilder
                 .Id(someOption2)
                 .Description(someOptionDescription2)
-                .Parameters(ClyshParameters.Create(new("testarg3", 6, 10, false),
-                    new("testarg4", 6, 10, false),
-                    new("testarg5", 6, 10)))
+                .Parameters(ClyshParameters.Create(new(6, 10, false),
+                    new(6, 10, false),
+                    new(6, 10)))
                 .Build())
             .Build();
         
-        ClyshCommand rootCommand = builder
+        var rootCommand = builder
             .Id("root")
             .Description("root command")
             .Action((o, c) =>
@@ -570,8 +570,8 @@ public class ClyshServiceTests
             .Option(optionBuilder
                 .Id(someOption)
                 .Description(someOptionDescription)
-                .Parameters(ClyshParameters.Create(new ClyshParameter("testarg", 6, 10, false),
-                    new ClyshParameter("testarg2", 6, 10)))
+                .Parameters(ClyshParameters.Create(new ClyshParameter(6, 10, false),
+                    new ClyshParameter(6, 10)))
                 .Build())
             .Child(customCommand)
             .Build();
@@ -591,14 +591,14 @@ public class ClyshServiceTests
 
         Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters.Get("testarg2").Data);
+        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
+        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters?.Get("testarg2").Data);
 
         Assert.AreEqual(someOption2, expectedOptionsCustom?.Get(someOption2).Id);
         Assert.AreEqual(someOptionDescription2, expectedOptionsCustom?.Get(someOption2).Description);
-        Assert.AreEqual("mytest3", expectedOptionsCustom?.Get(someOption2).Parameters.Get("testarg3").Data);
-        Assert.AreEqual("mytest4", expectedOptionsCustom?.Get(someOption2).Parameters.Get("testarg4").Data);
-        Assert.AreEqual("mytest5", expectedOptionsCustom?.Get(someOption2).Parameters.Get("testarg5").Data);
+        Assert.AreEqual("mytest3", expectedOptionsCustom?.Get(someOption2).Parameters?.Get("testarg3").Data);
+        Assert.AreEqual("mytest4", expectedOptionsCustom?.Get(someOption2).Parameters?.Get("testarg4").Data);
+        Assert.AreEqual("mytest5", expectedOptionsCustom?.Get(someOption2).Parameters?.Get("testarg5").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
         Assert.AreEqual(cli.View, expectedCliFrontCustom);
@@ -612,29 +612,29 @@ public class ClyshServiceTests
     {
 
         const string someOption = "some-option";
-        const string someAbbrevOption = "s";
+        const string? someAbbrevOption = "s";
         const string someOptionDescription = "awesome option";
 
         const string someAbbrevOptionWithDash = $"-{someAbbrevOption}";
 
-        string[] args = new string[] { someAbbrevOptionWithDash };
+        var args = new[] { someAbbrevOptionWithDash };
 
-        Map<ClyshOption>? expectedOptions = null;
+        ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void action(Map<ClyshOption> options, IClyshView cliFront)
+        void Action(ClyshMap<ClyshOption> options, IClyshView cliFront)
         {
             expectedOptions = options;
             expectedCliFront = cliFront;
         }
 
-        ClyshCommandBuilder builder = new ClyshCommandBuilder();
+        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(action).Build();
+        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
 
         IClyshService cli = new ClyshService(rootCommand, frontMock.Object);
 
-        ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+        var optionBuilder = new ClyshOptionBuilder();
         
         cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Shortcut(someAbbrevOption).Build());
 
@@ -659,7 +659,7 @@ public class ClyshServiceTests
 
         const string invalidOptionWithDashes = $"--{invalidOption}";
 
-        string[] args = new string[] { invalidOptionWithDashes };
+        var args = new[] { invalidOptionWithDashes };
 
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
@@ -667,7 +667,7 @@ public class ClyshServiceTests
 
         cli.Execute(args);
 
-        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(x => x.Message == $"The option '{invalidOptionWithDashes}' is invalid.")), Times.Once);
+        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(y => y.Message == $"The option '{invalidOptionWithDashes}' is invalid.")), Times.Once);
     }
 
     [Test]
@@ -677,7 +677,7 @@ public class ClyshServiceTests
 
         const string invalidOptionWithDashes = $"-{invalidOption}";
 
-        string[] args = new string[] { invalidOptionWithDashes };
+        var args = new[] { invalidOptionWithDashes };
 
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
@@ -685,7 +685,7 @@ public class ClyshServiceTests
 
         cli.Execute(args);
 
-        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(x => x.Message == $"The option '{invalidOptionWithDashes}' is invalid.")), Times.Once);
+        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(y => y.Message == $"The option '{invalidOptionWithDashes}' is invalid.")), Times.Once);
     }
 
     [Test]
@@ -695,41 +695,41 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        string[] args = new string[] { someOptionWithDashes };
+        var args = new[] { someOptionWithDashes };
 
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
-        ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+        var optionBuilder = new ClyshOptionBuilder();
         
         rootCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
         rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(optionBuilder
             .Id("some-option")
             .Description("some option")
-            .Parameters(ClyshParameters.Create(new ClyshParameter("arg1", 6, 10)))
+            .Parameters(ClyshParameters.Create(new ClyshParameter(6, 10)))
             .Build());
 
         cli.Execute(args);
 
-        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(x => x.Message == $"Required parameters [arg1] is missing for option: some-option")), Times.Once);
+        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(y => y.Message == $"Required parameters [arg1] is missing for option: some-option")), Times.Once);
     }
 
     [Test]
     public void ExecuteRootWithHelpOption()
     {
-        const string HELP_OPTION = "help";
+        const string helpOption = "help";
 
-        const string HELP_OPTION_WITH_DASHES = $"--{HELP_OPTION}";
+        const string helpOptionWithDashes = $"--{helpOption}";
 
-        string[] args = new string[] { HELP_OPTION_WITH_DASHES };
+        var args = new[] { helpOptionWithDashes };
 
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
-        rootCommandMock.Setup(x => x.HasOption(HELP_OPTION)).Returns(true);
+        rootCommandMock.Setup(x => x.HasOption(helpOption)).Returns(true);
         
-        ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+        var optionBuilder = new ClyshOptionBuilder();
         
-        rootCommandMock.Setup(x => x.GetOption(HELP_OPTION)).Returns(optionBuilder
-            .Id(HELP_OPTION)
+        rootCommandMock.Setup(x => x.GetOption(helpOption)).Returns(optionBuilder
+            .Id(helpOption)
             .Description("Show help on screen")
             .Shortcut("h")
             .Build());
@@ -743,13 +743,13 @@ public class ClyshServiceTests
     public void ExecuteRootWithArgsAndNoOptionError()
     {
 
-        string[] args = new string[] { "testarg:mytest" };
+        var args = new[] { "testarg:mytest" };
 
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
         cli.Execute(args);
 
-        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(x => x.Message == "You can't put parameters without any option that accept it.")), Times.Once);
+        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(y => y.Message == "You can't put parameters without any option that accept it.")), Times.Once);
     }
 
     [Test]
@@ -759,13 +759,13 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        string[] args = new string[] { someOptionWithDashes, "testarg:mytest" };
+        var args = new[] { someOptionWithDashes, "testarg:mytest" };
 
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
         rootCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
         
-        ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+        var optionBuilder = new ClyshOptionBuilder();
         
         rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(optionBuilder
             .Id(someOption)
@@ -774,7 +774,7 @@ public class ClyshServiceTests
 
         cli.Execute(args);
 
-        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(x => x.Message == $"The parameter 'testarg' is invalid for option: {someOption}.")), Times.Once);
+        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(y => y.Message == $"The parameter 'testarg' is invalid for option: {someOption}.")), Times.Once);
     }
 
     [Test]
@@ -784,13 +784,13 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        string[] args = new string[] { someOptionWithDashes, "testarg" };
+        var args = new[] { someOptionWithDashes, "testarg" };
 
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
         rootCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
         
-        ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+        var optionBuilder = new ClyshOptionBuilder();
         
         rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(optionBuilder
             .Id(someOption)
@@ -799,7 +799,7 @@ public class ClyshServiceTests
 
         cli.Execute(args);
 
-        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(x => x.Message == $"The parameter data 'testarg' is out of bound for option: {someOption}.")), Times.Once);
+        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(y => y.Message == $"The parameter data 'testarg' is out of bound for option: {someOption}.")), Times.Once);
     }
 
     [Test]
@@ -810,29 +810,24 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        string[] args = new string[] { someOptionWithDashes, "mytest", "testarg:mytest" };
+        var args = new[] { someOptionWithDashes, "mytest", "testarg:mytest" };
 
-        Map<ClyshOption>? expectedOptions = null;
-        IClyshView? expectedCliFront = null;
-
-        void action(Map<ClyshOption> options, IClyshView cliFront)
+        void Action(ClyshMap<ClyshOption> options, IClyshView cliFront)
         {
-            expectedOptions = options;
-            expectedCliFront = cliFront;
         }
 
-        ClyshCommandBuilder builder = new ClyshCommandBuilder();
+        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(action).Build();
+        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
 
         IClyshService cli = new ClyshService(rootCommand, frontMock.Object);
 
-        ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+        var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter("testarg", 6, 10))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10))).Build());
 
         cli.Execute(args);
 
-        frontMock.Verify(x => x.PrintHelp(rootCommand, It.Is<InvalidOperationException>(x => x.Message == $"The parameter 'testarg' is already filled for option: {someOption}.")), Times.Once);
+        frontMock.Verify(x => x.PrintHelp(rootCommand, It.Is<InvalidOperationException>(y => y.Message == $"The parameter 'testarg' is already filled for option: {someOption}.")), Times.Once);
     }
 }

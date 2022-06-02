@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Clysh
 {
     public class ClyshParameters
@@ -42,7 +38,7 @@ namespace Clysh
 
         public ClyshParameter Last()
         {
-            ClyshParameter p = Itens[lastIndexRetrieved];
+            var p = Itens[lastIndexRetrieved];
             lastIndexRetrieved++;
 
             return p;
@@ -50,7 +46,7 @@ namespace Clysh
 
         public string RequiredToString()
         {
-            string s = "";
+            var s = "";
 
             Itens.Where(x => x.Required).ToList().ForEach(k => s += k.Id + ",");
 
@@ -62,12 +58,12 @@ namespace Clysh
 
         public override string ToString()
         {
-            string paramsText = "";
+            var paramsText = "";
 
-            for (int i = 0; i < Itens.Length; i++)
+            for (var i = 0; i < Itens.Length; i++)
             {
-                ClyshParameter parameter = Itens[i];
-                string type = parameter.Required ? "R" : "O";
+                var parameter = Itens[i];
+                var type = parameter.Required ? "R" : "O";
                 paramsText += $"{i}:<{parameter.Id}:{type}>{(i < Itens.Length - 1 ? ", " : "")}";
             }
 

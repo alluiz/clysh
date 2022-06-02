@@ -3,7 +3,7 @@ using ProjectHelper;
 
 namespace Clysh;
 
-public class ClyshOptionBuilder: Builder<ClyshOption>
+public class ClyshOptionBuilder: ClyshBuilder<ClyshOption>
 {
     private const int MaxDescription = 50;
     private const int MinDescription = 10;
@@ -33,9 +33,9 @@ public class ClyshOptionBuilder: Builder<ClyshOption>
         return this;
     }
     
-    public ClyshOptionBuilder Shortcut(string shortcut)
+    public ClyshOptionBuilder Shortcut(string? shortcut)
     {
-        if (shortcut.Length is < MinShortcut or > MaxShortcut || !regex.IsMatch(Pattern))
+        if (shortcut != null && (shortcut.Length is < MinShortcut or > MaxShortcut || !regex.IsMatch(Pattern)))
             throw new ArgumentException($"Invalid shortcut. The shortcut must be null or follow the pattern {Pattern} and between {MinShortcut} and {MaxShortcut} chars.",
                 nameof(shortcut));
 

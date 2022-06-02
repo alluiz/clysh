@@ -1,26 +1,24 @@
-using System;
-using System.Collections.Generic;
 using ProjectHelper;
 
 namespace Clysh
 {
-    public class ClyshCommand : SimpleIndexable, IClyshCommand
+    public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
     {
-        public Action<Map<ClyshOption>, IClyshView>? Action { get; set; }
+        public Action<ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
         public string? Description { get; set; }
-        public Map<ClyshOption> AvailableOptions { get; }
+        public ClyshMap<ClyshOption> AvailableOptions { get; }
         public int Order { get; set; }
-        public Map<ClyshOption> SelectedOptions { get; }
+        public ClyshMap<ClyshOption> SelectedOptions { get; }
         public IClyshCommand? Parent { get; set; }
-        public Map<ClyshCommand> Children { get; }
+        public ClyshMap<ClyshCommand> Children { get; }
 
         private readonly Dictionary<string, string> shortcutToOptionId;
         
         public ClyshCommand()
         {
-            AvailableOptions = new Map<ClyshOption>();
-            SelectedOptions = new Map<ClyshOption>();
-            Children = new Map<ClyshCommand>();
+            AvailableOptions = new ClyshMap<ClyshOption>();
+            SelectedOptions = new ClyshMap<ClyshOption>();
+            Children = new ClyshMap<ClyshCommand>();
             shortcutToOptionId = new Dictionary<string, string>();
             AddHelpOption();
         }
@@ -35,8 +33,8 @@ namespace Clysh
 
         private void AddHelpOption()
         {
-            ClyshOptionBuilder builder = new ClyshOptionBuilder();
-            ClyshOption helpOption = builder
+            var builder = new ClyshOptionBuilder();
+            var helpOption = builder
                 .Id("help")
                 .Description("Show help on screen")
                 .Shortcut("h")
@@ -62,7 +60,7 @@ namespace Clysh
             {
                 return AvailableOptions.Get(arg);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return AvailableOptions.Get(shortcutToOptionId[arg]);
             }

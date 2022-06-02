@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Clysh.Example
+﻿namespace Clysh.Example
 {
     public static class ClyshProgram
     {
@@ -12,8 +10,6 @@ namespace Clysh.Example
                     
                 try
                 {
-                    ClyshParameterBuilder builder = new ClyshParameterBuilder();
-                    
                     ClyshSetup setup = new("clidata.yml");
 
                     setup.MakeAction("mycli",
@@ -23,9 +19,9 @@ namespace Clysh.Example
 
                             if (options.Has("test"))
                             {
-                                ClyshOption option = options.Get("test");
+                                var option = options.Get("test");
 
-                                string? data = option.GetParameter("ab");
+                                var data = option.GetParameter("ab");
                                 
                                 if (data != null)
                                     view.Print(data);

@@ -1,4 +1,3 @@
-using System;
 using Clysh.Data;
 
 namespace Clysh
@@ -11,7 +10,7 @@ namespace Clysh
         string AskFor(string text, bool sensitive = false);
         string AskForSensitive(string text);
         void PrintEmpty();
-        void Print(string text, bool emptyLine = false, bool noBreak = false);
+        void Print(string? text, bool emptyLine = false, bool noBreak = false);
         void PrintSeparator();
         void PrintHelp(IClyshCommand command);
         void PrintHelp(IClyshCommand command, Exception exception);

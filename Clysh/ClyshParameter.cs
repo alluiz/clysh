@@ -1,10 +1,9 @@
-using System;
 using System.Text.RegularExpressions;
 using ProjectHelper;
 
 namespace Clysh
 {
-    public class ClyshParameter : SimpleIndexable
+    public class ClyshParameter : ClyshSimpleIndexable
     {
         private string? data;
         public string? Data { get { return data; } set { Validate(Id, value, MinLength, MaxLength); data = value; } }
@@ -20,7 +19,7 @@ namespace Clysh
             
         }
         
-        public ClyshParameter(string? id, int minLength, int maxLength, bool required = true)
+        public ClyshParameter(int minLength, int maxLength, bool required = true)
         {
             if (minLength < 1)
                 throw new ArgumentException($"Invalid min length. The values must be between 1 and 1000.", nameof(minLength));
@@ -33,7 +32,7 @@ namespace Clysh
             Required = required;
         }
 
-        public ClyshParameter(string? id, int minLength, int maxLength, bool required, string? pattern) : this(id, minLength, maxLength, required)
+        public ClyshParameter(int minLength, int maxLength, bool required, string? pattern) : this(minLength, maxLength, required)
         {
             if (pattern != null)
             {

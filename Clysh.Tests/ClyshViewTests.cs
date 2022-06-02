@@ -21,13 +21,13 @@ public class ClyshViewTests
     [Test]
     public void SuccessfulConfirmWithYesAnswer()
     {
-        string answerExpected = "Y";
+        var answerExpected = "Y";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        string question = "Do you agree? (Y/n):";
-        bool answer = view.Confirm();
+        var question = "Do you agree? (Y/n):";
+        var answer = view.Confirm();
 
         consoleMock.Verify(x => x.Write(question, 1), Times.Once);
         consoleMock.Verify(x => x.ReadLine(), Times.Once);
@@ -39,13 +39,13 @@ public class ClyshViewTests
     [Test]
     public void SuccessfulConfirmWithNoAnswer()
     {
-        string answerExpected = "n";
+        var answerExpected = "n";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        string question = "Do you agree? (Y/n):";
-        bool answer = view.Confirm();
+        var question = "Do you agree? (Y/n):";
+        var answer = view.Confirm();
 
         consoleMock.Verify(x => x.Write(question, 1), Times.Once);
         consoleMock.Verify(x => x.ReadLine(), Times.Once);
@@ -57,13 +57,13 @@ public class ClyshViewTests
     [Test]
     public void SuccessfulConfirmWithOtherAnswer()
     {
-        string answerExpected = "xxxxx";
+        var answerExpected = "xxxxx";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        string question = "Do you agree? (Y/n):";
-        bool answer = view.Confirm();
+        var question = "Do you agree? (Y/n):";
+        var answer = view.Confirm();
 
         consoleMock.Verify(x => x.Write(question, 1), Times.Once);
         consoleMock.Verify(x => x.ReadLine(), Times.Once);
@@ -75,13 +75,13 @@ public class ClyshViewTests
     [Test]
     public void SuccessfulConfirmWithEmptyAnswer()
     {
-        string answerExpected = "";
+        var answerExpected = "";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        string question = "Do you agree? (Y/n):";
-        bool answer = view.Confirm();
+        var question = "Do you agree? (Y/n):";
+        var answer = view.Confirm();
 
         consoleMock.Verify(x => x.Write(question, 1), Times.Once);
         consoleMock.Verify(x => x.ReadLine(), Times.Once);
@@ -93,13 +93,13 @@ public class ClyshViewTests
     [Test]
     public void SuccessfulConfirmWithCustomYesAnswer()
     {
-        string answerExpected = "I'm agree";
+        var answerExpected = "I'm agree";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        string question = "Do you agree? (I'm agree/n):";
-        bool answer = view.Confirm(yes: "I'm agree");
+        var question = "Do you agree? (I'm agree/n):";
+        var answer = view.Confirm(yes: "I'm agree");
 
         consoleMock.Verify(x => x.Write(question, 1), Times.Once);
         consoleMock.Verify(x => x.ReadLine(), Times.Once);
@@ -111,13 +111,13 @@ public class ClyshViewTests
     [Test]
     public void SuccessfulConfirmWithCustomNoAnswer()
     {
-        string answerExpected = "NO";
+        var answerExpected = "NO";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        string question = "Do you agree? (I'm agree/n):";
-        bool answer = view.Confirm(yes: "I'm agree");
+        var question = "Do you agree? (I'm agree/n):";
+        var answer = view.Confirm(yes: "I'm agree");
 
         consoleMock.Verify(x => x.Write(question, 1), Times.Once);
         consoleMock.Verify(x => x.ReadLine(), Times.Once);
@@ -129,13 +129,13 @@ public class ClyshViewTests
     [Test]
     public void SuccessfulConfirmWithCustomQuestion()
     {
-        string answerExpected = "Y";
+        var answerExpected = "Y";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        string question = "Are you kidding me? (Y/n):";
-        bool answer = view.Confirm("Are you kidding me?");
+        var question = "Are you kidding me? (Y/n):";
+        var answer = view.Confirm("Are you kidding me?");
 
         consoleMock.Verify(x => x.Write(question, 1), Times.Once);
         consoleMock.Verify(x => x.ReadLine(), Times.Once);
@@ -147,13 +147,13 @@ public class ClyshViewTests
     [Test]
     public void SuccessfulAskFor()
     {
-        string answerExpected = "test answer";
+        var answerExpected = "test answer";
         consoleMock.Setup(x => x.ReadLine()).Returns(answerExpected);
 
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        string question = "test question:";
-        string answer = view.AskFor("test question");
+        var question = "test question:";
+        var answer = view.AskFor("test question");
 
         consoleMock.Verify(x => x.Write(question, 1), Times.Once);
 
@@ -164,13 +164,13 @@ public class ClyshViewTests
     [Test]
     public void SuccessfulAskForSensitive()
     {
-        string answerExpected = "x1A";
+        var answerExpected = "x1A";
         consoleMock.Setup(x => x.ReadSensitive()).Returns(answerExpected);
 
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        string question = "test question:";
-        string answer = view.AskForSensitive("test question");
+        var question = "test question:";
+        var answer = view.AskForSensitive("test question");
 
         consoleMock.Verify(x => x.Write(question, 1), Times.Once);
 
@@ -183,10 +183,10 @@ public class ClyshViewTests
     {
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        string question = "     ";
-        ArgumentException? exception = Assert.Throws<ArgumentException>(() => view.AskFor(question));
+        var question = "     ";
+        var exception = Assert.Throws<ArgumentException>(() => view.AskFor(question));
 
-        Assert.IsTrue(exception?.Message.Contains(ClyshView.QUESTION_MUST_BE_NOT_BLANK));
+        Assert.IsTrue(exception?.Message.Contains(ClyshView.QuestionMustBeNotBlank));
 
         consoleMock.Verify(x => x.Write($"{question}:"), Times.Never);
         consoleMock.Verify(x => x.ReadLine(), Times.Never);
@@ -198,7 +198,7 @@ public class ClyshViewTests
     {
         IClyshView view = new ClyshView(consoleMock.Object, new ClyshData(title: "Auth 2 API", "1.0"), true);
 
-        IClyshCommand command = ClyshDataForTest.CreateRootCommand();
+        var command = ClyshDataForTest.CreateRootCommand();
         view.PrintHelp(command);
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
@@ -213,11 +213,12 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(28) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional = Length", 10), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
 
-        int i = 0;
+        var i = 0;
 
         foreach (var item in command.AvailableOptions.Itens.OrderBy(x => x.Key))
         {
-            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i), Times.Once);
+            var i1 = i;
+            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);
             i++;
         }
 
@@ -227,12 +228,13 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("[commands]:", 13 + i), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 14 + i), Times.Once);
 
-        int j = i + 1;
+        var j = i + 1;
         foreach (var item in command.Children.Itens.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value))
         {
             if (item.Key != command.Id)
             {
-                consoleMock.Verify(x => x.WriteLine("".PadRight(3) + $"{item.Key,-39}{item.Value.Description}", 14 + j), Times.Once);
+                var j1 = j;
+                consoleMock.Verify(x => x.WriteLine("".PadRight(3) + $"{item.Key,-39}{item.Value.Description}", 14 + j1), Times.Once);
                 j++;
             }
         }
@@ -264,11 +266,12 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(28) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional = Length", 10), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
 
-        int i = 0;
+        var i = 0;
 
         foreach (var item in command.AvailableOptions.Itens.OrderBy(x => x.Key))
         {
-            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i), Times.Once);
+            var i1 = i;
+            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);
             i++;
         }
 
@@ -278,12 +281,13 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("[commands]:", 13 + i), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 14 + i), Times.Once);
 
-        int j = i + 1;
+        var j = i + 1;
         foreach (var item in command.Children.Itens.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value))
         {
             if (item.Key != command.Id)
             {
-                consoleMock.Verify(x => x.WriteLine("".PadRight(3) + $"{item.Key,-39}{item.Value.Description}", 14 + j), Times.Once);
+                var j1 = j;
+                consoleMock.Verify(x => x.WriteLine("".PadRight(3) + $"{item.Key,-39}{item.Value.Description}", 14 + j1), Times.Once);
                 j++;
             }
         }
@@ -315,11 +319,12 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(28) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional = Length", 10), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
 
-        int i = 0;
+        var i = 0;
 
         foreach (var item in command.AvailableOptions.Itens.OrderBy(x => x.Key))
         {
-            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i), Times.Once);
+            var i1 = i;
+            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);
             i++;
         }
 
@@ -335,7 +340,7 @@ public class ClyshViewTests
     {
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        IClyshCommand rootCommand = ClyshDataForTest.CreateRootCommand();
+        var rootCommand = ClyshDataForTest.CreateRootCommand();
 
         try
         {

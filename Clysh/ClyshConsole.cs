@@ -1,15 +1,14 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Clysh
 {
     public interface IClyshConsole
     {
-        void WriteLine(string text);
-        void WriteLine(string text, int lineNumber);
+        void WriteLine(string? text);
+        void WriteLine(string? text, int lineNumber);
         string ReadLine();
-        void Write(string text);
-        void Write(string text, int lineNumber);
+        void Write(string? text);
+        void Write(string? text, int lineNumber);
         string ReadSensitive();
     }
 
@@ -25,12 +24,12 @@ namespace Clysh
             return Console.ReadLine() ?? "";
         }
 
-        public void Write(string text, int lineNumber)
+        public void Write(string? text, int lineNumber)
         {
             Console.Write($"{lineNumber + ".",-5}{text}");
         }
 
-        public void WriteLine(string text, int lineNumber)
+        public void WriteLine(string? text, int lineNumber)
         {
             Console.WriteLine($"{lineNumber + ".",-5}{text}");
         }
@@ -46,9 +45,9 @@ namespace Clysh
         /// </returns>
         public string ReadSensitive()
         {
-            string data = "";
+            var data = "";
 
-            ConsoleKeyInfo info = Console.ReadKey(true);
+            var info = Console.ReadKey(true);
 
             while (info.Key != ConsoleKey.Enter)
             {
@@ -64,7 +63,7 @@ namespace Clysh
                         // remove one character from the list of password characters
                         data = data[..^1];
                         // get the location of the cursor
-                        int pos = Console.CursorLeft;
+                        var pos = Console.CursorLeft;
                         // move the cursor to the left by one character
                         Console.SetCursorPosition(pos - 1, Console.CursorTop);
                         // replace it with space
@@ -82,12 +81,12 @@ namespace Clysh
             return data;
         }
 
-        public void WriteLine(string text)
+        public void WriteLine(string? text)
         {
             Console.WriteLine(text);
         }
 
-        public void Write(string text)
+        public void Write(string? text)
         {
             Console.Write(text);
         }

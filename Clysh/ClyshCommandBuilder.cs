@@ -2,7 +2,7 @@ using ProjectHelper;
 
 namespace Clysh;
 
-public class ClyshCommandBuilder: Builder<ClyshCommand>
+public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
 {
     public ClyshCommandBuilder Id(string id)
     {
@@ -28,7 +28,7 @@ public class ClyshCommandBuilder: Builder<ClyshCommand>
         return this;
     }
 
-    public ClyshCommandBuilder Action(Action<Map<ClyshOption>, IClyshView> action)
+    public ClyshCommandBuilder Action(Action<ClyshMap<ClyshOption>, IClyshView> action)
     {
         this.Result.Action = action;
         return this;

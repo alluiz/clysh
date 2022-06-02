@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.IO.Abstractions;
-using System.Linq;
 using Clysh.Data;
 using Newtonsoft.Json;
 using ProjectHelper;
@@ -104,7 +101,7 @@ namespace Clysh
                 throw new ArgumentException(InvalidExtension, nameof(path));
         }
 
-        public void MakeAction(string commandId, Action<Map<ClyshOption>, IClyshView> action)
+        public void MakeAction(string commandId, Action<ClyshMap<ClyshOption>, IClyshView> action)
         {
             IClyshCommand command = commandsLoaded[commandId];
             
@@ -120,15 +117,15 @@ namespace Clysh
                 else if (Data.Commands.Count == 0)
                     throw new ArgumentException(InvalidCommandsLength, nameof(Data));
 
-                ClyshCommandData? rootData = Data.Commands.SingleOrDefault(x => x.Root);
+                var rootData = Data.Commands.SingleOrDefault(x => x.Root);
 
                 if (rootData == null)
                     throw new ArgumentNullException(nameof(Data), "Data must have at least one root command.");
 
                 commandsData.AddRange(Data.Commands);
 
-                ClyshCommandBuilder commandBuilder = new ClyshCommandBuilder();
-                ClyshCommand root = commandBuilder
+                var commandBuilder = new ClyshCommandBuilder();
+                var root = commandBuilder
                     .Id(rootData.Id)
                     .Description(rootData.Description)
                     .Build();
@@ -154,7 +151,7 @@ namespace Clysh
             var duplicatedCommands = commands.GroupBy(x => x.Id)
                 .Select(g => new {g.Key, Count = g.Count()}).Where(f => f.Count > 1);
 
-            string ids = duplicatedCommands.Aggregate(string.Empty, (current, command) => $"{current}{command.Key},");
+            var ids = duplicatedCommands.Aggregate(string.Empty, (current, command) => $"{current}{command.Key},");
 
             if (ids != null)
             {
@@ -170,19 +167,19 @@ namespace Clysh
         {
             if (commandData.Options != null)
             {
-                foreach (ClyshOptionData option in commandData.Options)
+                foreach (var option in commandData.Options)
                 {
-                    ClyshOptionBuilder optionBuilder = new ClyshOptionBuilder();
+                    var optionBuilder = new ClyshOptionBuilder();
 
                     optionBuilder
-                        .Id(option.Id)
-                        .Description(option.Description)
+                        .Id(option.Id ?? throw new InvalidOperationException())
+                        .Description(option.Description ?? throw new InvalidOperationException())
                         .Shortcut(option.Shortcut);
                     
                     if (option.Parameters != null)
                     {
-                        ClyshParameters parameters = ClyshParameters.Create(option.Parameters.Select(x =>
-                                new ClyshParameter(x.Id, x.MinLength, x.MaxLength, x.Required, x.Pattern))
+                        var parameters = ClyshParameters.Create(option.Parameters.Select(x =>
+                                new ClyshParameter(x.MinLength, x.MaxLength, x.Required, x.Pattern))
                             .ToArray());
                         optionBuilder.Parameters(parameters);
                     }
@@ -193,9 +190,9 @@ namespace Clysh
 
             if (commandData.ChildrenCommandsId != null)
             {
-                foreach (string childrenCommandId in commandData.ChildrenCommandsId)
+                foreach (var childrenCommandId in commandData.ChildrenCommandsId)
                 {
-                    ClyshCommandData? childrenCommandData =
+                    var childrenCommandData =
                         commandsData.SingleOrDefault(x => x.Id == childrenCommandId);
 
                     if (childrenCommandData == null)
@@ -204,11 +201,11 @@ namespace Clysh
 
                     VerifyParentRecursivity(command, childrenCommandData);
 
-                    bool alreadyLoaded = commandsLoaded.ContainsKey(childrenCommandData.Id);
+                    var alreadyLoaded = commandsLoaded.ContainsKey(childrenCommandData.Id);
 
-                    ClyshCommandBuilder commandBuilder = new ClyshCommandBuilder();
+                    var commandBuilder = new ClyshCommandBuilder();
                     
-                    ClyshCommand children = alreadyLoaded
+                    var children = alreadyLoaded
                         ? commandsLoaded[childrenCommandData.Id]
                         : commandBuilder
                             .Id(childrenCommandData.Id)
@@ -228,8 +225,8 @@ namespace Clysh
 
         private static void VerifyParentRecursivity(IClyshCommand command, ClyshCommandData childrenCommandData)
         {
-            string tree = childrenCommandData.Id;
-            IClyshCommand? commandCheck = command;
+            var tree = childrenCommandData.Id;
+            var commandCheck = command;
 
             while (commandCheck != null)
             {
@@ -246,9 +243,9 @@ namespace Clysh
 
         private ClyshData JsonSerializer(string path)
         {
-            string config = GetDataFromFilePath(path);
+            var config = GetDataFromFilePath(path);
 
-            ClyshData? data = JsonConvert.DeserializeObject<ClyshData>(config);
+            var data = JsonConvert.DeserializeObject<ClyshData>(config);
 
             if (data == null)
                 throw new ArgumentException(InvalidJson, nameof(path));
@@ -263,7 +260,7 @@ namespace Clysh
 
         private ClyshData YamlSerializer(string path)
         {
-            string config = GetDataFromFilePath(path);
+            var config = GetDataFromFilePath(path);
 
             var deserializer = new DeserializerBuilder().Build();
 

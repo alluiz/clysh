@@ -4,13 +4,13 @@ namespace Clysh;
 
 public interface IClyshCommand: IIndexable<string>
 {
-    Action<Map<ClyshOption>, IClyshView>? Action { get; set; }
+    Action<ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
     string? Description { get; }
-    Map<ClyshOption> AvailableOptions { get; }
+    ClyshMap<ClyshOption> AvailableOptions { get; }
     int Order { get; set; }
-    Map<ClyshOption> SelectedOptions { get; }
+    ClyshMap<ClyshOption> SelectedOptions { get; }
     IClyshCommand? Parent { get; set; }
-    Map<ClyshCommand> Children { get; }
+    ClyshMap<ClyshCommand> Children { get; }
     void AddSelectedOption(ClyshOption optionSelected);
     ClyshOption GetOption(string arg);
     bool HasOption(string key);

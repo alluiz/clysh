@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using Clysh.Data;
 
 namespace Clysh
@@ -9,7 +7,7 @@ namespace Clysh
         public ClyshData Data { get; set; }
         public int PrintedLines { get; private set; }
 
-        public const string QUESTION_MUST_BE_NOT_BLANK = "Question must be not blank";
+        public const string QuestionMustBeNotBlank = "Question must be not blank";
 
         private readonly IClyshConsole clyshConsole;
         private readonly bool printLineNumber;
@@ -27,7 +25,7 @@ namespace Clysh
         public string AskFor(string question, bool sensitive = false)
         {
             if (string.IsNullOrWhiteSpace(question))
-                throw new ArgumentException(QUESTION_MUST_BE_NOT_BLANK, nameof(question));
+                throw new ArgumentException(QuestionMustBeNotBlank, nameof(question));
 
             Print($"{question}:", false, true);
 
@@ -44,7 +42,7 @@ namespace Clysh
             Print("");
         }
 
-        public void Print(string text, bool emptyLineAfterPrint = false, bool noBreak = false)
+        public void Print(string? text, bool emptyLineAfterPrint = false, bool noBreak = false)
         {
             PrintedLines++;
 
@@ -107,7 +105,7 @@ namespace Clysh
 
         private void PrintCommand(IClyshCommand command)
         {
-            bool hasCommands = command.HasAnyChildren();
+            var hasCommands = command.HasAnyChildren();
 
             PrintHeader(command, hasCommands);
             PrintOptions(command);
@@ -143,7 +141,10 @@ namespace Clysh
 
             foreach (var item in command.AvailableOptions.Itens.OrderBy(x => x.Key))
             {
-                string paramsText = item.Value.Parameters.ToString();
+                if (item.Value.Parameters == null) 
+                    continue;
+                
+                var paramsText = item.Value.Parameters.ToString();
 
                 Print("".PadRight(2) +
                       $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{paramsText}");
@@ -154,8 +155,8 @@ namespace Clysh
 
         private void PrintHeader(IClyshCommand command, bool hasCommands)
         {
-            IClyshCommand? parent = command.Parent;
-            string parentCommands = "";
+            var parent = command.Parent;
+            var parentCommands = "";
 
             while (parent != null)
             {

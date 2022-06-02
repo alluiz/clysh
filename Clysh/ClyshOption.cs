@@ -1,10 +1,8 @@
-using System;
-using System.Text.RegularExpressions;
 using ProjectHelper;
 
 namespace Clysh
 {
-    public class ClyshOption : SimpleIndexable
+    public class ClyshOption : ClyshSimpleIndexable
     {
         public string? Description { get; set; }
         public ClyshParameters? Parameters { get; set; }
