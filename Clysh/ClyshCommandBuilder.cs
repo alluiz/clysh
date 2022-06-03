@@ -6,13 +6,13 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
 {
     public ClyshCommandBuilder Id(string id)
     {
-        this.Result.Id = id;
+        Result.Id = id;
         return this;
     }
     
     public ClyshCommandBuilder Description(string description)
     {
-        this.Result.Description = description;
+        Result.Description = description;
         return this;
     }
     
@@ -30,7 +30,7 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
 
     public ClyshCommandBuilder Action(Action<ClyshMap<ClyshOption>, IClyshView> action)
     {
-        this.Result.Action = action;
+        Result.Action = action;
         return this;
     }
 }

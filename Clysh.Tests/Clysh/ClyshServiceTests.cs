@@ -180,7 +180,7 @@ public class ClyshServiceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
-        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters["testarg"].Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -223,7 +223,7 @@ public class ClyshServiceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
-        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters["testarg"].Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -268,9 +268,9 @@ public class ClyshServiceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
-        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?[someOption].Parameters.Get("testarg2").Data);
-        Assert.AreEqual("mytest3", expectedOptions?[someOption].Parameters.Get("testarg3").Data);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters["testarg"].Data);
+        Assert.AreEqual("mytest2", expectedOptions?[someOption].Parameters["testarg2"].Data);
+        Assert.AreEqual("mytest3", expectedOptions?[someOption].Parameters["testarg3"].Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -313,7 +313,7 @@ public class ClyshServiceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
-        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters["testarg"].Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -358,9 +358,9 @@ public class ClyshServiceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
-        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?[someOption].Parameters.Get("testarg2").Data);
-        Assert.AreEqual("mytest3", expectedOptions?[someOption].Parameters.Get("testarg3").Data);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters["testarg"].Data);
+        Assert.AreEqual("mytest2", expectedOptions?[someOption].Parameters["testarg2"].Data);
+        Assert.AreEqual("mytest3", expectedOptions?[someOption].Parameters["testarg3"].Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -408,8 +408,8 @@ public class ClyshServiceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
-        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
-        Assert.AreEqual("myreq", expectedOptions?[someOption].Parameters.Get("testreq").Data);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters["testarg"].Data);
+        Assert.AreEqual("myreq", expectedOptions?[someOption].Parameters["testreq"].Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -456,11 +456,11 @@ public class ClyshServiceTests
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
-        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?[someOption].Parameters.Get("testarg2").Data);
-        Assert.AreEqual("mytest3", expectedOptions?[someOption].Parameters.Get("testarg3").Data);
-        Assert.AreEqual("mytest4", expectedOptions?[someOption].Parameters.Get("testarg4").Data);
-        Assert.AreEqual("mytest5", expectedOptions?[someOption].Parameters.Get("testarg5").Data);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters["testarg"].Data);
+        Assert.AreEqual("mytest2", expectedOptions?[someOption].Parameters["testarg2"].Data);
+        Assert.AreEqual("mytest3", expectedOptions?[someOption].Parameters["testarg3"].Data);
+        Assert.AreEqual("mytest4", expectedOptions?[someOption].Parameters["testarg4"].Data);
+        Assert.AreEqual("mytest5", expectedOptions?[someOption].Parameters["testarg5"].Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -512,14 +512,14 @@ public class ClyshServiceTests
 
         Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
-        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?[someOption].Parameters.Get("testarg2").Data);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters["testarg"].Data);
+        Assert.AreEqual("mytest2", expectedOptions?[someOption].Parameters["testarg2"].Data);
 
         Assert.AreEqual(someOption2, expectedOptions?[someOption2].Id);
         Assert.AreEqual(someOptionDescription2, expectedOptions?[someOption2].Description);
-        Assert.AreEqual("mytest3", expectedOptions?[someOption2].Parameters.Get("testarg3").Data);
-        Assert.AreEqual("mytest4", expectedOptions?[someOption2].Parameters.Get("testarg4").Data);
-        Assert.AreEqual("mytest5", expectedOptions?[someOption2].Parameters.Get("testarg5").Data);
+        Assert.AreEqual("mytest3", expectedOptions?[someOption2].Parameters["testarg3"].Data);
+        Assert.AreEqual("mytest4", expectedOptions?[someOption2].Parameters["testarg4"].Data);
+        Assert.AreEqual("mytest5", expectedOptions?[someOption2].Parameters["testarg5"].Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -597,14 +597,14 @@ public class ClyshServiceTests
 
         Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
         Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
-        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?[someOption].Parameters.Get("testarg2").Data);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters["testarg"].Data);
+        Assert.AreEqual("mytest2", expectedOptions?[someOption].Parameters["testarg2"].Data);
 
         Assert.AreEqual(someOption2, expectedOptionsCustom?[someOption2].Id);
         Assert.AreEqual(someOptionDescription2, expectedOptionsCustom?[someOption2].Description);
-        Assert.AreEqual("mytest3", expectedOptionsCustom?[someOption2].Parameters.Get("testarg3").Data);
-        Assert.AreEqual("mytest4", expectedOptionsCustom?[someOption2].Parameters.Get("testarg4").Data);
-        Assert.AreEqual("mytest5", expectedOptionsCustom?[someOption2].Parameters.Get("testarg5").Data);
+        Assert.AreEqual("mytest3", expectedOptionsCustom?[someOption2].Parameters["testarg3"].Data);
+        Assert.AreEqual("mytest4", expectedOptionsCustom?[someOption2].Parameters["testarg4"].Data);
+        Assert.AreEqual("mytest5", expectedOptionsCustom?[someOption2].Parameters["testarg5"].Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
         Assert.AreEqual(cli.View, expectedCliFrontCustom);

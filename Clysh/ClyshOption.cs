@@ -11,15 +11,7 @@ namespace Clysh
         public ClyshOption()
         {
             Pattern = @"[a-zA-Z]+\w+";
-            Parameters = ClyshParameters.Create();
-        }
-
-        public string? GetParameter(string id)
-        {
-            if (this.Parameters == null)
-                throw new ClyshException("Option parameters is null");
-            
-            return this.Parameters.Get(id).Data;
+            Parameters = new ClyshParameters();
         }
     }
 }

@@ -64,7 +64,7 @@ namespace Clysh.Tests
                     {
                         var appname = options[appNameOption];
 
-                        cliFront.Print("appname: " + appname.Parameters.Get(appNameOption).Data);
+                        cliFront.Print("appname: " + appname.Parameters[appNameOption].Data);
                     }
                     else
                     {
@@ -74,8 +74,8 @@ namespace Clysh.Tests
 
                     if (options.Has(scopeOption))
                     {
-                        cliFront.Print("scope: " + options[scopeOption].Parameters.Itens[0].Data);
-                        cliFront.Print("tags: " + options[scopeOption].Parameters.Itens[1].Data);
+                        cliFront.Print("scope: " + options[scopeOption].Parameters["scope"].Data);
+                        cliFront.Print("tags: " + options[scopeOption].Parameters["tags"].Data);
                     }
                 })
                 .Option(optionBuilder.Id(appNameOption)
@@ -136,7 +136,7 @@ namespace Clysh.Tests
                     else if (options.Has(credentialsOption))
                     {
                         var credential = options[credentialsOption];
-                        cliFront.Print("Your credential path is: " + credential.Parameters.Itens[0].Data);
+                        cliFront.Print("Your credential path is: " + credential.Parameters["path"].Data);
                     }
 
                     if (cliFront.Confirm("Salvar login?", "Sim", "Nao"))

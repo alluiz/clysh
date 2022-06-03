@@ -7,31 +7,31 @@ public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
 {
     public ClyshParameterBuilder Id(string id)
     {
-        this.Result.Id = id;
+        Result.Id = id;
         return this;
     }
     
     public ClyshParameterBuilder Regex(Regex regex)
     {
-        this.Result.Regex = regex;
+        Result.Regex = regex;
         return this;
     }
     
     public ClyshParameterBuilder Required(bool required)
     {
-        this.Result.Required = required;
+        Result.Required = required;
         return this;
     }
     
     public ClyshParameterBuilder MinLength(int minLength)
     {
-        this.Result.MinLength = minLength;
+        Result.MinLength = minLength;
         return this;
     }
     
     public ClyshParameterBuilder MaxLength(int maxLength)
     {
-        this.Result.MaxLength = maxLength;
+        Result.MaxLength = maxLength;
         return this;
     }
 }

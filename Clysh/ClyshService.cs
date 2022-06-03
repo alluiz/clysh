@@ -98,11 +98,11 @@ namespace Clysh
 
                 if (lastOption.Parameters.Has(id))
                 {
-                    if (lastOption.Parameters.Get(id).Data != null)
+                    if (lastOption.Parameters[id].Data != null)
                         throw new InvalidOperationException(
                             $"The parameter '{id}' is already filled for option: {lastOption.Id}.");
 
-                    lastOption.Parameters.Get(id).Data = data;
+                    lastOption.Parameters[id].Data = data;
                 }
                 else
                     throw new InvalidOperationException(

@@ -39,7 +39,7 @@ public class ClyshOptionBuilder: ClyshBuilder<ClyshOption>
             throw new ArgumentException($"Invalid shortcut. The shortcut must be null or follow the pattern {Pattern} and between {MinShortcut} and {MaxShortcut} chars.",
                 nameof(shortcut));
 
-        if (this.Result.Id is not "help" && shortcut is "h")
+        if (Result.Id is not "help" && shortcut is "h")
             throw new ArgumentException("Shortcut 'h' is reserved to help shortcut.", nameof(shortcut));
         
         Result.Shortcut = shortcut;

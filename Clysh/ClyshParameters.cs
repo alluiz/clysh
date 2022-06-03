@@ -1,54 +1,29 @@
+using Clysh.Helper;
+
 namespace Clysh
 {
-    public class ClyshParameters
+    public class ClyshParameters: ClyshMap<ClyshParameter>
     {
-        private int lastIndexRetrieved;
-
-        public ClyshParameter[] Itens { get; }
-
-        private ClyshParameters(ClyshParameter[] itens)
-        {
-            Itens = itens;
-        }
-
-        public static ClyshParameters Create(params ClyshParameter[] itens)
-        {
-            return new ClyshParameters(itens);
-        }
-
         public bool WaitingForRequired()
         {
-            return Itens.Any(x => x.Required && x.Data == null);
+            return Values.Any(x => x.Required && x.Data == null);
         }
 
         public bool WaitingForAny()
         {
-            return Itens.Any(x => x.Data == null);
-        }
-
-        public ClyshParameter Get(string id)
-        {
-            return Itens.Single(x => x.Id == id);
-        }
-
-        public bool Has(string id)
-        {
-            return Itens.Any(x => x.Id == id);
+            return Values.Any(x => x.Data == null);
         }
 
         public ClyshParameter Last()
         {
-            var p = Itens[lastIndexRetrieved];
-            lastIndexRetrieved++;
-
-            return p;
+            return this.LastOrDefault().Value;
         }
 
         public string RequiredToString()
         {
             var s = "";
 
-            Itens.Where(x => x.Required).ToList().ForEach(k => s += k.Id + ",");
+            Values.Where(x => x.Required).ToList().ForEach(k => s += k.Id + ",");
 
             if (s.Length > 1)
                 s = s[..^1];
@@ -59,18 +34,31 @@ namespace Clysh
         public override string ToString()
         {
             var paramsText = "";
-
-            for (var i = 0; i < Itens.Length; i++)
+            var i = 0;
+            
+            foreach (var parameter in Values)
             {
-                var parameter = Itens[i];
                 var type = parameter.Required ? "R" : "O";
-                paramsText += $"{i}:<{parameter.Id}:{type}>{(i < Itens.Length - 1 ? ", " : "")}";
+                paramsText += $"{i}:<{parameter.Id}:{type}>{(i < Count - 1 ? ", " : "")}";
+                i++;
             }
 
-            if (Itens.Length > 0)
-                paramsText = $"[{paramsText}]: {Itens.Length}";
+            if (Count > 0)
+                paramsText = $"[{paramsText}]: {Count}";
 
             return paramsText;
+        }
+
+        public static ClyshParameters Create(params ClyshParameter[] array)
+        {
+            var parameters = new ClyshParameters();
+            
+            foreach (var parameter in array)
+            {
+                parameters.Add(parameter);
+            }
+
+            return parameters;
         }
     }
 }

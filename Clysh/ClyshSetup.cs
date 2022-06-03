@@ -178,9 +178,10 @@ namespace Clysh
                     
                     if (option.Parameters != null)
                     {
-                        var parameters = ClyshParameters.Create(option.Parameters.Select(x =>
-                                new ClyshParameter(x.Id, x.MinLength, x.MaxLength, x.Required, x.Pattern))
-                            .ToArray());
+
+                        var parameters = new ClyshParameters();
+                        option.Parameters.ForEach(x =>
+                               parameters.Add(new ClyshParameter(x.Id, x.MinLength, x.MaxLength, x.Required, x.Pattern)));
                         optionBuilder.Parameters(parameters);
                     }
                     

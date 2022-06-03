@@ -360,4 +360,32 @@ public class ClyshViewTests
 
         Assert.AreEqual(27, view.PrintedLines);
     }
+    
+    [Test]
+    public void SuccessfulPrintWithoutLineNumber()
+    {
+        IClyshView view = new ClyshView(consoleMock.Object, metadata);
+
+        var question = "test question:";
+        
+        view.Print(question);
+
+        consoleMock.Verify(x => x.WriteLine(question), Times.Once);
+
+        Assert.AreEqual(1, view.PrintedLines);
+    }
+    
+    [Test]
+    public void SuccessfulPrintWithoutLineNumberAndNoBreak()
+    {
+        IClyshView view = new ClyshView(consoleMock.Object, metadata);
+
+        var question = "test question:";
+        
+        view.Print(question, false, true);
+
+        consoleMock.Verify(x => x.Write(question), Times.Once);
+
+        Assert.AreEqual(1, view.PrintedLines);
+    }
 }

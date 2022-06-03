@@ -20,7 +20,7 @@ public class ClyshCommandTests
         Assert.AreEqual("help", help.Id);
         Assert.AreEqual("h", help.Shortcut);
         Assert.AreEqual("Show help on screen", help.Description);
-        Assert.IsEmpty(help.Parameters.Itens);
+        Assert.IsEmpty(help.Parameters);
     }
 
     [Test]

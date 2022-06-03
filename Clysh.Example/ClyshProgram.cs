@@ -7,7 +7,7 @@
             try
             {
                 IClyshService cli = default!;
-                    
+
                 try
                 {
                     ClyshSetup setup = new("clidata.yml");
@@ -21,10 +21,9 @@
                             {
                                 var option = options["test"];
 
-                                var data = option.GetParameter("ab");
-                                
-                                if (data != null)
-                                    view.Print(data);
+                                var data = option.Parameters["ab"].Data;
+
+                                view.Print(data);
                             }
                         });
 

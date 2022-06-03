@@ -21,7 +21,7 @@ namespace Clysh
         
         public ClyshParameter(string id, int minLength, int maxLength, bool required = true)
         {
-            this.Id = id;
+            Id = id;
             
             if (minLength < 1)
                 throw new ArgumentException($"Invalid min length. The values must be between 1 and 1000.", nameof(minLength));
