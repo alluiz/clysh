@@ -62,9 +62,9 @@ namespace Clysh.Tests
                 {
                     if (options.Has(appNameOption))
                     {
-                        var appname = options.Get(appNameOption);
+                        var appname = options[appNameOption];
 
-                        cliFront.Print("appname: " + appname.Parameters?.Get(appNameOption).Data);
+                        cliFront.Print("appname: " + appname.Parameters.Get(appNameOption).Data);
                     }
                     else
                     {
@@ -74,20 +74,20 @@ namespace Clysh.Tests
 
                     if (options.Has(scopeOption))
                     {
-                        cliFront.Print("scope: " + options.Get(scopeOption).Parameters?.Itens[0].Data);
-                        cliFront.Print("tags: " + options.Get(scopeOption).Parameters?.Itens[1].Data);
+                        cliFront.Print("scope: " + options[scopeOption].Parameters.Itens[0].Data);
+                        cliFront.Print("tags: " + options[scopeOption].Parameters.Itens[1].Data);
                     }
                 })
                 .Option(optionBuilder.Id(appNameOption)
                     .Description("Name of the app")
                     .Parameters(ClyshParameters.Create(
-                        new ClyshParameter(1, 100)))
+                        new ClyshParameter("app-name", 1, 100)))
                     .Build())
                 .Option(optionBuilder.Id(scopeOption)
                     .Description("Scopes of the app by comma")
                     .Parameters(ClyshParameters.Create(
-                        new(1, 1000),
-                        new(1, 1000, false)))
+                        new("scope", 1, 1000),
+                        new("tags", 1, 1000, false)))
                     .Build())
                 .Child(CreateTestCredentialCommand())
                 .Build();
@@ -110,7 +110,7 @@ namespace Clysh.Tests
                 .Option(optionBuilder.Id(timeOption)
                     .Description("time to expire credential in hours.")
                     .Shortcut("t")
-                    .Parameters(ClyshParameters.Create(new ClyshParameter(1, 2)))
+                    .Parameters(ClyshParameters.Create(new ClyshParameter("hours", 1, 2)))
                     .Build())
                 .Build();
         }
@@ -135,8 +135,8 @@ namespace Clysh.Tests
                     }
                     else if (options.Has(credentialsOption))
                     {
-                        var credential = options.Get(credentialsOption);
-                        cliFront.Print("Your credential path is: " + credential.Parameters?.Itens[0].Data);
+                        var credential = options[credentialsOption];
+                        cliFront.Print("Your credential path is: " + credential.Parameters.Itens[0].Data);
                     }
 
                     if (cliFront.Confirm("Salvar login?", "Sim", "Nao"))
@@ -153,7 +153,7 @@ namespace Clysh.Tests
                     .Id(credentialsOption)
                     .Description("Your username credentials path")
                     .Shortcut("c")
-                    .Parameters(ClyshParameters.Create(new ClyshParameter(1, 10)))
+                    .Parameters(ClyshParameters.Create(new ClyshParameter("path", 1, 10)))
                     .Build())
                 .Build();
         }

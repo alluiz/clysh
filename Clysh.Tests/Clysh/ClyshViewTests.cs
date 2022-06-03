@@ -215,7 +215,7 @@ public class ClyshViewTests
 
         var i = 0;
 
-        foreach (var item in command.AvailableOptions.Itens.OrderBy(x => x.Key))
+        foreach (var item in command.AvailableOptions.OrderBy(x => x.Key))
         {
             var i1 = i;
             consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);
@@ -229,7 +229,7 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("", 14 + i), Times.Once);
 
         var j = i + 1;
-        foreach (var item in command.Children.Itens.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value))
+        foreach (var item in command.Children.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value))
         {
             if (item.Key != command.Id)
             {
@@ -251,7 +251,7 @@ public class ClyshViewTests
     {
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        IClyshCommand command = ClyshDataForTest.CreateRootCommand().Children.Get("credential");
+        IClyshCommand command = ClyshDataForTest.CreateRootCommand().Children["credential"];
         view.PrintHelp(command);
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
@@ -268,7 +268,7 @@ public class ClyshViewTests
 
         var i = 0;
 
-        foreach (var item in command.AvailableOptions.Itens.OrderBy(x => x.Key))
+        foreach (var item in command.AvailableOptions.OrderBy(x => x.Key))
         {
             var i1 = i;
             consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);
@@ -282,7 +282,7 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("", 14 + i), Times.Once);
 
         var j = i + 1;
-        foreach (var item in command.Children.Itens.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value))
+        foreach (var item in command.Children.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value))
         {
             if (item.Key != command.Id)
             {
@@ -304,7 +304,7 @@ public class ClyshViewTests
     {
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        IClyshCommand command = ClyshDataForTest.CreateRootCommand().Children.Get("credential").Children.Get("test");
+        IClyshCommand command = ClyshDataForTest.CreateRootCommand().Children["credential"].Children["test"];
         view.PrintHelp(command);
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
@@ -321,7 +321,7 @@ public class ClyshViewTests
 
         var i = 0;
 
-        foreach (var item in command.AvailableOptions.Itens.OrderBy(x => x.Key))
+        foreach (var item in command.AvailableOptions.OrderBy(x => x.Key))
         {
             var i1 = i;
             consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);

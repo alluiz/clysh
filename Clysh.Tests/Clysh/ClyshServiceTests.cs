@@ -1,7 +1,7 @@
 using System;
+using Clysh.Helper;
 using Moq;
 using NUnit.Framework;
-using ProjectHelper;
 
 namespace Clysh.Tests;
 
@@ -29,20 +29,22 @@ public class ClyshServiceTests
     [Test]
     public void SuccessfulCreateCommand()
     {
-        void NewAction(ClyshMap<ClyshOption> map, IClyshView clyshView)
-        {
-        }
+        void NewAction(ClyshMap<ClyshOption> map, IClyshView clyshView) { }
 
-        var name = "new";
-        var description = "new command for test";
+        const string name = "new";
+        const string description = "new command for test";
 
         var builder = new ClyshCommandBuilder();
 
-        IClyshCommand command = builder.Id(name).Description(description).Action(NewAction).Build();
+        IClyshCommand command = builder
+            .Id(name)
+            .Description(description)
+            .Action(NewAction)
+            .Build();
         
         Assert.AreEqual(name, command.Id);
         Assert.AreEqual(description, command.Description);
-        Assert.AreEqual((Action<ClyshMap<ClyshOption>, IClyshView>)NewAction, command.Action);
+        Assert.AreEqual(NewAction, command.Action);
     }
 
 
@@ -131,11 +133,11 @@ public class ClyshServiceTests
         Assert.NotNull(expectedOptions);
         Assert.NotNull(expectedCliFront);
 
-        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.AreEqual(1, expectedOptions?.Count);
         Assert.IsTrue(expectedOptions?.Has(someOption));
-        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
-        Assert.AreEqual(someAbbrevOption, expectedOptions?.Get(someOption).Shortcut);
-        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
+        Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
+        Assert.AreEqual(someAbbrevOption, expectedOptions?[someOption].Shortcut);
+        Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -167,18 +169,18 @@ public class ClyshServiceTests
 
         var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter("testarg",6, 10))).Build());
 
         cli.Execute(args);
 
         Assert.NotNull(expectedCliFront);
         Assert.NotNull(expectedOptions);
 
-        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.AreEqual(1, expectedOptions?.Count);
         Assert.IsTrue(expectedOptions?.Has(someOption));
-        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
-        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
+        Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
+        Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -210,18 +212,18 @@ public class ClyshServiceTests
 
         var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter("testarg",6, 10))).Build());
 
         cli.Execute(args);
 
         Assert.NotNull(expectedCliFront);
         Assert.NotNull(expectedOptions);
 
-        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.AreEqual(1, expectedOptions?.Count);
         Assert.IsTrue(expectedOptions?.Has(someOption));
-        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
-        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
+        Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
+        Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -253,22 +255,22 @@ public class ClyshServiceTests
 
         var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new(6, 10)
-            , new(6, 10)
-            , new(6, 10))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new("testarg",6, 10)
+            , new("testarg2", 6, 10)
+            , new("testarg3", 6, 10))).Build());
 
         cli.Execute(args);
 
         Assert.NotNull(expectedCliFront);
         Assert.NotNull(expectedOptions);
 
-        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.AreEqual(1, expectedOptions?.Count);
         Assert.IsTrue(expectedOptions?.Has(someOption));
-        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
-        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters?.Get("testarg2").Data);
-        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Parameters?.Get("testarg3").Data);
+        Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
+        Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
+        Assert.AreEqual("mytest2", expectedOptions?[someOption].Parameters.Get("testarg2").Data);
+        Assert.AreEqual("mytest3", expectedOptions?[someOption].Parameters.Get("testarg3").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -300,18 +302,18 @@ public class ClyshServiceTests
         
         var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10, false))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter("testarg",6, 10, false))).Build());
 
         cli.Execute(args);
 
         Assert.NotNull(expectedCliFront);
         Assert.NotNull(expectedOptions);
 
-        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.AreEqual(1, expectedOptions?.Count);
         Assert.IsTrue(expectedOptions?.Has(someOption));
-        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
-        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
+        Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
+        Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -343,22 +345,22 @@ public class ClyshServiceTests
         
         var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10, false)
-            , new(6, 10, false)
-            , new(6, 10, false))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter("testarg",6, 10, false)
+            , new("testarg2", 6, 10, false)
+            , new("testarg3",6, 10, false))).Build());
 
         cli.Execute(args);
 
         Assert.NotNull(expectedCliFront);
         Assert.NotNull(expectedOptions);
 
-        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.AreEqual(1, expectedOptions?.Count);
         Assert.IsTrue(expectedOptions?.Has(someOption));
-        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
-        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters?.Get("testarg2").Data);
-        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Parameters?.Get("testarg3").Data);
+        Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
+        Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
+        Assert.AreEqual("mytest2", expectedOptions?[someOption].Parameters.Get("testarg2").Data);
+        Assert.AreEqual("mytest3", expectedOptions?[someOption].Parameters.Get("testarg3").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -390,20 +392,24 @@ public class ClyshServiceTests
         
         var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10, false),
-            new(5, 10))).Build());
+        cli.RootCommand.AddOption(optionBuilder
+            .Id(someOption)
+            .Description(someOptionDescription)
+            .Parameters(ClyshParameters.Create(
+                new ClyshParameter("testarg",6, 10, false),
+                new("testreq", 5, 10))).Build());
 
         cli.Execute(args);
 
         Assert.NotNull(expectedCliFront);
         Assert.NotNull(expectedOptions);
 
-        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.AreEqual(1, expectedOptions?.Count);
         Assert.IsTrue(expectedOptions?.Has(someOption));
-        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
-        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
-        Assert.AreEqual("myreq", expectedOptions?.Get(someOption).Parameters?.Get("testreq").Data);
+        Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
+        Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
+        Assert.AreEqual("myreq", expectedOptions?[someOption].Parameters.Get("testreq").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -435,26 +441,26 @@ public class ClyshServiceTests
         
         var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10, false)
-            , new(6, 10)
-            , new(6, 10, false)
-            , new(6, 10, false)
-            , new(6, 10))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter("testarg",6, 10, false)
+            , new("testarg2", 6, 10)
+            , new("testarg3", 6, 10, false)
+            , new("testarg4", 6, 10, false)
+            , new("testarg5", 6, 10))).Build());
 
         cli.Execute(args);
 
         Assert.NotNull(expectedCliFront);
         Assert.NotNull(expectedOptions);
 
-        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.AreEqual(1, expectedOptions?.Count);
         Assert.IsTrue(expectedOptions?.Has(someOption));
-        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
-        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters?.Get("testarg2").Data);
-        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption).Parameters?.Get("testarg3").Data);
-        Assert.AreEqual("mytest4", expectedOptions?.Get(someOption).Parameters?.Get("testarg4").Data);
-        Assert.AreEqual("mytest5", expectedOptions?.Get(someOption).Parameters?.Get("testarg5").Data);
+        Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
+        Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
+        Assert.AreEqual("mytest2", expectedOptions?[someOption].Parameters.Get("testarg2").Data);
+        Assert.AreEqual("mytest3", expectedOptions?[someOption].Parameters.Get("testarg3").Data);
+        Assert.AreEqual("mytest4", expectedOptions?[someOption].Parameters.Get("testarg4").Data);
+        Assert.AreEqual("mytest5", expectedOptions?[someOption].Parameters.Get("testarg5").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -489,31 +495,31 @@ public class ClyshServiceTests
         
         var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10, false), new(6, 10))).Build());
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption2).Description(someOptionDescription2).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10, false),
-            new(6, 10, false),
-            new(6, 10))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter("testarg",6, 10, false), new("testarg2", 6, 10))).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption2).Description(someOptionDescription2).Parameters(ClyshParameters.Create(new ClyshParameter("testarg3",6, 10, false),
+            new("testarg4", 6, 10, false),
+            new("testarg5", 6, 10))).Build());
 
         cli.Execute(args);
 
         Assert.NotNull(expectedCliFront);
         Assert.NotNull(expectedOptions);
 
-        Assert.AreEqual(2, expectedOptions?.Itens.Count);
+        Assert.AreEqual(2, expectedOptions?.Count);
 
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.IsTrue(expectedOptions?.Has(someOption2));
 
-        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
-        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters?.Get("testarg2").Data);
+        Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
+        Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
+        Assert.AreEqual("mytest2", expectedOptions?[someOption].Parameters.Get("testarg2").Data);
 
-        Assert.AreEqual(someOption2, expectedOptions?.Get(someOption2).Id);
-        Assert.AreEqual(someOptionDescription2, expectedOptions?.Get(someOption2).Description);
-        Assert.AreEqual("mytest3", expectedOptions?.Get(someOption2).Parameters?.Get("testarg3").Data);
-        Assert.AreEqual("mytest4", expectedOptions?.Get(someOption2).Parameters?.Get("testarg4").Data);
-        Assert.AreEqual("mytest5", expectedOptions?.Get(someOption2).Parameters?.Get("testarg5").Data);
+        Assert.AreEqual(someOption2, expectedOptions?[someOption2].Id);
+        Assert.AreEqual(someOptionDescription2, expectedOptions?[someOption2].Description);
+        Assert.AreEqual("mytest3", expectedOptions?[someOption2].Parameters.Get("testarg3").Data);
+        Assert.AreEqual("mytest4", expectedOptions?[someOption2].Parameters.Get("testarg4").Data);
+        Assert.AreEqual("mytest5", expectedOptions?[someOption2].Parameters.Get("testarg5").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -553,9 +559,9 @@ public class ClyshServiceTests
             .Option(optionBuilder
                 .Id(someOption2)
                 .Description(someOptionDescription2)
-                .Parameters(ClyshParameters.Create(new(6, 10, false),
-                    new(6, 10, false),
-                    new(6, 10)))
+                .Parameters(ClyshParameters.Create(new("testarg3", 6, 10, false),
+                    new("testarg4", 6, 10, false),
+                    new("testarg5", 6, 10)))
                 .Build())
             .Build();
         
@@ -570,8 +576,8 @@ public class ClyshServiceTests
             .Option(optionBuilder
                 .Id(someOption)
                 .Description(someOptionDescription)
-                .Parameters(ClyshParameters.Create(new ClyshParameter(6, 10, false),
-                    new ClyshParameter(6, 10)))
+                .Parameters(ClyshParameters.Create(new ClyshParameter("testarg",6, 10, false),
+                    new ClyshParameter("testarg2",6, 10)))
                 .Build())
             .Child(customCommand)
             .Build();
@@ -583,22 +589,22 @@ public class ClyshServiceTests
         Assert.NotNull(expectedCliFront);
         Assert.NotNull(expectedOptions);
 
-        Assert.AreEqual(1, expectedOptions?.Itens.Count);
-        Assert.AreEqual(1, expectedOptionsCustom?.Itens.Count);
+        Assert.AreEqual(1, expectedOptions?.Count);
+        Assert.AreEqual(1, expectedOptionsCustom?.Count);
 
         Assert.IsTrue(expectedOptions?.Has(someOption));
         Assert.IsTrue(expectedOptionsCustom?.Has(someOption2));
 
-        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
-        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
-        Assert.AreEqual("mytest", expectedOptions?.Get(someOption).Parameters?.Get("testarg").Data);
-        Assert.AreEqual("mytest2", expectedOptions?.Get(someOption).Parameters?.Get("testarg2").Data);
+        Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
+        Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
+        Assert.AreEqual("mytest", expectedOptions?[someOption].Parameters.Get("testarg").Data);
+        Assert.AreEqual("mytest2", expectedOptions?[someOption].Parameters.Get("testarg2").Data);
 
-        Assert.AreEqual(someOption2, expectedOptionsCustom?.Get(someOption2).Id);
-        Assert.AreEqual(someOptionDescription2, expectedOptionsCustom?.Get(someOption2).Description);
-        Assert.AreEqual("mytest3", expectedOptionsCustom?.Get(someOption2).Parameters?.Get("testarg3").Data);
-        Assert.AreEqual("mytest4", expectedOptionsCustom?.Get(someOption2).Parameters?.Get("testarg4").Data);
-        Assert.AreEqual("mytest5", expectedOptionsCustom?.Get(someOption2).Parameters?.Get("testarg5").Data);
+        Assert.AreEqual(someOption2, expectedOptionsCustom?[someOption2].Id);
+        Assert.AreEqual(someOptionDescription2, expectedOptionsCustom?[someOption2].Description);
+        Assert.AreEqual("mytest3", expectedOptionsCustom?[someOption2].Parameters.Get("testarg3").Data);
+        Assert.AreEqual("mytest4", expectedOptionsCustom?[someOption2].Parameters.Get("testarg4").Data);
+        Assert.AreEqual("mytest5", expectedOptionsCustom?[someOption2].Parameters.Get("testarg5").Data);
 
         Assert.AreEqual(cli.View, expectedCliFront);
         Assert.AreEqual(cli.View, expectedCliFrontCustom);
@@ -643,11 +649,11 @@ public class ClyshServiceTests
         Assert.NotNull(expectedOptions);
         Assert.NotNull(expectedCliFront);
 
-        Assert.AreEqual(1, expectedOptions?.Itens.Count);
+        Assert.AreEqual(1, expectedOptions?.Count);
         Assert.IsTrue(expectedOptions?.Has(someOption));
-        Assert.AreEqual(someOption, expectedOptions?.Get(someOption).Id);
-        Assert.AreEqual(someAbbrevOption, expectedOptions?.Get(someOption).Shortcut);
-        Assert.AreEqual(someOptionDescription, expectedOptions?.Get(someOption).Description);
+        Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
+        Assert.AreEqual(someAbbrevOption, expectedOptions?[someOption].Shortcut);
+        Assert.AreEqual(someOptionDescription, expectedOptions?[someOption].Description);
 
         Assert.AreEqual(cli.View, expectedCliFront);
     }
@@ -705,12 +711,12 @@ public class ClyshServiceTests
         rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(optionBuilder
             .Id("some-option")
             .Description("some option")
-            .Parameters(ClyshParameters.Create(new ClyshParameter(6, 10)))
+            .Parameters(ClyshParameters.Create(new ClyshParameter("testarg",6, 10)))
             .Build());
 
         cli.Execute(args);
 
-        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(y => y.Message == $"Required parameters [arg1] is missing for option: some-option")), Times.Once);
+        frontMock.Verify(x => x.PrintHelp(rootCommandMock.Object, It.Is<InvalidOperationException>(y => y.Message == $"Required parameters [testarg] is missing for option: some-option")), Times.Once);
     }
 
     [Test]
@@ -792,10 +798,12 @@ public class ClyshServiceTests
         
         var optionBuilder = new ClyshOptionBuilder();
         
-        rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(optionBuilder
-            .Id(someOption)
-            .Description("some option")
-            .Build());
+        rootCommandMock.Setup(x => x.GetOption(someOption))
+            .Returns(
+                optionBuilder
+                .Id(someOption)
+                .Description("some option")
+                .Build());
 
         cli.Execute(args);
 
@@ -824,7 +832,10 @@ public class ClyshServiceTests
 
         var optionBuilder = new ClyshOptionBuilder();
         
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription).Parameters(ClyshParameters.Create(new ClyshParameter(6, 10))).Build());
+        cli.RootCommand.AddOption(optionBuilder
+            .Id(someOption)
+            .Description(someOptionDescription)
+            .Parameters(ClyshParameters.Create(new ClyshParameter("testarg",6, 10))).Build());
 
         cli.Execute(args);
 

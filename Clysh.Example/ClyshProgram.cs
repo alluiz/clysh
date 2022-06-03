@@ -19,7 +19,7 @@
 
                             if (options.Has("test"))
                             {
-                                var option = options.Get("test");
+                                var option = options["test"];
 
                                 var data = option.GetParameter("ab");
                                 

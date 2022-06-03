@@ -120,7 +120,7 @@ namespace Clysh
         {
             Print("[commands]:", true);
 
-            foreach (var item in command.Children.Itens.OrderBy(obj => obj.Key)
+            foreach (var item in command.Children.OrderBy(obj => obj.Key)
                          .ToDictionary(obj => obj.Key, obj => obj.Value))
             {
                 if (item.Key != command.Id)
@@ -139,11 +139,8 @@ namespace Clysh
                 "".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(28) + "Description".PadRight(55) +
                 "Parameters: (R)equired | (O)ptional = Length", true);
 
-            foreach (var item in command.AvailableOptions.Itens.OrderBy(x => x.Key))
+            foreach (var item in command.AvailableOptions.OrderBy(x => x.Key))
             {
-                if (item.Value.Parameters == null) 
-                    continue;
-                
                 var paramsText = item.Value.Parameters.ToString();
 
                 Print("".PadRight(2) +

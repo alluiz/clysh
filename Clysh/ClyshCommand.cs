@@ -1,17 +1,17 @@
-using ProjectHelper;
+using Clysh.Helper;
 
 namespace Clysh
 {
     public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
     {
         public Action<ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
-        public string? Description { get; set; }
+        public ClyshMap<ClyshCommand> Children { get; }
         public ClyshMap<ClyshOption> AvailableOptions { get; }
-        public int Order { get; set; }
         public ClyshMap<ClyshOption> SelectedOptions { get; }
         public IClyshCommand? Parent { get; set; }
-        public ClyshMap<ClyshCommand> Children { get; }
-
+        public int Order { get; set; }
+        public string? Description { get; set; }
+        
         private readonly Dictionary<string, string> shortcutToOptionId;
         
         public ClyshCommand()
@@ -58,11 +58,11 @@ namespace Clysh
         {
             try
             {
-                return AvailableOptions.Get(arg);
+                return AvailableOptions[arg];
             }
             catch (Exception)
             {
-                return AvailableOptions.Get(shortcutToOptionId[arg]);
+                return AvailableOptions[shortcutToOptionId[arg]];
             }
         }
 
@@ -73,7 +73,7 @@ namespace Clysh
 
         public bool HasAnyChildren()
         {
-            return Children.Itens.Any();
+            return Children.Any();
         }
 
         public bool HasChild(string name)

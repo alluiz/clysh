@@ -10,7 +10,7 @@ namespace Clysh
             RootCommand = setup.RootCommand;
             View = new ClyshView(new ClyshConsole(), setup.Data);
         }
-        
+
         public ClyshService(ClyshSetup setup, IClyshConsole clyshConsole)
         {
             RootCommand = setup.RootCommand;
@@ -65,13 +65,11 @@ namespace Clysh
                     ExecuteHelp(lastCommand);
                 else
                     Execute(commandsToExecute);
-
             }
             catch (Exception e)
             {
                 ExecuteHelp(lastCommand, e);
             }
-
         }
 
         private static ClyshOption GetOptionFromCommand(IClyshCommand lastCommand, string arg)
@@ -98,25 +96,25 @@ namespace Clysh
                 var id = parameter[0];
                 var data = parameter[1];
 
-                if (lastOption.Parameters != null && lastOption.Parameters.Has(id))
+                if (lastOption.Parameters.Has(id))
                 {
                     if (lastOption.Parameters.Get(id).Data != null)
-                        throw new InvalidOperationException($"The parameter '{id}' is already filled for option: {lastOption.Id}.");
+                        throw new InvalidOperationException(
+                            $"The parameter '{id}' is already filled for option: {lastOption.Id}.");
 
                     lastOption.Parameters.Get(id).Data = data;
                 }
                 else
-                    throw new InvalidOperationException($"The parameter '{id}' is invalid for option: {lastOption.Id}.");
+                    throw new InvalidOperationException(
+                        $"The parameter '{id}' is invalid for option: {lastOption.Id}.");
             }
             else
             {
-                if (lastOption.Parameters != null)
-                {
-                    if (!lastOption.Parameters.WaitingForAny())
-                        throw new InvalidOperationException($"The parameter data '{arg}' is out of bound for option: {lastOption.Id}.");
-                    
-                    lastOption.Parameters.Last().Data = arg;
-                }
+                if (!lastOption.Parameters.WaitingForAny())
+                    throw new InvalidOperationException(
+                        $"The parameter data '{arg}' is out of bound for option: {lastOption.Id}.");
+
+                lastOption.Parameters.Last().Data = arg;
             }
         }
 
@@ -128,7 +126,8 @@ namespace Clysh
 
         private static void ThrowRequiredParametersError(ClyshOption lastOption)
         {
-            throw new InvalidOperationException($"Required parameters [{lastOption.Parameters?.RequiredToString()}] is missing for option: {lastOption.Id}");
+            throw new InvalidOperationException(
+                $"Required parameters [{lastOption.Parameters.RequiredToString()}] is missing for option: {lastOption.Id}");
         }
 
         private static bool ArgIsParameter(string arg)
@@ -145,13 +144,12 @@ namespace Clysh
 
                 command.Action(command.SelectedOptions, View);
             }
-
         }
 
         private static IClyshCommand GetCommandFromArg(IClyshCommand lastCommand, string arg)
         {
             var order = lastCommand.Order + 1;
-            lastCommand = lastCommand.Children.Get(arg);
+            lastCommand = lastCommand.Children[arg];
             lastCommand.Order = order;
             return lastCommand;
         }

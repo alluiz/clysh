@@ -1,7 +1,7 @@
 using System.IO.Abstractions;
 using Clysh.Data;
+using Clysh.Helper;
 using Newtonsoft.Json;
-using ProjectHelper;
 using YamlDotNet.Serialization;
 
 namespace Clysh
@@ -179,7 +179,7 @@ namespace Clysh
                     if (option.Parameters != null)
                     {
                         var parameters = ClyshParameters.Create(option.Parameters.Select(x =>
-                                new ClyshParameter(x.MinLength, x.MaxLength, x.Required, x.Pattern))
+                                new ClyshParameter(x.Id, x.MinLength, x.MaxLength, x.Required, x.Pattern))
                             .ToArray());
                         optionBuilder.Parameters(parameters);
                     }

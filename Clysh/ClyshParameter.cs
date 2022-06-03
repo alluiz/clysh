@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using ProjectHelper;
+using Clysh.Helper;
 
 namespace Clysh
 {
@@ -19,8 +19,10 @@ namespace Clysh
             
         }
         
-        public ClyshParameter(int minLength, int maxLength, bool required = true)
+        public ClyshParameter(string id, int minLength, int maxLength, bool required = true)
         {
+            this.Id = id;
+            
             if (minLength < 1)
                 throw new ArgumentException($"Invalid min length. The values must be between 1 and 1000.", nameof(minLength));
 
@@ -32,7 +34,7 @@ namespace Clysh
             Required = required;
         }
 
-        public ClyshParameter(int minLength, int maxLength, bool required, string? pattern) : this(minLength, maxLength, required)
+        public ClyshParameter(string id, int minLength, int maxLength, bool required, string? pattern) : this(id, minLength, maxLength, required)
         {
             if (pattern != null)
             {

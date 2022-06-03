@@ -1,8 +1,8 @@
-using ProjectHelper;
+using Clysh.Helper;
 
 namespace Clysh;
 
-public interface IClyshCommand: IIndexable<string>
+public interface IClyshCommand: IClyshIndexable<string>
 {
     Action<ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
     string? Description { get; }

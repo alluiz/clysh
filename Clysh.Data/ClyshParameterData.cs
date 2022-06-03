@@ -21,7 +21,7 @@ namespace Clysh.Data
         /// <param name="required">Indicates if is a required parameter</param>
         /// <param name="minLength">The minimum length</param>
         /// <param name="maxLength">The maximum length</param>
-        public ClyshParameterData(string? id, string? pattern, bool required, int minLength, int maxLength)
+        public ClyshParameterData(string id, string? pattern, bool required, int minLength, int maxLength)
         {
             Id = id;
             Pattern = pattern;
@@ -33,7 +33,8 @@ namespace Clysh.Data
         /// <summary>
         /// The id of parameter
         /// </summary>
-        public string? Id { get; set; }
+        public string Id { get; set; } = null!;
+
         /// <summary>
         /// The regular expression pattern
         /// </summary>

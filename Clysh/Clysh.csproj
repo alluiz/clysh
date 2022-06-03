@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ProjectHelper\ProjectHelper\ProjectHelper.csproj" />
     <ProjectReference Include="..\Clysh.Data\Clysh.Data.csproj" />
+    <ProjectReference Include="..\Clysh.Helper\Clysh.Helper.csproj" />
   </ItemGroup>
 
 </Project>
