@@ -16,7 +16,7 @@ public class ClyshSetupTests
     {
         fs.Reset();
     }
-    
+
     [Test]
     public void CreateSetupYamlSuccessful()
     {
@@ -24,31 +24,33 @@ public class ClyshSetupTests
         fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
         fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
         fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlText());
-     
+
         var setup = new ClyshSetup(fs.Object, Path);
-        Action<ClyshMap<ClyshOption>,IClyshView> action = (_, _) => {};
+        Action<ClyshMap<ClyshOption>, IClyshView> action = (_, _) => { };
         setup.MakeAction("mycli", action);
 
         var root = setup.RootCommand;
-        
+
+        Assert.IsFalse(setup.IsReadyToProduction());
+
         Assert.AreEqual("MyCLI with only test command", setup.Data.Title);
         Assert.AreEqual("1.0", setup.Data.Version);
-        
+
         Assert.AreEqual("mycli", root.Id);
         Assert.AreEqual("My own CLI", root.Description);
         Assert.AreEqual(2, root.Options.Count);
         Assert.AreEqual(1, root.Children.Count);
         Assert.AreEqual(action, root.Action);
-        
+
         Assert.AreEqual("Test option", root.Options["test"].Description);
         Assert.AreEqual("T", root.Options["test"].Shortcut);
         Assert.AreEqual(1, root.Options["test"].Parameters.Count);
-        
+
         Assert.IsTrue(root.Options["test"].Parameters["ab"].Required);
         Assert.AreEqual(1, root.Options["test"].Parameters["ab"].MinLength);
         Assert.AreEqual(15, root.Options["test"].Parameters["ab"].MaxLength);
     }
-    
+
     [Test]
     public void CreateSetupJsonSuccessful()
     {
@@ -56,31 +58,234 @@ public class ClyshSetupTests
         fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
         fs.Setup(x => x.Path.GetExtension(Path)).Returns(".json");
         fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetJsonText());
-     
+
         var setup = new ClyshSetup(fs.Object, Path);
+        Action<ClyshMap<ClyshOption>, IClyshView> action = (_, _) => { };
+        setup.MakeAction("mycli", action);
 
         var root = setup.RootCommand;
-        
+
+        Assert.IsTrue(setup.IsReadyToProduction());
+
         Assert.AreEqual("MyCLI with only test command", setup.Data.Title);
         Assert.AreEqual("1.0", setup.Data.Version);
-        
+
         Assert.AreEqual("mycli", root.Id);
         Assert.AreEqual("My own CLI", root.Description);
         Assert.AreEqual(2, root.Options.Count);
         Assert.IsEmpty(root.Children);
-        
+
         Assert.AreEqual("Test option", root.Options["test"].Description);
         Assert.AreEqual("T", root.Options["test"].Shortcut);
         Assert.AreEqual(1, root.Options["test"].Parameters.Count);
-        
+
         Assert.IsTrue(root.Options["test"].Parameters["ab"].Required);
         Assert.AreEqual(1, root.Options["test"].Parameters["ab"].MinLength);
         Assert.AreEqual(15, root.Options["test"].Parameters["ab"].MaxLength);
     }
 
+    [Test]
+    public void CreateSetupYamlDuplicatedCommandIdError()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlCommandIdDuplicatedText());
+
+        var exception = Assert.Throws<ClyshException>(() =>
+        {
+            var dummy = new ClyshSetup(fs.Object, Path);
+        });
+
+        Assert.AreEqual(
+            "Invalid commands: The id(s): mycli must be unique check your schema and try again. (Parameter 'commands')",
+            exception?.InnerException?.Message);
+    }
+
+    [Test]
+    public void CreateSetupFileNotExistsError()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(false);
+
+        var exception = Assert.Throws<ClyshException>(() =>
+        {
+            var dummy = new ClyshSetup(fs.Object, Path);
+        });
+
+        Assert.AreEqual("Invalid path: CLI data file was not found. (Parameter 'path')",
+            exception?.InnerException?.Message);
+    }
+
+    [Test]
+    public void CreateSetupFileExtensionInvalidError()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".txt");
+
+        var exception = Assert.Throws<ClyshException>(() =>
+        {
+            var dummy = new ClyshSetup(fs.Object, Path);
+        });
+
+        Assert.AreEqual(
+            "Invalid extension. Only JSON (.json) and YAML (.yml or .yaml) files are supported. (Parameter 'path')",
+            exception?.InnerException?.Message);
+    }
+
+    [Test]
+    public void CreateSetupNoFileExtensionError()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        fs.Setup(x => x.Path.HasExtension(Path)).Returns(false);
+
+        var exception = Assert.Throws<ClyshException>(() =>
+        {
+            var dummy = new ClyshSetup(fs.Object, Path);
+        });
+
+        Assert.AreEqual(
+            "Invalid extension. Only JSON (.json) and YAML (.yml or .yaml) files are supported. (Parameter 'path')",
+            exception?.InnerException?.Message);
+    }
+
+    [Test]
+    public void CreateSetupYamlWithoutCommandError()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithoutCommandText());
+
+        var exception = Assert.Throws<ClyshException>(() =>
+        {
+            var dummy = new ClyshSetup(fs.Object, Path);
+        });
+
+        Assert.AreEqual("Invalid commands: The data must contains at once one command. (Parameter 'Data')",
+            exception?.InnerException?.Message);
+    }
+
+    [Test]
+    public void CreateSetupYamlWithoutRootCommandError()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithoutRootCommandText());
+
+        var exception = Assert.Throws<ClyshException>(() =>
+        {
+            var dummy = new ClyshSetup(fs.Object, Path);
+        });
+
+        Assert.AreEqual("Data must have at least one root command. (Parameter 'Data')",
+            exception?.InnerException?.Message);
+    }
+
+    [Test]
+    public void CreateSetupYamlWithRecursiveCommandError()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithRecursiveCommandText());
+
+        var exception = Assert.Throws<ClyshException>(() =>
+        {
+            var dummy = new ClyshSetup(fs.Object, Path);
+        });
+
+        Assert.AreEqual("Command Error: The command 'mycli' must not be children of itself: mycli>mycli",
+            exception?.InnerException?.Message);
+    }
+    
+    [Test]
+    public void CreateSetupYamlWithInvalidChildrenCommandError()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithInvalidChildrenCommandText());
+
+        var exception = Assert.Throws<ClyshException>(() =>
+        {
+            var dummy = new ClyshSetup(fs.Object, Path);
+        });
+
+        Assert.AreEqual("Invalid commandId. The id: fake was not found on commands data list.",
+            exception?.InnerException?.Message);
+    }
+
+    private string GetYamlWithInvalidChildrenCommandText()
+    {
+        return @"
+Title: MyCLI with only test command
+Version: 1.0
+Commands:
+  - Id: mycli
+    Description: My own CLI
+    Options:
+      - Description: Test option
+        Id: test
+        Shortcut: T
+        Parameters:
+          - Id: ab
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+    Root: true
+    Children:
+      - fake";
+    }
+
+    private string GetYamlWithRecursiveCommandText()
+    {
+        return @"
+Title: MyCLI with only test command
+Version: 1.0
+Commands:
+  - Id: mycli
+    Description: My own CLI
+    Options:
+      - Description: Test option
+        Id: test
+        Shortcut: T
+        Parameters:
+          - Id: ab
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+    Root: true
+    Children:
+      - mycli";
+    }
+
+    private string GetYamlCommandIdDuplicatedText()
+    {
+        return @"
+Title: MyCLI with only test command
+Version: 1.0
+Commands:
+  - Id: mycli
+    Description: My own CLI
+    Options:
+      - Description: Test option
+        Id: test
+        Shortcut: T
+        Parameters:
+          - Id: ab
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+    Root: true
+  - Id: mycli
+    Description: My child";
+    }
+
     private string GetJsonText()
     {
-      return @"
+        return @"
 {
   ""Title"": ""MyCLI with only test command"",
   ""Version"": 1.0,
@@ -131,5 +336,35 @@ Commands:
       - mychild
   - Id: mychild
     Description: My child";
+    }
+
+    private string GetYamlWithoutRootCommandText()
+    {
+        return @"
+Title: MyCLI with only test command
+Version: 1.0
+Commands:
+  - Id: mycli
+    Description: My own CLI
+    Options:
+      - Description: Test option
+        Id: test
+        Shortcut: T
+        Parameters:
+          - Id: ab
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+    Children:
+      - mychild
+  - Id: mychild
+    Description: My child";
+    }
+
+    private string GetYamlWithoutCommandText()
+    {
+        return @"
+Title: MyCLI with only test command
+Version: 1.0";
     }
 }

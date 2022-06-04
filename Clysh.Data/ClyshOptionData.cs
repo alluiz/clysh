@@ -14,21 +14,6 @@ namespace Clysh.Data
         }
 
         /// <summary>
-        /// Create a <b>ClyshOptionData</b> object
-        /// </summary>
-        /// <param name="id">The id of option</param>
-        /// <param name="description">The description</param>
-        /// <param name="shortcut">The CLI shortcut</param>
-        /// <param name="parameters">The option parameters data list</param>
-        public ClyshOptionData(string? id, string? description, string? shortcut, List<ClyshParameterData>? parameters)
-        {
-            Id = id;
-            Description = description;
-            Shortcut = shortcut;
-            Parameters = parameters;
-        }
-        
-        /// <summary>
         /// The id of option
         /// </summary>
         public string? Id { get; set; }

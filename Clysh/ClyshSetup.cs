@@ -120,10 +120,11 @@ namespace Clysh
         {
             try
             {
+                if (Data.Commands == null)
+                    throw new ArgumentException(InvalidCommandsLength, nameof(Data));
+                
                 if (Data.Commands.DistinctBy(x => x.Id).Count() != Data.Commands.Count)
                     HandleIdsError(Data.Commands);
-                else if (Data.Commands.Count == 0)
-                    throw new ArgumentException(InvalidCommandsLength, nameof(Data));
 
                 var rootData = Data.Commands.SingleOrDefault(x => x.Root);
 
@@ -161,14 +162,11 @@ namespace Clysh
 
             var ids = duplicatedCommands.Aggregate(string.Empty, (current, command) => $"{current}{command.Key},");
 
-            if (ids != null)
-            {
-                ids = ids[..^1];
+            ids = ids[..^1];
 
-                throw new ArgumentException(
-                    InvalidCommandsTheIdSMustBeUnique.Replace("$0", ids),
-                    nameof(commands));
-            }
+            throw new ArgumentException(
+                InvalidCommandsTheIdSMustBeUnique.Replace("$0", ids),
+                nameof(commands));
         }
 
         private void LoadCommands(IClyshCommand command, ClyshCommandData commandData)
