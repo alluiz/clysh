@@ -42,8 +42,8 @@ namespace Clysh
         {
             this.fs = fs;
             PathOfData = pathOfData;
-            commandsData = new();
-            commandsLoaded = new();
+            commandsData = new List<ClyshCommandData>();
+            commandsLoaded = new Dictionary<string, ClyshCommand>();
             Data = new ClyshData();
             RootCommand = GetRootCommandFromFilePath(PathOfData);
         }
@@ -103,9 +103,17 @@ namespace Clysh
 
         public void MakeAction(string commandId, Action<ClyshMap<ClyshOption>, IClyshView> action)
         {
-            IClyshCommand command = commandsLoaded[commandId];
+            var command = commandsLoaded[commandId];
             
             command.Action = action;
+        }
+
+        public bool IsReadyToProduction()
+        {
+           var allHasActions = commandsLoaded.All(x => x.Value.Action != null);
+           var allHasDescription = commandsLoaded.All(x => x.Value.Description != null);
+
+           return allHasActions && allHasDescription;
         }
 
         private ClyshCommand CreateRootFromExtractedData()
@@ -189,9 +197,9 @@ namespace Clysh
                 }
             }
 
-            if (commandData.ChildrenCommandsId != null)
+            if (commandData.Children != null)
             {
-                foreach (var childrenCommandId in commandData.ChildrenCommandsId)
+                foreach (var childrenCommandId in commandData.Children)
                 {
                     var childrenCommandData =
                         commandsData.SingleOrDefault(x => x.Id == childrenCommandId);
@@ -261,11 +269,11 @@ namespace Clysh
 
         private ClyshData YamlSerializer(string path)
         {
-            var config = GetDataFromFilePath(path);
+            var data = GetDataFromFilePath(path);
 
             var deserializer = new DeserializerBuilder().Build();
 
-            return deserializer.Deserialize<ClyshData>(config);
+            return deserializer.Deserialize<ClyshData>(data);
         }
     }
 }

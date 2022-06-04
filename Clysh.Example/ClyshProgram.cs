@@ -8,34 +8,31 @@
             {
                 IClyshService cli = default!;
 
-                try
-                {
-                    ClyshSetup setup = new("clidata.yml");
+                ClyshSetup setup = new("clidata.yml");
 
-                    setup.MakeAction("mycli",
-                        (options, view) =>
+                setup.MakeAction("mycli",
+                    (options, view) =>
+                    {
+                        view.Print(options.Has("test") ? "mycli with test option" : "mycli without test option");
+
+                        if (options.Has("test"))
                         {
-                            view.Print(options.Has("test") ? "mycli with test option" : "mycli without test option");
+                            var option = options["test"];
 
-                            if (options.Has("test"))
-                            {
-                                var option = options["test"];
+                            var data = option.Parameters["ab"].Data;
 
-                                var data = option.Parameters["ab"].Data;
+                            view.Print(data);
+                        }
+                    });
 
-                                view.Print(data);
-                            }
-                        });
-
-                    cli = new ClyshService(setup);
-                }
-                catch (ClyshException e)
-                {
-                    Console.Write(e);
-                    Environment.ExitCode = 2;
-                }
+                cli = new ClyshService(setup, true);
 
                 cli.Execute(args);
+            }
+            catch (ClyshException e)
+            {
+                Console.Write(e);
+                Environment.ExitCode = 2;
             }
             catch (Exception e)
             {

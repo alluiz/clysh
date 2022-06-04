@@ -6,8 +6,7 @@ namespace Clysh
     {
         public Action<ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
         public ClyshMap<ClyshCommand> Children { get; }
-        public ClyshMap<ClyshOption> AvailableOptions { get; }
-        public ClyshMap<ClyshOption> SelectedOptions { get; }
+        public ClyshMap<ClyshOption> Options { get; }
         public IClyshCommand? Parent { get; set; }
         public int Order { get; set; }
         public string? Description { get; set; }
@@ -16,8 +15,7 @@ namespace Clysh
         
         public ClyshCommand()
         {
-            AvailableOptions = new ClyshMap<ClyshOption>();
-            SelectedOptions = new ClyshMap<ClyshOption>();
+            Options = new ClyshMap<ClyshOption>();
             Children = new ClyshMap<ClyshCommand>();
             shortcutToOptionId = new Dictionary<string, string>();
             AddHelpOption();
@@ -25,7 +23,7 @@ namespace Clysh
         
         public void AddOption(ClyshOption option)
         {
-            AvailableOptions.Add(option);
+            Options.Add(option);
 
             if (option.Shortcut != null)
                 shortcutToOptionId.Add(option.Shortcut, option.Id);
@@ -49,26 +47,21 @@ namespace Clysh
             Children.Add(child);
         }
 
-        public void AddSelectedOption(ClyshOption optionSelected)
-        {
-            SelectedOptions.Add(optionSelected);
-        }
-
         public ClyshOption GetOption(string arg)
         {
             try
             {
-                return AvailableOptions[arg];
+                return Options[arg];
             }
             catch (Exception)
             {
-                return AvailableOptions[shortcutToOptionId[arg]];
+                return Options[shortcutToOptionId[arg]];
             }
         }
 
         public bool HasOption(string key)
         {
-            return AvailableOptions.Has(key) || shortcutToOptionId.ContainsKey(key);
+            return Options.Has(key) || shortcutToOptionId.ContainsKey(key);
         }
 
         public bool HasAnyChildren()

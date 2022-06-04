@@ -5,14 +5,15 @@ namespace Clysh
         public IClyshCommand RootCommand { get; private set; }
         public IClyshView View { get; }
 
-        public ClyshService(ClyshSetup setup)
+        public ClyshService(ClyshSetup setup, bool disableSafeMode = false):this(setup, new ClyshConsole(), disableSafeMode)
         {
-            RootCommand = setup.RootCommand;
-            View = new ClyshView(new ClyshConsole(), setup.Data);
         }
 
-        public ClyshService(ClyshSetup setup, IClyshConsole clyshConsole)
+        public ClyshService(ClyshSetup setup, IClyshConsole clyshConsole, bool disableSafeMode = false)
         {
+            if (!disableSafeMode && !setup.IsReadyToProduction())
+                throw new ClyshException("Your CLI are not ready to production. Check if ALL of your commands has a configured action and a valid description.");
+            
             RootCommand = setup.RootCommand;
             View = new ClyshView(clyshConsole, setup.Data);
         }
@@ -45,7 +46,7 @@ namespace Clysh
                     {
                         CheckLastOptionStatus(lastOption);
                         lastOption = GetOptionFromCommand(lastCommand, arg);
-                        lastCommand.AddSelectedOption(lastOption);
+                        lastOption.Selected = true;
                         isOptionHelp = lastOption.Id.Equals("help");
                     }
                     else if (lastCommand.HasChild(arg))
@@ -127,7 +128,7 @@ namespace Clysh
         private static void ThrowRequiredParametersError(ClyshOption lastOption)
         {
             throw new InvalidOperationException(
-                $"Required parameters [{lastOption.Parameters.RequiredToString()}] is missing for option: {lastOption.Id}");
+                $"Required parameters [{lastOption.Parameters.RequiredToString()}] is missing for option: {lastOption.Id} (shortcut: {lastOption.Shortcut ?? "<null>"})");
         }
 
         private static bool ArgIsParameter(string arg)
@@ -142,7 +143,7 @@ namespace Clysh
                 if (command.Action == null)
                     throw new ArgumentNullException(nameof(commandsToExecute), "Action null");
 
-                command.Action(command.SelectedOptions, View);
+                command.Action(command.Options, View);
             }
         }
 

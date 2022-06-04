@@ -28,6 +28,6 @@ namespace Clysh.Data
         /// <summary>
         /// The children commands
         /// </summary>
-        public List<string>? ChildrenCommandsId { get; set; }
+        public List<string>? Children { get; set; }
     }
 }

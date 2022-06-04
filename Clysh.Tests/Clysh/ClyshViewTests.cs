@@ -9,7 +9,7 @@ namespace Clysh.Tests;
 public class ClyshViewTests
 {
 
-    private readonly ClyshData metadata = new ClyshData(title: "Auth 2 API", "1.0");
+    private readonly ClyshData metadata = new(title: "Auth 2 API", "1.0");
     private readonly Mock<IClyshConsole> consoleMock = new();
 
     [SetUp]
@@ -215,7 +215,7 @@ public class ClyshViewTests
 
         var i = 0;
 
-        foreach (var item in command.AvailableOptions.OrderBy(x => x.Key))
+        foreach (var item in command.Options.OrderBy(x => x.Key))
         {
             var i1 = i;
             consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);
@@ -268,7 +268,7 @@ public class ClyshViewTests
 
         var i = 0;
 
-        foreach (var item in command.AvailableOptions.OrderBy(x => x.Key))
+        foreach (var item in command.Options.OrderBy(x => x.Key))
         {
             var i1 = i;
             consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);
@@ -321,7 +321,7 @@ public class ClyshViewTests
 
         var i = 0;
 
-        foreach (var item in command.AvailableOptions.OrderBy(x => x.Key))
+        foreach (var item in command.Options.OrderBy(x => x.Key))
         {
             var i1 = i;
             consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);

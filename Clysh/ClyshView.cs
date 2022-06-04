@@ -139,7 +139,7 @@ namespace Clysh
                 "".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(28) + "Description".PadRight(55) +
                 "Parameters: (R)equired | (O)ptional = Length", true);
 
-            foreach (var item in command.AvailableOptions.OrderBy(x => x.Key))
+            foreach (var item in command.Options.OrderBy(x => x.Key))
             {
                 var paramsText = item.Value.Parameters.ToString();
 

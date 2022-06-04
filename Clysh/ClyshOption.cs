@@ -7,6 +7,7 @@ namespace Clysh
         public string? Description { get; set; }
         public ClyshParameters Parameters { get; set; }
         public string? Shortcut { get; set; }
+        public bool Selected { get; set; }
 
         public ClyshOption()
         {

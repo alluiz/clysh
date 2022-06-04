@@ -19,16 +19,16 @@ namespace Clysh.Tests
            return builder
                 .Id("auth2")
                 .Description("Execute Auth 2 API CLI Application")
-                .Action((options, cliFront) =>
+                .Action((options, view) =>
                 {
-                    if (options.Has(developmentOption))
-                        cliFront.Print("Selected environment: development");
+                    if (options[developmentOption].Selected)
+                        view.Print("Selected environment: development");
 
-                    if (options.Has(homologOption))
-                        cliFront.Print("Selected environment: homolog");
+                    if (options[homologOption].Selected)
+                        view.Print("Selected environment: homolog");
 
-                    if (options.Has(productionOption))
-                        cliFront.Print("Selected environment: production");
+                    if (options[productionOption].Selected)
+                        view.Print("Selected environment: production");
                 })
                 .Option(optionBuilder.Id(developmentOption)
                     .Description("Development environment option. Default value.")
@@ -58,24 +58,24 @@ namespace Clysh.Tests
             return builder
                 .Id("credential")
                 .Description("Manager a credential")
-                .Action((options, cliFront) =>
+                .Action((options, view) =>
                 {
-                    if (options.Has(appNameOption))
+                    if (options[appNameOption].Selected)
                     {
                         var appname = options[appNameOption];
 
-                        cliFront.Print("appname: " + appname.Parameters[appNameOption].Data);
+                        view.Print("appname: " + appname.Parameters[appNameOption].Data);
                     }
                     else
                     {
                         var guid = Guid.NewGuid();
-                        cliFront.Print("appname: (random) " + guid.ToString());
+                        view.Print("appname: (random) " + guid.ToString());
                     }
 
-                    if (options.Has(scopeOption))
+                    if (options[scopeOption].Selected)
                     {
-                        cliFront.Print("scope: " + options[scopeOption].Parameters["scope"].Data);
-                        cliFront.Print("tags: " + options[scopeOption].Parameters["tags"].Data);
+                        view.Print("scope: " + options[scopeOption].Parameters["scope"].Data);
+                        view.Print("tags: " + options[scopeOption].Parameters["tags"].Data);
                     }
                 })
                 .Option(optionBuilder.Id(appNameOption)
@@ -86,8 +86,8 @@ namespace Clysh.Tests
                 .Option(optionBuilder.Id(scopeOption)
                     .Description("Scopes of the app by comma")
                     .Parameters(ClyshParameters.Create(
-                        new("scope", 1, 1000),
-                        new("tags", 1, 1000, false)))
+                        new ClyshParameter("scope", 1, 1000),
+                        new ClyshParameter("tags", 1, 1000, false)))
                     .Build())
                 .Child(CreateTestCredentialCommand())
                 .Build();
@@ -126,23 +126,23 @@ namespace Clysh.Tests
             return builder
                 .Id("login")
                 .Description("User login command for system")
-                .Action((options, cliFront) =>
+                .Action((options, view) =>
                 {
-                    if (options.Has(promptOption))
+                    if (options[promptOption].Selected)
                     {
-                        cliFront.Print($"Your username is: {cliFront.AskFor("Username")}");
-                        cliFront.Print($"Your password is: {cliFront.AskFor("Password")}");
+                        view.Print($"Your username is: {view.AskFor("Username")}");
+                        view.Print($"Your password is: {view.AskFor("Password")}");
                     }
-                    else if (options.Has(credentialsOption))
+                    else if (options[credentialsOption].Selected)
                     {
                         var credential = options[credentialsOption];
-                        cliFront.Print("Your credential path is: " + credential.Parameters["path"].Data);
+                        view.Print("Your credential path is: " + credential.Parameters["path"].Data);
                     }
 
-                    if (cliFront.Confirm("Salvar login?", "Sim", "Nao"))
-                        cliFront.Print("OK");
+                    if (view.Confirm("Salvar login?", "Sim", "Nao"))
+                        view.Print("OK");
                     else
-                        cliFront.Print("Aborted");
+                        view.Print("Aborted");
                 })
                 .Option(optionBuilder
                     .Id(promptOption)

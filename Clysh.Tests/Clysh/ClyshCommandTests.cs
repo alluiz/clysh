@@ -26,7 +26,7 @@ public class ClyshCommandTests
     [Test]
     public void TestAddChild()
     {
-        ClyshCommandBuilder builder = new ClyshCommandBuilder();
+        var builder = new ClyshCommandBuilder();
         var child = builder.Id("child").Build();
         command.AddChild(child);
         Assert.NotNull(command.Children);
@@ -37,12 +37,12 @@ public class ClyshCommandTests
     [Test]
     public void TestAddOption()
     {
-        ClyshOptionBuilder builder = new ClyshOptionBuilder();
+        var builder = new ClyshOptionBuilder();
         command.AddOption(builder
             .Id("option")
             .Build());
-        Assert.NotNull(command.AvailableOptions);
-        Assert.AreEqual(2, command.AvailableOptions.Count);
-        Assert.AreEqual("option", command.AvailableOptions["option"].Id);
+        Assert.NotNull(command.Options);
+        Assert.AreEqual(2, command.Options.Count);
+        Assert.AreEqual("option", command.Options["option"].Id);
     }
 }

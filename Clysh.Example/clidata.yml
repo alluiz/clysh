@@ -13,3 +13,7 @@ Commands:
             MinLength: 1
             MaxLength: 15
     Root: true
+    Children:
+      - mychild
+  - Id: mychild
+    Description: My child

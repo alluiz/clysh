@@ -6,12 +6,10 @@ public interface IClyshCommand: IClyshIndexable<string>
 {
     Action<ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
     string? Description { get; }
-    ClyshMap<ClyshOption> AvailableOptions { get; }
+    ClyshMap<ClyshOption> Options { get; }
     int Order { get; set; }
-    ClyshMap<ClyshOption> SelectedOptions { get; }
     IClyshCommand? Parent { get; set; }
     ClyshMap<ClyshCommand> Children { get; }
-    void AddSelectedOption(ClyshOption optionSelected);
     ClyshOption GetOption(string arg);
     bool HasOption(string key);
     bool HasAnyChildren();
