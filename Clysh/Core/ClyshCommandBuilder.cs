@@ -1,6 +1,6 @@
 using Clysh.Helper;
 
-namespace Clysh;
+namespace Clysh.Core;
 
 public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
 {

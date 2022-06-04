@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Clysh.Core;
 using Clysh.Helper;
 using Moq;
 using NUnit.Framework;

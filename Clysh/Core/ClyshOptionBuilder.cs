@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using Clysh.Helper;
 
-namespace Clysh;
+namespace Clysh.Core;
 
 public class ClyshOptionBuilder: ClyshBuilder<ClyshOption>
 {

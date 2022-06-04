@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Clysh.Core;
+using NUnit.Framework;
 
 namespace Clysh.Tests;
 

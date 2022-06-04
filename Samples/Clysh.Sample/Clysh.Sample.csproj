@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Clysh\Clysh.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="clidata.yml" />
     <Content Include="clidata.yml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Clysh\Clysh.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

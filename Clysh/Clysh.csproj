@@ -1,14 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>Clysh</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Luiz Almeida</Authors>
+    <Company>Clysh</Company>
+    <Title>Clysh: CLI in YAML for Shell apps</Title>
+    <Description>Create your own CLI on .NET 6+ with simple steps</Description>
+    <PackageTags>CLI;command-line-interface;clysh;yaml;prompt;shell;backend</PackageTags>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Clysh.Data\Clysh.Data.csproj" />
-    <ProjectReference Include="..\Clysh.Helper\Clysh.Helper.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.IO.Abstractions" Version="17.0.15" />
+    <PackageReference Include="YamlDotNet" Version="11.2.1" />
   </ItemGroup>
 
 </Project>

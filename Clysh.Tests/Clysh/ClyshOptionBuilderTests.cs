@@ -1,4 +1,5 @@
 ﻿using System;
+using Clysh.Core;
 using NUnit.Framework;
 
 namespace Clysh.Tests;
