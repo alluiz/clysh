@@ -5,15 +5,17 @@ public class ClyshService : IClyshService
     public IClyshCommand RootCommand { get; private set; }
     public IClyshView View { get; }
 
-    public ClyshService(ClyshSetup setup, bool disableSafeMode = false):this(setup, new ClyshConsole(), disableSafeMode)
+    public ClyshService(ClyshSetup setup, bool disableSafeMode = false) : this(setup, new ClyshConsole(),
+        disableSafeMode)
     {
     }
 
     public ClyshService(ClyshSetup setup, IClyshConsole clyshConsole, bool disableSafeMode = false)
     {
         if (!disableSafeMode && !setup.IsReadyToProduction())
-            throw new ClyshException("Your CLI are not ready to production. Check if ALL of your commands has a configured action and a valid description.");
-            
+            throw new ClyshException(
+                "Your CLI are not ready to production. Check if ALL of your commands has a configured action and a valid description.");
+
         RootCommand = setup.RootCommand;
         View = new ClyshView(clyshConsole, setup.Data);
     }
@@ -46,6 +48,16 @@ public class ClyshService : IClyshService
                 {
                     CheckLastOptionStatus(lastOption);
                     lastOption = GetOptionFromCommand(lastCommand, arg);
+
+                    if (lastOption.Group != null)
+                    {
+                        var oldOptionOfGroupSelected = lastCommand
+                            .GetOptionFromGroup(lastOption.Group);
+
+                        if (oldOptionOfGroupSelected != null)
+                            oldOptionOfGroupSelected.Selected = false;
+                    }
+
                     lastOption.Selected = true;
                     isOptionHelp = lastOption.Id.Equals("help");
                 }
@@ -121,8 +133,11 @@ public class ClyshService : IClyshService
 
     private static void CheckLastOptionStatus(ClyshOption? lastOption)
     {
-        if (lastOption?.Parameters != null && lastOption.Parameters.WaitingForRequired())
-            ThrowRequiredParametersError(lastOption);
+        if (lastOption != null)
+        {
+            if (lastOption.Parameters.WaitingForRequired())
+                ThrowRequiredParametersError(lastOption);
+        }
     }
 
     private static void ThrowRequiredParametersError(ClyshOption lastOption)

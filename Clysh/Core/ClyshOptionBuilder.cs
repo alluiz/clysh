@@ -57,4 +57,16 @@ public class ClyshOptionBuilder: ClyshBuilder<ClyshOption>
         if (value == null || value.Trim().Length < min || value.Trim().Length > max)
             throw new ArgumentException($"Option {field} must be not null or empty and between {min} and {max} chars.", field);
     }
+
+    public ClyshOptionBuilder Group(ClyshGroup group)
+    {
+        Result.Group = group;
+        return this;
+    }
+
+    public ClyshOptionBuilder Selected(bool selected)
+    {
+        Result.Selected = selected;
+        return this;
+    }
 }

@@ -8,6 +8,7 @@ public class ClyshOption : ClyshSimpleIndexable
     public ClyshParameters Parameters { get; set; }
     public string? Shortcut { get; set; }
     public bool Selected { get; set; }
+    public ClyshGroup? Group { get; set; }
 
     public ClyshOption()
     {

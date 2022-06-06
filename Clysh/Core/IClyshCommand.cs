@@ -10,10 +10,12 @@ public interface IClyshCommand: IClyshIndexable<string>
     int Order { get; set; }
     IClyshCommand? Parent { get; set; }
     ClyshMap<ClyshCommand> Children { get; }
+    ClyshMap<ClyshGroup> Groups { get; set; }
     ClyshOption GetOption(string arg);
     bool HasOption(string key);
     bool HasAnyChildren();
     bool HasChild(string arg);
     void AddOption(ClyshOption option);
     void AddChild(ClyshCommand child);
+    ClyshOption? GetOptionFromGroup(ClyshGroup group);
 }

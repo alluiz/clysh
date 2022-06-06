@@ -6,15 +6,17 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
 {
     public Action<ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
     public ClyshMap<ClyshCommand> Children { get; }
+    public ClyshMap<ClyshGroup> Groups { get; set; }
     public ClyshMap<ClyshOption> Options { get; }
     public IClyshCommand? Parent { get; set; }
     public int Order { get; set; }
     public string? Description { get; set; }
-        
+
     private readonly Dictionary<string, string> shortcutToOptionId;
         
     public ClyshCommand()
     {
+        Groups = new ClyshMap<ClyshGroup>();
         Options = new ClyshMap<ClyshOption>();
         Children = new ClyshMap<ClyshCommand>();
         shortcutToOptionId = new Dictionary<string, string>();
@@ -45,6 +47,14 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
     {
         child.Parent = this;
         Children.Add(child);
+    }
+
+    public ClyshOption? GetOptionFromGroup(ClyshGroup group)
+    {
+        return Options
+            .Values
+            .SingleOrDefault(x =>
+                x.Group == group && x.Selected);
     }
 
     public ClyshOption GetOption(string arg)

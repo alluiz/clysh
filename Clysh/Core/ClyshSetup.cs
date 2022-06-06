@@ -171,6 +171,17 @@ public class ClyshSetup
 
     private void LoadCommands(IClyshCommand command, ClyshCommandData commandData)
     {
+        if (commandData.Groups != null)
+        {
+            foreach (var group in commandData.Groups)
+            {
+                var groupBuilder = new ClyshGroupBuilder();
+                command.Groups.Add(groupBuilder
+                    .Id(group)
+                    .Build());
+            }
+        }
+        
         if (commandData.Options != null)
         {
             foreach (var option in commandData.Options)
@@ -181,17 +192,36 @@ public class ClyshSetup
                     .Id(option.Id ?? throw new InvalidOperationException())
                     .Description(option.Description ?? throw new InvalidOperationException())
                     .Shortcut(option.Shortcut);
-                    
+
+                if (option.Group != null)
+                {
+                    if (option.Parameters != null)
+                        throw new InvalidOperationException("Option into a group cannot have parameters. Like a 'radio' button.");
+                        
+                    var group = command.Groups[option.Group];
+                    optionBuilder
+                        .Group(group);
+
+                    if (option.DefaultAtGroup)
+                        optionBuilder
+                            .Selected(true);
+                }
+                else if (option.DefaultAtGroup)
+                    throw new InvalidOperationException("The command cannot have a default option at group if doesn`t have a configured group.");
+
                 if (option.Parameters != null)
                 {
-
+                    if (option.Group != null)
+                        throw new InvalidOperationException("Option into a group cannot have parameters. Like a 'radio' button.");
+                    
                     var parameters = new ClyshParameters();
                     option.Parameters.ForEach(x =>
                         parameters.Add(new ClyshParameter(x.Id, x.MinLength, x.MaxLength, x.Required, x.Pattern)));
                     optionBuilder.Parameters(parameters);
                 }
-                    
-                command.AddOption(optionBuilder.Build());
+                
+                var optionBuilded = optionBuilder.Build();
+                command.AddOption(optionBuilded);
             }
         }
 
