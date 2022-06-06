@@ -843,4 +843,294 @@ public class ClyshServiceTests
 
         frontMock.Verify(x => x.PrintHelp(rootCommand, It.Is<InvalidOperationException>(y => y.Message == $"The parameter 'testarg' is already filled for option: {someOption}.")), Times.Once);
     }
+    
+    [Test]
+    public void SuccessfulExecuteRootWithGroupOptionDefault()
+    {
+        var args = new[] { " " };
+
+        var someOption = "dev";
+
+        ClyshMap<ClyshOption>? expectedOptions = null;
+        IClyshView? expectedCliFront = null;
+
+        void Action(ClyshMap<ClyshOption> options, IClyshView view)
+        {
+            expectedOptions = options;
+            expectedCliFront = view;
+        }
+        
+        var builder = new ClyshCommandBuilder();
+
+        var optBuilder = new ClyshOptionBuilder();
+
+        var groupBuilder = new ClyshGroupBuilder();
+
+        var group = groupBuilder
+            .Id("env")
+            .Build();
+        
+        IClyshCommand rootCommand = builder
+            .Id("root")
+            .Description("root command")
+            .Action(Action)
+            .Option(optBuilder
+                .Id("dev")
+                .Group(group)
+                .Selected(true)
+                .Build())
+            .Option(optBuilder
+                .Id("hom")
+                .Group(group)
+                .Build())
+            .Build();
+
+        IClyshService cli = new ClyshService(rootCommand, frontMock.Object);
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedOptions);
+        Assert.NotNull(expectedCliFront);
+
+        Assert.AreEqual(1, expectedOptions?.Count(x => x.Value.Selected));
+        Assert.IsTrue(expectedOptions?[someOption].Selected);
+        Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
+
+        Assert.AreEqual(cli.View, expectedCliFront);
+    }
+    
+    [Test]
+    public void SuccessfulExecuteRootWithGroupOptionPassed()
+    {
+        
+        var someOption = "hom";
+        var someOptionWithDashes = $"--{someOption}";
+        
+        var args = new[] { someOptionWithDashes };
+        
+        ClyshMap<ClyshOption>? expectedOptions = null;
+        IClyshView? expectedCliFront = null;
+
+        void Action(ClyshMap<ClyshOption> options, IClyshView view)
+        {
+            expectedOptions = options;
+            expectedCliFront = view;
+        }
+        
+        var builder = new ClyshCommandBuilder();
+
+        var optBuilder = new ClyshOptionBuilder();
+
+        var groupBuilder = new ClyshGroupBuilder();
+
+        var group = groupBuilder
+            .Id("env")
+            .Build();
+        
+        IClyshCommand rootCommand = builder
+            .Id("root")
+            .Description("root command")
+            .Action(Action)
+            .Option(optBuilder
+                .Id("dev")
+                .Group(group)
+                .Selected(true)
+                .Build())
+            .Option(optBuilder
+                .Id("hom")
+                .Group(group)
+                .Build())
+            .Build();
+
+        IClyshService cli = new ClyshService(rootCommand, frontMock.Object);
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedOptions);
+        Assert.NotNull(expectedCliFront);
+
+        Assert.AreEqual(1, expectedOptions?.Count(x => x.Value.Selected));
+        Assert.IsTrue(expectedOptions?[someOption].Selected);
+        Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
+
+        Assert.AreEqual(cli.View, expectedCliFront);
+    }
+    
+    [Test]
+    public void SuccessfulExecuteRootWithGroupOptionPassedAndNoDefault()
+    {
+        
+        var someOption = "hom";
+        var someOptionWithDashes = $"--{someOption}";
+        
+        var args = new[] { someOptionWithDashes };
+        
+        ClyshMap<ClyshOption>? expectedOptions = null;
+        IClyshView? expectedCliFront = null;
+
+        void Action(ClyshMap<ClyshOption> options, IClyshView view)
+        {
+            expectedOptions = options;
+            expectedCliFront = view;
+        }
+        
+        var builder = new ClyshCommandBuilder();
+
+        var optBuilder = new ClyshOptionBuilder();
+
+        var groupBuilder = new ClyshGroupBuilder();
+
+        var group = groupBuilder
+            .Id("env")
+            .Build();
+        
+        IClyshCommand rootCommand = builder
+            .Id("root")
+            .Description("root command")
+            .Action(Action)
+            .Option(optBuilder
+                .Id("dev")
+                .Group(group)
+                .Build())
+            .Option(optBuilder
+                .Id("hom")
+                .Group(group)
+                .Build())
+            .Build();
+
+        IClyshService cli = new ClyshService(rootCommand, frontMock.Object);
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedOptions);
+        Assert.NotNull(expectedCliFront);
+
+        Assert.AreEqual(1, expectedOptions?.Count(x => x.Value.Selected));
+        Assert.IsTrue(expectedOptions?[someOption].Selected);
+        Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
+
+        Assert.AreEqual(cli.View, expectedCliFront);
+    }
+    
+    [Test]
+    public void SuccessfulExecuteRootWithGroupOptionPassedAndOtherOption()
+    {
+        var someOption = "hom";
+        var someOptionWithDashes = $"--{someOption}";
+        
+        var args = new[] { someOptionWithDashes, "--opt2" };
+        
+        ClyshMap<ClyshOption>? expectedOptions = null;
+        IClyshView? expectedCliFront = null;
+
+        void Action(ClyshMap<ClyshOption> options, IClyshView view)
+        {
+            expectedOptions = options;
+            expectedCliFront = view;
+        }
+        
+        var builder = new ClyshCommandBuilder();
+
+        var optBuilder = new ClyshOptionBuilder();
+
+        var groupBuilder = new ClyshGroupBuilder();
+
+        var group = groupBuilder
+            .Id("env")
+            .Build();
+        
+        IClyshCommand rootCommand = builder
+            .Id("root")
+            .Description("root command")
+            .Action(Action)
+            .Option(optBuilder
+                .Id("dev")
+                .Group(group)
+                .Build())
+            .Option(optBuilder
+                .Id("hom")
+                .Group(group)
+                .Build())
+            .Option(optBuilder
+                .Id("opt2")
+                .Build())
+            .Build();
+
+        IClyshService cli = new ClyshService(rootCommand, frontMock.Object);
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedOptions);
+        Assert.NotNull(expectedCliFront);
+
+        Assert.AreEqual(2, expectedOptions?.Count(x => x.Value.Selected));
+        Assert.IsTrue(expectedOptions?[someOption].Selected);
+        Assert.IsTrue(expectedOptions?["opt2"].Selected);
+        Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
+        Assert.AreEqual("opt2", expectedOptions?["opt2"].Id);
+
+        Assert.AreEqual(cli.View, expectedCliFront);
+    }
+    
+    [Test]
+    public void SuccessfulExecuteRootWithGroupOptionPassedAndOtherOptionWithParameter()
+    {
+        var someOption = "hom";
+        var someOptionWithDashes = $"--{someOption}";
+        
+        var args = new[] { someOptionWithDashes, "--opt2", "arg" };
+        
+        ClyshMap<ClyshOption>? expectedOptions = null;
+        IClyshView? expectedCliFront = null;
+
+        void Action(ClyshMap<ClyshOption> options, IClyshView view)
+        {
+            expectedOptions = options;
+            expectedCliFront = view;
+        }
+        
+        var builder = new ClyshCommandBuilder();
+
+        var optBuilder = new ClyshOptionBuilder();
+
+        var groupBuilder = new ClyshGroupBuilder();
+
+        var group = groupBuilder
+            .Id("env")
+            .Build();
+        
+        IClyshCommand rootCommand = builder
+            .Id("root")
+            .Description("root command")
+            .Action(Action)
+            .Option(optBuilder
+                .Id("dev")
+                .Group(group)
+                .Build())
+            .Option(optBuilder
+                .Id("hom")
+                .Group(group)
+                .Build())
+            .Option(optBuilder
+                .Id("opt2")
+                .Parameters(ClyshParameters.Create(new ClyshParameter("value", 1, 10, true)))
+                .Build())
+            .Build();
+
+        IClyshService cli = new ClyshService(rootCommand, frontMock.Object);
+
+        cli.Execute(args);
+
+        Assert.NotNull(expectedOptions);
+        Assert.NotNull(expectedCliFront);
+
+        Assert.AreEqual(2, expectedOptions?.Count(x => x.Value.Selected));
+        Assert.IsTrue(expectedOptions?[someOption].Selected);
+        Assert.IsTrue(expectedOptions?["opt2"].Selected);
+        Assert.AreEqual(someOption, expectedOptions?[someOption].Id);
+        Assert.AreEqual("opt2", expectedOptions?["opt2"].Id);
+        Assert.AreEqual("arg", expectedOptions?["opt2"].Parameters["value"].Data);
+
+        Assert.AreEqual(cli.View, expectedCliFront);
+    }
 }

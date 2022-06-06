@@ -39,13 +39,17 @@ public class ClyshSetupTests
 
         Assert.AreEqual("mycli", root.Id);
         Assert.AreEqual("My own CLI", root.Description);
-        Assert.AreEqual(2, root.Options.Count);
+        Assert.AreEqual(4, root.Options.Count);
         Assert.AreEqual(1, root.Children.Count);
         Assert.AreEqual(action, root.Action);
 
         Assert.AreEqual("Test option", root.Options["test"].Description);
         Assert.AreEqual("T", root.Options["test"].Shortcut);
         Assert.AreEqual(1, root.Options["test"].Parameters.Count);
+        
+        Assert.IsTrue(root.Options["dev"].Selected);
+        Assert.IsFalse(root.Options["hom"].Selected);
+        Assert.IsTrue(root.Groups.ContainsKey("env"));
 
         Assert.IsTrue(root.Options["test"].Parameters["ab"].Required);
         Assert.AreEqual(1, root.Options["test"].Parameters["ab"].MinLength);
@@ -217,6 +221,136 @@ public class ClyshSetupTests
         Assert.AreEqual("Invalid commandId. The id: fake was not found on commands data list.",
             exception?.InnerException?.Message);
     }
+    
+    [Test]
+    public void CreateSetupYamlWithoutGroupAndDefaultGroupAtError()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithoutGroupAndDefaultGroupAtText());
+
+        var exception = Assert.Throws<ClyshException>(() =>
+        {
+            var dummy = new ClyshSetup(fs.Object, Path);
+        });
+
+        Assert.AreEqual("The command cannot have a default option at group if doesn`t have a configured group.",
+            exception?.InnerException?.Message);
+    }
+    
+    [Test]
+    public void CreateSetupYamlWithGroupAndParametersError()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithGroupAndParametersText());
+
+        var exception = Assert.Throws<ClyshException>(() =>
+        {
+            var dummy = new ClyshSetup(fs.Object, Path);
+        });
+
+        Assert.AreEqual("Option into a group cannot have parameters. Like a 'radio' button.",
+            exception?.InnerException?.Message);
+    }
+    
+    [Test]
+    public void CreateSetupYamlWithInvalidGroupError()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithInvalidGroupText());
+
+        var exception = Assert.Throws<ClyshException>(() =>
+        {
+            var dummy = new ClyshSetup(fs.Object, Path);
+        });
+
+        Assert.AreEqual("Invalid group 'test'. You need to add it to 'Groups' field of command.",
+            exception?.InnerException?.Message);
+    }
+
+    private string GetYamlWithInvalidGroupText()
+    {
+        return @"
+Title: MyCLI with only test command
+Version: 1.0
+Commands:
+  - Id: mycli
+    Description: My own CLI
+    Options:
+      - Description: Test option
+        Id: test
+        Shortcut: T
+        Group: test
+    Root: true
+    Children:
+      - mychild
+  - Id: mychild
+    Description: My child";
+    }
+
+    private string GetYamlWithGroupAndParametersText()
+    {
+        return @"
+Title: MyCLI with only test command
+Version: 1.0
+Commands:
+  - Id: mycli
+    Description: My own CLI
+    Groups:
+      - test
+    Options:
+      - Description: Test option
+        Id: test
+        Shortcut: T
+        Group: test
+        Parameters:
+          - Id: ab
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+    Root: true
+    Children:
+      - mychild
+  - Id: mychild
+    Description: My child";
+    }
+    
+    private string GetYamlWithoutGroupAndDefaultGroupAtText()
+    {
+        return @"
+Title: MyCLI with only test command
+Version: 1.0
+Commands:
+  - Id: mycli
+    Description: My own CLI
+    Groups:
+      - env
+    Options:
+      - Description: Test option
+        Id: dev
+        DefaultAtGroup: true
+      - Description: Test option
+        Id: hom
+        Group: env
+      - Description: Test option
+        Id: test
+        Shortcut: T
+        Parameters:
+          - Id: ab
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+    Root: true
+    Children:
+      - mychild
+  - Id: mychild
+    Description: My child";
+    }
 
     private string GetYamlWithInvalidChildrenCommandText()
     {
@@ -323,7 +457,16 @@ Version: 1.0
 Commands:
   - Id: mycli
     Description: My own CLI
+    Groups:
+      - env
     Options:
+      - Description: Test option
+        Id: dev
+        Group: env
+        DefaultAtGroup: true
+      - Description: Test option
+        Id: hom
+        Group: env
       - Description: Test option
         Id: test
         Shortcut: T

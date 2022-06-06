@@ -198,6 +198,9 @@ public class ClyshSetup
                     if (option.Parameters != null)
                         throw new InvalidOperationException("Option into a group cannot have parameters. Like a 'radio' button.");
                         
+                    if (command.Groups == null || !command.Groups.ContainsKey(option.Group))
+                        throw new InvalidOperationException($"Invalid group '{option.Group}'. You need to add it to 'Groups' field of command.");
+                    
                     var group = command.Groups[option.Group];
                     optionBuilder
                         .Group(group);
@@ -211,9 +214,6 @@ public class ClyshSetup
 
                 if (option.Parameters != null)
                 {
-                    if (option.Group != null)
-                        throw new InvalidOperationException("Option into a group cannot have parameters. Like a 'radio' button.");
-                    
                     var parameters = new ClyshParameters();
                     option.Parameters.ForEach(x =>
                         parameters.Add(new ClyshParameter(x.Id, x.MinLength, x.MaxLength, x.Required, x.Pattern)));
