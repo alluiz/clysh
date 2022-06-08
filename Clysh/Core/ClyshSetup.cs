@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 using Clysh.Data;
 using Clysh.Helper;
@@ -52,6 +53,7 @@ public class ClyshSetup
     /// The <b>ClyshDataSetup</b> object
     /// </summary>
     /// <param name="pathOfData">The path of file. YAML or JSON format only</param>
+    [ExcludeFromCodeCoverage]
     public ClyshSetup(string pathOfData) : this(new FileSystem(), pathOfData)
     {
     }
@@ -144,10 +146,6 @@ public class ClyshSetup
             LoadCommands(root, rootData);
 
             return root;
-        }
-        catch (ClyshException)
-        {
-            throw;
         }
         catch (Exception e)
         {
@@ -285,7 +283,7 @@ public class ClyshSetup
         var data = JsonConvert.DeserializeObject<ClyshData>(config);
 
         if (data == null)
-            throw new ArgumentException(InvalidJson, nameof(path));
+            throw new InvalidOperationException(InvalidJson);
 
         return data;
     }

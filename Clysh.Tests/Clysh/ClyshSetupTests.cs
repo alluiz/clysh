@@ -273,6 +273,22 @@ public class ClyshSetupTests
             exception?.InnerException?.Message);
     }
 
+    [Test]
+    public void CreateSetupJsonNullError()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".json");
+        fs.Setup(x => x.File.ReadAllText(Path)).Returns("null");
+
+        var ex = Assert.Throws<ClyshException>(() =>
+        {
+            var dummy = new ClyshSetup(fs.Object, Path);
+        });
+
+        Assert.AreEqual("Invalid JSON: The deserialization results in null object.", ex?.InnerException?.Message);
+    }
+    
     private string GetYamlWithInvalidGroupText()
     {
         return @"

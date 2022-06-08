@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Clysh.Core;
 
 public class ClyshService : IClyshService
@@ -5,11 +7,13 @@ public class ClyshService : IClyshService
     public IClyshCommand RootCommand { get; private set; }
     public IClyshView View { get; }
 
+    [ExcludeFromCodeCoverage]
     public ClyshService(ClyshSetup setup, bool disableSafeMode = false) : this(setup, new ClyshConsole(),
         disableSafeMode)
     {
     }
 
+    [ExcludeFromCodeCoverage]
     public ClyshService(ClyshSetup setup, IClyshConsole clyshConsole, bool disableSafeMode = false)
     {
         if (!disableSafeMode && !setup.IsReadyToProduction())

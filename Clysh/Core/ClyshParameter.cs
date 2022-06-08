@@ -14,11 +14,6 @@ public class ClyshParameter : ClyshSimpleIndexable
     public int MinLength { get; set;  }
     public int MaxLength { get; set; }
 
-    public ClyshParameter()
-    {
-            
-    }
-        
     public ClyshParameter(string id, int minLength, int maxLength, bool required = true)
     {
         Id = id;
