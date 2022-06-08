@@ -47,7 +47,7 @@ public class ClyshSetupTests
         Assert.AreEqual("T", root.Options["test"].Shortcut);
         Assert.AreEqual(1, root.Options["test"].Parameters.Count);
         
-        Assert.IsTrue(root.Options["dev"].Selected);
+        Assert.IsFalse(root.Options["dev"].Selected);
         Assert.IsFalse(root.Options["hom"].Selected);
         Assert.IsTrue(root.Groups.ContainsKey("env"));
 
@@ -219,40 +219,6 @@ public class ClyshSetupTests
         });
 
         Assert.AreEqual("Invalid commandId. The id: fake was not found on commands data list.",
-            exception?.InnerException?.Message);
-    }
-    
-    [Test]
-    public void CreateSetupYamlWithoutGroupAndDefaultGroupAtError()
-    {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithoutGroupAndDefaultGroupAtText());
-
-        var exception = Assert.Throws<ClyshException>(() =>
-        {
-            var dummy = new ClyshSetup(fs.Object, Path);
-        });
-
-        Assert.AreEqual("The command cannot have a default option at group if doesn`t have a configured group.",
-            exception?.InnerException?.Message);
-    }
-    
-    [Test]
-    public void CreateSetupYamlWithGroupAndParametersError()
-    {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithGroupAndParametersText());
-
-        var exception = Assert.Throws<ClyshException>(() =>
-        {
-            var dummy = new ClyshSetup(fs.Object, Path);
-        });
-
-        Assert.AreEqual("Option into a group cannot have parameters. Like a 'radio' button.",
             exception?.InnerException?.Message);
     }
     
@@ -479,7 +445,6 @@ Commands:
       - Description: Test option
         Id: dev
         Group: env
-        DefaultAtGroup: true
       - Description: Test option
         Id: hom
         Group: env

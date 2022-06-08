@@ -193,23 +193,14 @@ public class ClyshSetup
 
                 if (option.Group != null)
                 {
-                    if (option.Parameters != null)
-                        throw new InvalidOperationException("Option into a group cannot have parameters. Like a 'radio' button.");
-                        
                     if (command.Groups == null || !command.Groups.ContainsKey(option.Group))
                         throw new InvalidOperationException($"Invalid group '{option.Group}'. You need to add it to 'Groups' field of command.");
                     
                     var group = command.Groups[option.Group];
                     optionBuilder
                         .Group(group);
-
-                    if (option.DefaultAtGroup)
-                        optionBuilder
-                            .Selected(true);
                 }
-                else if (option.DefaultAtGroup)
-                    throw new InvalidOperationException("The command cannot have a default option at group if doesn`t have a configured group.");
-
+                
                 if (option.Parameters != null)
                 {
                     var parameters = new ClyshParameters();

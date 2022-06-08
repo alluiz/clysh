@@ -29,9 +29,6 @@ namespace Clysh.Data
         /// The option parameters data list
         /// </summary>
         public List<ClyshParameterData>? Parameters { get; set; }
-
-        public bool DefaultAtGroup { get; set; }
-
         public string? Group { get; set; }
     }
 }
