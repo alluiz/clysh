@@ -120,7 +120,7 @@ public class ClyshView : IClyshView
     {
         Print("[commands]:", true);
 
-        foreach (var item in command.Children.OrderBy(obj => obj.Key)
+        foreach (var item in command.SubCommands.OrderBy(obj => obj.Key)
                      .ToDictionary(obj => obj.Key, obj => obj.Value))
         {
             if (item.Key != command.Id)
@@ -136,15 +136,17 @@ public class ClyshView : IClyshView
     {
         Print("[options]:", true);
         Print(
-            "".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(28) + "Description".PadRight(55) +
+            "".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(55) +
             "Parameters: (R)equired | (O)ptional = Length", true);
 
-        foreach (var item in command.Options.OrderBy(x => x.Key))
+        foreach (var item in command.Options
+                     .OrderBy(x => x.Value.Group?.Id)
+                     .ThenBy(y=>y.Key))
         {
             var paramsText = item.Value.Parameters.ToString();
 
             Print("".PadRight(2) +
-                  $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{paramsText}");
+                  $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-13}{item.Value.Group?.Id,-15}{item.Value.Description,-55}{paramsText}");
         }
 
         PrintEmpty();

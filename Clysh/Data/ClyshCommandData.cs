@@ -21,15 +21,25 @@ namespace Clysh.Data
         /// Indicates if it is the root command
         /// </summary>
         public bool Root { get; set; }
+        
         /// <summary>
         /// The command options data
         /// </summary>
         public List<ClyshOptionData>? Options { get; set; }
+        
         /// <summary>
-        /// The children commands
+        /// The subcommands
         /// </summary>
-        public List<string>? Children { get; set; }
-
+        public List<string>? SubCommands { get; set; }
+        
+        /// <summary>
+        /// The groups available for command
+        /// </summary>
         public List<string>? Groups { get; set; }
+        
+        /// <summary>
+        /// Indicates if require subcommand
+        /// </summary>
+        public bool RequireSubcommand { get; set; }
     }
 }

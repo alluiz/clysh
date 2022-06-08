@@ -9,11 +9,14 @@ public interface IClyshCommand: IClyshIndexable<string>
     ClyshMap<ClyshOption> Options { get; }
     int Order { get; set; }
     IClyshCommand? Parent { get; set; }
-    ClyshMap<ClyshCommand> Children { get; }
+    ClyshMap<ClyshCommand> SubCommands { get; }
     ClyshMap<ClyshGroup> Groups { get; set; }
+    bool Executed { get; set; }
+    bool RequireSubcommand { get; set; }
     ClyshOption GetOption(string arg);
     bool HasOption(string key);
     bool HasAnyChildren();
+    bool HasAnyChildrenExecuted();
     bool HasChild(string arg);
     void AddOption(ClyshOption option);
     void AddChild(ClyshCommand child);

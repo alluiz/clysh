@@ -112,7 +112,9 @@ public class ClyshSetup
 
     public bool IsReadyToProduction()
     {
-        var allHasActions = commandsLoaded.All(x => x.Value.Action != null);
+        var allHasActions = commandsLoaded
+            .Where(f => !f.Value.RequireSubcommand)
+            .All(x => x.Value.Action != null);
         var allHasDescription = commandsLoaded.All(x => x.Value.Description != null);
 
         return allHasActions && allHasDescription;
@@ -214,9 +216,11 @@ public class ClyshSetup
             }
         }
 
-        if (commandData.Children != null)
+        if (commandData.SubCommands != null)
         {
-            foreach (var childrenCommandId in commandData.Children)
+            command.RequireSubcommand = commandData.RequireSubcommand;
+            
+            foreach (var childrenCommandId in commandData.SubCommands)
             {
                 var childrenCommandData =
                     commandsData.SingleOrDefault(x => x.Id == childrenCommandId);
@@ -246,6 +250,10 @@ public class ClyshSetup
                     commandsLoaded.Add(children.Id, children);
                 }
             }
+        }
+        else if (commandData.RequireSubcommand)
+        {
+            throw new InvalidOperationException("The command requires some subcommand.");
         }
     }
 

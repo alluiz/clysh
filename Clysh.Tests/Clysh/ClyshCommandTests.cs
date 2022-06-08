@@ -30,9 +30,9 @@ public class ClyshCommandTests
         var builder = new ClyshCommandBuilder();
         var child = builder.Id("child").Build();
         command.AddChild(child);
-        Assert.NotNull(command.Children);
-        Assert.AreEqual(1, command.Children.Count);
-        Assert.NotNull(command.Children["child"]);
+        Assert.NotNull(command.SubCommands);
+        Assert.AreEqual(1, command.SubCommands.Count);
+        Assert.NotNull(command.SubCommands["child"]);
     }
 
     [Test]

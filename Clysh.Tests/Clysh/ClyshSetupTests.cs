@@ -40,7 +40,7 @@ public class ClyshSetupTests
         Assert.AreEqual("mycli", root.Id);
         Assert.AreEqual("My own CLI", root.Description);
         Assert.AreEqual(4, root.Options.Count);
-        Assert.AreEqual(1, root.Children.Count);
+        Assert.AreEqual(1, root.SubCommands.Count);
         Assert.AreEqual(action, root.Action);
 
         Assert.AreEqual("Test option", root.Options["test"].Description);
@@ -78,7 +78,7 @@ public class ClyshSetupTests
         Assert.AreEqual("mycli", root.Id);
         Assert.AreEqual("My own CLI", root.Description);
         Assert.AreEqual(2, root.Options.Count);
-        Assert.IsEmpty(root.Children);
+        Assert.IsEmpty(root.SubCommands);
 
         Assert.AreEqual("Test option", root.Options["test"].Description);
         Assert.AreEqual("T", root.Options["test"].Shortcut);
@@ -269,7 +269,7 @@ Commands:
         Shortcut: T
         Group: test
     Root: true
-    Children:
+    SubCommands:
       - mychild
   - Id: mychild
     Description: My child";
@@ -296,7 +296,7 @@ Commands:
             MinLength: 1
             MaxLength: 15
     Root: true
-    Children:
+    SubCommands:
       - mychild
   - Id: mychild
     Description: My child";
@@ -328,7 +328,7 @@ Commands:
             MinLength: 1
             MaxLength: 15
     Root: true
-    Children:
+    SubCommands:
       - mychild
   - Id: mychild
     Description: My child";
@@ -352,7 +352,7 @@ Commands:
             MinLength: 1
             MaxLength: 15
     Root: true
-    Children:
+    SubCommands:
       - fake";
     }
 
@@ -374,7 +374,7 @@ Commands:
             MinLength: 1
             MaxLength: 15
     Root: true
-    Children:
+    SubCommands:
       - mycli";
     }
 
@@ -457,7 +457,7 @@ Commands:
             MinLength: 1
             MaxLength: 15
     Root: true
-    Children:
+    SubCommands:
       - mychild
   - Id: mychild
     Description: My child";
@@ -480,7 +480,7 @@ Commands:
             Required: true
             MinLength: 1
             MaxLength: 15
-    Children:
+    SubCommands:
       - mychild
   - Id: mychild
     Description: My child";

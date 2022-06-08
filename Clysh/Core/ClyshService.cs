@@ -69,6 +69,7 @@ public class ClyshService : IClyshService
                 {
                     CheckLastOptionStatus(lastOption);
                     lastOption = null;
+                    lastCommand.Executed = true;
                     lastCommand = GetCommandFromArg(lastCommand, arg);
                     commandsToExecute.Add(lastCommand);
                 }
@@ -76,6 +77,7 @@ public class ClyshService : IClyshService
                     ProcessParameter(lastOption, arg);
             }
 
+            CheckLastCommandStatus(lastCommand);
             CheckLastOptionStatus(lastOption);
 
             if (isOptionHelp)
@@ -87,6 +89,12 @@ public class ClyshService : IClyshService
         {
             ExecuteHelp(lastCommand, e);
         }
+    }
+
+    private void CheckLastCommandStatus(IClyshCommand lastCommand)
+    {
+        if (lastCommand.RequireSubcommand && !lastCommand.HasAnyChildrenExecuted())
+            throw new InvalidOperationException($"You need to provide some subcommand to command '{lastCommand.Id}'");
     }
 
     private static ClyshOption GetOptionFromCommand(IClyshCommand lastCommand, string arg)
@@ -159,17 +167,19 @@ public class ClyshService : IClyshService
     {
         foreach (var command in commandsToExecute.OrderBy(x => x.Order))
         {
-            if (command.Action == null)
+            if (command.Action != null)
+            {
+                command.Action(command, command.Options, View);
+            }
+            else if (!command.RequireSubcommand)
                 throw new ArgumentNullException(nameof(commandsToExecute), "Action null");
-
-            command.Action(command, command.Options, View);
         }
     }
 
     private static IClyshCommand GetCommandFromArg(IClyshCommand lastCommand, string arg)
     {
         var order = lastCommand.Order + 1;
-        lastCommand = lastCommand.Children[arg];
+        lastCommand = lastCommand.SubCommands[arg];
         lastCommand.Order = order;
         return lastCommand;
     }

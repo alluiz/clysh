@@ -5,12 +5,14 @@ namespace Clysh.Core;
 public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
 {
     public Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
-    public ClyshMap<ClyshCommand> Children { get; }
+    public ClyshMap<ClyshCommand> SubCommands { get; }
     public ClyshMap<ClyshGroup> Groups { get; set; }
     public ClyshMap<ClyshOption> Options { get; }
     public IClyshCommand? Parent { get; set; }
     public int Order { get; set; }
     public string? Description { get; set; }
+    public bool Executed { get; set; }
+    public bool RequireSubcommand { get; set; }
 
     private readonly Dictionary<string, string> shortcutToOptionId;
         
@@ -18,7 +20,7 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
     {
         Groups = new ClyshMap<ClyshGroup>();
         Options = new ClyshMap<ClyshOption>();
-        Children = new ClyshMap<ClyshCommand>();
+        SubCommands = new ClyshMap<ClyshCommand>();
         shortcutToOptionId = new Dictionary<string, string>();
         AddHelpOption();
     }
@@ -46,7 +48,7 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
     public void AddChild(ClyshCommand child)
     {
         child.Parent = this;
-        Children.Add(child);
+        SubCommands.Add(child);
     }
 
     public ClyshOption? GetOptionFromGroup(string group)
@@ -76,11 +78,16 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
 
     public bool HasAnyChildren()
     {
-        return Children.Any();
+        return SubCommands.Any();
+    }
+
+    public bool HasAnyChildrenExecuted()
+    {
+        return SubCommands.Any(x => x.Value.Executed);
     }
 
     public bool HasChild(string name)
     {
-        return Children.Has(name);
+        return SubCommands.Has(name);
     }
 }
