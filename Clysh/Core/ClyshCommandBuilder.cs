@@ -28,7 +28,7 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
         return this;
     }
 
-    public ClyshCommandBuilder Action(Action<ClyshMap<ClyshOption>, IClyshView> action)
+    public ClyshCommandBuilder Action(Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView> action)
     {
         Result.Action = action;
         return this;

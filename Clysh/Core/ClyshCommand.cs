@@ -4,7 +4,7 @@ namespace Clysh.Core;
 
 public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
 {
-    public Action<ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
+    public Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
     public ClyshMap<ClyshCommand> Children { get; }
     public ClyshMap<ClyshGroup> Groups { get; set; }
     public ClyshMap<ClyshOption> Options { get; }
@@ -49,12 +49,12 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
         Children.Add(child);
     }
 
-    public ClyshOption? GetOptionFromGroup(ClyshGroup group)
+    public ClyshOption? GetOptionFromGroup(string group)
     {
         return Options
             .Values
             .SingleOrDefault(x =>
-                x.Group == group && x.Selected);
+                x.Group?.Id == group && x.Selected);
     }
 
     public ClyshOption GetOption(string arg)

@@ -20,7 +20,7 @@ namespace Clysh.Tests
            return builder
                 .Id("auth2")
                 .Description("Execute Auth 2 API CLI Application")
-                .Action((options, view) =>
+                .Action((_, options, view) =>
                 {
                     if (options[developmentOption].Selected)
                         view.Print("Selected environment: development");
@@ -59,7 +59,7 @@ namespace Clysh.Tests
             return builder
                 .Id("credential")
                 .Description("Manager a credential")
-                .Action((options, view) =>
+                .Action((_, options, view) =>
                 {
                     if (options[appNameOption].Selected)
                     {
@@ -104,7 +104,7 @@ namespace Clysh.Tests
             return builder
                 .Id("test")
                 .Description("Test credential command")
-                .Action((_, _) =>
+                .Action((_, _, _) =>
                 {
                     
                 })
@@ -127,7 +127,7 @@ namespace Clysh.Tests
             return builder
                 .Id("login")
                 .Description("User login command for system")
-                .Action((options, view) =>
+                .Action((_, options, view) =>
                 {
                     if (options[promptOption].Selected)
                     {

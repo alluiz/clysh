@@ -4,7 +4,7 @@ namespace Clysh.Core;
 
 public interface IClyshCommand: IClyshIndexable<string>
 {
-    Action<ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
+    Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
     string? Description { get; }
     ClyshMap<ClyshOption> Options { get; }
     int Order { get; set; }
@@ -17,5 +17,5 @@ public interface IClyshCommand: IClyshIndexable<string>
     bool HasChild(string arg);
     void AddOption(ClyshOption option);
     void AddChild(ClyshCommand child);
-    ClyshOption? GetOptionFromGroup(ClyshGroup group);
+    ClyshOption? GetOptionFromGroup(string group);
 }

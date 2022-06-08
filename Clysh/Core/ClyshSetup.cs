@@ -103,7 +103,7 @@ public class ClyshSetup
             throw new ArgumentException(InvalidExtension, nameof(path));
     }
 
-    public void MakeAction(string commandId, Action<ClyshMap<ClyshOption>, IClyshView> action)
+    public void MakeAction(string commandId, Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView> action)
     {
         var command = commandsLoaded[commandId];
             

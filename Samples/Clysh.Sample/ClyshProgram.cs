@@ -13,7 +13,7 @@ public static class ClyshProgram
             ClyshSetup setup = new("clidata.yml");
 
             setup.MakeAction("mycli",
-                (options, view) =>
+                (_, options, view) =>
                 {
                     view.Print(options.Has("test") ? "mycli with test option" : "mycli without test option");
 

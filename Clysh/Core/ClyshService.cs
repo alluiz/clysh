@@ -56,7 +56,7 @@ public class ClyshService : IClyshService
                     if (lastOption.Group != null)
                     {
                         var oldOptionOfGroupSelected = lastCommand
-                            .GetOptionFromGroup(lastOption.Group);
+                            .GetOptionFromGroup(lastOption.Group.Id);
 
                         if (oldOptionOfGroupSelected != null)
                             oldOptionOfGroupSelected.Selected = false;
@@ -162,7 +162,7 @@ public class ClyshService : IClyshService
             if (command.Action == null)
                 throw new ArgumentNullException(nameof(commandsToExecute), "Action null");
 
-            command.Action(command.Options, View);
+            command.Action(command, command.Options, View);
         }
     }
 

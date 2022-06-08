@@ -1,3 +1,5 @@
+using Clysh.Core;
+
 namespace Clysh.Helper;
 
 public abstract class ClyshIndexable<T> : IClyshIndexable<T>

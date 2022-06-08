@@ -27,7 +27,7 @@ public class ClyshSetupTests
         fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlText());
 
         var setup = new ClyshSetup(fs.Object, Path);
-        Action<ClyshMap<ClyshOption>, IClyshView> action = (_, _) => { };
+        Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView> action = (_, _, _) => { };
         setup.MakeAction("mycli", action);
 
         var root = setup.RootCommand;
@@ -65,7 +65,7 @@ public class ClyshSetupTests
         fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetJsonText());
 
         var setup = new ClyshSetup(fs.Object, Path);
-        Action<ClyshMap<ClyshOption>, IClyshView> action = (_, _) => { };
+        Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView> action = (_, _, _) => { };
         setup.MakeAction("mycli", action);
 
         var root = setup.RootCommand;
