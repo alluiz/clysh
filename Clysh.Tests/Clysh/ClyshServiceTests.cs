@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Clysh.Core;
+using Clysh.Core.Builder;
 using Clysh.Helper;
 using Moq;
 using NUnit.Framework;
@@ -1113,7 +1114,7 @@ public class ClyshServiceTests
                 .Build())
             .Option(optBuilder
                 .Id("opt2")
-                .Parameters(ClyshParameters.Create(new ClyshParameter("value", 1, 10, true)))
+                .Parameters(ClyshParameters.Create(new ClyshParameter("value", 1, 10)))
                 .Build())
             .Build();
 

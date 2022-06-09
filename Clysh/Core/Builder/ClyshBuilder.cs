@@ -1,6 +1,6 @@
-namespace Clysh.Helper;
+namespace Clysh.Core.Builder;
 
-public abstract class ClyshBuilder<T>: IClyshBuilder<T> where T: new()
+public abstract class ClyshBuilder<T> where T: new()
 {
     protected T Result;
 
@@ -9,7 +9,7 @@ public abstract class ClyshBuilder<T>: IClyshBuilder<T> where T: new()
         Result = new T();
     }
 
-    public void Reset()
+    private void Reset()
     {
         Result = new T();
     }

@@ -1,3 +1,4 @@
+using System.Linq;
 using Clysh.Helper;
 
 namespace Clysh.Core;

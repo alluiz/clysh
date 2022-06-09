@@ -1,37 +1,22 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Clysh.Core;
-
-public interface IClyshConsole
-{
-    void WriteLine(string? text);
-    void WriteLine(string? text, int lineNumber);
-    string ReadLine();
-    void Write(string? text);
-    void Write(string? text, int lineNumber);
-    string ReadSensitive();
-}
 
 /*
     This code is only for wrapper static System.Console class
     Therefore, it cannot be tested.
 */
 [ExcludeFromCodeCoverage]
-public class ClyshConsole : IClyshConsole
+internal class ClyshConsole : IClyshConsole
 {
+    /// <summary>
+    /// Read a line from console
+    /// </summary>
+    /// <returns>The input text in the console or empty string</returns>
     public string ReadLine()
     {
         return Console.ReadLine() ?? "";
-    }
-
-    public void Write(string? text, int lineNumber)
-    {
-        Console.Write($"{lineNumber + ".",-5}{text}");
-    }
-
-    public void WriteLine(string? text, int lineNumber)
-    {
-        Console.WriteLine($"{lineNumber + ".",-5}{text}");
     }
 
     /// <summary>
@@ -81,13 +66,41 @@ public class ClyshConsole : IClyshConsole
         return data;
     }
 
+    /// <summary>
+    /// Write text
+    /// </summary>
+    /// <param name="text">The text to be written to the console</param>
+    public void Write(string? text)
+    {
+        Console.Write(text);
+    }
+    
+    /// <summary>
+    /// Write text
+    /// </summary>
+    /// <param name="text">The text to be written to the console</param>
+    /// <param name="lineNumber">The line number</param>
+    public void Write(string? text, int lineNumber)
+    {
+        Console.Write($"{lineNumber + ".",-5}{text}");
+    }
+    
+    /// <summary>
+    /// Write text with line break
+    /// </summary>
+    /// <param name="text">The text to be written to the console</param>
     public void WriteLine(string? text)
     {
         Console.WriteLine(text);
     }
-
-    public void Write(string? text)
+    
+    /// <summary>
+    /// Write text with line break
+    /// </summary>
+    /// <param name="text">The text to be written to the console</param>
+    /// <param name="lineNumber">The line number</param>
+    public void WriteLine(string? text, int lineNumber)
     {
-        Console.Write(text);
+        Console.WriteLine($"{lineNumber + ".",-5}{text}");
     }
 }

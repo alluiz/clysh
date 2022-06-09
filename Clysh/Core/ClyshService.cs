@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace Clysh.Core;
 
@@ -14,7 +17,7 @@ public class ClyshService : IClyshService
     }
 
     [ExcludeFromCodeCoverage]
-    public ClyshService(ClyshSetup setup, IClyshConsole clyshConsole, bool disableSafeMode = false)
+    private ClyshService(ClyshSetup setup, IClyshConsole clyshConsole, bool disableSafeMode = false)
     {
         if (!disableSafeMode && !setup.IsReadyToProduction())
             throw new ClyshException(
@@ -184,12 +187,12 @@ public class ClyshService : IClyshService
         return lastCommand;
     }
 
-    public void ExecuteHelp(IClyshCommand command, Exception exception)
+    private void ExecuteHelp(IClyshCommand command, Exception exception)
     {
         View.PrintHelp(command, exception);
     }
 
-    public void ExecuteHelp(IClyshCommand command)
+    private void ExecuteHelp(IClyshCommand command)
     {
         View.PrintHelp(command);
     }

@@ -1,5 +1,9 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
+using System.Linq;
+using Clysh.Core.Builder;
 using Clysh.Data;
 using Clysh.Helper;
 using Newtonsoft.Json;
@@ -242,7 +246,7 @@ public class ClyshSetup
                         .Description(childrenCommandData.Description)
                         .Build();
 
-                command.AddChild(children);
+                command.AddSubCommand(children);
 
                 if (!alreadyLoaded)
                 {

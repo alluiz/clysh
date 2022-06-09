@@ -1,6 +1,7 @@
+using System;
 using Clysh.Helper;
 
-namespace Clysh.Core;
+namespace Clysh.Core.Builder;
 
 public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
 {
@@ -24,7 +25,7 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
 
     public ClyshCommandBuilder Child(ClyshCommand children)
     {
-        Result.AddChild(children);
+        Result.AddSubCommand(children);
         return this;
     }
 

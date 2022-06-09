@@ -1,6 +1,8 @@
+using System.Collections.Generic;
+
 namespace Clysh.Helper;
 
-public class ClyshMap<TObject>: Dictionary<string, TObject> where TObject : ClyshSimpleIndexable
+public class ClyshMap<TObject>: Dictionary<string, TObject> where TObject : IClyshIndexable<string>
 {
     public void Add(TObject o)
     {

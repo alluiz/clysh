@@ -197,13 +197,13 @@ public class ClyshViewTests
     [Test]
     public void SuccessfulPrintRootCommandHelp()
     {
-        IClyshView view = new ClyshView(consoleMock.Object, new ClyshData(title: "Auth 2 API", "1.0"), true);
+        IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
         var command = ClyshDataForTest.CreateRootCommand();
         view.PrintHelp(command);
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
-        consoleMock.Verify(x => x.WriteLine($"{view.Data.Title}. Version: {view.Data.Version}", 2), Times.Once);
+        consoleMock.Verify(x => x.WriteLine($"{metadata.Title}. Version: {metadata.Version}", 2), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
         consoleMock.Verify(x => x.WriteLine("Usage: auth2 [options] [commands]", 4), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
@@ -256,7 +256,7 @@ public class ClyshViewTests
         view.PrintHelp(command);
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
-        consoleMock.Verify(x => x.WriteLine($"{view.Data.Title}. Version: {view.Data.Version}", 2), Times.Once);
+        consoleMock.Verify(x => x.WriteLine($"{metadata.Title}. Version: {metadata.Version}", 2), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
         consoleMock.Verify(x => x.WriteLine("Usage: auth2 credential [options] [commands]", 4), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
@@ -309,7 +309,7 @@ public class ClyshViewTests
         view.PrintHelp(command);
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
-        consoleMock.Verify(x => x.WriteLine($"{view.Data.Title}. Version: {view.Data.Version}", 2), Times.Once);
+        consoleMock.Verify(x => x.WriteLine($"{metadata.Title}. Version: {metadata.Version}", 2), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
         consoleMock.Verify(x => x.WriteLine("Usage: auth2 credential test [options]", 4), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
@@ -383,7 +383,7 @@ public class ClyshViewTests
 
         var question = "test question:";
         
-        view.Print(question, false, true);
+        view.PrintWithoutBreak(question);
 
         consoleMock.Verify(x => x.Write(question), Times.Once);
 

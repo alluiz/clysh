@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Clysh.Data
 {
     // This class is used only to deserialize command data from JSON or YAML.

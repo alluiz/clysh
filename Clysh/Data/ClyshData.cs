@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Clysh.Data
 {
     /// <summary>
@@ -21,17 +23,6 @@ namespace Clysh.Data
         {
             Title = title;
             Version = version;
-        }
-        
-        /// <summary>
-        /// Create a <b>ClyshData</b> object
-        /// </summary>
-        /// <param name="title">The CLI Title</param>
-        /// <param name="version">The CLI Version</param>
-        /// <param name="commands">The CLI Commands list</param>
-        public ClyshData(string title, string version, List<ClyshCommandData> commands) : this(title, version)
-        {
-            Commands = commands;
         }
 
         /// <summary>

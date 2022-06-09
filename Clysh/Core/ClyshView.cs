@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Clysh.Data;
 
 namespace Clysh.Core;
@@ -22,12 +24,17 @@ public class ClyshView : IClyshView
         this.printLineNumber = printLineNumber;
     }
 
-    public string AskFor(string question, bool sensitive = false)
+    public string AskFor(string title)
     {
-        if (string.IsNullOrWhiteSpace(question))
-            throw new ArgumentException(QuestionMustBeNotBlank, nameof(question));
+        return AskFor(title, false);
+    }
 
-        Print($"{question}:", false, true);
+    private string AskFor(string title, bool sensitive)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+            throw new ArgumentException(QuestionMustBeNotBlank, nameof(title));
+
+        Print($"{title}:", false, true);
 
         return sensitive ? clyshConsole.ReadSensitive() : clyshConsole.ReadLine();
     }
@@ -42,7 +49,12 @@ public class ClyshView : IClyshView
         Print("");
     }
 
-    public void Print(string? text, bool emptyLineAfterPrint = false, bool noBreak = false)
+    public void Print(string? text)
+    {
+        Print(text, false, false);
+    }
+
+    private void Print(string? text, bool emptyLineAfterPrint, bool noBreak)
     {
         PrintedLines++;
 
@@ -64,16 +76,22 @@ public class ClyshView : IClyshView
         if (emptyLineAfterPrint)
             PrintEmpty();
     }
-
-    public string AskForSensitive(string question)
+    
+    public void PrintWithoutBreak(string? text)
     {
-        return AskFor(question, true);
+        Print(text, false, true);
+    }
+
+    public string AskForSensitive(string title)
+    {
+        return AskFor(title, true);
     }
 
     private void PrintTitle()
     {
         PrintEmpty();
-        Print($"{Data.Title}. Version: {Data.Version}", true);
+        Print($"{Data.Title}. Version: {Data.Version}");
+        PrintEmpty();
     }
 
     public void PrintHelp(IClyshCommand command, Exception exception)
@@ -118,7 +136,8 @@ public class ClyshView : IClyshView
 
     private void PrintChildrenCommands(IClyshCommand command)
     {
-        Print("[commands]:", true);
+        Print("[commands]:");
+        PrintEmpty();
 
         foreach (var item in command.SubCommands.OrderBy(obj => obj.Key)
                      .ToDictionary(obj => obj.Key, obj => obj.Value))
@@ -134,10 +153,16 @@ public class ClyshView : IClyshView
 
     private void PrintOptions(IClyshCommand command)
     {
-        Print("[options]:", true);
-        Print(
-            "".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(55) +
-            "Parameters: (R)equired | (O)ptional = Length", true);
+        Print("[options]:");
+        PrintEmpty();
+        Print($"" +
+              $"{"",-3}" +
+              $"{"Shortcut",-11}" +
+              $"{"Option",-13}" +
+              $"{"Group",-15}" +
+              $"{"Description",-55}" +
+              $"Parameters: (R)equired | (O)ptional = Length");
+        PrintEmpty();
 
         foreach (var item in command.Options
                      .OrderBy(x => x.Value.Group?.Id)
@@ -165,6 +190,7 @@ public class ClyshView : IClyshView
 
         Print($"Usage: {parentCommands}{command.Id} [options]{(hasCommands ? " [commands]" : "")}");
         PrintEmpty();
-        Print(command.Description, true);
+        Print(command.Description);
+        PrintEmpty();
     }
 }

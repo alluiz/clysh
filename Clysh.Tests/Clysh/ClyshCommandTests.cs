@@ -1,4 +1,5 @@
 ﻿using Clysh.Core;
+using Clysh.Core.Builder;
 using NUnit.Framework;
 
 namespace Clysh.Tests;
@@ -29,7 +30,7 @@ public class ClyshCommandTests
     {
         var builder = new ClyshCommandBuilder();
         var child = builder.Id("child").Build();
-        command.AddChild(child);
+        command.AddSubCommand(child);
         Assert.NotNull(command.SubCommands);
         Assert.AreEqual(1, command.SubCommands.Count);
         Assert.NotNull(command.SubCommands["child"]);

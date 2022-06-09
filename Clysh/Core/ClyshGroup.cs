@@ -2,6 +2,9 @@
 
 namespace Clysh.Core;
 
+/// <summary>
+/// A simple Clysh group representation model
+/// </summary>
 public class ClyshGroup: ClyshSimpleIndexable
 {
 }

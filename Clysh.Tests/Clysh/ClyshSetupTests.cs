@@ -275,65 +275,6 @@ Commands:
     Description: My child";
     }
 
-    private string GetYamlWithGroupAndParametersText()
-    {
-        return @"
-Title: MyCLI with only test command
-Version: 1.0
-Commands:
-  - Id: mycli
-    Description: My own CLI
-    Groups:
-      - test
-    Options:
-      - Description: Test option
-        Id: test
-        Shortcut: T
-        Group: test
-        Parameters:
-          - Id: ab
-            Required: true
-            MinLength: 1
-            MaxLength: 15
-    Root: true
-    SubCommands:
-      - mychild
-  - Id: mychild
-    Description: My child";
-    }
-    
-    private string GetYamlWithoutGroupAndDefaultGroupAtText()
-    {
-        return @"
-Title: MyCLI with only test command
-Version: 1.0
-Commands:
-  - Id: mycli
-    Description: My own CLI
-    Groups:
-      - env
-    Options:
-      - Description: Test option
-        Id: dev
-        DefaultAtGroup: true
-      - Description: Test option
-        Id: hom
-        Group: env
-      - Description: Test option
-        Id: test
-        Shortcut: T
-        Parameters:
-          - Id: ab
-            Required: true
-            MinLength: 1
-            MaxLength: 15
-    Root: true
-    SubCommands:
-      - mychild
-  - Id: mychild
-    Description: My child";
-    }
-
     private string GetYamlWithInvalidChildrenCommandText()
     {
         return @"

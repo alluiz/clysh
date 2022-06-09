@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Clysh.Core.Builder;
 using Clysh.Helper;
 
 namespace Clysh.Core;
@@ -5,7 +9,7 @@ namespace Clysh.Core;
 public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
 {
     public Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
-    public ClyshMap<ClyshCommand> SubCommands { get; }
+    public ClyshMap<IClyshCommand> SubCommands { get; }
     public ClyshMap<ClyshGroup> Groups { get; set; }
     public ClyshMap<ClyshOption> Options { get; }
     public IClyshCommand? Parent { get; set; }
@@ -20,7 +24,7 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
     {
         Groups = new ClyshMap<ClyshGroup>();
         Options = new ClyshMap<ClyshOption>();
-        SubCommands = new ClyshMap<ClyshCommand>();
+        SubCommands = new ClyshMap<IClyshCommand>();
         shortcutToOptionId = new Dictionary<string, string>();
         AddHelpOption();
     }
@@ -45,18 +49,17 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
         AddOption(helpOption);
     }
         
-    public void AddChild(ClyshCommand child)
+    public void AddSubCommand(IClyshCommand subCommand)
     {
-        child.Parent = this;
-        SubCommands.Add(child);
+        subCommand.Parent = this;
+        SubCommands.Add(subCommand);
     }
 
     public ClyshOption? GetOptionFromGroup(string group)
     {
         return Options
             .Values
-            .SingleOrDefault(x =>
-                x.Group?.Id == group && x.Selected);
+            .SingleOrDefault(x => x.Group?.Id == group && x.Selected);
     }
 
     public ClyshOption GetOption(string arg)

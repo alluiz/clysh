@@ -1,8 +1,6 @@
-using Clysh.Core;
-
 namespace Clysh.Helper;
 
-public interface IClyshIndexable<T>
+public interface IClyshIndexable<out T>
 {
-    T Id { get; set; }
+    T Id { get; }
 }

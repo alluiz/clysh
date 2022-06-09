@@ -1,3 +1,4 @@
+using System;
 using Clysh.Helper;
 
 namespace Clysh.Core;
@@ -9,7 +10,7 @@ public interface IClyshCommand: IClyshIndexable<string>
     ClyshMap<ClyshOption> Options { get; }
     int Order { get; set; }
     IClyshCommand? Parent { get; set; }
-    ClyshMap<ClyshCommand> SubCommands { get; }
+    ClyshMap<IClyshCommand> SubCommands { get; }
     ClyshMap<ClyshGroup> Groups { get; set; }
     bool Executed { get; set; }
     bool RequireSubcommand { get; set; }
@@ -19,6 +20,6 @@ public interface IClyshCommand: IClyshIndexable<string>
     bool HasAnyChildrenExecuted();
     bool HasChild(string arg);
     void AddOption(ClyshOption option);
-    void AddChild(ClyshCommand child);
+    void AddSubCommand(IClyshCommand subCommand);
     ClyshOption? GetOptionFromGroup(string group);
 }
