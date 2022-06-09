@@ -32,7 +32,9 @@ public class ClyshServiceTests
     [Test]
     public void SuccessfulCreateCommand()
     {
-        void NewAction(IClyshCommand command, ClyshMap<ClyshOption> map, IClyshView clyshView) { }
+        void Action(IClyshCommand clyshCommand, ClyshMap<ClyshOption> map, IClyshView clyshView)
+        {
+        }
 
         const string name = "new";
         const string description = "new command for test";
@@ -42,12 +44,12 @@ public class ClyshServiceTests
         IClyshCommand command = builder
             .Id(name)
             .Description(description)
-            .Action(NewAction)
+            .Action(Action)
             .Build();
         
         Assert.AreEqual(name, command.Id);
         Assert.AreEqual(description, command.Description);
-        Assert.AreEqual(NewAction, command.Action);
+        Assert.AreEqual((Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView>)Action, command.Action);
     }
 
 
