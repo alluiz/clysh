@@ -16,9 +16,9 @@ public interface IClyshCommand: IClyshIndexable<string>
     bool RequireSubcommand { get; set; }
     ClyshOption GetOption(string arg);
     bool HasOption(string key);
-    bool HasAnyChildren();
-    bool HasAnyChildrenExecuted();
-    bool HasChild(string arg);
+    bool HasAnySubcommand();
+    bool HasAnySubcommandExecuted();
+    bool HasSubcommand(string subCommandId);
     void AddOption(ClyshOption option);
     void AddSubCommand(IClyshCommand subCommand);
     ClyshOption? GetOptionFromGroup(string group);

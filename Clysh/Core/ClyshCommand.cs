@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Clysh.Core.Builder;
 using Clysh.Helper;
 
@@ -79,18 +76,18 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
         return Options.Has(key) || shortcutToOptionId.ContainsKey(key);
     }
 
-    public bool HasAnyChildren()
+    public bool HasAnySubcommand()
     {
         return SubCommands.Any();
     }
 
-    public bool HasAnyChildrenExecuted()
+    public bool HasAnySubcommandExecuted()
     {
         return SubCommands.Any(x => x.Value.Executed);
     }
 
-    public bool HasChild(string name)
+    public bool HasSubcommand(string subCommandId)
     {
-        return SubCommands.Has(name);
+        return SubCommands.Has(subCommandId);
     }
 }

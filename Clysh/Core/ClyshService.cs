@@ -1,14 +1,18 @@
-using System;
-using System.Collections.Generic;
+
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using Clysh.Helper;
 
 namespace Clysh.Core;
 
 public class ClyshService : IClyshService
 {
-    public IClyshCommand RootCommand { get; private set; }
+    public IClyshCommand RootCommand { get; }
     public IClyshView View { get; }
+    public bool Completed { get; set; }
+
+    private ClyshOption? lastOption;
+
+    private IClyshCommand lastCommand;
 
     [ExcludeFromCodeCoverage]
     public ClyshService(ClyshSetup setup, bool disableSafeMode = false) : this(setup, new ClyshConsole(),
@@ -24,144 +28,170 @@ public class ClyshService : IClyshService
                 "Your CLI are not ready to production. Check if ALL of your commands has a configured action and a valid description.");
 
         RootCommand = setup.RootCommand;
+        RootCommand.Order = 0;
+        lastCommand = RootCommand;
         View = new ClyshView(clyshConsole, setup.Data);
     }
 
     public ClyshService(IClyshCommand rootCommand, IClyshView view)
     {
         RootCommand = rootCommand;
+        RootCommand.Order = 0;
+        lastCommand = RootCommand;
         View = view;
     }
 
     public void Execute(string[] args)
     {
-        ClyshOption? lastOption = null;
-        var lastCommand = RootCommand;
-        var isOptionHelp = false;
-
-        RootCommand.Order = 0;
-        List<IClyshCommand> commandsToExecute = new()
-        {
-            RootCommand
-        };
-
         try
         {
-            for (var i = 0; i < args.Length && !isOptionHelp; i++)
+            Completed = false;
+            
+            List<IClyshCommand> commandsToExecute = new() { lastCommand };
+            
+            foreach (var arg in args)
             {
-                var arg = args[i];
-
-                if (ArgIsOption(arg))
+                if (IsOption(arg))
                 {
-                    CheckLastOptionStatus(lastOption);
-                    lastOption = GetOptionFromCommand(lastCommand, arg);
+                    ProcessOption(arg);
 
-                    if (lastOption.Group != null)
+                    if (OptionHelp())
                     {
-                        var oldOptionOfGroupSelected = lastCommand
-                            .GetOptionFromGroup(lastOption.Group.Id);
-
-                        if (oldOptionOfGroupSelected != null)
-                            oldOptionOfGroupSelected.Selected = false;
+                        ExecuteHelp();
+                        break;
                     }
-
-                    lastOption.Selected = true;
-                    isOptionHelp = lastOption.Id.Equals("help");
                 }
-                else if (lastCommand.HasChild(arg))
+                else
                 {
-                    CheckLastOptionStatus(lastOption);
-                    lastOption = null;
-                    lastCommand.Executed = true;
-                    lastCommand = GetCommandFromArg(lastCommand, arg);
-                    commandsToExecute.Add(lastCommand);
+                    if (IsSubcommand(arg))
+                        ProcessSubcommand(arg, commandsToExecute);
+                    else //is parameter
+                        ProcessParameter(arg);
                 }
-                else if (!string.IsNullOrEmpty(arg) && !string.IsNullOrWhiteSpace(arg))
-                    ProcessParameter(lastOption, arg);
             }
 
-            CheckLastCommandStatus(lastCommand);
-            CheckLastOptionStatus(lastOption);
-
-            if (isOptionHelp)
-                ExecuteHelp(lastCommand);
-            else
+            if (!Completed)
+            {
+                CheckLastCommandStatus();
+                CheckLastOptionStatus();
                 Execute(commandsToExecute);
+            }
         }
         catch (Exception e)
         {
-            ExecuteHelp(lastCommand, e);
+            ExecuteHelp(e);
         }
     }
 
-    private void CheckLastCommandStatus(IClyshCommand lastCommand)
+    private void ProcessSubcommand(string arg, List<IClyshCommand> commandsToExecute)
     {
-        if (lastCommand.RequireSubcommand && !lastCommand.HasAnyChildrenExecuted())
-            throw new InvalidOperationException($"You need to provide some subcommand to command '{lastCommand.Id}'");
+        CheckLastOptionStatus();
+        lastOption = null;
+        lastCommand.Executed = true;
+        lastCommand = GetCommandFromArg(lastCommand, arg);
+        commandsToExecute.Add(lastCommand);
     }
 
-    private static ClyshOption GetOptionFromCommand(IClyshCommand lastCommand, string arg)
+    private void ProcessOption(string arg)
     {
-        ClyshOption? lastOption;
-        var key = ArgIsOptionFull(arg) ? arg[2..] : arg[1..];
+        CheckLastOptionStatus();
+
+        var key = IsOptionFull(arg) ? arg[2..] : arg[1..];
 
         if (!lastCommand.HasOption(key))
             throw new InvalidOperationException($"The option '{arg}' is invalid.");
 
         lastOption = lastCommand.GetOption(key);
-        return lastOption;
+
+        HandleOptionGroup();
+
+        lastOption.Selected = true;
     }
 
-    private static void ProcessParameter(ClyshOption? lastOption, string arg)
+    private bool IsSubcommand(string arg)
+    {
+        return lastCommand.HasSubcommand(arg);
+    }
+
+    private void HandleOptionGroup()
+    {
+        if (lastOption?.Group != null)
+        {
+            var oldOptionOfGroupSelected = lastCommand
+                .GetOptionFromGroup(lastOption.Group.Id);
+
+            if (oldOptionOfGroupSelected != null)
+                oldOptionOfGroupSelected.Selected = false;
+        }
+    }
+
+    private bool OptionHelp()
+    {
+        return lastOption is { Id: "help" };
+    }
+
+    private void CheckLastCommandStatus()
+    {
+        if (lastCommand.RequireSubcommand && !lastCommand.HasAnySubcommandExecuted())
+            throw new InvalidOperationException($"You need to provide some subcommand to command '{lastCommand.Id}'");
+    }
+
+    private void ProcessParameter(string arg)
+    {
+        if (arg.IsEmpty()) return;
+        
+        if (ArgIsParameterById(arg))
+            ProcessParameterById(arg);
+        else
+            ProcessParameterByPosition(arg);
+    }
+
+    private void ProcessParameterByPosition(string arg)
+    {
+        if (lastOption == null)
+            throw new InvalidOperationException("You can't put parameters without any option that accept it.");
+        
+        if (!lastOption.Parameters.WaitingForAny())
+            throw new InvalidOperationException(
+                $"The parameter data '{arg}' is out of bound for option: {lastOption.Id}.");
+
+        lastOption.Parameters.Last().Data = arg;
+    }
+
+    private void ProcessParameterById(string arg)
     {
         if (lastOption == null)
             throw new InvalidOperationException("You can't put parameters without any option that accept it.");
 
-        if (ArgIsParameter(arg))
+        var parameter = arg.Split(":");
+
+        var id = parameter[0];
+        var data = parameter[1];
+        
+        if (lastOption.Parameters.Has(id))
         {
-            var parameter = arg.Split(":");
-
-            var id = parameter[0];
-            var data = parameter[1];
-
-            if (lastOption.Parameters.Has(id))
-            {
-                if (lastOption.Parameters[id].Data != null)
-                    throw new InvalidOperationException(
-                        $"The parameter '{id}' is already filled for option: {lastOption.Id}.");
-
-                lastOption.Parameters[id].Data = data;
-            }
-            else
+            if (lastOption.Parameters[id].Data != null)
                 throw new InvalidOperationException(
-                    $"The parameter '{id}' is invalid for option: {lastOption.Id}.");
+                    $"The parameter '{id}' is already filled for option: {lastOption.Id}.");
+
+            lastOption.Parameters[id].Data = data;
         }
         else
-        {
-            if (!lastOption.Parameters.WaitingForAny())
-                throw new InvalidOperationException(
-                    $"The parameter data '{arg}' is out of bound for option: {lastOption.Id}.");
-
-            lastOption.Parameters.Last().Data = arg;
-        }
+            throw new InvalidOperationException(
+                $"The parameter '{id}' is invalid for option: {lastOption.Id}.");
     }
 
-    private static void CheckLastOptionStatus(ClyshOption? lastOption)
+    private void CheckLastOptionStatus()
     {
         if (lastOption != null)
         {
             if (lastOption.Parameters.WaitingForRequired())
-                ThrowRequiredParametersError(lastOption);
+                throw new InvalidOperationException(
+                    $"Required parameters [{lastOption.Parameters.RequiredToString()}] is missing for option: {lastOption.Id} (shortcut: {lastOption.Shortcut ?? "<null>"})");
         }
     }
 
-    private static void ThrowRequiredParametersError(ClyshOption lastOption)
-    {
-        throw new InvalidOperationException(
-            $"Required parameters [{lastOption.Parameters.RequiredToString()}] is missing for option: {lastOption.Id} (shortcut: {lastOption.Shortcut ?? "<null>"})");
-    }
-
-    private static bool ArgIsParameter(string arg)
+    private static bool ArgIsParameterById(string arg)
     {
         return arg.Contains(':');
     }
@@ -177,6 +207,8 @@ public class ClyshService : IClyshService
             else if (!command.RequireSubcommand)
                 throw new ArgumentNullException(nameof(commandsToExecute), "Action null");
         }
+
+        Completed = true;
     }
 
     private static IClyshCommand GetCommandFromArg(IClyshCommand lastCommand, string arg)
@@ -187,22 +219,22 @@ public class ClyshService : IClyshService
         return lastCommand;
     }
 
-    private void ExecuteHelp(IClyshCommand command, Exception exception)
+    private void ExecuteHelp(Exception? exception = null)
     {
-        View.PrintHelp(command, exception);
+        if (exception == null)
+            View.PrintHelp(lastCommand);
+        else
+            View.PrintHelp(lastCommand, exception);
+
+        Completed = true;
     }
 
-    private void ExecuteHelp(IClyshCommand command)
-    {
-        View.PrintHelp(command);
-    }
-
-    private static bool ArgIsOption(string arg)
+    private static bool IsOption(string arg)
     {
         return arg.StartsWith("-");
     }
 
-    private static bool ArgIsOptionFull(string arg)
+    private static bool IsOptionFull(string arg)
     {
         return arg.StartsWith("--");
     }

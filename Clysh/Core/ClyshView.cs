@@ -123,7 +123,7 @@ public class ClyshView : IClyshView
 
     private void PrintCommand(IClyshCommand command)
     {
-        var hasCommands = command.HasAnyChildren();
+        var hasCommands = command.HasAnySubcommand();
 
         PrintHeader(command, hasCommands);
         PrintOptions(command);
