@@ -1,45 +1,21 @@
 ﻿using Clysh.Core;
 
-namespace Clysh.Sample;
+var setup = new ClyshSetup("clidata.yml");
 
-public static class ClyshProgram
+setup.MakeAction("mycli", (_, options, view) =>
 {
-    public static void Main(string[] args)
+    view.Print(options["test"].Selected ? "mycli with test option" : "mycli without test option");
+
+    if (options["test"].Selected)
     {
-        try
-        {
-            IClyshService cli = default!;
+        var option = options["test"];
 
-            ClyshSetup setup = new("clidata.yml");
+        var data = option.Parameters["value"].Data;
 
-            setup.MakeAction("mycli",
-                (_, options, view) =>
-                {
-                    view.Print(options.Has("test") ? "mycli with test option" : "mycli without test option");
-
-                    if (options.Has("test"))
-                    {
-                        var option = options["test"];
-
-                        var data = option.Parameters["ab"].Data;
-
-                        view.Print(data);
-                    }
-                });
-
-            cli = new ClyshService(setup, true);
-
-            cli.Execute(args);
-        }
-        catch (ClyshException e)
-        {
-            Console.Write(e);
-            Environment.ExitCode = 2;
-        }
-        catch (Exception e)
-        {
-            Console.Write(e);
-            Environment.ExitCode = 1;
-        }
+        view.Print(data);
     }
-}
+});
+
+var cli = new ClyshService(setup, true);
+
+cli.Execute(args);

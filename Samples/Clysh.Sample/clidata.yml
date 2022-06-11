@@ -3,15 +3,27 @@ Version: 1.0
 Commands:
   - Id: mycli
     Description: My own CLI
+    Groups:
+      - foo
     Options:
       - Description: Test option
         Id: test
         Shortcut: T
         Parameters:
-          - Id: ab
+          - Id: value
             Required: true
             MinLength: 1
             MaxLength: 15
+        Group: foo
+      - Description: Test option
+        Id: dummy
+        Shortcut: d
+        Parameters:
+          - Id: value
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+        Group: foo
     Root: true
     SubCommands:
       - mychild
