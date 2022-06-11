@@ -1,20 +1,46 @@
-using System;
 using System.Text.RegularExpressions;
 using Clysh.Helper;
 
 namespace Clysh.Core;
 
+/// <summary>
+/// The parameter for <see cref="Clysh"/>
+/// </summary>
 public class ClyshParameter : ClyshSimpleIndexable
 {
     private string? data;
-    public string? Data { get { return data; } set { Validate(Id, value, MinLength, MaxLength); data = value; } }
     private readonly string? pattern;
+    
+    private Regex? Regex { get; set;  }
+    
+    /// <summary>
+    /// The parameter data
+    /// </summary>
+    public string? Data { get { return data; } set { Validate(Id, value, MinLength, MaxLength); data = value; } }
+    
+    /// <summary>
+    /// The indicator if parameter is required
+    /// </summary>
+    public bool Required { get; }
+    
+    /// <summary>
+    /// The parameter data minimum length
+    /// </summary>
+    public int MinLength { get; }
+    
+    /// <summary>
+    /// The parameter data maximum length
+    /// </summary>
+    public int MaxLength { get; }
 
-    public Regex? Regex { get; set;  }
-    public bool Required { get; set; }
-    public int MinLength { get; set;  }
-    public int MaxLength { get; set; }
-
+    /// <summary>
+    /// The parameter constructor
+    /// </summary>
+    /// <param name="id">The parameter identifier</param>
+    /// <param name="minLength">The parameter data minimum length</param>
+    /// <param name="maxLength">The parameter data maximum length</param>
+    /// <param name="required">The indicator if parameter is required</param>
+    /// <exception cref="ArgumentException">The length must be between 1 and 1000</exception>
     public ClyshParameter(string id, int minLength, int maxLength, bool required = true)
     {
         Id = id;
@@ -29,7 +55,16 @@ public class ClyshParameter : ClyshSimpleIndexable
         MaxLength = maxLength;
         Required = required;
     }
-
+    
+    /// <summary>
+    /// The parameter constructor
+    /// </summary>
+    /// <param name="id">The parameter identifier</param>
+    /// <param name="minLength">The parameter data minimum length</param>
+    /// <param name="maxLength">The parameter data maximum length</param>
+    /// <param name="required">The indicator if parameter is required</param>
+    /// <param name="pattern">The parameter data pattern validator</param>
+    /// <exception cref="ArgumentException">The length must be between 1 and 1000</exception>
     public ClyshParameter(string id, int minLength, int maxLength, bool required, string? pattern) : this(id, minLength, maxLength, required)
     {
         if (pattern != null)
@@ -39,6 +74,15 @@ public class ClyshParameter : ClyshSimpleIndexable
         }
     }
 
+    /// <summary>
+    /// Formats parameter exibition
+    /// </summary>
+    /// <returns>The parameter formatted</returns>
+    public override string ToString()
+    {
+        return Id + ":" + Data;
+    }
+    
     private void Validate(string field, string? value, int min, int max)
     {
         if (value == null || value.Trim().Length < min || value.Trim().Length > max)
@@ -47,10 +91,5 @@ public class ClyshParameter : ClyshSimpleIndexable
         if (Regex != null && !Regex.IsMatch(value))
             throw new ArgumentException($"Parameter {field} must match the follow regex pattern: {pattern}.", field);
 
-    }
-
-    public override string ToString()
-    {
-        return Id + ":" + Data;
     }
 }
