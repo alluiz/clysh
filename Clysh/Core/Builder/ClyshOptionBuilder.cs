@@ -1,8 +1,11 @@
-using System;
 using System.Text.RegularExpressions;
 
 namespace Clysh.Core.Builder;
 
+/// <summary>
+/// A builder for <see cref="ClyshOption"/>
+/// </summary>
+/// <seealso cref="ClyshBuilder{T}"/>
 public class ClyshOptionBuilder: ClyshBuilder<ClyshOption>
 {
     private const int MaxDescription = 50;
@@ -15,17 +18,30 @@ public class ClyshOptionBuilder: ClyshBuilder<ClyshOption>
     
     private readonly Regex regex;
 
+    /// <summary>
+    /// The builder constructor
+    /// </summary>
     public ClyshOptionBuilder()
     {
         regex = new Regex(Pattern);
     }
 
+    /// <summary>
+    /// Build the option identifier
+    /// </summary>
+    /// <param name="id">The option identifier</param>
+    /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
     public ClyshOptionBuilder Id(string id)
     {
         Result.Id = id;
         return this;
     }
-
+    
+    /// <summary>
+    /// Build the option description
+    /// </summary>
+    /// <param name="description">The option description</param>
+    /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
     public ClyshOptionBuilder Description(string description)
     {
         Validate(nameof(description), description, MinDescription, MaxDescription);
@@ -33,6 +49,11 @@ public class ClyshOptionBuilder: ClyshBuilder<ClyshOption>
         return this;
     }
     
+    /// <summary>
+    /// Build the option shortcut
+    /// </summary>
+    /// <param name="shortcut">The option shortcut</param>
+    /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
     public ClyshOptionBuilder Shortcut(string? shortcut)
     {
         if (shortcut != null && (shortcut.Length is < MinShortcut or > MaxShortcut || !regex.IsMatch(Pattern)))
@@ -46,27 +67,42 @@ public class ClyshOptionBuilder: ClyshBuilder<ClyshOption>
         return this;
     }
     
+    /// <summary>
+    /// Build the option parameters
+    /// </summary>
+    /// <param name="parameters">The option parameters</param>
+    /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
     public ClyshOptionBuilder Parameters(ClyshParameters parameters)
     {
         Result.Parameters = parameters;
         return this;
     }
 
-    private static void Validate(string? field, string? value, int min, int max)
-    {
-        if (value == null || value.Trim().Length < min || value.Trim().Length > max)
-            throw new ArgumentException($"Option {field} must be not null or empty and between {min} and {max} chars.", field);
-    }
-
+    /// <summary>
+    /// Build the option group
+    /// </summary>
+    /// <param name="group">The option group</param>
+    /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
     public ClyshOptionBuilder Group(ClyshGroup group)
     {
         Result.Group = group;
         return this;
     }
 
+    /// <summary>
+    /// Build the option selected
+    /// </summary>
+    /// <param name="selected">The option selected</param>
+    /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
     public ClyshOptionBuilder Selected(bool selected)
     {
         Result.Selected = selected;
         return this;
+    }
+    
+    private static void Validate(string? field, string? value, int min, int max)
+    {
+        if (value == null || value.Trim().Length < min || value.Trim().Length > max)
+            throw new ArgumentException($"Option {field} must be not null or empty and between {min} and {max} chars.", field);
     }
 }
