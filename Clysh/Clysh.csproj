@@ -14,12 +14,14 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/alluiz/clysh.git</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.IO.Abstractions" Version="17.0.15" />
     <PackageReference Include="YamlDotNet" Version="11.2.1" />
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
 </Project>
