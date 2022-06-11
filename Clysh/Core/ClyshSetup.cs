@@ -43,6 +43,8 @@ public class ClyshSetup
     private const string OneCommandWithRootTrue =
         "Data must have one root command. Consider marking only one command with 'Root': true.";
 
+    private const string InvalidGroup = "Invalid group '{0}'. You need to add it to 'Groups' field of command.";
+
     private readonly ClyshMap<ClyshCommand> commandsLoaded;
     private readonly List<ClyshCommandData> commandsData;
     private readonly IFileSystem fs;
@@ -217,43 +219,56 @@ public class ClyshSetup
     {
         if (commandData.Options == null) return;
 
-        foreach (var option in commandData.Options)
-        {
-            var optionBuilder = new ClyshOptionBuilder();
+        foreach (var option in commandData.Options) 
+            BuildOption(command, option);
+    }
 
-            optionBuilder
-                .Id(option.Id,
-                    option.Shortcut)
-                .Description(option.Description);
+    private static void BuildOption(IClyshCommand command, ClyshOptionData option)
+    {
+        var optionBuilder = new ClyshOptionBuilder();
 
-            if (option.Group != null)
-            {
-                if (command.Groups == null || !command.Groups.ContainsKey(option.Group))
-                    throw new InvalidOperationException(
-                        $"Invalid group '{option.Group}'. You need to add it to 'Groups' field of command.");
+        BuildOptionBase(optionBuilder, option);
+        BuildOptionGroup(command, option, optionBuilder);
+        BuildOptionParameters(option, optionBuilder);
 
-                var group = command.Groups[option.Group];
-                optionBuilder
-                    .Group(group);
-            }
+        var optionBuilded = optionBuilder.Build();
+        command.AddOption(optionBuilded);
+    }
 
-            if (option.Parameters != null)
-            {
-                var parameterBuilder = new ClyshParameterBuilder();
-                var parameters = new ClyshParameters();
-                option.Parameters.ForEach(x => parameters.Add(
-                    parameterBuilder
-                        .Id(x.Id)
-                        .Pattern(x.Pattern)
-                        .Required(x.Required)
-                        .Range(x.MinLength, x.MaxLength)
-                        .Build()));
-                optionBuilder.Parameters(parameters);
-            }
+    private static void BuildOptionBase(ClyshOptionBuilder optionBuilder, ClyshOptionData option)
+    {
+        optionBuilder
+            .Id(option.Id,
+                option.Shortcut)
+            .Description(option.Description);
+    }
 
-            var optionBuilded = optionBuilder.Build();
-            command.AddOption(optionBuilded);
-        }
+    private static void BuildOptionParameters(ClyshOptionData option, ClyshOptionBuilder optionBuilder)
+    {
+        if (option.Parameters == null) return;
+        
+        var parameterBuilder = new ClyshParameterBuilder();
+        var parameters = new ClyshParameters();
+        option.Parameters.ForEach(x => parameters.Add(
+            parameterBuilder
+                .Id(x.Id)
+                .Pattern(x.Pattern)
+                .Required(x.Required)
+                .Range(x.MinLength, x.MaxLength)
+                .Build()));
+        optionBuilder.Parameters(parameters);
+    }
+
+    private static void BuildOptionGroup(IClyshCommand command, ClyshOptionData option, ClyshOptionBuilder optionBuilder)
+    {
+        if (option.Group == null) return;
+        
+        if (!command.Groups.Has(option.Group))
+            throw new InvalidOperationException(string.Format(InvalidGroup, option.Group));
+
+        var group = command.Groups[option.Group];
+        optionBuilder
+            .Group(group);
     }
 
     private static void BuildCommandGroups(IClyshCommand command, ClyshCommandData commandData)

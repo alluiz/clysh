@@ -13,6 +13,9 @@ public class ClyshService : IClyshService
 
     private const string YourCommandDoesNotHaveASubcommandConfigured =
         "Your command does NOT have a subcommand configured. Command: '{0}'.";
+    
+    private const string InvalidGroup = 
+        "Invalid group '{0}'. You need to add it to 'Groups' field of command.";
 
     /// <summary>
     /// The root command
@@ -78,10 +81,10 @@ public class ClyshService : IClyshService
     /// <param name="args">The arguments of CLI</param>
     public void Execute(string[] args)
     {
-        AuditClysh(RootCommand);
-
         try
         {
+            AuditClysh(RootCommand);
+            
             Completed = false;
 
             List<IClyshCommand> commandsToExecute = new() { lastCommand };
@@ -178,6 +181,15 @@ public class ClyshService : IClyshService
         {
             if (cmd.Action == null)
                 audit.Messages.Add(string.Format(YourCommandDoesNotHaveAnActionConfigured, cmd.Id));
+        }
+
+        if (cmd.Options.Any())
+        {
+            foreach (var option in cmd.Options.Values.Where(x=>x.Group != null))
+            {
+                if (!cmd.Groups.Has(option.Group?.Id ?? throw new InvalidOperationException()))
+                    throw new InvalidOperationException(string.Format(InvalidGroup, option.Group));
+            }
         }
     }
 

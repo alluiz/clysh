@@ -62,4 +62,15 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
         Result.Action = action;
         return this;
     }
+
+    /// <summary>
+    /// Build the group
+    /// </summary>
+    /// <param name="group">The group</param>
+    /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
+    public ClyshCommandBuilder Group(ClyshGroup group)
+    {
+        Result.Groups.Add(group);
+        return this;
+    }
 }
