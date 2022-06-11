@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
-using System.Linq;
 using Clysh.Core.Builder;
 using Clysh.Data;
 using Clysh.Helper;
@@ -11,28 +8,34 @@ using YamlDotNet.Serialization;
 
 namespace Clysh.Core;
 
+/// <summary>
+/// The setup of <see cref="Clysh"/>
+/// </summary>
 public class ClyshSetup
 {
     /// <summary>
     /// The path of file. YAML or JSON format only
     /// </summary>
-    public string PathOfData { get; set; }
+    private string PathOfData { get; }
 
     /// <summary>
     /// The CLI Root command
     /// </summary>
-    public ClyshCommand RootCommand { get; private set; }
-
+    public ClyshCommand RootCommand { get; }
+    
+    /// <summary>
+    /// The CLI Data
+    /// </summary>
     public ClyshData Data { get; set; }
 
-    public const string InvalidPath = "Invalid path: CLI data file was not found.";
-    public const string InvalidExtension = "Invalid extension. Only JSON (.json) and YAML (.yml or .yaml) files are supported.";
-    public const string ErrorOnLoad = "Error on load data from file path.";
-    public const string InvalidJson = "Invalid JSON: The deserialization results in null object.";
-    public const string ErrorOnCreateRoot = "Error on create root or nested commands from extracted data.";
-    public const string InvalidCommandsTheIdSMustBeUnique = "Invalid commands: The id(s): $0 must be unique check your schema and try again.";
-    public const string InvalidCommandsLength = $"Invalid commands: The data must contains at once one command.";
-    public const string InvalidCommandTheIdWasNotFound = $"Invalid commandId. The id: $0 was not found on commands data list.";
+    private const string InvalidPath = "Invalid path: CLI data file was not found.";
+    private const string InvalidExtension = "Invalid extension. Only JSON (.json) and YAML (.yml or .yaml) files are supported.";
+    private const string ErrorOnLoad = "Error on load data from file path.";
+    private const string InvalidJson = "Invalid JSON: The deserialization results in null object.";
+    private const string ErrorOnCreateRoot = "Error on create root or nested commands from extracted data.";
+    private const string InvalidCommandsTheIdSMustBeUnique = "Invalid commands: The id(s): $0 must be unique check your schema and try again.";
+    private const string InvalidCommandsLength = "Invalid commands: The data must contains at once one command.";
+    private const string InvalidCommandTheIdWasNotFound = "Invalid commandId. The id: $0 was not found on commands data list.";
 
     private readonly Dictionary<string, ClyshCommand> commandsLoaded;
     private readonly List<ClyshCommandData> commandsData;
@@ -61,7 +64,32 @@ public class ClyshSetup
     public ClyshSetup(string pathOfData) : this(new FileSystem(), pathOfData)
     {
     }
+    
+    /// <summary>
+    /// Make your custom command action
+    /// </summary>
+    /// <param name="commandId">The command id</param>
+    /// <param name="action">The action to be executed</param>
+    public void MakeAction(string commandId, Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView> action)
+    {
+        var command = commandsLoaded[commandId];
+            
+        command.Action = action;
+    }
+    
+    /// <summary>
+    /// Avaliate if the code is able to production
+    /// </summary>
+    /// <returns>The result</returns>
+    public bool IsReadyToProduction()
+    {
+        var allHasActions = commandsLoaded
+            .Where(f => !f.Value.RequireSubcommand)
+            .All(x => x.Value.Action != null);
+        var allHasDescription = commandsLoaded.All(x => x.Value.Description != null);
 
+        return allHasActions && allHasDescription;
+    }
 
     private ClyshCommand GetRootCommandFromFilePath(string path)
     {
@@ -105,23 +133,6 @@ public class ClyshSetup
         }
         else
             throw new ArgumentException(InvalidExtension, nameof(path));
-    }
-
-    public void MakeAction(string commandId, Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView> action)
-    {
-        var command = commandsLoaded[commandId];
-            
-        command.Action = action;
-    }
-
-    public bool IsReadyToProduction()
-    {
-        var allHasActions = commandsLoaded
-            .Where(f => !f.Value.RequireSubcommand)
-            .All(x => x.Value.Action != null);
-        var allHasDescription = commandsLoaded.All(x => x.Value.Description != null);
-
-        return allHasActions && allHasDescription;
     }
 
     private ClyshCommand CreateRootFromExtractedData()
@@ -193,9 +204,9 @@ public class ClyshSetup
                 var optionBuilder = new ClyshOptionBuilder();
 
                 optionBuilder
-                    .Id(option.Id ?? throw new InvalidOperationException())
-                    .Description(option.Description ?? throw new InvalidOperationException())
-                    .Shortcut(option.Shortcut);
+                    .Id(option.Id, 
+                        option.Shortcut)
+                    .Description(option.Description);
 
                 if (option.Group != null)
                 {

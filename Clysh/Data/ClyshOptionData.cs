@@ -1,36 +1,33 @@
-using System.Collections.Generic;
+namespace Clysh.Data;
 
-namespace Clysh.Data
+/// <summary>
+/// Class used to deserialize option data from file
+/// </summary>
+// ReSharper disable once ClassNeverInstantiated.Global
+public class ClyshOptionData
 {
     /// <summary>
-    /// Class used to deserialize option data from file
+    /// The id of option
     /// </summary>
-    // ReSharper disable once ClassNeverInstantiated.Global
-    public class ClyshOptionData
-    {
-        /// <summary>
-        /// Create a <b>ClyshOptionData</b> object
-        /// </summary>
-        public ClyshOptionData()
-        {
-        }
+    public string Id { get; set; } = null!;
 
-        /// <summary>
-        /// The id of option
-        /// </summary>
-        public string? Id { get; set; }
-        /// <summary>
-        /// The description
-        /// </summary>
-        public string? Description { get; set; }
-        /// <summary>
-        /// The CLI shortcut
-        /// </summary>
-        public string? Shortcut { get; set; }
-        /// <summary>
-        /// The option parameters data list
-        /// </summary>
-        public List<ClyshParameterData>? Parameters { get; set; }
-        public string? Group { get; set; }
-    }
+    /// <summary>
+    /// The description
+    /// </summary>
+    public string Description { get; set; } = null!;
+
+    /// <summary>
+    /// The CLI shortcut
+    /// </summary>
+    public string? Shortcut { get; set; }
+        
+    /// <summary>
+    /// The option parameters data list
+    /// </summary>
+    public List<ClyshParameterData>? Parameters { get; set; }
+    
+    /// <summary>
+    /// The option group
+    /// </summary>
+    public string? Group { get; set; }
 }

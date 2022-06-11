@@ -187,7 +187,7 @@ public class ClyshViewTests
         var question = "     ";
         var exception = Assert.Throws<ArgumentException>(() => view.AskFor(question));
 
-        Assert.IsTrue(exception?.Message.Contains(ClyshView.QuestionMustBeNotBlank));
+        Assert.IsTrue(exception?.Message.Contains("Question must be not blank"));
 
         consoleMock.Verify(x => x.Write($"{question}:"), Times.Never);
         consoleMock.Verify(x => x.ReadLine(), Times.Never);
