@@ -6,7 +6,7 @@ Create your **own CLI on .NET 6+** with simple steps.
 
 ## Release Notes
 
-- 1.0.0 - Initial release
+- 1.0.2 - Initial release
 
 ## What is?
 
