@@ -8,7 +8,7 @@ Create your **own CLI on .NET 6+** with simple steps.
 
 - 1.0.2 - Initial release
 - 1.0.3 - Parameters creation using builder pattern
-- 1.0.4 - 
+- 1.0.4 - XML docs for all public classes
 
 ## What is?
 
