@@ -32,17 +32,14 @@ namespace Clysh.Tests
                     if (options[productionOption].Selected)
                         view.Print("Selected environment: production");
                 })
-                .Option(optionBuilder.Id(developmentOption)
+                .Option(optionBuilder.Id(developmentOption, "d")
                     .Description("Development environment option. Default value.")
-                    .Shortcut("d")
                     .Build())
-                .Option(optionBuilder.Id(homologOption)
+                .Option(optionBuilder.Id(homologOption, "s")
                     .Description("Homolog environment option.")
-                    .Shortcut("s")
                     .Build())
-                .Option(optionBuilder.Id(productionOption)
+                .Option(optionBuilder.Id(productionOption, "p")
                     .Description("Production environment option.")
-                    .Shortcut("p")
                     .Build())
                 .SubCommand(login)
                 .SubCommand(credential)
@@ -108,9 +105,8 @@ namespace Clysh.Tests
                 .Id("test")
                 .Description("Test credential command")
                 .Action((_, _, _) => { })
-                .Option(optionBuilder.Id(timeOption)
+                .Option(optionBuilder.Id(timeOption, "t")
                     .Description("time to expire credential in hours.")
-                    .Shortcut("t")
                     .Parameters(ClyshParameters.Create(parameterBuilder.Id("hours").Range(1, 2).Required(true).Build()))
                     .Build())
                 .Build();
@@ -147,14 +143,12 @@ namespace Clysh.Tests
                         view.Print("Aborted");
                 })
                 .Option(optionBuilder
-                    .Id(promptOption)
+                    .Id(promptOption, "p")
                     .Description("Prompt your credentials")
-                    .Shortcut("p")
                     .Build())
                 .Option(optionBuilder
-                    .Id(credentialsOption)
+                    .Id(credentialsOption, "c")
                     .Description("Your username credentials path")
-                    .Shortcut("c")
                     .Parameters(ClyshParameters.Create(parameterBuilder.Id("path").Range(1, 10).Required(true).Build()))
                     .Build())
                 .Build();

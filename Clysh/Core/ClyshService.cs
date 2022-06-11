@@ -4,22 +4,38 @@ using Clysh.Helper;
 
 namespace Clysh.Core;
 
+/// <summary>
+/// The main service of <see cref="Clysh"/>
+/// </summary>
 public class ClyshService : IClyshService
 {
+    /// <summary>
+    /// The root command
+    /// </summary>
     public IClyshCommand RootCommand { get; }
+    
+    /// <summary>
+    /// The view
+    /// </summary>
     public IClyshView View { get; }
-    public bool Completed { get; set; }
+    
+    private bool Completed { get; set; }
 
     private ClyshOption? lastOption;
 
     private IClyshCommand lastCommand;
 
+    /// <summary>
+    /// The constructor of service
+    /// </summary>
+    /// <param name="setup">The setup of <see cref="Clysh"/></param>
+    /// <param name="disableSafeMode">Indicates if the service shouldn't validate production rules</param>
     [ExcludeFromCodeCoverage]
     public ClyshService(ClyshSetup setup, bool disableSafeMode = false) : this(setup, new ClyshConsole(),
         disableSafeMode)
     {
     }
-
+    
     [ExcludeFromCodeCoverage]
     private ClyshService(ClyshSetup setup, IClyshConsole clyshConsole, bool disableSafeMode = false)
     {
@@ -33,6 +49,11 @@ public class ClyshService : IClyshService
         View = new ClyshView(clyshConsole, setup.Data);
     }
 
+    /// <summary>
+    /// The constructor of service
+    /// </summary>
+    /// <param name="rootCommand">The root command to be executed</param>
+    /// <param name="view">The view to output</param>
     public ClyshService(IClyshCommand rootCommand, IClyshView view)
     {
         RootCommand = rootCommand;
@@ -41,6 +62,10 @@ public class ClyshService : IClyshService
         View = view;
     }
 
+    /// <summary>
+    /// Execute the CLI with program arguments
+    /// </summary>
+    /// <param name="args">The arguments of CLI</param>
     public void Execute(string[] args)
     {
         try
