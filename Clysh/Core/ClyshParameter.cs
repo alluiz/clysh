@@ -9,7 +9,6 @@ namespace Clysh.Core;
 public class ClyshParameter : ClyshSimpleIndexable
 {
     private string? data;
-    private readonly string? pattern;
     
     /// <summary>
     /// The parameter data
@@ -23,6 +22,11 @@ public class ClyshParameter : ClyshSimpleIndexable
     /// </summary>
     public Regex? Regex { get; set; }
 
+    /// <summary>
+    /// The parameter data regex pattern
+    /// </summary>
+    public string? PatternData { get; set; }
+    
     /// <summary>
     /// The indicator if parameter is required
     /// </summary>
@@ -53,7 +57,7 @@ public class ClyshParameter : ClyshSimpleIndexable
             throw new ArgumentException($"Parameter {Id} must be not null or empty and between {MinLength} and {MaxLength} chars.", Id);
 
         if (Regex != null && !Regex.IsMatch(value))
-            throw new ArgumentException($"Parameter {Id} must match the follow regex pattern: {pattern}.", Id);
+            throw new ArgumentException($"Parameter {Id} must match the follow regex pattern: {PatternData}.", Id);
 
     }
 }

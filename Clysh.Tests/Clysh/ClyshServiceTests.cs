@@ -130,8 +130,7 @@ public class ClyshServiceTests
 
         var optionBuilder = new ClyshOptionBuilder();
 
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription)
-            .Shortcut(someAbbrevOption).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption, someAbbrevOption).Description(someOptionDescription).Build());
 
         cli.Execute(args);
 
@@ -669,8 +668,7 @@ public class ClyshServiceTests
 
         var optionBuilder = new ClyshOptionBuilder();
 
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription)
-            .Shortcut(someAbbrevOption).Build());
+        cli.RootCommand.AddOption(optionBuilder.Id(someOption, someAbbrevOption).Description(someOptionDescription).Build());
 
         cli.Execute(args);
 
@@ -774,9 +772,8 @@ public class ClyshServiceTests
         var optionBuilder = new ClyshOptionBuilder();
 
         rootCommandMock.Setup(x => x.GetOption(helpOption)).Returns(optionBuilder
-            .Id(helpOption)
+            .Id(helpOption, "h")
             .Description("Show help on screen")
-            .Shortcut("h")
             .Build());
 
         cli.Execute(args);

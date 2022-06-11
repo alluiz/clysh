@@ -1,25 +1,34 @@
-using System.Linq;
 using Clysh.Helper;
 
 namespace Clysh.Core;
 
+/// <summary>
+/// The parameters set
+/// </summary>
 public class ClyshParameters: ClyshMap<ClyshParameter>
 {
-    public bool WaitingForRequired()
-    {
-        return Values.Any(x => x.Required && x.Data == null);
-    }
+    /// <summary>
+    /// Indicates if all required parameters is filled
+    /// </summary>
+    /// <returns>The indicator</returns>
+    public bool WaitingForRequired() => Values.Any(x => x.Required && x.Data == null);
 
-    public bool WaitingForAny()
-    {
-        return Values.Any(x => x.Data == null);
-    }
+    /// <summary>
+    /// Indicates if all parameters is filled
+    /// </summary>
+    /// <returns>The indicator</returns>
+    public bool WaitingForAny() => Values.Any(x => x.Data == null);
 
-    public ClyshParameter Last()
-    {
-        return this.LastOrDefault().Value;
-    }
+    /// <summary>
+    /// The last parameter of the set
+    /// </summary>
+    /// <returns>The last parameter</returns>
+    public ClyshParameter Last() => this.LastOrDefault().Value;
 
+    /// <summary>
+    /// Format all required parameters
+    /// </summary>
+    /// <returns>The formatted string</returns>
     public string RequiredToString()
     {
         var s = "";
@@ -31,7 +40,11 @@ public class ClyshParameters: ClyshMap<ClyshParameter>
 
         return s;
     }
-
+    
+    /// <summary>
+    /// Format all parameters
+    /// </summary>
+    /// <returns>The formatted string</returns>
     public override string ToString()
     {
         var paramsText = "";
@@ -50,14 +63,18 @@ public class ClyshParameters: ClyshMap<ClyshParameter>
         return paramsText;
     }
 
+    /// <summary>
+    /// Creates a new set of <see cref="ClyshParameter"/>
+    /// </summary>
+    /// <param name="array">The parameters</param>
+    /// <returns>The set of <see cref="ClyshParameter"/></returns>
+    /// <seealso cref="ClyshParameter"/>
     public static ClyshParameters Create(params ClyshParameter[] array)
     {
         var parameters = new ClyshParameters();
             
-        foreach (var parameter in array)
-        {
+        foreach (var parameter in array) 
             parameters.Add(parameter);
-        }
 
         return parameters;
     }

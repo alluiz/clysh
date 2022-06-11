@@ -2,28 +2,56 @@
 
 namespace Clysh.Core.Builder;
 
+/// <summary>
+/// A builder for <see cref="ClyshParameter"/>
+/// </summary>
+/// <seealso cref="ClyshBuilder{T}"/>
 public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
 {
+    /// <summary>
+    /// Build the parameter identifier
+    /// </summary>
+    /// <param name="id">The parameter identifier</param>
+    /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
     public ClyshParameterBuilder Id(string id)
     {
         Result.Id = id;
         return this;
     }
     
+    /// <summary>
+    /// Build the parameter data pattern
+    /// </summary>
+    /// <param name="pattern">The parameter data pattern</param>
+    /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
     public ClyshParameterBuilder Pattern(string? pattern)
     {
         if (pattern != null)
+        {
+            Result.PatternData = pattern;
             Result.Regex = new Regex(pattern);
-        
+        }
+
         return this;
     }
     
+    /// <summary>
+    /// Build the required status
+    /// </summary>
+    /// <param name="required">Indicates if the parameter is required for option</param>
+    /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
     public ClyshParameterBuilder Required(bool required)
     {
         Result.Required = required;   
         return this;
     }
     
+    /// <summary>
+    /// Build the range of parameter data
+    /// </summary>
+    /// <param name="minLength">Indicates the minimum length</param>
+    /// <param name="maxLength">Indicates the maximum length</param>
+    /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
     public ClyshParameterBuilder Range(int minLength, int maxLength)
     {
         if (minLength < 1)

@@ -8,6 +8,8 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
 {
+    private readonly Dictionary<string, string> shortcutToOptionId;
+    
     /// <summary>
     /// The command action
     /// </summary>
@@ -53,8 +55,6 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
     /// </summary>
     public bool RequireSubcommand { get; set; }
 
-    private readonly Dictionary<string, string> shortcutToOptionId;
-    
     /// <summary>
     /// The command constructor
     /// </summary>
@@ -66,19 +66,7 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
         shortcutToOptionId = new Dictionary<string, string>();
         AddHelpOption();
     }
-    
-    private void AddHelpOption()
-    {
-        var builder = new ClyshOptionBuilder();
-        var helpOption = builder
-            .Id("help")
-            .Description("Show help on screen")
-            .Shortcut("h")
-            .Build();
-            
-        AddOption(helpOption);
-    }
-    
+
     /// <summary>
     /// Adds an option to the command
     /// </summary>
@@ -120,14 +108,7 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
     /// <returns></returns>
     public ClyshOption GetOption(string arg)
     {
-        try
-        {
-            return Options[arg];
-        }
-        catch (Exception)
-        {
-            return Options[shortcutToOptionId[arg]];
-        }
+        return Options.Has(arg) ? Options[arg] : Options[shortcutToOptionId[arg]];
     }
 
     /// <summary>
@@ -166,5 +147,16 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
     public bool HasSubcommand(string subCommandId)
     {
         return SubCommands.Has(subCommandId);
+    }
+    
+    private void AddHelpOption()
+    {
+        var builder = new ClyshOptionBuilder();
+        var helpOption = builder
+            .Id("help", "h")
+            .Description("Show help on screen")
+            .Build();
+            
+        AddOption(helpOption);
     }
 }
