@@ -16,8 +16,10 @@ jobs:
         with:
           dotnet-version: '6.0.x'
           source-url: https://api.nuget.org/v3/index.json
-      - run: dotnet build --configuration Release
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.NUGETKEY}}
+      - run: dotnet build ./Clysh --configuration Release
       - name: Create the package
-        run: dotnet pack --configuration Release --no-restore
+        run: dotnet pack ./Clysh --configuration Release --no-restore
       - name: Publish the package to GPR
-        run: dotnet nuget push Clysh/bin/Release/*.nupkg --api-key ${{secrets.NUGETKEY}}
+        run: dotnet nuget push Clysh/bin/Release/*.nupkg
