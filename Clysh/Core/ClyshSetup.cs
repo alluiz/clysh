@@ -209,9 +209,15 @@ public class ClyshSetup
                 
                 if (option.Parameters != null)
                 {
+                    var parameterBuilder = new ClyshParameterBuilder();
                     var parameters = new ClyshParameters();
-                    option.Parameters.ForEach(x =>
-                        parameters.Add(new ClyshParameter(x.Id, x.MinLength, x.MaxLength, x.Required, x.Pattern)));
+                    option.Parameters.ForEach(x => parameters.Add(
+                        parameterBuilder
+                            .Id(x.Id)
+                            .Pattern(x.Pattern)
+                            .Required(x.Required)
+                            .Range(x.MinLength, x.MaxLength)
+                            .Build()));
                     optionBuilder.Parameters(parameters);
                 }
                 

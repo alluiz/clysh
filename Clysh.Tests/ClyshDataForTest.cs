@@ -18,7 +18,7 @@ namespace Clysh.Tests
             var builder = new ClyshCommandBuilder();
             var optionBuilder = new ClyshOptionBuilder();
 
-           return builder
+            return builder
                 .Id("auth2")
                 .Description("Execute Auth 2 API CLI Application")
                 .Action((_, options, view) =>
@@ -53,10 +53,11 @@ namespace Clysh.Tests
         {
             const string appNameOption = "app-name";
             const string scopeOption = "scope";
-            
+
             var builder = new ClyshCommandBuilder();
             var optionBuilder = new ClyshOptionBuilder();
-            
+            var parameterBuilder = new ClyshParameterBuilder();
+
             return builder
                 .Id("credential")
                 .Description("Manager a credential")
@@ -83,13 +84,13 @@ namespace Clysh.Tests
                 .Option(optionBuilder.Id(appNameOption)
                     .Description("Name of the app")
                     .Parameters(ClyshParameters.Create(
-                        new ClyshParameter("app-name", 1, 100)))
+                        parameterBuilder.Id("app-name").Range(1, 100).Required(true).Build()))
                     .Build())
                 .Option(optionBuilder.Id(scopeOption)
                     .Description("Scopes of the app by comma")
                     .Parameters(ClyshParameters.Create(
-                        new ClyshParameter("scope", 1, 1000),
-                        new ClyshParameter("tags", 1, 1000, false)))
+                        parameterBuilder.Id("scope").Range(1, 1000).Required(true).Build(),
+                        parameterBuilder.Id("tags").Range(1, 1000).Required(false).Build()))
                     .Build())
                 .SubCommand(CreateTestCredentialCommand())
                 .Build();
@@ -98,21 +99,19 @@ namespace Clysh.Tests
         private static ClyshCommand CreateTestCredentialCommand()
         {
             const string timeOption = "time-to-expire";
-            
+
             var builder = new ClyshCommandBuilder();
             var optionBuilder = new ClyshOptionBuilder();
-            
+            var parameterBuilder = new ClyshParameterBuilder();
+
             return builder
                 .Id("test")
                 .Description("Test credential command")
-                .Action((_, _, _) =>
-                {
-                    
-                })
+                .Action((_, _, _) => { })
                 .Option(optionBuilder.Id(timeOption)
                     .Description("time to expire credential in hours.")
                     .Shortcut("t")
-                    .Parameters(ClyshParameters.Create(new ClyshParameter("hours", 1, 2)))
+                    .Parameters(ClyshParameters.Create(parameterBuilder.Id("hours").Range(1, 2).Required(true).Build()))
                     .Build())
                 .Build();
         }
@@ -121,10 +120,11 @@ namespace Clysh.Tests
         {
             const string promptOption = "prompt";
             const string credentialsOption = "credentials";
-            
+
             var builder = new ClyshCommandBuilder();
             var optionBuilder = new ClyshOptionBuilder();
-            
+            var parameterBuilder = new ClyshParameterBuilder();
+
             return builder
                 .Id("login")
                 .Description("User login command for system")
@@ -155,7 +155,7 @@ namespace Clysh.Tests
                     .Id(credentialsOption)
                     .Description("Your username credentials path")
                     .Shortcut("c")
-                    .Parameters(ClyshParameters.Create(new ClyshParameter("path", 1, 10)))
+                    .Parameters(ClyshParameters.Create(parameterBuilder.Id("path").Range(1, 10).Required(true).Build()))
                     .Build())
                 .Build();
         }
