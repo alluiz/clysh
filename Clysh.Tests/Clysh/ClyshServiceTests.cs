@@ -584,7 +584,7 @@ public class ClyshServiceTests
                 .Parameters(ClyshParameters.Create(new ClyshParameter("testarg",6, 10, false),
                     new ClyshParameter("testarg2",6, 10)))
                 .Build())
-            .Child(customCommand)
+            .SubCommand(customCommand)
             .Build();
 
         IClyshService cli = new ClyshService(rootCommand, frontMock.Object);

@@ -44,8 +44,8 @@ namespace Clysh.Tests
                     .Description("Production environment option.")
                     .Shortcut("p")
                     .Build())
-                .Child(login)
-                .Child(credential)
+                .SubCommand(login)
+                .SubCommand(credential)
                 .Build();
         }
 
@@ -91,7 +91,7 @@ namespace Clysh.Tests
                         new ClyshParameter("scope", 1, 1000),
                         new ClyshParameter("tags", 1, 1000, false)))
                     .Build())
-                .Child(CreateTestCredentialCommand())
+                .SubCommand(CreateTestCredentialCommand())
                 .Build();
         }
 
