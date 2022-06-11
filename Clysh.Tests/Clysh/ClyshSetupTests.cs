@@ -26,14 +26,12 @@ public class ClyshSetupTests
         fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
         fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlText());
 
-        var setup = new ClyshSetup(fs.Object, Path);
+        var setup = new ClyshSetup(Path, fs.Object);
         Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView> action = (_, _, _) => { };
         setup.MakeAction("mycli", action);
 
         var root = setup.RootCommand;
-
-        Assert.IsFalse(setup.IsReadyToProduction());
-
+        
         Assert.AreEqual("MyCLI with only test command", setup.Data.Title);
         Assert.AreEqual("1.0", setup.Data.Version);
 
@@ -64,13 +62,11 @@ public class ClyshSetupTests
         fs.Setup(x => x.Path.GetExtension(Path)).Returns(".json");
         fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetJsonText());
 
-        var setup = new ClyshSetup(fs.Object, Path);
+        var setup = new ClyshSetup(Path, fs.Object);
         Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView> action = (_, _, _) => { };
         setup.MakeAction("mycli", action);
 
         var root = setup.RootCommand;
-
-        Assert.IsTrue(setup.IsReadyToProduction());
 
         Assert.AreEqual("MyCLI with only test command", setup.Data.Title);
         Assert.AreEqual("1.0", setup.Data.Version);
@@ -99,7 +95,7 @@ public class ClyshSetupTests
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var dummy = new ClyshSetup(fs.Object, Path);
+            var dummy = new ClyshSetup(Path, fs.Object);
         });
 
         Assert.AreEqual(
@@ -114,7 +110,7 @@ public class ClyshSetupTests
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var dummy = new ClyshSetup(fs.Object, Path);
+            var dummy = new ClyshSetup(Path, fs.Object);
         });
 
         Assert.AreEqual("Invalid path: CLI data file was not found. (Parameter 'path')",
@@ -130,7 +126,7 @@ public class ClyshSetupTests
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var dummy = new ClyshSetup(fs.Object, Path);
+            var dummy = new ClyshSetup(Path, fs.Object);
         });
 
         Assert.AreEqual(
@@ -146,7 +142,7 @@ public class ClyshSetupTests
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var dummy = new ClyshSetup(fs.Object, Path);
+            var dummy = new ClyshSetup(Path, fs.Object);
         });
 
         Assert.AreEqual(
@@ -164,7 +160,7 @@ public class ClyshSetupTests
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var dummy = new ClyshSetup(fs.Object, Path);
+            var dummy = new ClyshSetup(Path, fs.Object);
         });
 
         Assert.AreEqual("Invalid commands: The data must contains at once one command. (Parameter 'Data')",
@@ -181,10 +177,10 @@ public class ClyshSetupTests
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var dummy = new ClyshSetup(fs.Object, Path);
+            var dummy = new ClyshSetup(Path, fs.Object);
         });
 
-        Assert.AreEqual("Data must have at least one root command. (Parameter 'Data')",
+        Assert.AreEqual("Data must have one root command. Consider marking only one command with 'Root': true. (Parameter 'Data')",
             exception?.InnerException?.Message);
     }
 
@@ -198,7 +194,7 @@ public class ClyshSetupTests
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var dummy = new ClyshSetup(fs.Object, Path);
+            var dummy = new ClyshSetup(Path, fs.Object);
         });
 
         Assert.AreEqual("Command Error: The command 'mycli' must not be children of itself: mycli>mycli",
@@ -215,7 +211,7 @@ public class ClyshSetupTests
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var dummy = new ClyshSetup(fs.Object, Path);
+            var dummy = new ClyshSetup(Path, fs.Object);
         });
 
         Assert.AreEqual("Invalid commandId. The id: fake was not found on commands data list.",
@@ -232,7 +228,7 @@ public class ClyshSetupTests
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var dummy = new ClyshSetup(fs.Object, Path);
+            var dummy = new ClyshSetup(Path, fs.Object);
         });
 
         Assert.AreEqual("Invalid group 'test'. You need to add it to 'Groups' field of command.",
@@ -249,7 +245,7 @@ public class ClyshSetupTests
 
         var ex = Assert.Throws<ClyshException>(() =>
         {
-            var dummy = new ClyshSetup(fs.Object, Path);
+            var dummy = new ClyshSetup(Path, fs.Object);
         });
 
         Assert.AreEqual("Invalid JSON: The deserialization results in null object.", ex?.InnerException?.Message);

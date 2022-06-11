@@ -96,7 +96,14 @@ public class ClyshView : IClyshView
     /// <summary>
     /// Prints a separator
     /// </summary>
-    public void PrintSeparator() => Print("-----------#-----------");
+    public void PrintSeparator(string separator = "#")
+    {
+        var length = separator.Length;
+        var count = (45 - length) / 2;
+        var symbol = string.Empty.PadRight(count, '-');
+        
+        Print($"{symbol}{separator}{symbol}");
+    }
 
     /// <summary>
     /// Print text without line break

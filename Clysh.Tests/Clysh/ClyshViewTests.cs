@@ -353,11 +353,11 @@ public class ClyshViewTests
         }
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("-----------#-----------", 2), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("----------------------#----------------------", 2), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
         consoleMock.Verify(x => x.WriteLine($"Error: Exception: Test Exception", 4), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("-----------#-----------", 6), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("----------------------#----------------------", 6), Times.Once);
 
         Assert.AreEqual(27, view.PrintedLines);
     }

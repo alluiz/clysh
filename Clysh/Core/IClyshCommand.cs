@@ -15,7 +15,7 @@ public interface IClyshCommand: IClyshIndexable<string>
     /// <summary>
     /// The command description
     /// </summary>
-    string? Description { get; }
+    string Description { get; }
     
     /// <summary>
     /// The command options

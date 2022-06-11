@@ -60,10 +60,12 @@ public class ClyshServiceTests
         var args = Array.Empty<string>();
 
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
+        
+        rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
 
         cli.Execute(args);
 
-        rootCommandMock.Verify(x => x.Action, Times.Once);
+        rootCommandMock.Verify(x => x.Action, Times.Exactly(2));
     }
 
     [Test]
@@ -72,10 +74,12 @@ public class ClyshServiceTests
         var args = new[] { "" };
 
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
+        
+        rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
 
         cli.Execute(args);
 
-        rootCommandMock.Verify(x => x.Action, Times.Once);
+        rootCommandMock.Verify(x => x.Action, Times.Exactly(2));
     }
 
     [Test]
@@ -84,10 +88,12 @@ public class ClyshServiceTests
         var args = new[] { "  " };
 
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
+        
+        rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
 
         cli.Execute(args);
 
-        rootCommandMock.Verify(x => x.Action, Times.Once);
+        rootCommandMock.Verify(x => x.Action, Times.Exactly(2));
     }
 
     [Test]
@@ -96,10 +102,12 @@ public class ClyshServiceTests
         var args = new[] { "  ", "   ", "         ", "  " };
 
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
+        
+        rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
 
         cli.Execute(args);
 
-        rootCommandMock.Verify(x => x.Action, Times.Once);
+        rootCommandMock.Verify(x => x.Action, Times.Exactly(2));
     }
 
     [Test]
@@ -696,6 +704,7 @@ public class ClyshServiceTests
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
         rootCommandMock.Setup(x => x.HasOption(invalidOption)).Returns(false);
+        rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
 
         cli.Execute(args);
 
@@ -717,6 +726,7 @@ public class ClyshServiceTests
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
         rootCommandMock.Setup(x => x.HasOption(invalidOption)).Returns(false);
+        rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
 
         cli.Execute(args);
 
@@ -739,6 +749,7 @@ public class ClyshServiceTests
 
         var optionBuilder = new ClyshOptionBuilder();
 
+        rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
         rootCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
         rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(optionBuilder
             .Id("some-option")
@@ -768,6 +779,7 @@ public class ClyshServiceTests
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
         rootCommandMock.Setup(x => x.HasOption(helpOption)).Returns(true);
+        rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
 
         var optionBuilder = new ClyshOptionBuilder();
 
@@ -786,6 +798,8 @@ public class ClyshServiceTests
     {
         var args = new[] { "testarg:mytest" };
 
+        rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
+        
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
         cli.Execute(args);
@@ -808,7 +822,8 @@ public class ClyshServiceTests
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
         rootCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
-
+        rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
+        
         var optionBuilder = new ClyshOptionBuilder();
 
         rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(optionBuilder
@@ -836,6 +851,7 @@ public class ClyshServiceTests
         IClyshService cli = new ClyshService(rootCommandMock.Object, frontMock.Object);
 
         rootCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
+        rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
 
         var optionBuilder = new ClyshOptionBuilder();
 

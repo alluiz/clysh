@@ -43,7 +43,7 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
     /// <summary>
     /// The command description
     /// </summary>
-    public string? Description { get; set; }
+    public string Description { get; set; }
     
     /// <summary>
     /// The command status
@@ -64,6 +64,7 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
         Options = new ClyshMap<ClyshOption>();
         SubCommands = new ClyshMap<IClyshCommand>();
         shortcutToOptionId = new Dictionary<string, string>();
+        Description = string.Empty;
         AddHelpOption();
     }
 
@@ -85,6 +86,7 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
     /// <param name="subCommand">The subcommand</param>
     public void AddSubCommand(IClyshCommand subCommand)
     {
+        VerifyParentRecursivity(subCommand);
         subCommand.Parent = this;
         SubCommands.Add(subCommand);
     }
@@ -158,5 +160,23 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
             .Build();
             
         AddOption(helpOption);
+    }
+    
+    private void VerifyParentRecursivity(IClyshCommand command)
+    {
+        var tree = command.Id;
+        IClyshCommand? commandCheck = this;
+
+        while (commandCheck != null)
+        {
+            if (command.Id.Equals(commandCheck.Id))
+                throw new InvalidOperationException("Command Error: The command '$0' must not be children of itself: $1"
+                    .Replace("$0", command.Id)
+                    .Replace("$1", $"{commandCheck.Id}>{tree}")
+                );
+
+            tree = $"{commandCheck.Id}>{tree}";
+            commandCheck = commandCheck.Parent;
+        }
     }
 }

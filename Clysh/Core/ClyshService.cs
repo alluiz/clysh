@@ -1,4 +1,3 @@
-
 using System.Diagnostics.CodeAnalysis;
 using Clysh.Helper;
 
@@ -9,43 +8,51 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshService : IClyshService
 {
+    private const string YourCommandDoesNotHaveAnActionConfigured =
+        "Your command does NOT have an action configured. Command: '{0}'.";
+
+    private const string YourCommandDoesNotHaveASubcommandConfigured =
+        "Your command does NOT have a subcommand configured. Command: '{0}'.";
+
     /// <summary>
     /// The root command
     /// </summary>
     public IClyshCommand RootCommand { get; }
-    
+
     /// <summary>
     /// The view
     /// </summary>
     public IClyshView View { get; }
-    
+
     private bool Completed { get; set; }
 
     private ClyshOption? lastOption;
 
     private IClyshCommand lastCommand;
 
+    private readonly bool disableAudit;
+
+    private readonly List<ClyshAudit> audits;
+
     /// <summary>
     /// The constructor of service
     /// </summary>
     /// <param name="setup">The setup of <see cref="Clysh"/></param>
-    /// <param name="disableSafeMode">Indicates if the service shouldn't validate production rules</param>
+    /// <param name="disableAudit">Indicates if the service shouldn't validate production rules</param>
     [ExcludeFromCodeCoverage]
-    public ClyshService(ClyshSetup setup, bool disableSafeMode = false) : this(setup, new ClyshConsole(),
-        disableSafeMode)
+    public ClyshService(ClyshSetup setup, bool disableAudit = false) : this(setup, new ClyshConsole(),
+        disableAudit)
     {
     }
-    
-    [ExcludeFromCodeCoverage]
-    private ClyshService(ClyshSetup setup, IClyshConsole clyshConsole, bool disableSafeMode = false)
-    {
-        if (!disableSafeMode && !setup.IsReadyToProduction())
-            throw new ClyshException(
-                "Your CLI are not ready to production. Check if ALL of your commands has a configured action and a valid description.");
 
+    [ExcludeFromCodeCoverage]
+    private ClyshService(ClyshSetup setup, IClyshConsole clyshConsole, bool disableAudit = false)
+    {
+        this.disableAudit = disableAudit;
         RootCommand = setup.RootCommand;
         RootCommand.Order = 0;
         lastCommand = RootCommand;
+        audits = new();
         View = new ClyshView(clyshConsole, setup.Data);
     }
 
@@ -54,12 +61,15 @@ public class ClyshService : IClyshService
     /// </summary>
     /// <param name="rootCommand">The root command to be executed</param>
     /// <param name="view">The view to output</param>
-    public ClyshService(IClyshCommand rootCommand, IClyshView view)
+    /// <param name="disableAudit">Indicates if the service shouldn't validate production rules</param>
+    public ClyshService(IClyshCommand rootCommand, IClyshView view, bool disableAudit = false)
     {
+        this.disableAudit = disableAudit;
         RootCommand = rootCommand;
         RootCommand.Order = 0;
         lastCommand = RootCommand;
         View = view;
+        audits = new();
     }
 
     /// <summary>
@@ -68,12 +78,14 @@ public class ClyshService : IClyshService
     /// <param name="args">The arguments of CLI</param>
     public void Execute(string[] args)
     {
+        AuditClysh(RootCommand);
+
         try
         {
             Completed = false;
-            
+
             List<IClyshCommand> commandsToExecute = new() { lastCommand };
-            
+
             foreach (var arg in args)
             {
                 if (IsOption(arg))
@@ -105,6 +117,67 @@ public class ClyshService : IClyshService
         catch (Exception e)
         {
             ExecuteHelp(e);
+        }
+    }
+
+    private void AuditLogMessages()
+    {
+        View.PrintSeparator("AUDITING");
+        View.PrintEmpty();
+        View.Print("YOUR CLI ARE NOT READY TO PRODUCTION. ");
+        View.Print("You can disable this alert with constructor param 'disableAudit' = true");
+        View.PrintEmpty();
+        View.PrintSeparator("LIST TO CHECK");
+        View.PrintEmpty();
+
+        var array = audits.Where(x => x.AnyError()).ToArray();
+        
+        for (var i = 0; i < array.Length; i++)
+        {
+            var audit = array[i];
+            View.Print($"({i}) >> {audit}\n");
+        }
+
+        View.PrintSeparator("AUDIT END");
+        View.PrintEmpty();
+    }
+
+    private void AuditClysh(IClyshCommand cmd)
+    {
+        if (disableAudit) return;
+
+        AuditRecursive(cmd);
+
+        if (audits.Any(x => x.AnyError()))
+            AuditLogMessages();
+    }
+
+    private void AuditRecursive(IClyshCommand cmd)
+    {
+        var audit = new ClyshAudit(cmd);
+
+        audits.Add(audit);
+
+        AuditCommand(cmd, audit);
+
+        if (cmd.SubCommands.Any())
+        {
+            foreach (var subCommand in cmd.SubCommands.Values)
+                AuditRecursive(subCommand);
+        }
+    }
+
+    private static void AuditCommand(IClyshCommand cmd, ClyshAudit audit)
+    {
+        if (cmd.RequireSubcommand)
+        {
+            if (!cmd.SubCommands.Any())
+                audit.Messages.Add(string.Format(YourCommandDoesNotHaveASubcommandConfigured, cmd.Id));
+        }
+        else
+        {
+            if (cmd.Action == null)
+                audit.Messages.Add(string.Format(YourCommandDoesNotHaveAnActionConfigured, cmd.Id));
         }
     }
 
@@ -164,7 +237,7 @@ public class ClyshService : IClyshService
     private void ProcessParameter(string arg)
     {
         if (arg.IsEmpty()) return;
-        
+
         if (ArgIsParameterById(arg))
             ProcessParameterById(arg);
         else
@@ -175,7 +248,7 @@ public class ClyshService : IClyshService
     {
         if (lastOption == null)
             throw new InvalidOperationException("You can't put parameters without any option that accept it.");
-        
+
         if (!lastOption.Parameters.WaitingForAny())
             throw new InvalidOperationException(
                 $"The parameter data '{arg}' is out of bound for option: {lastOption.Id}.");
@@ -192,7 +265,7 @@ public class ClyshService : IClyshService
 
         var id = parameter[0];
         var data = parameter[1];
-        
+
         if (lastOption.Parameters.Has(id))
         {
             if (lastOption.Parameters[id].Data != null)

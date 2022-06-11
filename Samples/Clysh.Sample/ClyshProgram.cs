@@ -16,6 +16,6 @@ setup.MakeAction("mycli", (_, options, view) =>
     }
 });
 
-var cli = new ClyshService(setup, true);
+var cli = new ClyshService(setup, false);
 
 cli.Execute(args);
