@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Clysh.Data;
 
 namespace Clysh.Core;
@@ -33,6 +35,18 @@ public class ClyshView : IClyshView
         this.clyshConsole = clyshConsole;
         Data = clyshData;
         this.printLineNumber = printLineNumber;
+    }
+    
+    /// <summary>
+    /// The constructor of view
+    /// </summary>
+    /// <param name="clyshData">The data to print</param>
+    /// <param name="printLineNumber">Indicates if should print the line number</param>
+    public ClyshView(
+        ClyshData clyshData,
+        bool printLineNumber = false): this(new ClyshConsole(), clyshData, printLineNumber)
+    {
+        
     }
 
     /// <summary>

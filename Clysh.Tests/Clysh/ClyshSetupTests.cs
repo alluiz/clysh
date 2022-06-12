@@ -231,7 +231,7 @@ public class ClyshSetupTests
             var dummy = new ClyshSetup(Path, fs.Object);
         });
 
-        Assert.AreEqual("Invalid group 'test'. You need to add it to 'Groups' field of command.",
+        Assert.AreEqual("Invalid group 'test'. You need to add it to 'Groups' field of command. Option: 'test'",
             exception?.InnerException?.Message);
     }
 

@@ -1,3 +1,5 @@
+using System;
+
 namespace Clysh.Core;
 
 /// <summary>

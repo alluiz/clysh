@@ -1,3 +1,4 @@
+using System;
 using System.Text.RegularExpressions;
 
 namespace Clysh.Core.Builder;
@@ -61,13 +62,13 @@ public class ClyshOptionBuilder: ClyshBuilder<ClyshOption>
     }
 
     /// <summary>
-    /// Build the option parameters
+    /// Build the option parameter
     /// </summary>
-    /// <param name="parameters">The option parameters</param>
+    /// <param name="parameter">The option parameter</param>
     /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
-    public ClyshOptionBuilder Parameters(ClyshParameters parameters)
+    public ClyshOptionBuilder Parameter(ClyshParameter parameter)
     {
-        Result.Parameters = parameters;
+        Result.Parameters.Add(parameter);
         return this;
     }
 
