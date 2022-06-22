@@ -102,6 +102,13 @@ public interface IClyshCommand: IClyshIndexable<string>
     /// Get an option selected by group
     /// </summary>
     /// <param name="group">The group filter</param>
-    /// <returns></returns>
-    ClyshOption? GetOptionFromGroup(string group);
+    /// <returns>The selected option</returns>
+    ClyshOption? GetOptionFromGroup(ClyshGroup group);
+    
+    /// <summary>
+    /// Get an option selected by group
+    /// </summary>
+    /// <param name="groupId">The groupId filter</param>
+    /// <returns>The selected option</returns>
+    ClyshOption? GetOptionFromGroup(string groupId);
 }

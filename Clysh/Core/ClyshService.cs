@@ -234,7 +234,7 @@ public class ClyshService : IClyshService
         if (lastOption?.Group != null)
         {
             var oldOptionOfGroupSelected = lastCommand
-                .GetOptionFromGroup(lastOption.Group.Id);
+                .GetOptionFromGroup(lastOption.Group);
 
             if (oldOptionOfGroupSelected != null)
                 oldOptionOfGroupSelected.Selected = false;

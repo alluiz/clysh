@@ -11,6 +11,10 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
 {
+    private const string CommandMustHaveOnlyOneParentCommand = "The command must have only one parent. Command: '{0}'";
+    private const string TheOptionAddressMemoryIsAlreadyRelatedToAnotherCommandOption = "The option address memory is already related to another command. Option: '{0}'";
+    private const string TheGroupAddressMemoryIsAlreadyRelatedToAnotherCommandOption = "The group address memory is already related to another command. Group: '{0}'";
+
     private readonly Dictionary<string, string> shortcutToOptionId;
     
     /// <summary>
@@ -77,6 +81,11 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
     /// <param name="option">The option</param>
     public void AddOption(ClyshOption option)
     {
+        if (option.Command != null)
+            throw new ClyshException(string.Format(TheOptionAddressMemoryIsAlreadyRelatedToAnotherCommandOption, option.Id));
+
+        option.Command = this;
+        
         Options.Add(option);
 
         if (option.Shortcut != null)
@@ -89,6 +98,9 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
     /// <param name="subCommand">The subcommand</param>
     public void AddSubCommand(IClyshCommand subCommand)
     {
+        if (subCommand.Parent != null)
+            throw new ClyshException(string.Format(CommandMustHaveOnlyOneParentCommand, subCommand.Id));
+
         VerifyParentRecursivity(subCommand);
         subCommand.Parent = this;
         SubCommands.Add(subCommand);
@@ -99,13 +111,23 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
     /// </summary>
     /// <param name="group">The group filter</param>
     /// <returns></returns>
-    public ClyshOption? GetOptionFromGroup(string group)
+    public ClyshOption? GetOptionFromGroup(ClyshGroup group)
     {
         return Options
             .Values
-            .SingleOrDefault(x => x.Group?.Id == group && x.Selected);
+            .SingleOrDefault(x => x.Group != null && x.Group.Equals(group) && x.Selected);
     }
     
+    /// <summary>
+    /// Get an option selected by group
+    /// </summary>
+    /// <param name="groupId">The groupId filter</param>
+    /// <returns></returns>
+    public ClyshOption? GetOptionFromGroup(string groupId)
+    {
+        return GetOptionFromGroup(Groups[groupId]);
+    }
+
     /// <summary>
     /// Get an option by arg
     /// </summary>
@@ -181,5 +203,20 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
             tree = $"{commandCheck.Id}>{tree}";
             commandCheck = commandCheck.Parent;
         }
+    }
+    
+    /// <summary>
+    /// Adds a group to command
+    /// </summary>
+    /// <param name="group">The group</param>
+    /// <exception cref="ClyshException">The group cannot be related to another command</exception>
+    public void AddGroups(ClyshGroup group)
+    {
+        if (group.Command != null)
+            throw new ClyshException(string.Format(TheGroupAddressMemoryIsAlreadyRelatedToAnotherCommandOption, group.Id));
+        
+        group.Command = this;
+        
+        Groups.Add(group);
     }
 }
