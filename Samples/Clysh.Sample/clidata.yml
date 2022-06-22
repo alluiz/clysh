@@ -3,6 +3,8 @@ Version: 1.0
 Commands:
   - Id: mycli
     Description: My own CLI
+    Groups:
+      - foo
     Options:
       - Description: Test option
         Id: test
@@ -26,4 +28,4 @@ Commands:
     SubCommands:
       - mychild
   - Id: mychild
-    Description: My child
+    Description: My child command
