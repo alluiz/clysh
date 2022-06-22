@@ -397,7 +397,7 @@ Commands:
     SubCommands:
       - mychild
   - Id: mychild
-    Description: My child";
+    Description: My awesome child";
     }
 
     private string GetYamlWithoutRootCommandText()

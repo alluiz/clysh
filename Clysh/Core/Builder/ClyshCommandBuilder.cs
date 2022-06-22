@@ -9,6 +9,9 @@ namespace Clysh.Core.Builder;
 /// <seealso cref="ClyshBuilder{T}"/>
 public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
 {
+    private const int MaxDescription = 50;
+    private const int MinDescription = 10;
+    
     /// <summary>
     /// Build the command identifier
     /// </summary>
@@ -27,6 +30,9 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
     public ClyshCommandBuilder Description(string description)
     {
+        if (description == null || description.Trim().Length is < MinDescription or > MaxDescription)
+            throw new ArgumentException($"Command {nameof(description)} value '{description}' must be not null or empty and between {MinDescription} and {MaxDescription} chars.", nameof(description));
+        
         Result.Description = description;
         return this;
     }
@@ -71,7 +77,7 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
     public ClyshCommandBuilder Group(ClyshGroup group)
     {
-        Result.Groups.Add(group);
+        Result.AddGroups(group);
         return this;
     }
 }
