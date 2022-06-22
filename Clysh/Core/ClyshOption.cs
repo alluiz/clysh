@@ -33,6 +33,11 @@ public class ClyshOption : ClyshSimpleIndexable
     public ClyshGroup? Group { get; set; }
 
     /// <summary>
+    /// The command owner
+    /// </summary>
+    public IClyshCommand? Command { get; set; }
+
+    /// <summary>
     /// The option constructor
     /// </summary>
     public ClyshOption()

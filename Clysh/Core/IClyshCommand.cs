@@ -1,3 +1,4 @@
+using System;
 using Clysh.Helper;
 
 namespace Clysh.Core;
@@ -15,7 +16,7 @@ public interface IClyshCommand: IClyshIndexable<string>
     /// <summary>
     /// The command description
     /// </summary>
-    string? Description { get; }
+    string Description { get; }
     
     /// <summary>
     /// The command options
@@ -101,6 +102,13 @@ public interface IClyshCommand: IClyshIndexable<string>
     /// Get an option selected by group
     /// </summary>
     /// <param name="group">The group filter</param>
-    /// <returns></returns>
-    ClyshOption? GetOptionFromGroup(string group);
+    /// <returns>The selected option</returns>
+    ClyshOption? GetOptionFromGroup(ClyshGroup group);
+    
+    /// <summary>
+    /// Get an option selected by group
+    /// </summary>
+    /// <param name="groupId">The groupId filter</param>
+    /// <returns>The selected option</returns>
+    ClyshOption? GetOptionFromGroup(string groupId);
 }

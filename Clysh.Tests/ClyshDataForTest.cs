@@ -80,14 +80,12 @@ namespace Clysh.Tests
                 })
                 .Option(optionBuilder.Id(appNameOption)
                     .Description("Name of the app")
-                    .Parameters(ClyshParameters.Create(
-                        parameterBuilder.Id("app-name").Range(1, 100).Required(true).Build()))
+                    .Parameter(parameterBuilder.Id("app-name").Range(1, 100).Required(true).Build())
                     .Build())
                 .Option(optionBuilder.Id(scopeOption)
                     .Description("Scopes of the app by comma")
-                    .Parameters(ClyshParameters.Create(
-                        parameterBuilder.Id("scope").Range(1, 1000).Required(true).Build(),
-                        parameterBuilder.Id("tags").Range(1, 1000).Required(false).Build()))
+                    .Parameter(parameterBuilder.Id("scope").Range(1, 1000).Required(true).Build())
+                    .Parameter(parameterBuilder.Id("tags").Range(1, 1000).Required(false).Build())
                     .Build())
                 .SubCommand(CreateTestCredentialCommand())
                 .Build();
@@ -107,7 +105,7 @@ namespace Clysh.Tests
                 .Action((_, _, _) => { })
                 .Option(optionBuilder.Id(timeOption, "t")
                     .Description("time to expire credential in hours.")
-                    .Parameters(ClyshParameters.Create(parameterBuilder.Id("hours").Range(1, 2).Required(true).Build()))
+                    .Parameter(parameterBuilder.Id("hours").Range(1, 2).Required(true).Build())
                     .Build())
                 .Build();
         }
@@ -149,7 +147,7 @@ namespace Clysh.Tests
                 .Option(optionBuilder
                     .Id(credentialsOption, "c")
                     .Description("Your username credentials path")
-                    .Parameters(ClyshParameters.Create(parameterBuilder.Id("path").Range(1, 10).Required(true).Build()))
+                    .Parameter(parameterBuilder.Id("path").Range(1, 10).Required(true).Build())
                     .Build())
                 .Build();
         }

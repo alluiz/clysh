@@ -28,4 +28,4 @@ Commands:
     SubCommands:
       - mychild
   - Id: mychild
-    Description: My child
+    Description: My child command

@@ -1,3 +1,4 @@
+using System;
 using System.Text.RegularExpressions;
 
 namespace Clysh.Core.Builder;
@@ -53,21 +54,21 @@ public class ClyshOptionBuilder: ClyshBuilder<ClyshOption>
     /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
     public ClyshOptionBuilder Description(string description)
     {
-        if (description == null || description.Trim().Length < MinDescription || description.Trim().Length > MaxDescription)
-            throw new ArgumentException($"Option {nameof(description)} must be not null or empty and between {MinDescription} and {MaxDescription} chars.", nameof(description));
+        if (description == null || description.Trim().Length is < MinDescription or > MaxDescription)
+            throw new ArgumentException($"Option {nameof(description)} value '{description}' must be not null or empty and between {MinDescription} and {MaxDescription} chars.", nameof(description));
         
         Result.Description = description;
         return this;
     }
 
     /// <summary>
-    /// Build the option parameters
+    /// Build the option parameter
     /// </summary>
-    /// <param name="parameters">The option parameters</param>
+    /// <param name="parameter">The option parameter</param>
     /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
-    public ClyshOptionBuilder Parameters(ClyshParameters parameters)
+    public ClyshOptionBuilder Parameter(ClyshParameter parameter)
     {
-        Result.Parameters = parameters;
+        Result.Parameters.Add(parameter);
         return this;
     }
 

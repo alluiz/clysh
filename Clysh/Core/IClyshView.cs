@@ -1,3 +1,5 @@
+using System;
+
 namespace Clysh.Core;
 
 /// <summary>
@@ -55,7 +57,8 @@ public interface IClyshView
     /// <summary>
     /// Print separator text
     /// </summary>
-    void PrintSeparator();
+    /// <param name="separator">The separator text</param>
+    void PrintSeparator(string separator = "#");
     
     /// <summary>
     /// Print <see cref="IClyshCommand"/> help text

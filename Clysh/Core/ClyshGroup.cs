@@ -7,4 +7,5 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshGroup: ClyshSimpleIndexable
 {
+    public IClyshCommand Command { get; set; }
 }

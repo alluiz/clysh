@@ -1,3 +1,4 @@
+using System.Linq;
 using Clysh.Helper;
 
 namespace Clysh.Core;
@@ -61,21 +62,5 @@ public class ClyshParameters: ClyshMap<ClyshParameter>
             paramsText = $"[{paramsText}]: {Count}";
 
         return paramsText;
-    }
-
-    /// <summary>
-    /// Creates a new set of <see cref="ClyshParameter"/>
-    /// </summary>
-    /// <param name="array">The parameters</param>
-    /// <returns>The set of <see cref="ClyshParameter"/></returns>
-    /// <seealso cref="ClyshParameter"/>
-    public static ClyshParameters Create(params ClyshParameter[] array)
-    {
-        var parameters = new ClyshParameters();
-            
-        foreach (var parameter in array) 
-            parameters.Add(parameter);
-
-        return parameters;
     }
 }

@@ -27,6 +27,6 @@ public class ClyshOptionBuilderTests
     {
         var builder = new ClyshOptionBuilder();
         var exception = Assert.Throws<ArgumentException>(() =>  builder.Description("test"));
-        Assert.AreEqual("Option description must be not null or empty and between 10 and 50 chars. (Parameter 'description')", exception?.Message);
+        Assert.AreEqual("Option description value 'test' must be not null or empty and between 10 and 50 chars. (Parameter 'description')", exception?.Message);
     }
 }
