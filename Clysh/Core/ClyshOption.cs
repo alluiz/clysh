@@ -45,4 +45,14 @@ public class ClyshOption : ClyshSimpleIndexable
         Pattern = @"[a-zA-Z]+\w+";
         Parameters = new ClyshParameters();
     }
+
+    /// <summary>
+    /// Check the optionId
+    /// </summary>
+    /// <param name="id">The id to be checked</param>
+    /// <returns>The result of validation</returns>
+    public bool Is(string id)
+    {
+        return this.Id.Equals(id, StringComparison.CurrentCultureIgnoreCase);
+    }
 }
