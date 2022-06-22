@@ -10,6 +10,7 @@ Create your **own CLI on .NET 6+** with simple steps.
 - 1.0.3 - Parameters creation using builder pattern
 - 1.0.4 - XML docs for all public classes
 - 1.0.5 - More production safety validations
+- 1.0.6 - Simplify option check id
 
 ## What is?
 

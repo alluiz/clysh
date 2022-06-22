@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Clysh</PackageId>
-    <Version>1.0.2</Version>
+    <Version>1.0.6</Version>
     <Authors>Luiz Almeida</Authors>
     <Company>Clysh</Company>
     <Title>Clysh: CLI in YAML for Shell apps</Title>
@@ -15,7 +15,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/alluiz/clysh.git</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageVersion>1.0.5</PackageVersion>
+    <PackageVersion>1.0.6</PackageVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
