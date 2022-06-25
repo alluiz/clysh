@@ -12,6 +12,7 @@ Create your **own CLI on .NET 6+** with simple steps.
 - 1.0.5 - More production safety validations
 - 1.0.6 - Simplify option check id
 - 1.0.7 - Order parameter by property and introduce filled property to parameter model
+- 1.0.8 - BugFix: Lastcommand executed flag fix
 
 ## What is?
 

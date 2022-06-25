@@ -115,6 +115,7 @@ public class ClyshService : IClyshService
 
             if (!Completed)
             {
+                lastCommand.Executed = true;
                 CheckLastCommandStatus();
                 CheckLastOptionStatus();
                 Execute(commandsToExecute);
