@@ -272,6 +272,7 @@ public class ClyshService : IClyshService
                 $"The parameter data '{arg}' is out of bound for option: {lastOption.Id}.");
 
         lastOption.Parameters.Last().Data = arg;
+        lastOption.Parameters.Last().Filled = true;
     }
 
     private void ProcessParameterById(string arg)
@@ -286,11 +287,12 @@ public class ClyshService : IClyshService
 
         if (lastOption.Parameters.Has(id))
         {
-            if (lastOption.Parameters[id].Data != null)
+            if (!lastOption.Parameters[id].Data.IsEmpty())
                 throw new InvalidOperationException(
                     $"The parameter '{id}' is already filled for option: {lastOption.Id}.");
 
             lastOption.Parameters[id].Data = data;
+            lastOption.Parameters[id].Filled = true;
         }
         else
             throw new InvalidOperationException(
