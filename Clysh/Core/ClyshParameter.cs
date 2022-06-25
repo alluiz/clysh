@@ -7,14 +7,23 @@ namespace Clysh.Core;
 /// <summary>
 /// The parameter for <see cref="Clysh"/>
 /// </summary>
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ClyshParameter : ClyshSimpleIndexable
 {
-    private string? data;
+    private string data;
+
+    /// <summary>
+    /// Create a new parameter
+    /// </summary>
+    public ClyshParameter()
+    {
+        data = string.Empty;
+    }
     
     /// <summary>
     /// The parameter data
     /// </summary>
-    public string? Data { 
+    public string Data { 
         get => data;
         set { Validate(value); data = value; } }
     
@@ -42,6 +51,16 @@ public class ClyshParameter : ClyshSimpleIndexable
     /// The parameter data maximum length
     /// </summary>
     public int MaxLength { get; set; }
+
+    /// <summary>
+    /// Check if parameter data is filled
+    /// </summary>
+    public bool Filled { get; set; }
+
+    /// <summary>
+    /// Order of parameter
+    /// </summary>
+    public int Order { get; set; }
 
     /// <summary>
     /// Formats parameter exibition

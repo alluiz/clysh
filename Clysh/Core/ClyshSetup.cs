@@ -253,13 +253,16 @@ public class ClyshSetup
 
         var parameterBuilder = new ClyshParameterBuilder();
 
-        option.Parameters.ForEach(x =>
-            optionBuilder.Parameter(parameterBuilder
-                .Id(x.Id)
-                .Pattern(x.Pattern)
-                .Required(x.Required)
-                .Range(x.MinLength, x.MaxLength)
-                .Build()));
+        option.Parameters
+            .OrderBy(p => p.Order)
+            .ToList()
+            .ForEach(x =>
+                optionBuilder.Parameter(parameterBuilder
+                    .Id(x.Id)
+                    .Pattern(x.Pattern)
+                    .Required(x.Required)
+                    .Range(x.MinLength, x.MaxLength)
+                    .Build()));
     }
 
     private static void BuildOptionGroup(IClyshCommand command, ClyshOptionData option,

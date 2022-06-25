@@ -27,6 +27,10 @@ namespace Clysh.Data
         /// The maximum length
         /// </summary>
         public int MaxLength { get; set; }
-        
+
+        /// <summary>
+        /// The order of parameter
+        /// </summary>
+        public int Order { get; set; }
     }
 }

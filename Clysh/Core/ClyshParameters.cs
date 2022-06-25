@@ -12,19 +12,19 @@ public class ClyshParameters: ClyshMap<ClyshParameter>
     /// Indicates if all required parameters is filled
     /// </summary>
     /// <returns>The indicator</returns>
-    public bool WaitingForRequired() => Values.Any(x => x.Required && x.Data == null);
+    public bool WaitingForRequired() => Values.Any(x => x.Required && !x.Filled);
 
     /// <summary>
     /// Indicates if all parameters is filled
     /// </summary>
     /// <returns>The indicator</returns>
-    public bool WaitingForAny() => Values.Any(x => x.Data == null);
+    public bool WaitingForAny() => Values.Any(x => !x.Filled);
 
     /// <summary>
     /// The last parameter of the set
     /// </summary>
     /// <returns>The last parameter</returns>
-    public ClyshParameter Last() => this.LastOrDefault().Value;
+    public ClyshParameter Last() => this.OrderBy(x => x.Value.Order).LastOrDefault().Value;
 
     /// <summary>
     /// Format all required parameters

@@ -9,6 +9,8 @@ namespace Clysh.Core.Builder;
 /// <seealso cref="ClyshBuilder{T}"/>
 public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
 {
+    private int order;
+    
     /// <summary>
     /// Build the parameter identifier
     /// </summary>
@@ -17,6 +19,7 @@ public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
     public ClyshParameterBuilder Id(string id)
     {
         Result.Id = id;
+        Result.Order = order;
         return this;
     }
     
@@ -68,5 +71,15 @@ public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
             throw new ArgumentException($"Invalid max length. The max length must be greater than min length.", nameof(Result.MaxLength));
         
         return this;
+    }
+
+    /// <summary>
+    /// Build Clysh Parameter
+    /// </summary>
+    /// <returns>The parameter</returns>
+    public new ClyshParameter Build()
+    {
+        order++;
+        return base.Build();
     }
 }
