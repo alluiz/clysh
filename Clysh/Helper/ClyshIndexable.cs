@@ -1,35 +1,47 @@
 using System;
+using System.Text.RegularExpressions;
 
 namespace Clysh.Helper;
 
 /// <summary>
-/// The indexable <see cref="Clysh"/> class
+/// The string indexable
 /// </summary>
-/// <typeparam name="T">The type to be indexable</typeparam>
-public abstract class ClyshIndexable<T> : IClyshIndexable<T>
+public abstract class ClyshIndexable: IClyshIndexable
 {
-    private T id = default!;
+    private Regex? regex;
+    
+    private string id = default!;
 
     /// <summary>
     /// The identifier
     /// </summary>
-    public T Id
+    public string Id
     {
         get => id;
         set => id = ValidatedId(value);
     }
-
+    
     /// <summary>
-    /// Validate the identifier
+    /// The pattern to validate the id
+    /// </summary>
+    protected string? Pattern;
+    
+    /// <summary>
+    /// Validates the identifier
     /// </summary>
     /// <param name="identifier">The identifier</param>
-    /// <returns>The identifier</returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    protected virtual T ValidatedId(T identifier)
+    /// <returns>The validation result</returns>
+    /// <exception cref="ArgumentException">The id must follow the pattern</exception>
+    private string ValidatedId(string identifier)
     {
-        if (identifier == null)
-            throw new ArgumentNullException(nameof(identifier), "Invalid id.");
-            
+        if (Pattern == null) 
+            return identifier;
+        
+        regex ??= new Regex(Pattern);
+
+        if (!regex.IsMatch(identifier))
+            throw new ArgumentException($"Invalid id. The id must follow the pattern: {Pattern}", nameof(identifier));
+
         return identifier;
     }
 }

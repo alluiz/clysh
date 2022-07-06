@@ -12,7 +12,7 @@ public class ClyshAudit
     /// <summary>
     /// The object with error
     /// </summary>
-    public IClyshIndexable<string> Obj { get; }
+    public IClyshIndexable Obj { get; }
     
     /// <summary>
     /// The object errors list
@@ -23,7 +23,7 @@ public class ClyshAudit
     /// The Clysh error representation
     /// </summary>
     /// <param name="obj">The object with error</param>
-    public ClyshAudit(IClyshIndexable<string> obj)
+    public ClyshAudit(IClyshIndexable obj)
     {
         Obj = obj;
         Messages = new ();

@@ -13,7 +13,12 @@ public interface IClyshView
     /// The number of lines printed. Useful only for tests purpouses
     /// </summary>
     int PrintedLines { get; }
-    
+
+    /// <summary>
+    /// Indicates if print verbose mode is active
+    /// </summary>
+    bool Debug { get; set; }
+
     /// <summary>
     /// A confirmation prompt.
     /// </summary>
@@ -41,6 +46,12 @@ public interface IClyshView
     /// Print empty line
     /// </summary>
     void PrintEmpty();
+    
+    /// <summary>
+    /// Print text if verbose is active
+    /// </summary>
+    /// <param name="text">The text to be printed</param>
+    void PrintDebug(string? text);
     
     /// <summary>
     /// Print text

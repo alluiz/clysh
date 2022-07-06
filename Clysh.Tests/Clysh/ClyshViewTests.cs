@@ -211,15 +211,17 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
         consoleMock.Verify(x => x.WriteLine("[options]:", 8), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 9), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional = Length", 10), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(105) + "Parameters: (R)equired | (O)ptional", 10), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
 
         var i = 0;
 
-        foreach (var item in command.Options.OrderBy(x => x.Key))
+        foreach (var item in command.Options
+                     .OrderBy(x => x.Value.Group?.Id)
+                     .ThenBy(y=>y.Key))
         {
             var i1 = i;
-            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);
+            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-13}{item.Value.Group,-15}{item.Value.Description,-105}{item.Value.Parameters}", 12 + i1), Times.Once);
             i++;
         }
 
@@ -244,7 +246,7 @@ public class ClyshViewTests
 
         consoleMock.Verify(x => x.WriteLine("", 14 + j), Times.Once);
 
-        Assert.AreEqual(21, view.PrintedLines);
+        Assert.AreEqual(22, view.PrintedLines);
     }
 
     [Test]
@@ -264,7 +266,7 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
         consoleMock.Verify(x => x.WriteLine("[options]:", 8), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 9), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional = Length", 10), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(105) + "Parameters: (R)equired | (O)ptional", 10), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
 
         var i = 0;
@@ -272,7 +274,7 @@ public class ClyshViewTests
         foreach (var item in command.Options.OrderBy(x => x.Key))
         {
             var i1 = i;
-            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);
+            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-105}{item.Value.Parameters}", 12 + i1), Times.Once);
             i++;
         }
 
@@ -297,7 +299,7 @@ public class ClyshViewTests
 
         consoleMock.Verify(x => x.WriteLine("", 14 + j), Times.Once);
 
-        Assert.AreEqual(19, view.PrintedLines);
+        Assert.AreEqual(20, view.PrintedLines);
     }
 
     [Test]
@@ -317,7 +319,7 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
         consoleMock.Verify(x => x.WriteLine("[options]:", 8), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 9), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional = Length", 10), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(105) + "Parameters: (R)equired | (O)ptional", 10), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
 
         var i = 0;
@@ -325,7 +327,7 @@ public class ClyshViewTests
         foreach (var item in command.Options.OrderBy(x => x.Key))
         {
             var i1 = i;
-            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-13}{(item.Value.Group == null?"":item.Value.Group.Id),-15}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);
+            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-13}{(item.Value.Group == null?"":item.Value.Group.Id),-15}{item.Value.Description,-105}{item.Value.Parameters}", 12 + i1), Times.Once);
             i++;
         }
 
@@ -333,7 +335,7 @@ public class ClyshViewTests
 
         consoleMock.Verify(x => x.WriteLine("", 12 + i), Times.Once);
 
-        Assert.AreEqual(14, view.PrintedLines);
+        Assert.AreEqual(15, view.PrintedLines);
     }
 
     [Test]
@@ -359,7 +361,7 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
         consoleMock.Verify(x => x.WriteLine("----------------------#----------------------", 6), Times.Once);
 
-        Assert.AreEqual(27, view.PrintedLines);
+        Assert.AreEqual(28, view.PrintedLines);
     }
     
     [Test]

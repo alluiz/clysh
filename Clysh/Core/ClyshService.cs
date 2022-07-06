@@ -86,6 +86,7 @@ public class ClyshService : IClyshService
     {
         try
         {
+            View.Debug = false;
             AuditClysh(RootCommand);
             
             Completed = false;
@@ -103,6 +104,9 @@ public class ClyshService : IClyshService
                         ExecuteHelp();
                         break;
                     }
+
+                    if (OptionDebug())
+                        View.Debug = true;
                 }
                 else
                 {
@@ -125,6 +129,11 @@ public class ClyshService : IClyshService
         {
             ExecuteHelp(e);
         }
+    }
+
+    private bool OptionDebug()
+    {
+        return lastOption is { Id: "verbose" };
     }
 
     private void AuditLogMessages()
@@ -324,7 +333,7 @@ public class ClyshService : IClyshService
                 command.Action(command, command.Options, View);
             }
             else if (!command.RequireSubcommand)
-                throw new ArgumentNullException(nameof(commandsToExecute), "Action null");
+                throw new ClyshException($"Action null (NOT READY TO PRODUCTION). Command: {command.Id}");
         }
 
         Completed = true;

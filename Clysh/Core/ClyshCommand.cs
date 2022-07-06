@@ -9,7 +9,7 @@ namespace Clysh.Core;
 /// <summary>
 /// The command for <see cref="Clysh"/>
 /// </summary>
-public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
+public class ClyshCommand : ClyshIndexable, IClyshCommand
 {
     private const string CommandMustHaveOnlyOneParentCommand = "The command must have only one parent. Command: '{0}'";
     private const string TheOptionAddressMemoryIsAlreadyRelatedToAnotherCommandOption = "The option address memory is already related to another command. Option: '{0}'";
@@ -73,6 +73,18 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
         shortcutToOptionId = new Dictionary<string, string>();
         Description = string.Empty;
         AddHelpOption();
+        AddDebugOption();
+    }
+
+    private void AddDebugOption()
+    {
+        var builder = new ClyshOptionBuilder();
+        var debugOption = builder
+            .Id("debug")
+            .Description("Print debug log on screen")
+            .Build();
+            
+        AddOption(debugOption);
     }
 
     /// <summary>
@@ -85,6 +97,12 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
             throw new ClyshException(string.Format(TheOptionAddressMemoryIsAlreadyRelatedToAnotherCommandOption, option.Id));
 
         option.Command = this;
+
+        if (Options.Has(option.Id))
+            throw new ClyshException($"Invalid option id. The command already has an option with id: {option.Id}.");
+        
+        if (option.Shortcut != null && shortcutToOptionId.ContainsKey(option.Shortcut))
+            throw new ClyshException($"Invalid option shortcut. The command already has an option with shortcut: {option.Shortcut}.");
         
         Options.Add(option);
 
@@ -195,7 +213,7 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
         while (commandCheck != null)
         {
             if (command.Id.Equals(commandCheck.Id))
-                throw new InvalidOperationException("Command Error: The command '$0' must not be children of itself: $1"
+                throw new ClyshException("Command Error: The command '$0' must not be children of itself: $1"
                     .Replace("$0", command.Id)
                     .Replace("$1", $"{commandCheck.Id}>{tree}")
                 );

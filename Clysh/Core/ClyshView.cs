@@ -16,6 +16,11 @@ public class ClyshView : IClyshView
     /// </summary>
     public int PrintedLines { get; private set; }
 
+    /// <summary>
+    /// Indicates if verbose mode is active
+    /// </summary>
+    public bool Debug { get; set; }
+
     private const string QuestionMustBeNotBlank = "Question must be not blank";
 
     private readonly IClyshConsole clyshConsole;
@@ -73,6 +78,16 @@ public class ClyshView : IClyshView
     public bool Confirm(string question = "Do you agree?", string yes = "Y", string no = "n")
     {
         return string.Equals(AskFor($"{question} ({yes}/{no})"), yes, StringComparison.CurrentCultureIgnoreCase);
+    }
+
+    /// <summary>
+    /// Print text if debug is active
+    /// </summary>
+    /// <param name="text">The text</param>
+    public void PrintDebug(string? text)
+    {
+       if (Debug)
+           Print(text);
     }
 
     /// <summary>
@@ -184,11 +199,11 @@ public class ClyshView : IClyshView
 
         if (hasCommands)
         {
-            PrintChildrenCommands(command);
+            PrintSubCommands(command);
         }
     }
 
-    private void PrintChildrenCommands(IClyshCommand command)
+    private void PrintSubCommands(IClyshCommand command)
     {
         Print("[commands]:");
         PrintEmpty();
@@ -214,8 +229,8 @@ public class ClyshView : IClyshView
               $"{"Shortcut",-11}" +
               $"{"Option",-13}" +
               $"{"Group",-15}" +
-              $"{"Description",-55}" +
-              $"Parameters: (R)equired | (O)ptional = Length");
+              $"{"Description",-105}" +
+              $"Parameters: (R)equired | (O)ptional");
         PrintEmpty();
 
         foreach (var item in command.Options
@@ -225,7 +240,7 @@ public class ClyshView : IClyshView
             var paramsText = item.Value.Parameters.ToString();
 
             Print("".PadRight(2) +
-                  $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-13}{item.Value.Group?.Id,-15}{item.Value.Description,-55}{paramsText}");
+                  $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-13}{item.Value.Group?.Id,-15}{item.Value.Description,-105}{paramsText}");
         }
 
         PrintEmpty();

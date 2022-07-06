@@ -8,7 +8,7 @@ namespace Clysh.Core;
 /// The parameter for <see cref="Clysh"/>
 /// </summary>
 // ReSharper disable once ClassNeverInstantiated.Global
-public class ClyshParameter : ClyshSimpleIndexable
+public class ClyshParameter : ClyshIndexable
 {
     private string data;
 

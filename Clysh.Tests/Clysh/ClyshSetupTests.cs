@@ -37,9 +37,10 @@ public class ClyshSetupTests
 
         Assert.AreEqual("mycli", root.Id);
         Assert.AreEqual("My own CLI", root.Description);
-        Assert.AreEqual(4, root.Options.Count);
+        Assert.AreEqual(5, root.Options.Count);
         Assert.AreEqual(1, root.SubCommands.Count);
         Assert.AreEqual(action, root.Action);
+        Assert.IsFalse(root.RequireSubcommand);
 
         Assert.AreEqual("Test option", root.Options["test"].Description);
         Assert.AreEqual("T", root.Options["test"].Shortcut);
@@ -52,6 +53,45 @@ public class ClyshSetupTests
         Assert.IsTrue(root.Options["test"].Parameters["ab"].Required);
         Assert.AreEqual(1, root.Options["test"].Parameters["ab"].MinLength);
         Assert.AreEqual(15, root.Options["test"].Parameters["ab"].MaxLength);
+        Assert.AreEqual(@"\w+", root.Options["test"].Parameters["ab"].PatternData);
+    }
+    
+    [Test]
+    public void CreateSetupYmlSuccessful()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yml");
+        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlText());
+
+        var setup = new ClyshSetup(Path, fs.Object);
+        Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView> action = (_, _, _) => { };
+        setup.MakeAction("mycli", action);
+
+        var root = setup.RootCommand;
+        
+        Assert.AreEqual("MyCLI with only test command", setup.Data.Title);
+        Assert.AreEqual("1.0", setup.Data.Version);
+
+        Assert.AreEqual("mycli", root.Id);
+        Assert.AreEqual("My own CLI", root.Description);
+        Assert.AreEqual(5, root.Options.Count);
+        Assert.AreEqual(1, root.SubCommands.Count);
+        Assert.AreEqual(action, root.Action);
+        Assert.IsFalse(root.RequireSubcommand);
+
+        Assert.AreEqual("Test option", root.Options["test"].Description);
+        Assert.AreEqual("T", root.Options["test"].Shortcut);
+        Assert.AreEqual(1, root.Options["test"].Parameters.Count);
+        
+        Assert.IsFalse(root.Options["dev"].Selected);
+        Assert.IsFalse(root.Options["hom"].Selected);
+        Assert.IsTrue(root.Groups.ContainsKey("env"));
+
+        Assert.IsTrue(root.Options["test"].Parameters["ab"].Required);
+        Assert.AreEqual(1, root.Options["test"].Parameters["ab"].MinLength);
+        Assert.AreEqual(15, root.Options["test"].Parameters["ab"].MaxLength);
+        Assert.AreEqual(@"\w+", root.Options["test"].Parameters["ab"].PatternData);
     }
 
     [Test]
@@ -73,7 +113,7 @@ public class ClyshSetupTests
 
         Assert.AreEqual("mycli", root.Id);
         Assert.AreEqual("My own CLI", root.Description);
-        Assert.AreEqual(2, root.Options.Count);
+        Assert.AreEqual(3, root.Options.Count);
         Assert.IsEmpty(root.SubCommands);
 
         Assert.AreEqual("Test option", root.Options["test"].Description);
@@ -166,6 +206,23 @@ public class ClyshSetupTests
         Assert.AreEqual("Invalid commands: The data must contains at once one command. (Parameter 'Data')",
             exception?.InnerException?.Message);
     }
+    
+    [Test]
+    public void CreateSetupYamlWithoutSubCommandError()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithoutSubCommandText());
+
+        var exception = Assert.Throws<ClyshException>(() =>
+        {
+            var dummy = new ClyshSetup(Path, fs.Object);
+        });
+
+        Assert.AreEqual("The command is configured to require subcommand. So subcommands cannot be null.",
+            exception?.InnerException?.Message);
+    }
 
     [Test]
     public void CreateSetupYamlWithoutRootCommandError()
@@ -198,6 +255,40 @@ public class ClyshSetupTests
         });
 
         Assert.AreEqual("Command Error: The command 'mycli' must not be children of itself: mycli>mycli",
+            exception?.InnerException?.Message);
+    }
+    
+    [Test]
+    public void CreateSetupYamlWithDuplicatedParameterOrderError()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithDuplicatedParameterOrderText());
+
+        var exception = Assert.Throws<ClyshException>(() =>
+        {
+            var dummy = new ClyshSetup(Path, fs.Object);
+        });
+
+        Assert.AreEqual("The order must be greater than the lastOrder: 0",
+            exception?.InnerException?.Message);
+    }
+    
+    [Test]
+    public void CreateSetupYamlWithParameterRequiredOrderError()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithParameterRequiredOrderText());
+
+        var exception = Assert.Throws<ClyshException>(() =>
+        {
+            var dummy = new ClyshSetup(Path, fs.Object);
+        });
+
+        Assert.AreEqual("Invalid order. The required parameters must come first than optional parameters. Check the order.",
             exception?.InnerException?.Message);
     }
     
@@ -248,7 +339,7 @@ public class ClyshSetupTests
             var dummy = new ClyshSetup(Path, fs.Object);
         });
 
-        Assert.AreEqual("Invalid JSON: The deserialization results in null object.", ex?.InnerException?.Message);
+        Assert.AreEqual("Invalid JSON: The deserialization results in null object.", ex?.Message);
     }
     
     private string GetYamlWithInvalidGroupText()
@@ -288,6 +379,7 @@ Commands:
             Required: true
             MinLength: 1
             MaxLength: 15
+            Order: 1
     Root: true
     SubCommands:
       - fake";
@@ -310,6 +402,7 @@ Commands:
             Required: true
             MinLength: 1
             MaxLength: 15
+            Order: 1
     Root: true
     SubCommands:
       - mycli";
@@ -357,7 +450,8 @@ Commands:
               ""Id"": ""ab"",
               ""Required"": true,
               ""MinLength"": 1,
-              ""MaxLength"": 15
+              ""MaxLength"": 15,
+              ""Order"": 1
             }
           ]
         }
@@ -393,11 +487,14 @@ Commands:
             Required: true
             MinLength: 1
             MaxLength: 15
+            Pattern: \w+
+            Order: 1
     Root: true
     SubCommands:
       - mychild
   - Id: mychild
-    Description: My awesome child";
+    Description: My awesome child
+    RequireSubcommand: false";
     }
 
     private string GetYamlWithoutRootCommandText()
@@ -428,5 +525,108 @@ Commands:
         return @"
 Title: MyCLI with only test command
 Version: 1.0";
+    }
+    
+    private string GetYamlWithoutSubCommandText()
+    {
+        return @"
+Title: MyCLI with only test command
+Version: 1.0
+Commands:
+  - Id: mycli
+    Description: My own CLI
+    Groups:
+      - env
+    Options:
+      - Description: Test option
+        Id: dev
+        Group: env
+      - Description: Test option
+        Id: hom
+        Group: env
+      - Description: Test option
+        Id: test
+        Shortcut: T
+        Parameters:
+          - Id: ab
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+            Pattern: \w+
+            Order: 1
+    Root: true
+    RequireSubcommand: true";
+    }
+    
+    private string GetYamlWithDuplicatedParameterOrderText()
+    {
+        return @"
+Title: MyCLI with only test command
+Version: 1.0
+Commands:
+  - Id: mycli
+    Description: My own CLI
+    Groups:
+      - env
+    Options:
+      - Description: Test option
+        Id: dev
+        Group: env
+      - Description: Test option
+        Id: hom
+        Group: env
+      - Description: Test option
+        Id: test
+        Shortcut: T
+        Parameters:
+          - Id: ab
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+            Pattern: \w+
+            Order: 0
+          - Id: c
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+            Pattern: \w+
+            Order: 0
+    Root: true";
+    }
+    
+    private string GetYamlWithParameterRequiredOrderText()
+    {
+        return @"
+Title: MyCLI with only test command
+Version: 1.0
+Commands:
+  - Id: mycli
+    Description: My own CLI
+    Groups:
+      - env
+    Options:
+      - Description: Test option
+        Id: dev
+        Group: env
+      - Description: Test option
+        Id: hom
+        Group: env
+      - Description: Test option
+        Id: test
+        Shortcut: T
+        Parameters:
+          - Id: ab
+            Required: false
+            MinLength: 1
+            MaxLength: 15
+            Pattern: \w+
+            Order: 1
+          - Id: c
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+            Pattern: \w+
+            Order: 2
+    Root: true";
     }
 }

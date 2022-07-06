@@ -285,9 +285,9 @@ public class ClyshServiceTests
         cli.RootCommand.AddOption(optionBuilder
             .Id(someOption)
             .Description(someOptionDescription)
-            .Parameter(parameterBuilder.Id("testarg").Range(6, 10).Required(true).Build())
-            .Parameter(parameterBuilder.Id("testarg2").Range(6, 10).Required(true).Build())
-            .Parameter(parameterBuilder.Id("testarg3").Range(6, 10).Required(true).Build())
+            .Parameter(parameterBuilder.Id("testarg").Range(6, 10).Order(0).Required(true).Build())
+            .Parameter(parameterBuilder.Id("testarg2").Range(6, 10).Order(1).Required(true).Build())
+            .Parameter(parameterBuilder.Id("testarg3").Range(6, 10).Order(2).Required(true).Build())
             .Build());
 
         cli.Execute(args);
@@ -379,9 +379,9 @@ public class ClyshServiceTests
         var optionBuilder = new ClyshOptionBuilder();
 
         cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription)
-            .Parameter(parameterBuilder.Id("testarg").Range(6, 10).Required(false).Build())
-            .Parameter(parameterBuilder.Id("testarg2").Range(6, 10).Required(false).Build())
-            .Parameter(parameterBuilder.Id("testarg3").Range(6, 10).Required(false).Build())
+            .Parameter(parameterBuilder.Id("testarg2").Range(6, 10).Order(0).Required(false).Build())
+            .Parameter(parameterBuilder.Id("testarg3").Range(6, 10).Order(1).Required(false).Build())
+            .Parameter(parameterBuilder.Id("testarg").Range(6, 10).Order(2).Required(false).Build())
             .Build());
 
         cli.Execute(args);
@@ -430,8 +430,8 @@ public class ClyshServiceTests
         cli.RootCommand.AddOption(optionBuilder
             .Id(someOption)
             .Description(someOptionDescription)
-            .Parameter(parameterBuilder.Id("testarg").Range(6, 10).Required(false).Build())
-            .Parameter(parameterBuilder.Id("testarg2").Range(6, 10).Required(true).Build())
+            .Parameter(parameterBuilder.Id("testarg2").Range(6, 10).Order(0).Required(true).Build())
+            .Parameter(parameterBuilder.Id("testarg").Range(6, 10).Order(1).Required(false).Build())
             .Build());
 
         cli.Execute(args);
@@ -481,11 +481,12 @@ public class ClyshServiceTests
         var optionBuilder = new ClyshOptionBuilder();
 
         cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription)
-            .Parameter(parameterBuilder.Id("testarg").Range(6, 10).Required(false).Build())
-            .Parameter(parameterBuilder.Id("testarg2").Range(6, 10).Required(true).Build())
-            .Parameter(parameterBuilder.Id("testarg3").Range(6, 10).Required(false).Build())
-            .Parameter(parameterBuilder.Id("testarg4").Range(6, 10).Required(false).Build())
-            .Parameter(parameterBuilder.Id("testarg5").Range(6, 10).Required(true).Build()).Build());
+            .Parameter(parameterBuilder.Id("testarg5").Range(6, 10).Order(0).Required(true).Build())
+            .Parameter(parameterBuilder.Id("testarg2").Range(6, 10).Order(1).Required(true).Build())
+            .Parameter(parameterBuilder.Id("testarg").Range(6, 10).Order(2).Required(false).Build())
+            .Parameter(parameterBuilder.Id("testarg3").Range(6, 10).Order(3).Required(false).Build())
+            .Parameter(parameterBuilder.Id("testarg4").Range(6, 10).Order(4).Required(false).Build())
+            .Build());
 
         cli.Execute(args);
 
@@ -540,14 +541,14 @@ public class ClyshServiceTests
         var optionBuilder = new ClyshOptionBuilder();
 
         cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription)
-            .Parameter(parameterBuilder.Id("testarg").Range(6, 10).Required(false).Build())
-            .Parameter(parameterBuilder.Id("testarg2").Range(6, 10).Required(true).Build())
+            .Parameter(parameterBuilder.Id("testarg2").Range(6, 10).Order(1).Required(true).Build())
+            .Parameter(parameterBuilder.Id("testarg").Range(6, 10).Order(2).Required(false).Build())
             .Build());
 
         cli.RootCommand.AddOption(optionBuilder.Id(someOption2).Description(someOptionDescription2)
-            .Parameter(parameterBuilder.Id("testarg3").Range(6, 10).Required(false).Build())
-            .Parameter(parameterBuilder.Id("testarg4").Range(6, 10).Required(false).Build())
-            .Parameter(parameterBuilder.Id("testarg5").Range(6, 10).Required(true).Build())
+            .Parameter(parameterBuilder.Id("testarg5").Range(6, 10).Order(0).Required(true).Build())
+            .Parameter(parameterBuilder.Id("testarg3").Range(6, 10).Order(1).Required(false).Build())
+            .Parameter(parameterBuilder.Id("testarg4").Range(6, 10).Order(2).Required(false).Build())
             .Build());
 
         cli.Execute(args);
@@ -612,9 +613,9 @@ public class ClyshServiceTests
             .Option(optionBuilder
                 .Id(someOption2)
                 .Description(someOptionDescription2)
-                .Parameter(parameterBuilder.Id("testarg3").Range(6, 10).Required(false).Build())
-                .Parameter(parameterBuilder.Id("testarg4").Range(6, 10).Required(false).Build())
-                .Parameter(parameterBuilder.Id("testarg5").Range(6, 10).Required(true).Build())
+                .Parameter(parameterBuilder.Id("testarg5").Range(6, 10).Required(true).Order(0).Build())
+                .Parameter(parameterBuilder.Id("testarg3").Range(6, 10).Required(false).Order(1).Build())
+                .Parameter(parameterBuilder.Id("testarg4").Range(6, 10).Required(false).Order(2).Build())
                 .Build())
             .Build();
 
@@ -629,8 +630,8 @@ public class ClyshServiceTests
             .Option(optionBuilder
                 .Id(someOption)
                 .Description(someOptionDescription)
-                .Parameter(parameterBuilder.Id("testarg").Range(6, 10).Required(false).Build())
-                .Parameter(parameterBuilder.Id("testarg2").Range(6, 10).Required(true).Build())
+                .Parameter(parameterBuilder.Id("testarg2").Range(6, 10).Order(0).Required(true).Build())
+                .Parameter(parameterBuilder.Id("testarg").Range(6, 10).Order(1).Required(false).Build())
                 .Build())
             .SubCommand(customCommand)
             .Build();
