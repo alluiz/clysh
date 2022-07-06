@@ -13,6 +13,7 @@ Create your **own CLI on .NET 6+** with simple steps.
 - 1.0.6 - Simplify option check id
 - 1.0.7 - Order parameter by property and introduce filled property to parameter model
 - 1.0.8 - BugFix: Lastcommand executed flag fix
+- 1.0.9 - Some improvements to order parameters and increase max description to 100 chars
 
 ## What is?
 
