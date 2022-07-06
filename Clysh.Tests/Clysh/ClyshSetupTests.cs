@@ -248,7 +248,7 @@ public class ClyshSetupTests
             var dummy = new ClyshSetup(Path, fs.Object);
         });
 
-        Assert.AreEqual("Invalid JSON: The deserialization results in null object.", ex?.InnerException?.Message);
+        Assert.AreEqual("Invalid JSON: The deserialization results in null object.", ex?.Message);
     }
     
     private string GetYamlWithInvalidGroupText()
