@@ -12,7 +12,7 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     private bool hasProvidedOptionalParameterBefore;
     private int lastParameterOrder = -1;
     
-    private const int MaxDescription = 50;
+    private const int MaxDescription = 100;
     private const int MinDescription = 10;
 
     private const int MinShortcut = 1;

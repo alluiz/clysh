@@ -9,7 +9,7 @@ namespace Clysh.Core.Builder;
 /// <seealso cref="ClyshBuilder{T}"/>
 public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
 {
-    private const int MaxDescription = 50;
+    private const int MaxDescription = 100;
     private const int MinDescription = 10;
     
     /// <summary>

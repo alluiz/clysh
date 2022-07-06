@@ -229,7 +229,7 @@ public class ClyshView : IClyshView
               $"{"Shortcut",-11}" +
               $"{"Option",-13}" +
               $"{"Group",-15}" +
-              $"{"Description",-55}" +
+              $"{"Description",-105}" +
               $"Parameters: (R)equired | (O)ptional");
         PrintEmpty();
 
@@ -240,7 +240,7 @@ public class ClyshView : IClyshView
             var paramsText = item.Value.Parameters.ToString();
 
             Print("".PadRight(2) +
-                  $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-13}{item.Value.Group?.Id,-15}{item.Value.Description,-55}{paramsText}");
+                  $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-13}{item.Value.Group?.Id,-15}{item.Value.Description,-105}{paramsText}");
         }
 
         PrintEmpty();
