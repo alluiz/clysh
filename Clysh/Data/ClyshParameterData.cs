@@ -40,6 +40,6 @@ namespace Clysh.Data
         /// The order of parameter
         /// </summary>
         [Required]
-        public int? Order { get; set; }
+        public int Order { get; set; }
     }
 }

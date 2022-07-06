@@ -9,8 +9,6 @@ namespace Clysh.Core.Builder;
 /// <seealso cref="ClyshBuilder{T}"/>
 public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
 {
-    private int order;
-    
     /// <summary>
     /// Build the parameter identifier
     /// </summary>
@@ -22,6 +20,19 @@ public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
             throw new ArgumentNullException(id);
         
         Result.Id = id;
+        return this;
+    }
+    
+    /// <summary>
+    /// Build the parameter order
+    /// </summary>
+    /// <param name="order">The parameter order</param>
+    /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
+    public ClyshParameterBuilder Order(int order)
+    {
+        if (order < 0)
+            throw new ClyshException("All parameters must be greater or equal than 0 order.");
+
         Result.Order = order;
         return this;
     }
@@ -74,15 +85,5 @@ public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
             throw new ArgumentException($"Invalid max length. The max length must be greater than min length.", nameof(Result.MaxLength));
         
         return this;
-    }
-
-    /// <summary>
-    /// Build Clysh Parameter
-    /// </summary>
-    /// <returns>The parameter</returns>
-    public new ClyshParameter Build()
-    {
-        order++;
-        return base.Build();
     }
 }

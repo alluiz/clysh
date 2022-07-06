@@ -22,7 +22,7 @@ public abstract class ClyshBuilder<T> where T: new()
     /// <summary>
     /// Create a new instance of type
     /// </summary>
-    private void Reset()
+    protected virtual void Reset()
     {
         Result = new T();
     }

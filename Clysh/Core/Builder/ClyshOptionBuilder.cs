@@ -9,6 +9,9 @@ namespace Clysh.Core.Builder;
 /// <seealso cref="ClyshBuilder{T}"/>
 public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
 {
+    private bool hasProvidedOptionalParameterBefore;
+    private int lastParameterOrder = -1;
+    
     private const int MaxDescription = 50;
     private const int MinDescription = 10;
 
@@ -74,6 +77,16 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
     public ClyshOptionBuilder Parameter(ClyshParameter parameter)
     {
+        if (parameter.Order <= lastParameterOrder)
+            throw new ClyshException($"The order must be greater than the lastOrder: {lastParameterOrder}");
+
+        if (parameter.Required && hasProvidedOptionalParameterBefore)
+            throw new ClyshException(
+                "Invalid order. The required parameters must come first than optional parameters. Check the order.");
+
+        hasProvidedOptionalParameterBefore = !parameter.Required;
+        lastParameterOrder = parameter.Order;
+        
         Result.Parameters.Add(parameter);
         return this;
     }
@@ -98,5 +111,15 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     {
         Result.Selected = selected;
         return this;
+    }
+
+    /// <summary>
+    /// Reset the builder state
+    /// </summary>
+    protected override void Reset()
+    {
+        lastParameterOrder = -1;
+        hasProvidedOptionalParameterBefore = false;
+        base.Reset();
     }
 }

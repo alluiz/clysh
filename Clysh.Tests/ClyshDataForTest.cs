@@ -89,12 +89,12 @@ namespace Clysh.Tests
                 })
                 .Option(optionBuilder.Id(appNameOption)
                     .Description("Name of the app")
-                    .Parameter(parameterBuilder.Id("app-name").Range(1, 100).Required(true).Build())
+                    .Parameter(parameterBuilder.Id("app-name").Range(1, 100).Required(true).Order(1).Build())
                     .Build())
                 .Option(optionBuilder.Id(scopeOption)
                     .Description("Scopes of the app by comma")
-                    .Parameter(parameterBuilder.Id("scope").Range(1, 1000).Required(true).Build())
-                    .Parameter(parameterBuilder.Id("tags").Range(1, 1000).Required(false).Build())
+                    .Parameter(parameterBuilder.Id("scope").Range(1, 1000).Required(true).Order(1).Build())
+                    .Parameter(parameterBuilder.Id("tags").Range(1, 1000).Required(false).Order(2).Build())
                     .Build())
                 .SubCommand(CreateTestCredentialCommand())
                 .Build();
@@ -114,7 +114,7 @@ namespace Clysh.Tests
                 .Action((_, _, _) => { })
                 .Option(optionBuilder.Id(timeOption, "t")
                     .Description("time to expire credential in hours.")
-                    .Parameter(parameterBuilder.Id("hours").Range(1, 2).Required(true).Build())
+                    .Parameter(parameterBuilder.Id("hours").Range(1, 2).Required(true).Order(1).Build())
                     .Build())
                 .Build();
         }
@@ -156,7 +156,7 @@ namespace Clysh.Tests
                 .Option(optionBuilder
                     .Id(credentialsOption, "c")
                     .Description("Your username credentials path")
-                    .Parameter(parameterBuilder.Id("path").Range(1, 10).Required(true).Build())
+                    .Parameter(parameterBuilder.Id("path").Range(1, 10).Required(true).Order(1).Build())
                     .Build())
                 .Build();
         }

@@ -267,27 +267,16 @@ public class ClyshSetup
 
         var parameterBuilder = new ClyshParameterBuilder();
 
-        if (option.Parameters.Any(x => x.Order == null))
-            throw new ClyshException("All parameters must have explicit order.");
-
         //Needs to order explicit by user input
         var parameters = option.Parameters
             .OrderBy(p => p.Order)
             .ToList();
 
-        //Used to check if optional parameter come before required
-        var hasProvidedOptionalBefore = false;
-
         foreach (var p in parameters)
         {
-            if (p.Required && hasProvidedOptionalBefore)
-                throw new ClyshException(
-                    "Invalid order. The required parameters must come first than optional parameters. Check the order.");
-            
-            hasProvidedOptionalBefore = !p.Required;
-
             builder.Parameter(parameterBuilder
                 .Id(p.Id)
+                .Order(p.Order)
                 .Pattern(p.Pattern)
                 .Required(p.Required)
                 .Range(p.MinLength, p.MaxLength)

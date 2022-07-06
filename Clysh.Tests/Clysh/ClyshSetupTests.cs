@@ -259,19 +259,19 @@ public class ClyshSetupTests
     }
     
     [Test]
-    public void CreateSetupYamlWithoutParameterOrderError()
+    public void CreateSetupYamlWithDuplicatedParameterOrderError()
     {
         fs.Setup(x => x.File.Exists(Path)).Returns(true);
         fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
         fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithoutParameterOrderText());
+        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithDuplicatedParameterOrderText());
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var dummy = new ClyshSetup(Path, fs.Object);
         });
 
-        Assert.AreEqual("All parameters must have explicit order.",
+        Assert.AreEqual("The order must be greater than the lastOrder: 0",
             exception?.InnerException?.Message);
     }
     
@@ -379,7 +379,7 @@ Commands:
             Required: true
             MinLength: 1
             MaxLength: 15
-            Order: 0
+            Order: 1
     Root: true
     SubCommands:
       - fake";
@@ -402,7 +402,7 @@ Commands:
             Required: true
             MinLength: 1
             MaxLength: 15
-            Order: 0
+            Order: 1
     Root: true
     SubCommands:
       - mycli";
@@ -451,7 +451,7 @@ Commands:
               ""Required"": true,
               ""MinLength"": 1,
               ""MaxLength"": 15,
-              ""Order"": 0
+              ""Order"": 1
             }
           ]
         }
@@ -488,7 +488,7 @@ Commands:
             MinLength: 1
             MaxLength: 15
             Pattern: \w+
-            Order: 0
+            Order: 1
     Root: true
     SubCommands:
       - mychild
@@ -553,12 +553,12 @@ Commands:
             MinLength: 1
             MaxLength: 15
             Pattern: \w+
-            Order: 0
+            Order: 1
     Root: true
     RequireSubcommand: true";
     }
     
-    private string GetYamlWithoutParameterOrderText()
+    private string GetYamlWithDuplicatedParameterOrderText()
     {
         return @"
 Title: MyCLI with only test command
@@ -584,6 +584,13 @@ Commands:
             MinLength: 1
             MaxLength: 15
             Pattern: \w+
+            Order: 0
+          - Id: c
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+            Pattern: \w+
+            Order: 0
     Root: true";
     }
     
@@ -613,13 +620,13 @@ Commands:
             MinLength: 1
             MaxLength: 15
             Pattern: \w+
-            Order: 0
+            Order: 1
           - Id: c
             Required: true
             MinLength: 1
             MaxLength: 15
             Pattern: \w+
-            Order: 1
+            Order: 2
     Root: true";
     }
 }
