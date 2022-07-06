@@ -9,7 +9,7 @@ namespace Clysh.Core;
 /// <summary>
 /// The command for <see cref="Clysh"/>
 /// </summary>
-public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
+public class ClyshCommand : ClyshIndexable, IClyshCommand
 {
     private const string CommandMustHaveOnlyOneParentCommand = "The command must have only one parent. Command: '{0}'";
     private const string TheOptionAddressMemoryIsAlreadyRelatedToAnotherCommandOption = "The option address memory is already related to another command. Option: '{0}'";

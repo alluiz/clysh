@@ -6,7 +6,7 @@ namespace Clysh.Helper;
 /// The map for <see cref="Clysh"/>
 /// </summary>
 /// <typeparam name="TObject">The type of object to map</typeparam>
-public class ClyshMap<TObject>: Dictionary<string, TObject> where TObject : IClyshIndexable<string>
+public class ClyshMap<TObject>: Dictionary<string, TObject> where TObject : IClyshIndexable
 {
     /// <summary>
     /// Adds a object to the map

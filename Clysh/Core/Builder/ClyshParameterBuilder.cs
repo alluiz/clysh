@@ -16,8 +16,11 @@ public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
     /// </summary>
     /// <param name="id">The parameter identifier</param>
     /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
-    public ClyshParameterBuilder Id(string id)
+    public ClyshParameterBuilder Id(string? id)
     {
+        if (id == null)
+            throw new ArgumentNullException(id);
+        
         Result.Id = id;
         Result.Order = order;
         return this;

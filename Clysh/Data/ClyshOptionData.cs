@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace Clysh.Data;
 
@@ -11,12 +13,14 @@ public class ClyshOptionData
     /// <summary>
     /// The id of option
     /// </summary>
-    public string Id { get; set; } = null!;
+    [Required]
+    public string? Id { get; set; }
 
     /// <summary>
     /// The description
     /// </summary>
-    public string Description { get; set; } = null!;
+    [Required]
+    public string? Description { get; set; }
 
     /// <summary>
     /// The CLI shortcut

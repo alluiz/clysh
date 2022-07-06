@@ -216,10 +216,12 @@ public class ClyshViewTests
 
         var i = 0;
 
-        foreach (var item in command.Options.OrderBy(x => x.Key))
+        foreach (var item in command.Options
+                     .OrderBy(x => x.Value.Group?.Id)
+                     .ThenBy(y=>y.Key))
         {
             var i1 = i;
-            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);
+            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-13}{item.Value.Group,-15}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);
             i++;
         }
 

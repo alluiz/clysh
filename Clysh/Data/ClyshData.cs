@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace Clysh.Data;
 
@@ -28,15 +30,18 @@ public class ClyshData
     /// <summary>
     /// The CLI Title
     /// </summary>
-    public string Title { get; set; } = default!;
+    [Required]
+    public string? Title { get; set; }
 
     /// <summary>
     /// The CLI Version
     /// </summary>
-    public string Version { get; set; } = default!;
+    [Required]
+    public string? Version { get; set; }
 
     /// <summary>
     /// The CLI Commands list
     /// </summary>
-    public List<ClyshCommandData> Commands { get; set; } = default!;
+    [Required]
+    public List<ClyshCommandData>? Commands { get; set; }
 }

@@ -6,7 +6,7 @@ namespace Clysh.Core;
 /// <summary>
 /// The option for <see cref="Clysh"/>
 /// </summary>
-public class ClyshOption : ClyshSimpleIndexable
+public class ClyshOption : ClyshIndexable
 {
     /// <summary>
     /// The description
@@ -54,6 +54,6 @@ public class ClyshOption : ClyshSimpleIndexable
     /// <returns>The result of validation</returns>
     public bool Is(string id)
     {
-        return this.Id.Equals(id, StringComparison.CurrentCultureIgnoreCase);
+        return Id.Equals(id, StringComparison.CurrentCultureIgnoreCase);
     }
 }

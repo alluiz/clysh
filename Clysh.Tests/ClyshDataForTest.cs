@@ -17,29 +17,38 @@ namespace Clysh.Tests
 
             var builder = new ClyshCommandBuilder();
             var optionBuilder = new ClyshOptionBuilder();
+            var groupBuilder = new ClyshGroupBuilder();
 
+            var group = groupBuilder.Id("env").Build();
+            
             return builder
                 .Id("auth2")
                 .Description("Execute Auth 2 API CLI Application")
-                .Action((_, options, view) =>
+                .Action((cmd, options, view) =>
                 {
-                    if (options[developmentOption].Selected)
-                        view.Print("Selected environment: development");
+                    var envOption = cmd.GetOptionFromGroup("env");
 
-                    if (options[homologOption].Selected)
-                        view.Print("Selected environment: homolog");
-
-                    if (options[productionOption].Selected)
-                        view.Print("Selected environment: production");
+                    if (envOption != null)
+                    {
+                        if (envOption.Is("development"))
+                            view.Print("Selected environment: development");
+                        else if (envOption.Is("homolog"))
+                            view.Print("Selected environment: homolog");
+                        else
+                            view.Print("Selected environment: production");
+                    }
                 })
                 .Option(optionBuilder.Id(developmentOption, "d")
                     .Description("Development environment option. Default value.")
+                    .Group(group)
                     .Build())
                 .Option(optionBuilder.Id(homologOption, "s")
                     .Description("Homolog environment option.")
+                    .Group(group)
                     .Build())
                 .Option(optionBuilder.Id(productionOption, "p")
                     .Description("Production environment option.")
+                    .Group(group)
                     .Build())
                 .SubCommand(login)
                 .SubCommand(credential)

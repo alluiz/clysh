@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+
 namespace Clysh.Data
 {
     /// <summary>
@@ -9,7 +12,8 @@ namespace Clysh.Data
         /// <summary>
         /// The id of parameter
         /// </summary>
-        public string Id { get; set; } = null!;
+        [Required]
+        public string? Id { get; set; }
 
         /// <summary>
         /// The regular expression pattern
@@ -19,18 +23,23 @@ namespace Clysh.Data
         /// Indicates if is a required parameter
         /// </summary>
         public bool Required { get; set; }
+        
         /// <summary>
         /// The minimum length
         /// </summary>
+        [Required]
         public int MinLength { get; set; }
+        
         /// <summary>
         /// The maximum length
         /// </summary>
+        [Required]
         public int MaxLength { get; set; }
 
         /// <summary>
         /// The order of parameter
         /// </summary>
-        public int Order { get; set; }
+        [Required]
+        public int? Order { get; set; }
     }
 }

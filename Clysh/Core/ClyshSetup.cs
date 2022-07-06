@@ -127,7 +127,7 @@ public class ClyshSetup
         try
         {
             VerifyCommands();
-            VerifyDuplicatedIds(Data.Commands);
+            VerifyDuplicatedIds(Data.Commands!);
             return Root();
         }
         catch (Exception e)
@@ -152,7 +152,7 @@ public class ClyshSetup
     private ClyshCommandData GetRootData()
     {
         //Must have one root command. Throw an error if has any number different than one.
-        var rootData = Data.Commands.SingleOrDefault(x => x.Root);
+        var rootData = Data.Commands!.SingleOrDefault(x => x.Root);
 
         if (rootData == null)
             throw new ArgumentNullException(nameof(Data), OneCommandWithRootTrue);
@@ -267,6 +267,9 @@ public class ClyshSetup
 
         var parameterBuilder = new ClyshParameterBuilder();
 
+        if (option.Parameters.Any(x => x.Order == null))
+            throw new ClyshException("All parameters must have explicit order.");
+
         //Needs to order explicit by user input
         var parameters = option.Parameters
             .OrderBy(p => p.Order)
@@ -280,7 +283,7 @@ public class ClyshSetup
             if (p.Required && hasProvidedOptionalBefore)
                 throw new ClyshException(
                     "Invalid order. The required parameters must come first than optional parameters. Check the order.");
-
+            
             hasProvidedOptionalBefore = !p.Required;
 
             builder.Parameter(parameterBuilder

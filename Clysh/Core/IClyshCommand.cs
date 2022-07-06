@@ -6,7 +6,7 @@ namespace Clysh.Core;
 /// <summary>
 /// The command interface for <see cref="Clysh"/>
 /// </summary>
-public interface IClyshCommand: IClyshIndexable<string>
+public interface IClyshCommand: IClyshIndexable
 {
     /// <summary>
     /// The command action
