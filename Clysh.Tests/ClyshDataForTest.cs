@@ -24,7 +24,7 @@ namespace Clysh.Tests
             return builder
                 .Id("auth2")
                 .Description("Execute Auth 2 API CLI Application")
-                .Action((cmd, options, view) =>
+                .Action((cmd, _, view) =>
                 {
                     var envOption = cmd.GetOptionFromGroup("env");
 
