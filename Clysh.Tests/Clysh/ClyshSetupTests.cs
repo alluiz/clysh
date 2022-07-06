@@ -37,7 +37,7 @@ public class ClyshSetupTests
 
         Assert.AreEqual("mycli", root.Id);
         Assert.AreEqual("My own CLI", root.Description);
-        Assert.AreEqual(4, root.Options.Count);
+        Assert.AreEqual(5, root.Options.Count);
         Assert.AreEqual(1, root.SubCommands.Count);
         Assert.AreEqual(action, root.Action);
 
@@ -73,7 +73,7 @@ public class ClyshSetupTests
 
         Assert.AreEqual("mycli", root.Id);
         Assert.AreEqual("My own CLI", root.Description);
-        Assert.AreEqual(2, root.Options.Count);
+        Assert.AreEqual(3, root.Options.Count);
         Assert.IsEmpty(root.SubCommands);
 
         Assert.AreEqual("Test option", root.Options["test"].Description);

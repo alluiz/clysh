@@ -86,6 +86,7 @@ public class ClyshService : IClyshService
     {
         try
         {
+            View.Verbose = false;
             AuditClysh(RootCommand);
             
             Completed = false;
@@ -103,6 +104,9 @@ public class ClyshService : IClyshService
                         ExecuteHelp();
                         break;
                     }
+
+                    if (OptionVerbose())
+                        View.Verbose = true;
                 }
                 else
                 {
@@ -125,6 +129,11 @@ public class ClyshService : IClyshService
         {
             ExecuteHelp(e);
         }
+    }
+
+    private bool OptionVerbose()
+    {
+        return lastOption is { Id: "verbose" };
     }
 
     private void AuditLogMessages()

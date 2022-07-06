@@ -16,6 +16,11 @@ public class ClyshView : IClyshView
     /// </summary>
     public int PrintedLines { get; private set; }
 
+    /// <summary>
+    /// Indicates if verbose mode is active
+    /// </summary>
+    public bool Verbose { get; set; }
+
     private const string QuestionMustBeNotBlank = "Question must be not blank";
 
     private readonly IClyshConsole clyshConsole;
@@ -73,6 +78,16 @@ public class ClyshView : IClyshView
     public bool Confirm(string question = "Do you agree?", string yes = "Y", string no = "n")
     {
         return string.Equals(AskFor($"{question} ({yes}/{no})"), yes, StringComparison.CurrentCultureIgnoreCase);
+    }
+
+    /// <summary>
+    /// Print text if verbose is active
+    /// </summary>
+    /// <param name="text">The text</param>
+    public void PrintVerbose(string? text)
+    {
+       if (Verbose)
+           Print(text);
     }
 
     /// <summary>

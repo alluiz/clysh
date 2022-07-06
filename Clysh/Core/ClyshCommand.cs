@@ -73,6 +73,18 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
         shortcutToOptionId = new Dictionary<string, string>();
         Description = string.Empty;
         AddHelpOption();
+        AddVerboseOption();
+    }
+
+    private void AddVerboseOption()
+    {
+        var builder = new ClyshOptionBuilder();
+        var verboseOption = builder
+            .Id("verbose", "v")
+            .Description("Print verbose log on screen")
+            .Build();
+            
+        AddOption(verboseOption);
     }
 
     /// <summary>
