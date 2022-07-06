@@ -86,7 +86,7 @@ public class ClyshService : IClyshService
     {
         try
         {
-            View.Verbose = false;
+            View.Debug = false;
             AuditClysh(RootCommand);
             
             Completed = false;
@@ -105,8 +105,8 @@ public class ClyshService : IClyshService
                         break;
                     }
 
-                    if (OptionVerbose())
-                        View.Verbose = true;
+                    if (OptionDebug())
+                        View.Debug = true;
                 }
                 else
                 {
@@ -131,7 +131,7 @@ public class ClyshService : IClyshService
         }
     }
 
-    private bool OptionVerbose()
+    private bool OptionDebug()
     {
         return lastOption is { Id: "verbose" };
     }
@@ -333,7 +333,7 @@ public class ClyshService : IClyshService
                 command.Action(command, command.Options, View);
             }
             else if (!command.RequireSubcommand)
-                throw new ArgumentNullException(nameof(commandsToExecute), "Action null");
+                throw new ClyshException($"Action null (NOT READY TO PRODUCTION). Command: {command.Id}");
         }
 
         Completed = true;

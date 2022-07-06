@@ -17,7 +17,7 @@ public interface IClyshView
     /// <summary>
     /// Indicates if print verbose mode is active
     /// </summary>
-    bool Verbose { get; set; }
+    bool Debug { get; set; }
 
     /// <summary>
     /// A confirmation prompt.
@@ -51,7 +51,7 @@ public interface IClyshView
     /// Print text if verbose is active
     /// </summary>
     /// <param name="text">The text to be printed</param>
-    void PrintVerbose(string? text);
+    void PrintDebug(string? text);
     
     /// <summary>
     /// Print text

@@ -19,7 +19,7 @@ public class ClyshView : IClyshView
     /// <summary>
     /// Indicates if verbose mode is active
     /// </summary>
-    public bool Verbose { get; set; }
+    public bool Debug { get; set; }
 
     private const string QuestionMustBeNotBlank = "Question must be not blank";
 
@@ -81,12 +81,12 @@ public class ClyshView : IClyshView
     }
 
     /// <summary>
-    /// Print text if verbose is active
+    /// Print text if debug is active
     /// </summary>
     /// <param name="text">The text</param>
-    public void PrintVerbose(string? text)
+    public void PrintDebug(string? text)
     {
-       if (Verbose)
+       if (Debug)
            Print(text);
     }
 
