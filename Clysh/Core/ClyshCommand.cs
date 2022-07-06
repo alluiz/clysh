@@ -97,6 +97,12 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
             throw new ClyshException(string.Format(TheOptionAddressMemoryIsAlreadyRelatedToAnotherCommandOption, option.Id));
 
         option.Command = this;
+
+        if (Options.Has(option.Id))
+            throw new ClyshException($"Invalid option id. The command already has an option with id: {option.Id}.");
+        
+        if (option.Shortcut != null && shortcutToOptionId.ContainsKey(option.Shortcut))
+            throw new ClyshException($"Invalid option shortcut. The command already has an option with shortcut: {option.Shortcut}.");
         
         Options.Add(option);
 
