@@ -17,8 +17,11 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
     /// </summary>
     /// <param name="id">The command identifier</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
-    public ClyshCommandBuilder Id(string id)
+    public ClyshCommandBuilder Id(string? id)
     {
+        if (id == null)
+            throw new ArgumentNullException(id);
+        
         Result.Id = id;
         return this;
     }
@@ -28,7 +31,7 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
     /// </summary>
     /// <param name="description">The command description</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
-    public ClyshCommandBuilder Description(string description)
+    public ClyshCommandBuilder Description(string? description)
     {
         if (description == null || description.Trim().Length is < MinDescription or > MaxDescription)
             throw new ArgumentException($"Command {nameof(description)} value '{description}' must be not null or empty and between {MinDescription} and {MaxDescription} chars.", nameof(description));

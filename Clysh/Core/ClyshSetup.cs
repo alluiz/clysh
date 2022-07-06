@@ -49,7 +49,7 @@ public class ClyshSetup
     private const string InvalidGroup =
         "Invalid group '{0}'. You need to add it to 'Groups' field of command. Option: '{1}'";
 
-    private readonly ClyshMap<ClyshCommand> commandsLoaded;
+    private readonly ClyshMap<IClyshCommand> commandsLoaded;
     private readonly List<ClyshCommandData> commandsData;
     private readonly IFileSystem fs;
 
@@ -62,7 +62,7 @@ public class ClyshSetup
     {
         this.fs = fs;
         commandsData = new List<ClyshCommandData>();
-        commandsLoaded = new ClyshMap<ClyshCommand>();
+        commandsLoaded = new ClyshMap<IClyshCommand>();
         Data = new ClyshData();
         RootCommand = GetRootCommandFromFilePath(pathOfData);
     }
@@ -126,29 +126,47 @@ public class ClyshSetup
     {
         try
         {
-            if (Data.Commands == null || !Data.Commands.Any())
-                throw new ArgumentException(InvalidCommandsLength, nameof(Data));
-
-            if (Data.Commands.DistinctBy(x => x.Id).Count() != Data.Commands.Count)
-                HandleDuplicatedIdsError(Data.Commands);
-
-            var rootData = Data.Commands.SingleOrDefault(x => x.Root);
-
-            if (rootData == null)
-                throw new ArgumentNullException(nameof(Data), OneCommandWithRootTrue);
-
-            commandsData.AddRange(Data.Commands);
-
-            var root = BuildRootCommand(rootData);
-
-            LoadCommands(root, rootData);
-
-            return root;
+            VerifyCommands();
+            VerifyDuplicatedIds(Data.Commands);
+            return Root();
         }
         catch (Exception e)
         {
             throw new ClyshException(ErrorOnCreateRoot, e);
         }
+    }
+
+    private ClyshCommand Root()
+    {
+        //Return root command data
+        var rootData = GetRootData();
+
+        //Build root with data
+        var root = BuildRootCommand(rootData);
+
+        BuildCommand(root, rootData);
+
+        return root;
+    }
+
+    private ClyshCommandData GetRootData()
+    {
+        //Must have one root command. Throw an error if has any number different than one.
+        var rootData = Data.Commands.SingleOrDefault(x => x.Root);
+
+        if (rootData == null)
+            throw new ArgumentNullException(nameof(Data), OneCommandWithRootTrue);
+
+        return rootData;
+    }
+
+    private void VerifyCommands()
+    {
+        //Throw an error if has no command
+        if (Data.Commands == null || !Data.Commands.Any())
+            throw new ArgumentException(InvalidCommandsLength, nameof(Data));
+
+        commandsData.AddRange(Data.Commands);
     }
 
     private ClyshCommand BuildRootCommand(ClyshCommandData rootData)
@@ -159,25 +177,28 @@ public class ClyshSetup
             .Description(rootData.Description)
             .Build();
 
-        commandsLoaded.Add(root.Id, root);
-
         return root;
     }
 
-    private static void HandleDuplicatedIdsError(List<ClyshCommandData> commands)
+    private static void VerifyDuplicatedIds(List<ClyshCommandData> commands)
     {
-        var duplicatedCommands = commands.GroupBy(x => x.Id)
-            .Select(g => new { g.Key, Count = g.Count() }).Where(f => f.Count > 1);
+        //Throw an error if has duplicated ids
+        if (commands.DistinctBy(x => x.Id).Count() != commands.Count)
+        {
+            var duplicatedCommands = commands.GroupBy(x => x.Id)
+                .Select(g => new { g.Key, Count = g.Count() }).Where(f => f.Count > 1);
 
-        var ids = duplicatedCommands.Aggregate(string.Empty, (current, command) => $"{current}{command.Key},");
+            var ids = duplicatedCommands.Aggregate(string.Empty, (current, command) => $"{current}{command.Key},");
 
-        ids = ids[..^1];
+            ids = ids[..^1];
 
-        throw new ArgumentException(string.Format(InvalidCommandsTheIdSMustBeUnique, ids), nameof(commands));
+            throw new ArgumentException(string.Format(InvalidCommandsTheIdSMustBeUnique, ids), nameof(commands));
+        }
     }
 
-    private void LoadCommands(IClyshCommand command, ClyshCommandData commandData)
+    private void BuildCommand(IClyshCommand command, ClyshCommandData commandData)
     {
+        commandsLoaded.Add(command.Id, command);
         BuildCommandGroups(command, commandData);
         BuildCommandOptions(command, commandData);
         BuildCommandSubcommands(command, commandData);
@@ -187,35 +208,34 @@ public class ClyshSetup
     {
         command.RequireSubcommand = commandData.RequireSubcommand;
 
-        if (commandData.SubCommands == null) return;
+        if (commandData.SubCommands == null)
+        {
+            if (command.RequireSubcommand)
+                throw new ClyshException(
+                    "The command is configured to require subcommand. So subcommands cannot be null.");
+
+            return;
+        }
 
         foreach (var childrenCommandId in commandData.SubCommands)
         {
-            var childrenCommandData =
-                commandsData.SingleOrDefault(x => x.Id == childrenCommandId);
+            //Throw an error if command id was not found
+            var childrenCommandData = commandsData.SingleOrDefault(x => x.Id == childrenCommandId);
 
-            if (childrenCommandData == null)
-                throw new InvalidOperationException(
+            if (childrenCommandData?.Id == null)
+                throw new ClyshException(
                     InvalidCommandTheIdWasNotFound.Replace("$0", childrenCommandId));
-
-            var alreadyLoaded = commandsLoaded.ContainsKey(childrenCommandData.Id);
 
             var commandBuilder = new ClyshCommandBuilder();
 
-            var children = alreadyLoaded
-                ? commandsLoaded[childrenCommandData.Id]
-                : commandBuilder
-                    .Id(childrenCommandData.Id)
-                    .Description(childrenCommandData.Description)
-                    .Build();
+            var child = commandBuilder
+                .Id(childrenCommandData.Id)
+                .Description(childrenCommandData.Description)
+                .Build();
 
-            command.AddSubCommand(children);
-
-            if (!alreadyLoaded)
-            {
-                LoadCommands(children, childrenCommandData);
-                commandsLoaded.Add(children.Id, children);
-            }
+            command.AddSubCommand(child);
+            
+            BuildCommand(child, childrenCommandData);
         }
     }
 
@@ -223,71 +243,79 @@ public class ClyshSetup
     {
         if (commandData.Options == null) return;
 
+        var builder = new ClyshOptionBuilder();
+
         foreach (var option in commandData.Options)
-            BuildOption(command, option);
+            BuildOption(builder, command, option);
     }
 
-    private static void BuildOption(IClyshCommand command, ClyshOptionData option)
+    private static void BuildOption(ClyshOptionBuilder builder, IClyshCommand command, ClyshOptionData option)
     {
-        var optionBuilder = new ClyshOptionBuilder();
-
-        BuildOptionBase(optionBuilder, option);
-        BuildOptionGroup(command, option, optionBuilder);
-        BuildOptionParameters(option, optionBuilder);
-
-        var optionBuilded = optionBuilder.Build();
-        command.AddOption(optionBuilded);
-    }
-
-    private static void BuildOptionBase(ClyshOptionBuilder optionBuilder, ClyshOptionData option)
-    {
-        optionBuilder
-            .Id(option.Id,
-                option.Shortcut)
+        builder
+            .Id(option.Id, option.Shortcut)
             .Description(option.Description);
+
+        BuildOptionGroup(builder, command, option);
+        BuildOptionParameters(builder, option);
+
+        command.AddOption(builder.Build());
     }
 
-    private static void BuildOptionParameters(ClyshOptionData option, ClyshOptionBuilder optionBuilder)
+    private static void BuildOptionParameters(ClyshOptionBuilder builder, ClyshOptionData option)
     {
         if (option.Parameters == null) return;
 
         var parameterBuilder = new ClyshParameterBuilder();
 
-        option.Parameters
+        //Needs to order explicit by user input
+        var parameters = option.Parameters
             .OrderBy(p => p.Order)
-            .ToList()
-            .ForEach(x =>
-                optionBuilder.Parameter(parameterBuilder
-                    .Id(x.Id)
-                    .Pattern(x.Pattern)
-                    .Required(x.Required)
-                    .Range(x.MinLength, x.MaxLength)
-                    .Build()));
+            .ToList();
+
+        //Used to check if optional parameter come before required
+        var hasProvidedOptionalBefore = false;
+
+        foreach (var p in parameters)
+        {
+            if (p.Required && hasProvidedOptionalBefore)
+                throw new ClyshException(
+                    "Invalid order. The required parameters must come first than optional parameters. Check the order.");
+
+            hasProvidedOptionalBefore = !p.Required;
+
+            builder.Parameter(parameterBuilder
+                .Id(p.Id)
+                .Pattern(p.Pattern)
+                .Required(p.Required)
+                .Range(p.MinLength, p.MaxLength)
+                .Build());
+        }
     }
 
-    private static void BuildOptionGroup(IClyshCommand command, ClyshOptionData option,
-        ClyshOptionBuilder optionBuilder)
+    private static void BuildOptionGroup(ClyshOptionBuilder builder, IClyshCommand command, ClyshOptionData option)
     {
         if (option.Group == null) return;
 
         if (!command.Groups.Has(option.Group))
-            throw new InvalidOperationException(string.Format(InvalidGroup, option.Group, option.Id));
+            throw new ClyshException(string.Format(InvalidGroup, option.Group, option.Id));
 
         var group = command.Groups[option.Group];
-        optionBuilder
-            .Group(group);
+
+        builder.Group(group);
     }
 
     private static void BuildCommandGroups(IClyshCommand command, ClyshCommandData commandData)
     {
         if (commandData.Groups == null) return;
 
+        var groupBuilder = new ClyshGroupBuilder();
+
         foreach (var group in commandData.Groups)
         {
-            var groupBuilder = new ClyshGroupBuilder();
-            command.Groups.Add(groupBuilder
-                .Id(group)
-                .Build());
+            command.Groups.Add(
+                groupBuilder
+                    .Id(group)
+                    .Build());
         }
     }
 
@@ -298,7 +326,7 @@ public class ClyshSetup
         var data = JsonConvert.DeserializeObject<ClyshData>(config);
 
         if (data == null)
-            throw new InvalidOperationException(InvalidJson);
+            throw new ClyshException(InvalidJson);
 
         return data;
     }

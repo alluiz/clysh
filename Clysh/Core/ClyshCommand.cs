@@ -213,7 +213,7 @@ public class ClyshCommand : ClyshSimpleIndexable, IClyshCommand
         while (commandCheck != null)
         {
             if (command.Id.Equals(commandCheck.Id))
-                throw new InvalidOperationException("Command Error: The command '$0' must not be children of itself: $1"
+                throw new ClyshException("Command Error: The command '$0' must not be children of itself: $1"
                     .Replace("$0", command.Id)
                     .Replace("$1", $"{commandCheck.Id}>{tree}")
                 );
