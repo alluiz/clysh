@@ -211,7 +211,7 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
         consoleMock.Verify(x => x.WriteLine("[options]:", 8), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 9), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional = Length", 10), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional", 10), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
 
         var i = 0;
@@ -266,7 +266,7 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
         consoleMock.Verify(x => x.WriteLine("[options]:", 8), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 9), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional = Length", 10), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional", 10), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
 
         var i = 0;
@@ -319,7 +319,7 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
         consoleMock.Verify(x => x.WriteLine("[options]:", 8), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 9), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional = Length", 10), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional", 10), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
 
         var i = 0;

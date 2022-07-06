@@ -54,12 +54,12 @@ public class ClyshParameters: ClyshMap<ClyshParameter>
         foreach (var parameter in Values)
         {
             var type = parameter.Required ? "R" : "O";
-            paramsText += $"{i}:<{parameter.Id}:{type}>{(i < Count - 1 ? ", " : "")}";
+            paramsText += $"<{parameter.Id}:{type}>{(i < Count - 1 ? " " : "")}";
             i++;
         }
 
         if (Count > 0)
-            paramsText = $"[{paramsText}]: {Count}";
+            paramsText = $"{paramsText}";
 
         return paramsText;
     }

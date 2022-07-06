@@ -199,11 +199,11 @@ public class ClyshView : IClyshView
 
         if (hasCommands)
         {
-            PrintChildrenCommands(command);
+            PrintSubCommands(command);
         }
     }
 
-    private void PrintChildrenCommands(IClyshCommand command)
+    private void PrintSubCommands(IClyshCommand command)
     {
         Print("[commands]:");
         PrintEmpty();
@@ -230,7 +230,7 @@ public class ClyshView : IClyshView
               $"{"Option",-13}" +
               $"{"Group",-15}" +
               $"{"Description",-55}" +
-              $"Parameters: (R)equired | (O)ptional = Length");
+              $"Parameters: (R)equired | (O)ptional");
         PrintEmpty();
 
         foreach (var item in command.Options
