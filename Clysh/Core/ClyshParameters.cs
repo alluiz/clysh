@@ -64,19 +64,16 @@ public sealed class ClyshParameters: ClyshMap<ClyshParameter>
     /// <returns>The formatted string</returns>
     public override string ToString()
     {
-        var paramsText = "";
+        var paramsText = new StringBuilder();
         var i = 0;
             
         foreach (var parameter in Values)
         {
             var type = parameter.Required ? "R" : "O";
-            paramsText += $"<{parameter.Id}:{type}>{(i < Count - 1 ? " " : "")}";
+            paramsText.Append($"<{parameter.Id}:{type}>{(i < Count - 1 ? " " : "")}");
             i++;
         }
 
-        if (Count > 0)
-            paramsText = $"{paramsText}";
-
-        return paramsText;
+        return paramsText.ToString();
     }
 }

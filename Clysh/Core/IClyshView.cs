@@ -22,11 +22,11 @@ public interface IClyshView
     /// <summary>
     /// A confirmation prompt.
     /// </summary>
-    /// <param name="text">The question text. default: "Do you agree?"</param>
+    /// <param name="question">The question text. default: "Do you agree?"</param>
     /// <param name="yes">The text to positive answer. default: "Y"</param>
     /// <param name="no">The text to negative answer. default: "n"</param>
     /// <returns>The answer</returns>
-    bool Confirm(string text = "Do you agree?", string yes = "Y", string no = "n");
+    bool Confirm(string question = "Do you agree?", string yes = "Y", string no = "n");
     
     /// <summary>
     /// A input prompt.
