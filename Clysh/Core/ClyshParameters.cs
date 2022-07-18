@@ -40,7 +40,10 @@ public sealed class ClyshParameters: ClyshMap<ClyshParameter>
     /// The last parameter of the set
     /// </summary>
     /// <returns>The last parameter</returns>
-    public ClyshParameter Last() => this.OrderBy(x => x.Value.Order).LastOrDefault().Value;
+    public ClyshParameter Last() => this
+        .Where(p => !p.Value.Filled)
+        .MinBy(x => x.Value.Order)
+        .Value;
 
     /// <summary>
     /// Format all required parameters
