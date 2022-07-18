@@ -173,6 +173,7 @@ public class ClyshSetup
         var root = commandBuilder
             .Id(rootData.Id)
             .Description(rootData.Description)
+            .RequireSubcommand(rootData.RequireSubcommand)
             .Build();
 
         return root;
@@ -204,8 +205,6 @@ public class ClyshSetup
 
     private void BuildCommandSubcommands(IClyshCommand command, ClyshCommandData commandData)
     {
-        command.RequireSubcommand = commandData.RequireSubcommand;
-
         if (commandData.SubCommands == null)
         {
             if (command.RequireSubcommand)
@@ -229,6 +228,7 @@ public class ClyshSetup
             var child = commandBuilder
                 .Id(childrenCommandData.Id)
                 .Description(childrenCommandData.Description)
+                .RequireSubcommand(childrenCommandData.RequireSubcommand)
                 .Build();
 
             command.AddSubCommand(child);

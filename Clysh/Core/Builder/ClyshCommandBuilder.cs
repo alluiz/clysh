@@ -83,4 +83,10 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
         Result.AddGroups(group);
         return this;
     }
+
+    public ClyshCommandBuilder RequireSubcommand(bool require)
+    {
+        Result.RequireSubcommand = require;
+        return this;
+    }
 }
