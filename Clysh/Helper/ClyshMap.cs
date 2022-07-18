@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Clysh.Helper;
 
@@ -6,8 +8,28 @@ namespace Clysh.Helper;
 /// The map for <see cref="Clysh"/>
 /// </summary>
 /// <typeparam name="TObject">The type of object to map</typeparam>
+[Serializable]
 public class ClyshMap<TObject>: Dictionary<string, TObject> where TObject : IClyshIndexable
 {
+    /// <summary>
+    /// Serialization constructor
+    /// </summary>
+    /// <param name="info">The serialization info</param>
+    /// <param name="context">The streaming context</param>
+    protected ClyshMap(SerializationInfo info,
+        StreamingContext context): base(info, context)
+    {
+        
+    }
+
+    /// <summary>
+    /// Create an empty ClyshMap
+    /// </summary>
+    public ClyshMap()
+    {
+        
+    }
+    
     /// <summary>
     /// Adds a object to the map
     /// </summary>

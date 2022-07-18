@@ -14,7 +14,8 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     private const string CommandMustHaveOnlyOneParentCommand = "The command must have only one parent. Command: '{0}'";
     private const string TheOptionAddressMemoryIsAlreadyRelatedToAnotherCommandOption = "The option address memory is already related to another command. Option: '{0}'";
     private const string TheGroupAddressMemoryIsAlreadyRelatedToAnotherCommandOption = "The group address memory is already related to another command. Group: '{0}'";
-
+    private const string TheGroupAddressMemoryIsDifferent = "The group address memory is different between command and option. Group: '{0}'";
+    
     private readonly Dictionary<string, string> shortcutToOptionId;
     
     /// <summary>
@@ -103,6 +104,9 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         
         if (option.Shortcut != null && shortcutToOptionId.ContainsKey(option.Shortcut))
             throw new ClyshException($"Invalid option shortcut. The command already has an option with shortcut: {option.Shortcut}.");
+        
+        if (option.Group != null && !Groups.Has(option.Group.Id))
+            AddGroups(option.Group);
         
         Options.Add(option);
 
@@ -230,11 +234,14 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     /// <exception cref="ClyshException">The group cannot be related to another command</exception>
     public void AddGroups(ClyshGroup group)
     {
-        if (group.Command != null)
+        if (group.Command != null && !group.Command.Equals(this))
             throw new ClyshException(string.Format(TheGroupAddressMemoryIsAlreadyRelatedToAnotherCommandOption, group.Id));
         
         group.Command = this;
         
-        Groups.Add(group);
+        if (!Groups.Has(group.Id))
+            Groups.Add(group);
+        else if (!Groups[group.Id].Equals(group))
+            throw new ClyshException(string.Format(TheGroupAddressMemoryIsDifferent, group.Id));
     }
 }

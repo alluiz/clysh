@@ -19,7 +19,7 @@ public class ClyshSetup
     /// <summary>
     /// The CLI Root command
     /// </summary>
-    public ClyshCommand RootCommand { get; }
+    public ClyshCommand RootCommand { get; private set; } = default!;
 
     /// <summary>
     /// The CLI Data
@@ -46,33 +46,31 @@ public class ClyshSetup
     private const string OneCommandWithRootTrue =
         "Data must have one root command. Consider marking only one command with 'Root': true.";
 
-    private const string InvalidGroup =
-        "Invalid group '{0}'. You need to add it to 'Groups' field of command. Option: '{1}'";
-
     private readonly ClyshMap<IClyshCommand> commandsLoaded;
     private readonly List<ClyshCommandData> commandsData;
     private readonly IFileSystem fs;
+    private readonly string path;
 
     /// <summary>
     /// The <b>ClyshDataSetup</b> object
     /// </summary>
     /// <param name="fs">The file system object</param>
-    /// <param name="pathOfData">The path of file. YAML or JSON format only</param>
-    public ClyshSetup(string pathOfData, IFileSystem fs)
+    /// <param name="path">The path of file. YAML or JSON format only</param>
+    public ClyshSetup(string path, IFileSystem fs)
     {
+        this.path = path;
         this.fs = fs;
         commandsData = new List<ClyshCommandData>();
         commandsLoaded = new ClyshMap<IClyshCommand>();
         Data = new ClyshData();
-        RootCommand = GetRootCommandFromFilePath(pathOfData);
     }
 
     /// <summary>
     /// The <b>ClyshDataSetup</b> object
     /// </summary>
-    /// <param name="pathOfData">The path of file. YAML or JSON format only</param>
+    /// <param name="path">The path of file. YAML or JSON format only</param>
     [ExcludeFromCodeCoverage]
-    public ClyshSetup(string pathOfData) : this(pathOfData, new FileSystem())
+    public ClyshSetup(string path) : this(path, new FileSystem())
     {
     }
 
@@ -88,11 +86,11 @@ public class ClyshSetup
         command.Action = action;
     }
 
-    private ClyshCommand GetRootCommandFromFilePath(string path)
+    private ClyshCommand GetRootCommandFromFilePath()
     {
         try
         {
-            ExtractDataFromFile(path);
+            ExtractDataFromFile();
 
             return CreateRootFromData();
         }
@@ -106,19 +104,19 @@ public class ClyshSetup
         }
     }
 
-    private void ExtractDataFromFile(string path)
+    private void ExtractDataFromFile()
     {
         if (!fs.File.Exists(path))
-            throw new ArgumentException(InvalidPath, nameof(path));
+            throw new ClyshException(InvalidPath);
 
         var extension = fs.Path.GetExtension(path);
 
         Data = extension switch
         {
-            ".json" => JsonSerializer(path),
-            ".yml" => YamlSerializer(path),
-            ".yaml" => YamlSerializer(path),
-            _ => throw new ArgumentException(InvalidExtension, nameof(path))
+            ".json" => JsonSerializer(),
+            ".yml" => YamlSerializer(),
+            ".yaml" => YamlSerializer(),
+            _ => throw new ClyshException(InvalidExtension)
         };
     }
 
@@ -155,7 +153,7 @@ public class ClyshSetup
         var rootData = Data.Commands!.SingleOrDefault(x => x.Root);
 
         if (rootData == null)
-            throw new ArgumentNullException(nameof(Data), OneCommandWithRootTrue);
+            throw new ClyshException(OneCommandWithRootTrue);
 
         return rootData;
     }
@@ -164,7 +162,7 @@ public class ClyshSetup
     {
         //Throw an error if has no command
         if (Data.Commands == null || !Data.Commands.Any())
-            throw new ArgumentException(InvalidCommandsLength, nameof(Data));
+            throw new ClyshException(InvalidCommandsLength);
 
         commandsData.AddRange(Data.Commands);
     }
@@ -175,6 +173,7 @@ public class ClyshSetup
         var root = commandBuilder
             .Id(rootData.Id)
             .Description(rootData.Description)
+            .RequireSubcommand(rootData.RequireSubcommand)
             .Build();
 
         return root;
@@ -206,8 +205,6 @@ public class ClyshSetup
 
     private void BuildCommandSubcommands(IClyshCommand command, ClyshCommandData commandData)
     {
-        command.RequireSubcommand = commandData.RequireSubcommand;
-
         if (commandData.SubCommands == null)
         {
             if (command.RequireSubcommand)
@@ -231,6 +228,7 @@ public class ClyshSetup
             var child = commandBuilder
                 .Id(childrenCommandData.Id)
                 .Description(childrenCommandData.Description)
+                .RequireSubcommand(childrenCommandData.RequireSubcommand)
                 .Build();
 
             command.AddSubCommand(child);
@@ -288,9 +286,6 @@ public class ClyshSetup
     {
         if (option.Group == null) return;
 
-        if (!command.Groups.Has(option.Group))
-            throw new ClyshException(string.Format(InvalidGroup, option.Group, option.Id));
-
         var group = command.Groups[option.Group];
 
         builder.Group(group);
@@ -311,9 +306,9 @@ public class ClyshSetup
         }
     }
 
-    private ClyshData JsonSerializer(string path)
+    private ClyshData JsonSerializer()
     {
-        var config = GetDataFromFilePath(path);
+        var config = GetDataFromFilePath();
 
         var data = JsonConvert.DeserializeObject<ClyshData>(config);
 
@@ -323,17 +318,25 @@ public class ClyshSetup
         return data;
     }
 
-    private string GetDataFromFilePath(string path)
+    private string GetDataFromFilePath()
     {
         return fs.File.ReadAllText(path);
     }
 
-    private ClyshData YamlSerializer(string path)
+    private ClyshData YamlSerializer()
     {
-        var data = GetDataFromFilePath(path);
+        var data = GetDataFromFilePath();
 
         var deserializer = new DeserializerBuilder().Build();
 
         return deserializer.Deserialize<ClyshData>(data);
+    }
+
+    /// <summary>
+    /// Load CLI data from path and parse it
+    /// </summary>
+    public void Load()
+    {
+        RootCommand = GetRootCommandFromFilePath();
     }
 }

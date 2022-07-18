@@ -1,4 +1,7 @@
+using System;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
 using Clysh.Helper;
 
 namespace Clysh.Core;
@@ -6,8 +9,21 @@ namespace Clysh.Core;
 /// <summary>
 /// The parameters set
 /// </summary>
-public class ClyshParameters: ClyshMap<ClyshParameter>
+[Serializable]
+public sealed class ClyshParameters: ClyshMap<ClyshParameter>
 {
+    private ClyshParameters(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+    }
+
+    /// <summary>
+    /// Create an empty ClyshParameters
+    /// </summary>
+    public ClyshParameters()
+    {
+        
+    }
+    
     /// <summary>
     /// Indicates if all required parameters is filled
     /// </summary>
@@ -24,7 +40,10 @@ public class ClyshParameters: ClyshMap<ClyshParameter>
     /// The last parameter of the set
     /// </summary>
     /// <returns>The last parameter</returns>
-    public ClyshParameter Last() => this.OrderBy(x => x.Value.Order).LastOrDefault().Value;
+    public ClyshParameter Last() => this
+        .Where(p => !p.Value.Filled)
+        .MinBy(x => x.Value.Order)
+        .Value;
 
     /// <summary>
     /// Format all required parameters
@@ -48,19 +67,16 @@ public class ClyshParameters: ClyshMap<ClyshParameter>
     /// <returns>The formatted string</returns>
     public override string ToString()
     {
-        var paramsText = "";
+        var paramsText = new StringBuilder();
         var i = 0;
             
         foreach (var parameter in Values)
         {
             var type = parameter.Required ? "R" : "O";
-            paramsText += $"<{parameter.Id}:{type}>{(i < Count - 1 ? " " : "")}";
+            paramsText.Append($"<{parameter.Id}:{type}>{(i < Count - 1 ? " " : "")}");
             i++;
         }
 
-        if (Count > 0)
-            paramsText = $"{paramsText}";
-
-        return paramsText;
+        return paramsText.ToString();
     }
 }

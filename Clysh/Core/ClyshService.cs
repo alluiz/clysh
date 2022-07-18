@@ -16,9 +16,6 @@ public class ClyshService : IClyshService
 
     private const string YourCommandDoesNotHaveASubcommandConfigured =
         "Your command does NOT have a subcommand configured. Command: '{0}'.";
-    
-    private const string InvalidGroup = 
-        "Invalid group '{0}'. You need to add it to 'Groups' field of command. Option: '{1}'";
 
     /// <summary>
     /// The root command
@@ -30,8 +27,6 @@ public class ClyshService : IClyshService
     /// </summary>
     public IClyshView View { get; }
 
-    private bool Completed { get; set; }
-
     private ClyshOption? lastOption;
 
     private IClyshCommand lastCommand;
@@ -39,6 +34,8 @@ public class ClyshService : IClyshService
     private readonly bool disableAudit;
 
     private readonly List<ClyshAudit> audits;
+
+    private List<IClyshCommand> commandsToExecute;
 
     /// <summary>
     /// The constructor of service
@@ -58,7 +55,8 @@ public class ClyshService : IClyshService
         RootCommand = setup.RootCommand;
         RootCommand.Order = 0;
         lastCommand = RootCommand;
-        audits = new();
+        audits = new List<ClyshAudit>();
+        commandsToExecute = new List<IClyshCommand>();
         View = new ClyshView(clyshConsole, setup.Data);
     }
 
@@ -75,7 +73,8 @@ public class ClyshService : IClyshService
         RootCommand.Order = 0;
         lastCommand = RootCommand;
         View = view;
-        audits = new();
+        audits = new List<ClyshAudit>();
+        commandsToExecute = new List<IClyshCommand>();
     }
 
     /// <summary>
@@ -86,48 +85,59 @@ public class ClyshService : IClyshService
     {
         try
         {
-            View.Debug = false;
-            AuditClysh(RootCommand);
-            
-            Completed = false;
+            InitProcess();
 
-            List<IClyshCommand> commandsToExecute = new() { lastCommand };
+            ProcessArgs(args);
 
-            foreach (var arg in args)
-            {
-                if (IsOption(arg))
-                {
-                    ProcessOption(arg);
-
-                    if (OptionHelp())
-                    {
-                        ExecuteHelp();
-                        break;
-                    }
-
-                    if (OptionDebug())
-                        View.Debug = true;
-                }
-                else
-                {
-                    if (IsSubcommand(arg))
-                        ProcessSubcommand(arg, commandsToExecute);
-                    else //is parameter
-                        ProcessParameter(arg);
-                }
-            }
-
-            if (!Completed)
-            {
-                lastCommand.Executed = true;
-                CheckLastCommandStatus();
-                CheckLastOptionStatus();
-                Execute(commandsToExecute);
-            }
+            FinishProcess();
         }
         catch (Exception e)
         {
             ExecuteHelp(e);
+        }
+    }
+
+    private void InitProcess()
+    {
+        commandsToExecute = new List<IClyshCommand> { lastCommand };
+        View.Debug = false;
+        
+        AuditClysh();
+    }
+
+    private void ProcessArgs(IEnumerable<string> args)
+    {
+        foreach (var arg in args)
+        {
+            if (IsOption(arg))
+            {
+                ProcessOption(arg);
+
+                if (OptionHelp())
+                    break;
+            }
+            else
+            {
+                if (IsSubcommand(arg))
+                    ProcessSubcommand(arg);
+                else //is parameter
+                    ProcessParameter(arg);
+            }
+        }
+    }
+
+    private void FinishProcess()
+    {
+        if (OptionHelp())
+        {
+            ExecuteHelp();
+        }
+        else
+        {
+            lastCommand.Executed = true;
+            CheckLastCommandStatus();
+            CheckLastOptionStatus();
+            ExecuteCommands();
         }
     }
 
@@ -158,11 +168,11 @@ public class ClyshService : IClyshService
         View.PrintEmpty();
     }
 
-    private void AuditClysh(IClyshCommand cmd)
+    private void AuditClysh()
     {
         if (disableAudit) return;
 
-        AuditRecursive(cmd);
+        AuditRecursive(RootCommand);
 
         if (audits.Any(x => x.AnyError()))
             AuditLogMessages();
@@ -195,21 +205,9 @@ public class ClyshService : IClyshService
             if (cmd.Action == null)
                 audit.Messages.Add(string.Format(YourCommandDoesNotHaveAnActionConfigured, cmd.Id));
         }
-
-        if (cmd.Options.Any())
-        {
-            foreach (var option in cmd.Options.Values)
-            {
-                if (option.Group != null)
-                {
-                    if (!cmd.Groups.Has(option.Group.Id))
-                        audit.Messages.Add(string.Format(InvalidGroup, option.Group.Id, option.Id));
-                }
-            }
-        }
     }
 
-    private void ProcessSubcommand(string arg, List<IClyshCommand> commandsToExecute)
+    private void ProcessSubcommand(string arg)
     {
         CheckLastOptionStatus();
         lastOption = null;
@@ -232,6 +230,9 @@ public class ClyshService : IClyshService
         HandleOptionGroup();
 
         lastOption.Selected = true;
+        
+        if (OptionDebug())
+            View.Debug = true;
     }
 
     private bool IsSubcommand(string arg)
@@ -258,7 +259,9 @@ public class ClyshService : IClyshService
 
     private void CheckLastCommandStatus()
     {
-        if (lastCommand.RequireSubcommand && !lastCommand.HasAnySubcommandExecuted())
+        var waitingForAnySubcommand = lastCommand.RequireSubcommand && !lastCommand.HasAnySubcommandExecuted();
+        
+        if (waitingForAnySubcommand)
             throw new InvalidOperationException($"You need to provide some subcommand to command '{lastCommand.Id}'");
     }
 
@@ -311,12 +314,11 @@ public class ClyshService : IClyshService
 
     private void CheckLastOptionStatus()
     {
-        if (lastOption != null)
-        {
-            if (lastOption.Parameters.WaitingForRequired())
-                throw new InvalidOperationException(
-                    $"Required parameters [{lastOption.Parameters.RequiredToString()}] is missing for option: {lastOption.Id} (shortcut: {lastOption.Shortcut ?? "<null>"})");
-        }
+        var waitingForRequiredParameters = lastOption != null && lastOption.Parameters.WaitingForRequired();
+        
+        if (waitingForRequiredParameters)
+            throw new InvalidOperationException(
+                $"Required parameters [{lastOption!.Parameters.RequiredToString()}] is missing for option: {lastOption.Id} (shortcut: {lastOption.Shortcut ?? "<null>"})");
     }
 
     private static bool ArgIsParameterById(string arg)
@@ -324,19 +326,15 @@ public class ClyshService : IClyshService
         return arg.Contains(':');
     }
 
-    private void Execute(List<IClyshCommand> commandsToExecute)
+    private void ExecuteCommands()
     {
         foreach (var command in commandsToExecute.OrderBy(x => x.Order))
         {
             if (command.Action != null)
-            {
                 command.Action(command, command.Options, View);
-            }
             else if (!command.RequireSubcommand)
                 throw new ClyshException($"Action null (NOT READY TO PRODUCTION). Command: {command.Id}");
         }
-
-        Completed = true;
     }
 
     private static IClyshCommand GetCommandFromArg(IClyshCommand lastCommand, string arg)
@@ -353,8 +351,6 @@ public class ClyshService : IClyshService
             View.PrintHelp(lastCommand);
         else
             View.PrintHelp(lastCommand, exception);
-
-        Completed = true;
     }
 
     private static bool IsOption(string arg)

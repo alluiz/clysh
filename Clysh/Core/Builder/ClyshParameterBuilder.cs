@@ -82,7 +82,7 @@ public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
         Result.MaxLength = maxLength;
         
         if (Result.MinLength > Result.MaxLength)
-            throw new ArgumentException($"Invalid max length. The max length must be greater than min length.", nameof(Result.MaxLength));
+            throw new ArgumentException($"Invalid max length. The max length must be greater than min length.", nameof(maxLength));
         
         return this;
     }

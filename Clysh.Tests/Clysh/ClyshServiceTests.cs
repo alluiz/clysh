@@ -33,10 +33,6 @@ public class ClyshServiceTests
     [Test]
     public void SuccessfulCreateCommand()
     {
-        void Action(IClyshCommand clyshCommand, ClyshMap<ClyshOption> map, IClyshView clyshView)
-        {
-        }
-
         const string name = "new";
         const string description = "new command for test";
 
@@ -45,12 +41,17 @@ public class ClyshServiceTests
         IClyshCommand command = builder
             .Id(name)
             .Description(description)
-            .Action(Action)
+            .Action(EmptyAction)
             .Build();
 
         Assert.AreEqual(name, command.Id);
         Assert.AreEqual(description, command.Description);
-        Assert.AreEqual((Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView>)Action, command.Action);
+        Assert.AreEqual((Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView>)EmptyAction, command.Action);
+    }
+
+    private void EmptyAction(IClyshCommand clyshCommand, ClyshMap<ClyshOption> map, IClyshView clyshView)
+    {
+        //Do nothing because of X and Y. This action is just to bind with command for test
     }
 
 
@@ -915,13 +916,9 @@ public class ClyshServiceTests
 
         var args = new[] { someOptionWithDashes, "mytest", "testarg:mytest" };
 
-        void Action(IClyshCommand command, ClyshMap<ClyshOption> options, IClyshView view)
-        {
-        }
-
         var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
+        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(EmptyAction).Build();
 
         IClyshService cli = new ClyshService(rootCommand, viewMock.Object);
 

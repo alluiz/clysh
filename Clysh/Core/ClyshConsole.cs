@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace Clysh.Core;
 
@@ -30,7 +31,7 @@ internal class ClyshConsole : IClyshConsole
     /// </returns>
     public string ReadSensitive()
     {
-        var data = "";
+        var data = new StringBuilder();
 
         var info = Console.ReadKey(true);
 
@@ -39,23 +40,21 @@ internal class ClyshConsole : IClyshConsole
             if (info.Key != ConsoleKey.Backspace)
             {
                 Console.Write("*");
-                data += info.KeyChar;
+                data.Append(info.KeyChar);
             }
-            else if (info.Key == ConsoleKey.Backspace)
+            
+            else if (info.Key == ConsoleKey.Backspace && !string.IsNullOrEmpty(data.ToString()))
             {
-                if (!string.IsNullOrEmpty(data))
-                {
-                    // remove one character from the list of password characters
-                    data = data[..^1];
-                    // get the location of the cursor
-                    var pos = Console.CursorLeft;
-                    // move the cursor to the left by one character
-                    Console.SetCursorPosition(pos - 1, Console.CursorTop);
-                    // replace it with space
-                    Console.Write(" ");
-                    // move the cursor to the left by one character again
-                    Console.SetCursorPosition(pos - 1, Console.CursorTop);
-                }
+                // remove one character from the list of password characters
+                data = data.Remove(data.Length - 1, 1);
+                // get the location of the cursor
+                var pos = Console.CursorLeft;
+                // move the cursor to the left by one character
+                Console.SetCursorPosition(pos - 1, Console.CursorTop);
+                // replace it with space
+                Console.Write(" ");
+                // move the cursor to the left by one character again
+                Console.SetCursorPosition(pos - 1, Console.CursorTop);
             }
             info = Console.ReadKey(true);
         }
@@ -63,7 +62,7 @@ internal class ClyshConsole : IClyshConsole
         // add a new line because user pressed enter at the end of their password
         Console.WriteLine();
 
-        return data;
+        return data.ToString();
     }
 
     /// <summary>

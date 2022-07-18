@@ -1,31 +1,70 @@
-Title: MyCLI with only test command
+Title: MyCalc CLI
 Version: 1.0
 Commands:
-  - Id: mycli
-    Description: My own CLI
-    Groups:
-      - foo
-    Options:
-      - Description: Test option
-        Id: test
-        Shortcut: T
-        Parameters:
-          - Id: value
-            Required: true
-            MinLength: 1
-            MaxLength: 15
-        Group: foo
-      - Description: Test option
-        Id: dummy
-        Shortcut: d
-        Parameters:
-          - Id: value
-            Required: true
-            MinLength: 1
-            MaxLength: 15
-        Group: foo
+  - Id: calc
+    Description: My calculator using CLI
+    RequireSubcommand: true
     Root: true
     SubCommands:
-      - mychild
-  - Id: mychild
-    Description: My child command
+      - operation
+  - Id: operation
+    Description: Select some operation
+    Groups:
+      - operation
+    Options:
+      - Id: add
+        Description: Add two numbers (a + b)
+        Parameters:
+          - Id: a
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+            Order: 0
+          - Id: b
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+            Order: 1
+        Group: operation
+      - Id: sub
+        Description: Subtract two numbers (a - b)
+        Parameters:
+          - Id: a
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+            Order: 0
+          - Id: b
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+            Order: 1
+        Group: operation
+      - Id: times
+        Description: Times two numbers (a * b)
+        Parameters:
+          - Id: a
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+            Order: 0
+          - Id: b
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+            Order: 1
+        Group: operation
+      - Id: by
+        Description: Divide two numbers (a / b)
+        Parameters:
+          - Id: a
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+            Order: 0
+          - Id: b
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+            Order: 1
+        Group: operation
