@@ -5,28 +5,24 @@ namespace Clysh.Sample;
 
 public static class CliActions
 {
-    public static void Calc(IClyshCommand cmd, ClyshMap<ClyshOption> options, IClyshView view)
+    public static void CalcOperationAdd(IClyshCommand cmd, ClyshMap<ClyshOption> options, IClyshView view)
     {
-        var operation = cmd.GetOptionFromGroup("operation");
-
-        if (operation == null)
-            throw new InvalidOperationException("You must select some operation");
-
-        var a = GetValue(operation.Parameters["a"].Data);
-        var b = GetValue(operation.Parameters["b"].Data);
-        var result = 0;
+        CalcOperation(options, view, (a, b) => a + b);
+    }
+    
+    public static void CalcOperationSub(IClyshCommand cmd, ClyshMap<ClyshOption> options, IClyshView view)
+    {
+        CalcOperation(options, view, (a, b) => a - b);
+    }
+    
+    private static void CalcOperation(ClyshMap<ClyshOption> options, IClyshView view, Func<int, int, int> operation)
+    {
+        var values = options["values"];
         
-        if (operation.Is("add"))
-            result = a + b;
+        var a = GetValue(values.Selected? values.Parameters["a"].Data: view.AskFor("value (a)"));
+        var b = GetValue(values.Selected? values.Parameters["b"].Data: view.AskFor("value (b)"));
         
-        if (operation.Is("sub"))
-            result = a - b;
-        
-        if (operation.Is("times"))
-            result = a * b;
-
-        if (operation.Is("by"))
-            result = a / b;
+        var result = operation(a, b);
 
         view.Print($"={result}");
     }

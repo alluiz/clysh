@@ -20,16 +20,12 @@ public class CompiledApp: IApp
         var commandBuilder = new ClyshCommandBuilder();
         var optionBuilder = new ClyshOptionBuilder();
         var parameterBuilder = new ClyshParameterBuilder();
-        var groupBuilder = new ClyshGroupBuilder();
-        
-        var operationGroup = groupBuilder.Id("operation").Build();
 
-        var operationCommand = commandBuilder
-            .Id("operation")
-            .Description("Select some operation")
-            .Group(operationGroup)
+        var addOperationCommand = commandBuilder
+            .Id("add")
+            .Description("Add some values")
             .Option(optionBuilder
-                .Id("add")
+                .Id("values")
                 .Description("Add two numbers (a + b)")
                 .Parameter(parameterBuilder
                     .Id("a")
@@ -43,10 +39,15 @@ public class CompiledApp: IApp
                     .Range(1, 15)
                     .Order(1)
                     .Build())
-                .Group(operationGroup)
                 .Build())
+            .Action(CliActions.CalcOperationAdd)
+            .Build();
+        
+        var subOperationCommand = commandBuilder
+            .Id("sub")
+            .Description("Subtract some values")
             .Option(optionBuilder
-                .Id("sub")
+                .Id("values")
                 .Description("Subtract two numbers (a - b)")
                 .Parameter(parameterBuilder
                     .Id("a")
@@ -60,50 +61,16 @@ public class CompiledApp: IApp
                     .Range(1, 15)
                     .Order(1)
                     .Build())
-                .Group(operationGroup)
                 .Build())
-            .Option(optionBuilder
-                .Id("times")
-                .Description("Times two numbers (a * b)")
-                .Parameter(parameterBuilder
-                    .Id("a")
-                    .Required(true)
-                    .Range(1, 15)
-                    .Order(0)
-                    .Build())
-                .Parameter(parameterBuilder
-                    .Id("b")
-                    .Required(true)
-                    .Range(1, 15)
-                    .Order(1)
-                    .Build())
-                .Group(operationGroup)
-                .Build())
-            .Option(optionBuilder
-                .Id("by")
-                .Description("Divide two numbers (a / b)")
-                .Parameter(parameterBuilder
-                    .Id("a")
-                    .Required(true)
-                    .Range(1, 15)
-                    .Order(0)
-                    .Build())
-                .Parameter(parameterBuilder
-                    .Id("b")
-                    .Required(true)
-                    .Range(1, 15)
-                    .Order(1)
-                    .Build())
-                .Group(operationGroup)
-                .Build())
-            .Action(CliActions.Calc)
+            .Action(CliActions.CalcOperationSub)
             .Build();
         
         var rootCommand = commandBuilder
             .Id("calc")
             .Description("My calculator using CLI")
             .RequireSubcommand(true)
-            .SubCommand(operationCommand)
+            .SubCommand(addOperationCommand)
+            .SubCommand(subOperationCommand)
             .Build();
 
         return new ClyshService(rootCommand, new ClyshView(data));
