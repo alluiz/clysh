@@ -15,6 +15,7 @@ Create your **own CLI on .NET 6+** with simple steps.
 - 1.0.8 - BugFix: Lastcommand executed flag fix
 - 1.0.9 - Some improvements to order parameters and increase max description to 100 chars
 - 1.1.0 - BugFix: Parameter filled order
+- 1.2.0 - Make action by command path
 
 ## What is?
 

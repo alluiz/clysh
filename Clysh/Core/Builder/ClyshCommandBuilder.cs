@@ -23,6 +23,7 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
             throw new ArgumentNullException(id);
         
         Result.Id = id;
+        Result.Path = id;
         return this;
     }
     

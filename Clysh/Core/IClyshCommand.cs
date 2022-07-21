@@ -52,7 +52,12 @@ public interface IClyshCommand: IClyshIndexable
     /// Indicates if command require subcommands to be executed
     /// </summary>
     bool RequireSubcommand { get; set; }
-    
+
+    /// <summary>
+    /// The path of command in the tree
+    /// </summary>
+    string Path { get; set; }
+
     /// <summary>
     /// Get an option by arg
     /// </summary>

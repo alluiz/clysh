@@ -6,14 +6,13 @@ Commands:
     RequireSubcommand: true
     Root: true
     SubCommands:
-      - operation
-  - Id: operation
-    Description: Select some operation
-    Groups:
-      - operation
+      - add
+      - sub
+  - Id: add
+    Description: Add values "a" and "b"
     Options:
-      - Id: add
-        Description: Add two numbers (a + b)
+      - Id: values
+        Description: Values to some
         Parameters:
           - Id: a
             Required: true
@@ -25,9 +24,11 @@ Commands:
             MinLength: 1
             MaxLength: 15
             Order: 1
-        Group: operation
-      - Id: sub
-        Description: Subtract two numbers (a - b)
+  - Id: sub
+    Description: Subtract values "a" and "b"
+    Options:
+      - Id: values
+        Description: Values to subtract
         Parameters:
           - Id: a
             Required: true
@@ -39,32 +40,3 @@ Commands:
             MinLength: 1
             MaxLength: 15
             Order: 1
-        Group: operation
-      - Id: times
-        Description: Times two numbers (a * b)
-        Parameters:
-          - Id: a
-            Required: true
-            MinLength: 1
-            MaxLength: 15
-            Order: 0
-          - Id: b
-            Required: true
-            MinLength: 1
-            MaxLength: 15
-            Order: 1
-        Group: operation
-      - Id: by
-        Description: Divide two numbers (a / b)
-        Parameters:
-          - Id: a
-            Required: true
-            MinLength: 1
-            MaxLength: 15
-            Order: 0
-          - Id: b
-            Required: true
-            MinLength: 1
-            MaxLength: 15
-            Order: 1
-        Group: operation

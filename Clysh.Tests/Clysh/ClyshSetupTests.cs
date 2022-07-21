@@ -269,7 +269,7 @@ public class ClyshSetupTests
             setup.Load();
         });
 
-        Assert.AreEqual("Command Error: The command 'mycli' must not be children of itself: mycli>mycli",
+        Assert.AreEqual("Command Error: The command 'mycli' must not be children of itself: mycli.mycli",
             exception?.InnerException?.Message);
     }
 

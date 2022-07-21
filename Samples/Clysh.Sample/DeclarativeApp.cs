@@ -17,7 +17,8 @@ public class DeclarativeApp: IApp
 
         setup.Load();
 
-        setup.MakeAction("operation", CliActions.Calc);
+        setup.MakeAction("calc.add", CliActions.CalcOperationAdd);
+        setup.MakeAction("calc.sub", CliActions.CalcOperationSub);
 
         return new ClyshService(setup);
     }
