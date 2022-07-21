@@ -197,7 +197,7 @@ public class ClyshSetup
 
     private void BuildCommand(IClyshCommand command, ClyshCommandData commandData)
     {
-        commandsLoaded.Add(command.Id, command);
+        commandsLoaded.Add(command.Path, command);
         BuildCommandGroups(command, commandData);
         BuildCommandOptions(command, commandData);
         BuildCommandSubcommands(command, commandData);
@@ -232,7 +232,7 @@ public class ClyshSetup
                 .Build();
 
             command.AddSubCommand(child);
-            
+
             BuildCommand(child, childrenCommandData);
         }
     }

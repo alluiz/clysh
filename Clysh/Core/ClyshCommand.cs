@@ -64,6 +64,11 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     public bool RequireSubcommand { get; set; }
 
     /// <summary>
+    /// The path of command in the tree
+    /// </summary>
+    public string Path { get; set; } = default!;
+
+    /// <summary>
     /// The command constructor
     /// </summary>
     public ClyshCommand()
@@ -123,7 +128,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         if (subCommand.Parent != null)
             throw new ClyshException(string.Format(CommandMustHaveOnlyOneParentCommand, subCommand.Id));
 
-        VerifyParentRecursivity(subCommand);
+        subCommand.Path = ParentRecursivity(subCommand);
         subCommand.Parent = this;
         SubCommands.Add(subCommand);
     }
@@ -209,9 +214,9 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         AddOption(helpOption);
     }
     
-    private void VerifyParentRecursivity(IClyshCommand command)
+    private string ParentRecursivity(IClyshCommand command)
     {
-        var tree = command.Id;
+        var path = command.Id;
         IClyshCommand? commandCheck = this;
 
         while (commandCheck != null)
@@ -219,12 +224,14 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
             if (command.Id.Equals(commandCheck.Id))
                 throw new ClyshException("Command Error: The command '$0' must not be children of itself: $1"
                     .Replace("$0", command.Id)
-                    .Replace("$1", $"{commandCheck.Id}>{tree}")
+                    .Replace("$1", $"{commandCheck.Id}.{path}")
                 );
 
-            tree = $"{commandCheck.Id}>{tree}";
+            path = $"{commandCheck.Id}.{path}";
             commandCheck = commandCheck.Parent;
         }
+
+        return path;
     }
     
     /// <summary>
