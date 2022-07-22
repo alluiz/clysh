@@ -212,8 +212,7 @@ public class ClyshService : IClyshService
         CheckLastOptionStatus();
         lastOption = null;
         lastCommand.Executed = true;
-        lastCommand = GetCommandFromArg(lastCommand, arg);
-        commandsToExecute.Add(lastCommand);
+        SetCommandToExecute(arg);
     }
 
     private void ProcessOption(string arg)
@@ -237,7 +236,13 @@ public class ClyshService : IClyshService
 
     private bool IsSubcommand(string arg)
     {
-        return lastCommand.HasSubcommand(arg);
+        var commandId = GetCommandId(arg);
+        return lastCommand.HasSubcommand(commandId);
+    }
+
+    private string GetCommandId(string arg)
+    {
+        return $"{lastCommand.Id}.{arg}";
     }
 
     private void HandleOptionGroup()
@@ -337,12 +342,12 @@ public class ClyshService : IClyshService
         }
     }
 
-    private static IClyshCommand GetCommandFromArg(IClyshCommand lastCommand, string arg)
+    private void SetCommandToExecute(string arg)
     {
         var order = lastCommand.Order + 1;
-        lastCommand = lastCommand.SubCommands[arg];
+        lastCommand = lastCommand.SubCommands[GetCommandId(arg)];
         lastCommand.Order = order;
-        return lastCommand;
+        commandsToExecute.Add(lastCommand);
     }
 
     private void ExecuteHelp(Exception? exception = null)

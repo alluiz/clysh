@@ -22,7 +22,7 @@ public class CompiledApp: IApp
         var parameterBuilder = new ClyshParameterBuilder();
 
         var addOperationCommand = commandBuilder
-            .Id("add")
+            .Id("calc.add")
             .Description("Add some values")
             .Option(optionBuilder
                 .Id("values")
@@ -44,7 +44,7 @@ public class CompiledApp: IApp
             .Build();
         
         var subOperationCommand = commandBuilder
-            .Id("sub")
+            .Id("calc.sub")
             .Description("Subtract some values")
             .Option(optionBuilder
                 .Id("values")

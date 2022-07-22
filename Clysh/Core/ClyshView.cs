@@ -213,7 +213,7 @@ public class ClyshView : IClyshView
         {
             if (item.Key != command.Id)
             {
-                Print("".PadRight(3) + $"{item.Key,-39}{item.Value.Description}");
+                Print("".PadRight(3) + $"{item.Value.Name,-39}{item.Value.Description}");
             }
         }
 
@@ -248,16 +248,9 @@ public class ClyshView : IClyshView
 
     private void PrintHeader(IClyshCommand command, bool hasCommands)
     {
-        var parent = command.Parent;
-        var parentCommands = "";
+        var parentCommands = command.Id.Replace(".", " ");
 
-        while (parent != null)
-        {
-            parentCommands = parent.Id + " " + parentCommands;
-            parent = parent.Parent;
-        }
-
-        Print($"Usage: {parentCommands}{command.Id} [options]{(hasCommands ? " [commands]" : "")}");
+        Print($"Usage: {parentCommands} [options]{(hasCommands ? " [commands]" : "")}");
         PrintEmpty();
         Print(command.Description);
         PrintEmpty();

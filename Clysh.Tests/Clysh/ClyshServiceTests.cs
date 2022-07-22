@@ -604,7 +604,7 @@ public class ClyshServiceTests
         var optionBuilder = new ClyshOptionBuilder();
 
         var customCommand = builder
-            .Id("test")
+            .Id("root.test")
             .Description("test command description")
             .Action((_, o, c) =>
             {

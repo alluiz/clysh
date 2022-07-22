@@ -144,6 +144,9 @@ public class ClyshSetup
 
         BuildCommand(root, rootData);
 
+        if (commandsLoaded.Count != commandsData.Count)
+            throw new ClyshException("The commands loaded size is different than commands declared in file. Check if all your commands has a valid parent.");
+        
         return root;
     }
 
@@ -197,15 +200,17 @@ public class ClyshSetup
 
     private void BuildCommand(IClyshCommand command, ClyshCommandData commandData)
     {
-        commandsLoaded.Add(command.Path, command);
+        commandsLoaded.Add(command.Id, command);
         BuildCommandGroups(command, commandData);
         BuildCommandOptions(command, commandData);
-        BuildCommandSubcommands(command, commandData);
+        BuildCommandSubcommands(command);
     }
 
-    private void BuildCommandSubcommands(IClyshCommand command, ClyshCommandData commandData)
+    private void BuildCommandSubcommands(IClyshCommand command)
     {
-        if (commandData.SubCommands == null)
+        var subcommands = GetSubcommands(command);
+        
+        if (!subcommands.Any())
         {
             if (command.RequireSubcommand)
                 throw new ClyshException(
@@ -214,27 +219,47 @@ public class ClyshSetup
             return;
         }
 
-        foreach (var childrenCommandId in commandData.SubCommands)
+        foreach (var subcommandId in subcommands)
         {
             //Throw an error if command id was not found
-            var childrenCommandData = commandsData.SingleOrDefault(x => x.Id == childrenCommandId);
+            var subcommandData = commandsData.SingleOrDefault(x => x.Id == subcommandId);
 
-            if (childrenCommandData?.Id == null)
+            if (subcommandData?.Id == null)
                 throw new ClyshException(
-                    InvalidCommandTheIdWasNotFound.Replace("$0", childrenCommandId));
+                    InvalidCommandTheIdWasNotFound.Replace("$0", subcommandId));
 
             var commandBuilder = new ClyshCommandBuilder();
 
-            var child = commandBuilder
-                .Id(childrenCommandData.Id)
-                .Description(childrenCommandData.Description)
-                .RequireSubcommand(childrenCommandData.RequireSubcommand)
+            var subCommand = commandBuilder
+                .Id(subcommandData.Id)
+                .Description(subcommandData.Description)
+                .RequireSubcommand(subcommandData.RequireSubcommand)
                 .Build();
 
-            command.AddSubCommand(child);
-
-            BuildCommand(child, childrenCommandData);
+            command.AddSubCommand(subCommand);
+            
+            BuildCommand(subCommand, subcommandData);
         }
+    }
+
+    private List<string> GetSubcommands(IClyshCommand command)
+    { 
+        //Declare two vars only for readable purpouse
+        var commandLevel = GetCommandLevel(command.Id);
+        var nextLevel = commandLevel + 1;
+        
+        var subcommands = commandsData.Where(x =>
+                x.Id.Contains(command.Id) &&
+                GetCommandLevel(x.Id) == nextLevel)
+            .Select(c => c.Id)
+            .ToList();
+        
+        return subcommands;
+    }
+
+    private static int GetCommandLevel(string commandId)
+    {
+        return commandId.Split(".").Length - 1;
     }
 
     private static void BuildCommandOptions(IClyshCommand command, ClyshCommandData commandData)

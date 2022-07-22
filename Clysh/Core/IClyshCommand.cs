@@ -56,7 +56,7 @@ public interface IClyshCommand: IClyshIndexable
     /// <summary>
     /// The path of command in the tree
     /// </summary>
-    string Path { get; set; }
+    string Name { get; set; }
 
     /// <summary>
     /// Get an option by arg

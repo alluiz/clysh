@@ -237,7 +237,7 @@ public class ClyshViewTests
             if (item.Key != command.Id)
             {
                 var j1 = j;
-                consoleMock.Verify(x => x.WriteLine("".PadRight(3) + $"{item.Key,-39}{item.Value.Description}", 14 + j1), Times.Once);
+                consoleMock.Verify(x => x.WriteLine("".PadRight(3) + $"{item.Value.Name,-39}{item.Value.Description}", 14 + j1), Times.Once);
                 j++;
             }
         }
@@ -254,7 +254,7 @@ public class ClyshViewTests
     {
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        IClyshCommand command = ClyshDataForTest.CreateRootCommand().SubCommands["credential"];
+        IClyshCommand command = ClyshDataForTest.CreateRootCommand().SubCommands["auth2.credential"];
         view.PrintHelp(command);
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
@@ -290,7 +290,7 @@ public class ClyshViewTests
             if (item.Key != command.Id)
             {
                 var j1 = j;
-                consoleMock.Verify(x => x.WriteLine("".PadRight(3) + $"{item.Key,-39}{item.Value.Description}", 14 + j1), Times.Once);
+                consoleMock.Verify(x => x.WriteLine("".PadRight(3) + $"{item.Value.Name,-39}{item.Value.Description}", 14 + j1), Times.Once);
                 j++;
             }
         }
@@ -307,7 +307,7 @@ public class ClyshViewTests
     {
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        IClyshCommand command = ClyshDataForTest.CreateRootCommand().SubCommands["credential"].SubCommands["test"];
+        IClyshCommand command = ClyshDataForTest.CreateRootCommand().SubCommands["auth2.credential"].SubCommands["auth2.credential.test"];
         view.PrintHelp(command);
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);

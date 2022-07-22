@@ -23,7 +23,7 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
             throw new ArgumentNullException(id);
         
         Result.Id = id;
-        Result.Path = id;
+        Result.Name = id.Split(".").Last();
         return this;
     }
     

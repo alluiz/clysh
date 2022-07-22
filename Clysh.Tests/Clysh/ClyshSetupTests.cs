@@ -269,7 +269,7 @@ public class ClyshSetupTests
             setup.Load();
         });
 
-        Assert.AreEqual("Command Error: The command 'mycli' must not be children of itself: mycli.mycli",
+        Assert.AreEqual("Command Error: The commandId cannot have duplicated words.",
             exception?.InnerException?.Message);
     }
 
@@ -311,12 +311,12 @@ public class ClyshSetupTests
     }
 
     [Test]
-    public void CreateSetupYamlWithInvalidChildrenCommandError()
+    public void CreateSetupYamlWithInvalidParentCommandError()
     {
         fs.Setup(x => x.File.Exists(Path)).Returns(true);
         fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
         fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithInvalidChildrenCommandText());
+        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithInvalidParentCommandText());
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
@@ -324,7 +324,7 @@ public class ClyshSetupTests
             setup.Load();
         });
 
-        Assert.AreEqual("Invalid commandId. The id: fake was not found on commands data list.",
+        Assert.AreEqual("The commands loaded size is different than commands declared in file. Check if all your commands has a valid parent.",
             exception?.InnerException?.Message);
     }
 
@@ -377,13 +377,11 @@ Commands:
         Shortcut: T
         Group: test
     Root: true
-    SubCommands:
-      - mychild
-  - Id: mychild
+  - Id: mycli.mychild
     Description: My child";
     }
 
-    private string GetYamlWithInvalidChildrenCommandText()
+    private string GetYamlWithInvalidParentCommandText()
     {
         return @"
 Title: MyCLI with only test command
@@ -402,8 +400,8 @@ Commands:
             MaxLength: 15
             Order: 1
     Root: true
-    SubCommands:
-      - fake";
+  - Id: mytest.test
+    Description: My test";
     }
 
     private string GetYamlWithRecursiveCommandText()
@@ -425,8 +423,8 @@ Commands:
             MaxLength: 15
             Order: 1
     Root: true
-    SubCommands:
-      - mycli";
+  - Id: mycli.mycli
+    Description: My own CLI";
     }
 
     private string GetYamlCommandIdDuplicatedText()
@@ -511,9 +509,7 @@ Commands:
             Pattern: \w+
             Order: 1
     Root: true
-    SubCommands:
-      - mychild
-  - Id: mychild
+  - Id: mycli.mychild
     Description: My awesome child
     RequireSubcommand: false";
     }
@@ -535,9 +531,7 @@ Commands:
             Required: true
             MinLength: 1
             MaxLength: 15
-    SubCommands:
-      - mychild
-  - Id: mychild
+  - Id: mycli.mychild
     Description: My child";
     }
 
