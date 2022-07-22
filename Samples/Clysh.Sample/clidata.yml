@@ -5,10 +5,7 @@ Commands:
     Description: My calculator using CLI
     RequireSubcommand: true
     Root: true
-    SubCommands:
-      - add
-      - sub
-  - Id: add
+  - Id: calc.add
     Description: Add values "a" and "b"
     Options:
       - Id: values
@@ -24,7 +21,7 @@ Commands:
             MinLength: 1
             MaxLength: 15
             Order: 1
-  - Id: sub
+  - Id: calc.sub
     Description: Subtract values "a" and "b"
     Options:
       - Id: values
