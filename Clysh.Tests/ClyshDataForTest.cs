@@ -65,7 +65,7 @@ namespace Clysh.Tests
             var parameterBuilder = new ClyshParameterBuilder();
 
             return builder
-                .Id("credential")
+                .Id("auth2.credential")
                 .Description("Manager a credential")
                 .Action((_, options, view) =>
                 {
@@ -109,7 +109,7 @@ namespace Clysh.Tests
             var parameterBuilder = new ClyshParameterBuilder();
 
             return builder
-                .Id("test")
+                .Id("auth2.credential.test")
                 .Description("Test credential command")
                 .Action((_, _, _) => { })
                 .Option(optionBuilder.Id(timeOption, "t")
@@ -129,7 +129,7 @@ namespace Clysh.Tests
             var parameterBuilder = new ClyshParameterBuilder();
 
             return builder
-                .Id("login")
+                .Id("auth2.login")
                 .Description("User login command for system")
                 .Action((_, options, view) =>
                 {

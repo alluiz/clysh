@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
+
 // ReSharper disable All
 
 namespace Clysh.Data;
@@ -15,13 +17,13 @@ public class ClyshCommandData
     /// The id of command
     /// </summary>
     [Required]
-    public string? Id { get; set; }
+    public string Id { get; set; } = default!;
 
     /// <summary>
     /// The description
     /// </summary>
     [Required]
-    public string? Description { get; set; }
+    public string Description { get; set; } = default!;
 
     /// <summary>
     /// Indicates if it is the root command
@@ -32,11 +34,6 @@ public class ClyshCommandData
     /// The command options data
     /// </summary>
     public List<ClyshOptionData>? Options { get; set; }
-
-    /// <summary>
-    /// The subcommands
-    /// </summary>
-    public List<string>? SubCommands { get; set; }
 
     /// <summary>
     /// The groups available for command

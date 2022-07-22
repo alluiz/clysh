@@ -64,9 +64,9 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     public bool RequireSubcommand { get; set; }
 
     /// <summary>
-    /// The path of command in the tree
+    /// The simple name of command
     /// </summary>
-    public string Path { get; set; } = default!;
+    public string Name { get; set; } = default!;
 
     /// <summary>
     /// The command constructor
@@ -128,7 +128,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         if (subCommand.Parent != null)
             throw new ClyshException(string.Format(CommandMustHaveOnlyOneParentCommand, subCommand.Id));
 
-        subCommand.Path = ParentRecursivity(subCommand);
+        ParentRecursivity(subCommand);
         subCommand.Parent = this;
         SubCommands.Add(subCommand);
     }
@@ -214,24 +214,12 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         AddOption(helpOption);
     }
     
-    private string ParentRecursivity(IClyshCommand command)
+    private void ParentRecursivity(IClyshCommand command)
     {
-        var path = command.Id;
-        IClyshCommand? commandCheck = this;
+        var splittedId = command.Id.Split(".");
 
-        while (commandCheck != null)
-        {
-            if (command.Id.Equals(commandCheck.Id))
-                throw new ClyshException("Command Error: The command '$0' must not be children of itself: $1"
-                    .Replace("$0", command.Id)
-                    .Replace("$1", $"{commandCheck.Id}.{path}")
-                );
-
-            path = $"{commandCheck.Id}.{path}";
-            commandCheck = commandCheck.Parent;
-        }
-
-        return path;
+        if (splittedId.DistinctBy(x => x).Count() != splittedId.Length)
+            throw new ClyshException("Command Error: The commandId cannot have duplicated words.");
     }
     
     /// <summary>
