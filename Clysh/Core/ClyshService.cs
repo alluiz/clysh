@@ -143,7 +143,7 @@ public class ClyshService : IClyshService
 
     private bool OptionDebug()
     {
-        return lastOption is { Id: "verbose" };
+        return lastOption is { Id: "debug" };
     }
 
     private void AuditLogMessages()
