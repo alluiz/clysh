@@ -106,7 +106,7 @@ public class ClyshView : IClyshView
     /// </summary>
     /// <param name="command">The command to print</param>
     /// <param name="exception">The exception</param>
-    public void PrintHelp(IClyshCommand command, Exception exception)
+    public virtual void PrintHelp(IClyshCommand command, Exception exception)
     {
         PrintException(exception);
         PrintHelp(command);
@@ -116,7 +116,7 @@ public class ClyshView : IClyshView
     /// Prints help to user
     /// </summary>
     /// <param name="command">The command to print</param>
-    public void PrintHelp(IClyshCommand command)
+    public virtual void PrintHelp(IClyshCommand command)
     {
         PrintTitle();
         PrintCommand(command);

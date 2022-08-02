@@ -9,7 +9,7 @@ namespace Clysh.Core;
     Therefore, it cannot be tested.
 */
 [ExcludeFromCodeCoverage]
-internal class ClyshConsole : IClyshConsole
+public class ClyshConsole : IClyshConsole
 {
     /// <summary>
     /// Read a line from console
