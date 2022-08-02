@@ -17,7 +17,7 @@ public interface IClyshService
     /// The view used to interact with user. Like a front-end.
     /// </summary>
     /// <seealso cref="IClyshView"/>
-    IClyshView View { get; }
+    IClyshView View { get; set; }
     
     /// <summary>
     /// The main method of the CLI. Use to run the CLI rules with user args.

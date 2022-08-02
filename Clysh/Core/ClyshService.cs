@@ -25,7 +25,7 @@ public class ClyshService : IClyshService
     /// <summary>
     /// The view
     /// </summary>
-    public IClyshView View { get; }
+    public IClyshView View { get; set; }
 
     private ClyshOption? lastOption;
 
