@@ -18,64 +18,34 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     
     private readonly Dictionary<string, string> shortcutToOptionId;
     
-    /// <summary>
-    /// The command action
-    /// </summary>
+    public Dictionary<string, object> Data { get; }
+    
     public Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
     
-    /// <summary>
-    /// The subcommands of the command
-    /// </summary>
     public ClyshMap<IClyshCommand> SubCommands { get; }
     
-    /// <summary>
-    /// The command groups
-    /// </summary>
     public ClyshMap<ClyshGroup> Groups { get; set; }
     
-    /// <summary>
-    /// The command options
-    /// </summary>
     public ClyshMap<ClyshOption> Options { get; }
     
-    /// <summary>
-    /// The command parent
-    /// </summary>
     public IClyshCommand? Parent { get; set; }
     
-    /// <summary>
-    /// The command execution order
-    /// </summary>
     public int Order { get; set; }
     
-    /// <summary>
-    /// The command description
-    /// </summary>
     public string Description { get; set; }
     
-    /// <summary>
-    /// The command status
-    /// </summary>
     public bool Executed { get; set; }
     
-    /// <summary>
-    /// Indicates if command require subcommands to be executed
-    /// </summary>
     public bool RequireSubcommand { get; set; }
 
-    /// <summary>
-    /// The simple name of command
-    /// </summary>
     public string Name { get; set; } = default!;
 
-    /// <summary>
-    /// The command constructor
-    /// </summary>
     public ClyshCommand()
     {
         Groups = new ClyshMap<ClyshGroup>();
         Options = new ClyshMap<ClyshOption>();
         SubCommands = new ClyshMap<IClyshCommand>();
+        Data = new Dictionary<string, object>();
         shortcutToOptionId = new Dictionary<string, string>();
         Description = string.Empty;
         AddHelpOption();
@@ -93,10 +63,6 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         AddOption(debugOption);
     }
 
-    /// <summary>
-    /// Adds an option to the command
-    /// </summary>
-    /// <param name="option">The option</param>
     public void AddOption(ClyshOption option)
     {
         if (option.Command != null)
@@ -119,10 +85,6 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
             shortcutToOptionId.Add(option.Shortcut, option.Id);
     }
     
-    /// <summary>
-    /// Adds a subcommand to the command and mark it as parent
-    /// </summary>
-    /// <param name="subCommand">The subcommand</param>
     public void AddSubCommand(IClyshCommand subCommand)
     {
         if (subCommand.Parent != null)
@@ -132,12 +94,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         subCommand.Parent = this;
         SubCommands.Add(subCommand);
     }
-
-    /// <summary>
-    /// Get an option selected by group
-    /// </summary>
-    /// <param name="group">The group filter</param>
-    /// <returns></returns>
+    
     public ClyshOption? GetOptionFromGroup(ClyshGroup group)
     {
         return Options
@@ -145,59 +102,31 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
             .SingleOrDefault(x => x.Group != null && x.Group.Equals(group) && x.Selected);
     }
     
-    /// <summary>
-    /// Get an option selected by group
-    /// </summary>
-    /// <param name="groupId">The groupId filter</param>
-    /// <returns></returns>
     public ClyshOption? GetOptionFromGroup(string groupId)
     {
         return GetOptionFromGroup(Groups[groupId]);
     }
-
-    /// <summary>
-    /// Get an option by arg
-    /// </summary>
-    /// <param name="arg">The argument</param>
-    /// <returns></returns>
+    
     public ClyshOption GetOption(string arg)
     {
         return Options.Has(arg) ? Options[arg] : Options[shortcutToOptionId[arg]];
     }
 
-    /// <summary>
-    /// Indicates if the command has the option
-    /// </summary>
-    /// <param name="key">The option key</param>
-    /// <returns>The indicator</returns>
     public bool HasOption(string key)
     {
         return Options.Has(key) || shortcutToOptionId.ContainsKey(key);
     }
-
-    /// <summary>
-    /// Indicates if the command has any subcommand
-    /// </summary>
-    /// <returns>The indicator</returns>
+    
     public bool HasAnySubcommand()
     {
         return SubCommands.Any();
     }
 
-    /// <summary>
-    /// Indicates if the command has any subcommand executed
-    /// </summary>
-    /// <returns>The indicator</returns>
     public bool HasAnySubcommandExecuted()
     {
         return SubCommands.Any(x => x.Value.Executed);
     }
 
-    /// <summary>
-    /// Indicates if the command has the subcommand
-    /// </summary>
-    /// <param name="subCommandId">The subcommand id</param>
-    /// <returns>The indicator</returns>
     public bool HasSubcommand(string subCommandId)
     {
         return SubCommands.Has(subCommandId);
@@ -221,12 +150,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         if (splittedId.DistinctBy(x => x).Count() != splittedId.Length)
             throw new ClyshException("Command Error: The commandId cannot have duplicated words.");
     }
-    
-    /// <summary>
-    /// Adds a group to command
-    /// </summary>
-    /// <param name="group">The group</param>
-    /// <exception cref="ClyshException">The group cannot be related to another command</exception>
+
     public void AddGroups(ClyshGroup group)
     {
         if (group.Command != null && !group.Command.Equals(this))

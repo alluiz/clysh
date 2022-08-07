@@ -9,6 +9,11 @@ namespace Clysh.Core;
 public interface IClyshCommand: IClyshIndexable
 {
     /// <summary>
+    /// The command data output
+    /// </summary>
+    Dictionary<string, object> Data { get; }
+
+    /// <summary>
     /// The command action
     /// </summary>
     Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
