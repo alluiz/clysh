@@ -9,6 +9,11 @@ namespace Clysh.Core;
 public interface IClyshCommand: IClyshIndexable
 {
     /// <summary>
+    /// The command data output
+    /// </summary>
+    Dictionary<string, object> Data { get; }
+
+    /// <summary>
     /// The command action
     /// </summary>
     Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
@@ -116,4 +121,18 @@ public interface IClyshCommand: IClyshIndexable
     /// <param name="groupId">The groupId filter</param>
     /// <returns>The selected option</returns>
     ClyshOption? GetOptionFromGroup(string groupId);
+    
+    /// <summary>
+    /// Get all options from group
+    /// </summary>
+    /// <param name="group">The group filter</param>
+    /// <returns>The group available options</returns>
+    List<ClyshOption> GetAvailableOptionsFromGroup(ClyshGroup group);
+    
+    /// <summary>
+    /// Get all options from group
+    /// </summary>
+    /// <param name="groupId">The groupId filter</param>
+    /// <returns>The group available options</returns>
+    List<ClyshOption> GetAvailableOptionsFromGroup(string groupId);
 }

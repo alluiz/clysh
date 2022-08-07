@@ -8,6 +8,10 @@ public static class CliActions
     public static void CalcOperationAdd(IClyshCommand cmd, ClyshMap<ClyshOption> options, IClyshView view)
     {
         CalcOperation(options, view, (a, b) => a + b);
+        
+        //Get data from parent
+        var root = (Root) cmd.Parent!.Data["root"];
+        view.Print($"={root.Message}");
     }
     
     public static void CalcOperationSub(IClyshCommand cmd, ClyshMap<ClyshOption> options, IClyshView view)
@@ -30,5 +34,10 @@ public static class CliActions
     private static int GetValue(string value)
     {
        return Convert.ToInt32(value);
+    }
+
+    public static void CalcRoot(IClyshCommand cmd, ClyshMap<ClyshOption> options, IClyshView view)
+    {
+        cmd.Data.Add("root", new Root() { Message="Thanks for using my calc!" });
     }
 }

@@ -21,6 +21,23 @@ Commands:
             MinLength: 1
             MaxLength: 15
             Order: 1
+      - Id: zoo
+        Shortcut: z
+        Description: >
+          axqNOOjsARutWIVwzlGYS9UFjD8GLC3za0HR7rn9cLhgb6phP5chcuu
+          ODbR5U9nh8vmOkTo1w3y2lv1AMl5qGZtI7ZB7fIMzlESqvGWKRQkTxa
+          172xhBm5ndbtW55iBMBUnFd81ofaLrKqmeEAG5u52DIhWVocZzKTBPFk
+          l8nCPRA1nXUdQl97i0XtPQKPqmcaiwqiqd74G4v1YZD7a2Ch0ms2ZjWX
+          6VPo4tP3zF9MS7vNBSQEah8PXZCGcdaNK7rZVFSyzz3AxTbgEMtHazFF
+          QyKP2hLtbikYAGNymacMO1XIdKqksIAaMmoyLHblFQWF9Qg1vjTUgAvt
+          98Bg1ZmEzOHWoqBtUWdsOaWiyPbaxxI9LGXMj9wIO4PWcKKpCR7Q86c7
+          vAe270KkRXWoRo0vicCNc
+        Parameters:
+          - Id: a
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+            Order: 0
   - Id: calc.sub
     Description: Subtract values "a" and "b"
     Options:

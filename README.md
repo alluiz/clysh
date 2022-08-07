@@ -17,6 +17,7 @@ Create your **own CLI on .NET 6+** with simple steps.
 - 1.1.0 - BugFix: Parameter filled order
 - 1.2.0 - Make action by command path
 - 1.3.1 - BugFix: Debug mode
+- 1.3.4 - Data transfer between comands and description breakline after each 50 chars
 
 ## What is?
 

@@ -17,6 +17,7 @@ public class DeclarativeApp: IApp
 
         setup.Load();
 
+        setup.MakeAction("calc", CliActions.CalcRoot);
         setup.MakeAction("calc.add", CliActions.CalcOperationAdd);
         setup.MakeAction("calc.sub", CliActions.CalcOperationSub);
 
