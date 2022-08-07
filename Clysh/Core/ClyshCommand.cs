@@ -106,7 +106,20 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     {
         return GetOptionFromGroup(Groups[groupId]);
     }
+
+    public List<ClyshOption> GetAvailableOptionsFromGroup(ClyshGroup group)
+    {
+        return Options
+            .Values
+            .Where(x => x.Group != null && x.Group.Equals(group))
+            .ToList();
+    }
     
+    public List<ClyshOption> GetAvailableOptionsFromGroup(string groupId)
+    {
+        return GetAvailableOptionsFromGroup(Groups[groupId]);
+    }
+
     public ClyshOption GetOption(string arg)
     {
         return Options.Has(arg) ? Options[arg] : Options[shortcutToOptionId[arg]];
