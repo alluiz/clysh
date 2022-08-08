@@ -6,7 +6,7 @@ namespace Clysh.Tests;
 
 public class ClyshCommandTests
 {
-    private ClyshCommand command = new();
+    private ClyshCommand command = default!;
 
     [SetUp]
     public void Setup()

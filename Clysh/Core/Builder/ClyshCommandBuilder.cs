@@ -7,10 +7,9 @@ namespace Clysh.Core.Builder;
 /// A builder for <see cref="ClyshCommand"/>
 /// </summary>
 /// <seealso cref="ClyshBuilder{T}"/>
-public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
+public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
 {
-    private const int MaxDescription = 100;
-    private const int MinDescription = 10;
+    private const string ErrorOnCreateCommand = "Error on create command. Command: {0}";
 
     /// <summary>
     /// Build the command identifier
@@ -19,9 +18,8 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
     public ClyshCommandBuilder Id(string? id)
     {
-        if (id == null)
-            throw new ArgumentNullException(id);
-        
+        ArgumentNullException.ThrowIfNull(id);
+
         Result.Id = id;
         Result.Name = id.Split(".").Last();
         return this;
@@ -34,11 +32,17 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
     public ClyshCommandBuilder Description(string? description)
     {
-        if (description == null || description.Trim().Length is < MinDescription or > MaxDescription)
-            throw new ArgumentException($"Command {nameof(description)} value '{description}' must be not null or empty and between {MinDescription} and {MaxDescription} chars.", nameof(description));
-        
-        Result.Description = description;
-        return this;
+        ArgumentNullException.ThrowIfNull(description);
+
+        try
+        {
+            Result.Description = description;
+            return this;
+        }
+        catch (Exception e)
+        {
+            throw new ClyshException(string.Format(ErrorOnCreateCommand, Result.Id), e);
+        }
     }
 
     /// <summary>
@@ -48,8 +52,15 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
     public ClyshCommandBuilder Option(ClyshOption option)
     {
-        Result.AddOption(option);
-        return this;
+        try
+        {
+            Result.AddOption(option);
+            return this;
+        }
+        catch (Exception e)
+        {
+            throw new ClyshException(string.Format(ErrorOnCreateCommand, Result.Id), e);
+        }
     }
 
     /// <summary>
@@ -59,8 +70,15 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
     public ClyshCommandBuilder SubCommand(ClyshCommand subCommand)
     {
-        Result.AddSubCommand(subCommand);
-        return this;
+        try
+        {
+            Result.AddSubCommand(subCommand);
+            return this;
+        }
+        catch (Exception e)
+        {
+            throw new ClyshException(string.Format(ErrorOnCreateCommand, Result.Id), e);
+        }
     }
 
     /// <summary>
@@ -70,8 +88,15 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
     public ClyshCommandBuilder Action(Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView> action)
     {
-        Result.Action = action;
-        return this;
+        try
+        {
+            Result.Action = action;
+            return this;
+        }
+        catch (Exception e)
+        {
+            throw new ClyshException(string.Format(ErrorOnCreateCommand, Result.Id), e);
+        }
     }
 
     /// <summary>
@@ -81,8 +106,15 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
     public ClyshCommandBuilder Group(ClyshGroup group)
     {
-        Result.AddGroups(group);
-        return this;
+        try
+        {
+            Result.AddGroups(group);
+            return this;
+        }
+        catch (Exception e)
+        {
+            throw new ClyshException(string.Format(ErrorOnCreateCommand, Result.Id), e);
+        }
     }
 
     public ClyshCommandBuilder RequireSubcommand(bool require)

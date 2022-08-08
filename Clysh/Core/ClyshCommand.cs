@@ -11,12 +11,25 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshCommand : ClyshIndexable, IClyshCommand
 {
+    private const int MaxDescription = 100;
+    private const int MinDescription = 10;
     private const string CommandMustHaveOnlyOneParentCommand = "The command must have only one parent. Command: '{0}'";
-    private const string TheOptionAddressMemoryIsAlreadyRelatedToAnotherCommandOption = "The option address memory is already related to another command. Option: '{0}'";
-    private const string TheGroupAddressMemoryIsAlreadyRelatedToAnotherCommandOption = "The group address memory is already related to another command. Group: '{0}'";
-    private const string TheGroupAddressMemoryIsDifferent = "The group address memory is different between command and option. Group: '{0}'";
+
+    private const string TheOptionAddressMemoryIsAlreadyRelatedToAnotherCommandOption =
+        "The option address memory is already related to another command. Option: '{0}'";
+
+    private const string TheGroupAddressMemoryIsAlreadyRelatedToAnotherCommandOption =
+        "The group address memory is already related to another command. Group: '{0}'";
+
+    private const string TheGroupAddressMemoryIsDifferent =
+        "The group address memory is different between command and option. Group: '{0}'";
+
+    private const string InvalidDescription =
+        "Option description must be not null or empty and between {0} and {1} chars. Description: '{2}'";
 
     private readonly Dictionary<string, string> shortcutToOptionId;
+
+    private string description = string.Empty;
 
     public ClyshCommand()
     {
@@ -25,7 +38,6 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         SubCommands = new ClyshMap<IClyshCommand>();
         Data = new Dictionary<string, object>();
         shortcutToOptionId = new Dictionary<string, string>();
-        Description = string.Empty;
         AddHelpOption();
         AddDebugOption();
     }
@@ -44,7 +56,14 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
 
     public int Order { get; set; }
 
-    public string Description { get; set; }
+    /// <summary>
+    /// The description
+    /// </summary>
+    public string Description
+    {
+        get => description;
+        set => description = ValidateDescription(value);
+    }
 
     public bool Executed { get; set; }
 
@@ -55,19 +74,21 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     public void AddOption(ClyshOption option)
     {
         if (option.Command != null)
-            throw new ClyshException(string.Format(TheOptionAddressMemoryIsAlreadyRelatedToAnotherCommandOption, option.Id));
+            throw new ClyshException(string.Format(TheOptionAddressMemoryIsAlreadyRelatedToAnotherCommandOption,
+                option.Id));
 
         option.Command = this;
 
         if (Options.Has(option.Id))
             throw new ClyshException($"Invalid option id. The command already has an option with id: {option.Id}.");
-        
+
         if (option.Shortcut != null && shortcutToOptionId.ContainsKey(option.Shortcut))
-            throw new ClyshException($"Invalid option shortcut. The command already has an option with shortcut: {option.Shortcut}.");
-        
+            throw new ClyshException(
+                $"Invalid option shortcut. The command already has an option with shortcut: {option.Shortcut}.");
+
         if (option.Group != null && !Groups.Has(option.Group.Id))
             AddGroups(option.Group);
-        
+
         Options.Add(option);
 
         if (option.Shortcut != null)
@@ -134,6 +155,16 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         return SubCommands.Has(subCommandId);
     }
 
+    private static string ValidateDescription(string? descriptionValue)
+    {
+        if (descriptionValue == null || descriptionValue.Trim().Length is < MinDescription or > MaxDescription)
+            throw new ArgumentException(
+                string.Format(InvalidDescription, MinDescription, MaxDescription, descriptionValue),
+                nameof(descriptionValue));
+
+        return descriptionValue;
+    }
+
     private void AddDebugOption()
     {
         var builder = new ClyshOptionBuilder();
@@ -141,7 +172,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
             .Id("debug")
             .Description("Print debug log on screen")
             .Build();
-            
+
         AddOption(debugOption);
     }
 
@@ -152,7 +183,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
             .Id("help", "h")
             .Description("Show help on screen")
             .Build();
-            
+
         AddOption(helpOption);
     }
 
@@ -161,16 +192,18 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         var splittedId = command.Id.Split(".");
 
         if (splittedId.DistinctBy(x => x).Count() != splittedId.Length)
-            throw new ClyshException("Command Error: The commandId cannot have duplicated words.");
+            throw new ClyshException(
+                $"Invalid command: The commandId cannot have duplicated words. Command: {command.Id}");
     }
 
     public void AddGroups(ClyshGroup group)
     {
         if (group.Command != null && !group.Command.Equals(this))
-            throw new ClyshException(string.Format(TheGroupAddressMemoryIsAlreadyRelatedToAnotherCommandOption, group.Id));
-        
+            throw new ClyshException(string.Format(TheGroupAddressMemoryIsAlreadyRelatedToAnotherCommandOption,
+                group.Id));
+
         group.Command = this;
-        
+
         if (!Groups.Has(group.Id))
             Groups.Add(group);
         else if (!Groups[group.Id].Equals(group))

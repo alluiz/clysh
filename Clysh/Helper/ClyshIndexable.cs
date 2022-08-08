@@ -9,6 +9,7 @@ namespace Clysh.Helper;
 public abstract class ClyshIndexable: IClyshIndexable
 {
     private string id = default!;
+    private const string InvalidIdTheIdMustFollowThePatternId = "Invalid id. The id must follow the pattern: {0}. Id: '{1}'";
 
     /// <summary>
     /// The pattern to validate the id
@@ -40,7 +41,9 @@ public abstract class ClyshIndexable: IClyshIndexable
         regex ??= new Regex(Pattern);
 
         if (!regex.IsMatch(identifier))
-            throw new ArgumentException($"Invalid id. The id must follow the pattern: {Pattern}", nameof(identifier));
+            throw new ArgumentException(
+                string.Format(InvalidIdTheIdMustFollowThePatternId, Pattern, identifier),
+                nameof(identifier));
 
         return identifier;
     }
