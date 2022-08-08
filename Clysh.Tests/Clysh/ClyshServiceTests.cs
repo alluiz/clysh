@@ -10,9 +10,9 @@ namespace Clysh.Tests;
 
 public class ClyshServiceTests
 {
-    private readonly Mock<IClyshView> viewMock = new();
-    private readonly Mock<IClyshCommand> rootCommandMock = new();
     private readonly ClyshParameterBuilder parameterBuilder = new();
+    private readonly Mock<IClyshCommand> rootCommandMock = new();
+    private readonly Mock<IClyshView> viewMock = new();
 
 
     [SetUp]
@@ -51,7 +51,7 @@ public class ClyshServiceTests
 
     private void EmptyAction(IClyshCommand clyshCommand, ClyshMap<ClyshOption> map, IClyshView clyshView)
     {
-        //Do nothing because of X and Y. This action is just to bind with command for test
+        //Do nothing. This action is just to bind with command for test
     }
 
 

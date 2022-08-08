@@ -9,18 +9,6 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshView : IClyshView
 {
-    private ClyshData Data { get; }
-    
-    /// <summary>
-    /// The number of lines printed
-    /// </summary>
-    public int PrintedLines { get; private set; }
-
-    /// <summary>
-    /// Indicates if verbose mode is active
-    /// </summary>
-    public bool Debug { get; set; }
-
     private const string QuestionMustBeNotBlank = "Question must be not blank";
 
     private readonly IClyshConsole clyshConsole;
@@ -41,7 +29,7 @@ public class ClyshView : IClyshView
         Data = clyshData;
         this.printLineNumber = printLineNumber;
     }
-    
+
     /// <summary>
     /// The constructor of view
     /// </summary>
@@ -54,77 +42,43 @@ public class ClyshView : IClyshView
         
     }
 
-    /// <summary>
-    /// Ask for some data to user
-    /// </summary>
-    /// <param name="title">The title of the question</param>
-    /// <returns></returns>
+    private ClyshData Data { get; }
+
+    public int PrintedLines { get; private set; }
+
+    public bool Debug { get; set; }
+
     public string AskFor(string title) => AskFor(title, false);
 
-    /// <summary>
-    /// Ask for some sensitive data to user
-    /// </summary>
-    /// <param name="title">The title of the question</param>
-    /// <returns></returns>
     public string AskForSensitive(string title) => AskFor(title, true);
 
-    /// <summary>
-    /// Ask for user confirmation
-    /// </summary>
-    /// <param name="question">The question</param>
-    /// <param name="yes">The value of positive answer</param>
-    /// <param name="no">The value of negative answer</param>
-    /// <returns></returns>
     public bool Confirm(string question = "Do you agree?", string yes = "Y", string no = "n")
     {
         return string.Equals(AskFor($"{question} ({yes}/{no})"), yes, StringComparison.CurrentCultureIgnoreCase);
     }
 
-    /// <summary>
-    /// Print text if debug is active
-    /// </summary>
-    /// <param name="text">The text</param>
     public void PrintDebug(string? text)
     {
        if (Debug)
            Print(text);
     }
 
-    /// <summary>
-    /// Print text
-    /// </summary>
-    /// <param name="text">The text</param>
     public void Print(string? text) => Print(text, false, false);
 
-    /// <summary>
-    /// Print blank line
-    /// </summary>
     public void PrintEmpty() => Print("");
     
-    /// <summary>
-    /// Prints help to user
-    /// </summary>
-    /// <param name="command">The command to print</param>
-    /// <param name="exception">The exception</param>
     public virtual void PrintHelp(IClyshCommand command, Exception exception)
     {
         PrintException(exception);
         PrintHelp(command);
     }
 
-    /// <summary>
-    /// Prints help to user
-    /// </summary>
-    /// <param name="command">The command to print</param>
     public virtual void PrintHelp(IClyshCommand command)
     {
         PrintTitle();
         PrintCommand(command);
     }
-    
-    /// <summary>
-    /// Prints a separator
-    /// </summary>
+
     public void PrintSeparator(string separator = "#")
     {
         var length = separator.Length;
@@ -134,10 +88,6 @@ public class ClyshView : IClyshView
         Print($"{symbol}{separator}{symbol}");
     }
 
-    /// <summary>
-    /// Print text without line break
-    /// </summary>
-    /// <param name="text">The text</param>
     public void PrintWithoutBreak(string? text) => Print(text, false, true);
 
     private string AskFor(string title, bool sensitive)

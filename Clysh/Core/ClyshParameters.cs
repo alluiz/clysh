@@ -23,7 +23,7 @@ public sealed class ClyshParameters: ClyshMap<ClyshParameter>
     {
         
     }
-    
+
     /// <summary>
     /// Indicates if all required parameters is filled
     /// </summary>
@@ -60,7 +60,7 @@ public sealed class ClyshParameters: ClyshMap<ClyshParameter>
 
         return s;
     }
-    
+
     /// <summary>
     /// Format all parameters
     /// </summary>

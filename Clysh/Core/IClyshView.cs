@@ -27,32 +27,32 @@ public interface IClyshView
     /// <param name="no">The text to negative answer. default: "n"</param>
     /// <returns>The answer</returns>
     bool Confirm(string question = "Do you agree?", string yes = "Y", string no = "n");
-    
+
     /// <summary>
     /// A input prompt.
     /// </summary>
     /// <param name="title">The title. Like: "Input your age"</param>
     /// <returns>The answer</returns>
     string AskFor(string title);
-    
+
     /// <summary>
     /// A input prompt for sensitive data.
     /// </summary>
     /// <param name="title">The title. Like: "Input your password"</param>
     /// <returns>The sensitive answer</returns>
     string AskForSensitive(string title);
-    
+
     /// <summary>
     /// Print empty line
     /// </summary>
     void PrintEmpty();
-    
+
     /// <summary>
     /// Print text if verbose is active
     /// </summary>
     /// <param name="text">The text to be printed</param>
     void PrintDebug(string? text);
-    
+
     /// <summary>
     /// Print text
     /// </summary>
@@ -64,13 +64,13 @@ public interface IClyshView
     /// </summary>
     /// <param name="text">The text to be printed without line break</param>
     void PrintWithoutBreak(string? text);
-    
+
     /// <summary>
     /// Print separator text
     /// </summary>
     /// <param name="separator">The separator text</param>
     void PrintSeparator(string separator = "#");
-    
+
     /// <summary>
     /// Print <see cref="IClyshCommand"/> help text
     /// </summary>

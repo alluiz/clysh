@@ -13,7 +13,7 @@ public class ClyshOptionBuilderTests
         var exception = Assert.Throws<ArgumentException>(() =>  builder.Id("test", ""));
         Assert.AreEqual("Invalid shortcut. The shortcut must be null or follow the pattern [a-zA-Z] and between 1 and 1 chars. (Parameter 'shortcut')", exception?.Message);
     }
-    
+
     [Test]
     public void InvalidShortcutUsingHelpShortcut()
     {
@@ -21,7 +21,7 @@ public class ClyshOptionBuilderTests
         var exception = Assert.Throws<ArgumentException>(() =>  builder.Id("test", "h"));
         Assert.AreEqual("Shortcut 'h' is reserved to help shortcut. (Parameter 'shortcut')", exception?.Message);
     }
-    
+
     [Test]
     public void InvalidDescription()
     {

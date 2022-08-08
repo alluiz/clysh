@@ -16,16 +16,6 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshSetup
 {
-    /// <summary>
-    /// The CLI Root command
-    /// </summary>
-    public ClyshCommand RootCommand { get; private set; } = default!;
-
-    /// <summary>
-    /// The CLI Data
-    /// </summary>
-    public ClyshData Data { get; private set; }
-
     private const string InvalidPath = "Invalid path: CLI data file was not found.";
 
     private const string InvalidExtension =
@@ -46,8 +36,9 @@ public class ClyshSetup
     private const string OneCommandWithRootTrue =
         "Data must have one root command. Consider marking only one command with 'Root': true.";
 
-    private readonly ClyshMap<IClyshCommand> commandsLoaded;
     private readonly List<ClyshCommandData> commandsData;
+
+    private readonly ClyshMap<IClyshCommand> commandsLoaded;
     private readonly IFileSystem fs;
     private readonly string path;
 
@@ -73,6 +64,16 @@ public class ClyshSetup
     public ClyshSetup(string path) : this(path, new FileSystem())
     {
     }
+
+    /// <summary>
+    /// The CLI Root command
+    /// </summary>
+    public ClyshCommand RootCommand { get; private set; } = default!;
+
+    /// <summary>
+    /// The CLI Data
+    /// </summary>
+    public ClyshData Data { get; private set; }
 
     /// <summary>
     /// Make your custom command action

@@ -17,25 +17,15 @@ public class ClyshService : IClyshService
     private const string YourCommandDoesNotHaveASubcommandConfigured =
         "Your command does NOT have a subcommand configured. Command: '{0}'.";
 
-    /// <summary>
-    /// The root command
-    /// </summary>
-    public IClyshCommand RootCommand { get; }
-
-    /// <summary>
-    /// The view
-    /// </summary>
-    public IClyshView View { get; set; }
-
-    private ClyshOption? lastOption;
-
-    private IClyshCommand lastCommand;
+    private readonly List<ClyshAudit> audits;
 
     private readonly bool disableAudit;
 
-    private readonly List<ClyshAudit> audits;
-
     private List<IClyshCommand> commandsToExecute;
+
+    private IClyshCommand lastCommand;
+
+    private ClyshOption? lastOption;
 
     /// <summary>
     /// The constructor of service
@@ -76,6 +66,16 @@ public class ClyshService : IClyshService
         audits = new List<ClyshAudit>();
         commandsToExecute = new List<IClyshCommand>();
     }
+
+    /// <summary>
+    /// The root command
+    /// </summary>
+    public IClyshCommand RootCommand { get; }
+
+    /// <summary>
+    /// The view
+    /// </summary>
+    public IClyshView View { get; set; }
 
     /// <summary>
     /// Execute the CLI with program arguments

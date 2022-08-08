@@ -9,8 +9,8 @@ namespace Clysh.Tests;
 
 public class ClyshSetupTests
 {
-    private readonly Mock<IFileSystem> fs = new();
     private const string Path = "/file";
+    private readonly Mock<IFileSystem> fs = new();
 
     [SetUp]
     public void Setup()

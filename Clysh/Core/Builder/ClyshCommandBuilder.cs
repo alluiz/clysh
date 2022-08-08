@@ -11,7 +11,7 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
 {
     private const int MaxDescription = 100;
     private const int MinDescription = 10;
-    
+
     /// <summary>
     /// Build the command identifier
     /// </summary>
@@ -26,7 +26,7 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
         Result.Name = id.Split(".").Last();
         return this;
     }
-    
+
     /// <summary>
     /// Build the command description
     /// </summary>
@@ -40,7 +40,7 @@ public class ClyshCommandBuilder: ClyshBuilder<ClyshCommand>
         Result.Description = description;
         return this;
     }
-    
+
     /// <summary>
     /// Build the command option
     /// </summary>

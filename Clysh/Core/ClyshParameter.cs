@@ -19,14 +19,14 @@ public class ClyshParameter : ClyshIndexable
     {
         data = string.Empty;
     }
-    
+
     /// <summary>
     /// The parameter data
     /// </summary>
     public string Data { 
         get => data;
         set { Validate(value); data = value; } }
-    
+
     /// <summary>
     /// The parameter regex
     /// </summary>
@@ -36,7 +36,7 @@ public class ClyshParameter : ClyshIndexable
     /// The parameter data regex pattern
     /// </summary>
     public string? PatternData { get; set; }
-    
+
     /// <summary>
     /// The indicator if parameter is required
     /// </summary>
@@ -70,7 +70,7 @@ public class ClyshParameter : ClyshIndexable
     {
         return Id + ":" + Data;
     }
-    
+
     private void Validate(string? value)
     {
         if (value == null || value.Trim().Length < MinLength || value.Trim().Length > MaxLength)

@@ -19,17 +19,18 @@ namespace Clysh.Data
         /// The regular expression pattern
         /// </summary>
         public string? Pattern { get; set;}
+
         /// <summary>
         /// Indicates if is a required parameter
         /// </summary>
         public bool Required { get; set; }
-        
+
         /// <summary>
         /// The minimum length
         /// </summary>
         [Required]
         public int MinLength { get; set; }
-        
+
         /// <summary>
         /// The maximum length
         /// </summary>

@@ -8,9 +8,14 @@ namespace Clysh.Helper;
 /// </summary>
 public abstract class ClyshIndexable: IClyshIndexable
 {
-    private Regex? regex;
-    
     private string id = default!;
+
+    /// <summary>
+    /// The pattern to validate the id
+    /// </summary>
+    protected string? Pattern;
+
+    private Regex? regex;
 
     /// <summary>
     /// The identifier
@@ -20,12 +25,7 @@ public abstract class ClyshIndexable: IClyshIndexable
         get => id;
         set => id = ValidatedId(value);
     }
-    
-    /// <summary>
-    /// The pattern to validate the id
-    /// </summary>
-    protected string? Pattern;
-    
+
     /// <summary>
     /// Validates the identifier
     /// </summary>

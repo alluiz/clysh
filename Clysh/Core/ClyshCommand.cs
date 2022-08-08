@@ -15,30 +15,8 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     private const string TheOptionAddressMemoryIsAlreadyRelatedToAnotherCommandOption = "The option address memory is already related to another command. Option: '{0}'";
     private const string TheGroupAddressMemoryIsAlreadyRelatedToAnotherCommandOption = "The group address memory is already related to another command. Group: '{0}'";
     private const string TheGroupAddressMemoryIsDifferent = "The group address memory is different between command and option. Group: '{0}'";
-    
-    private readonly Dictionary<string, string> shortcutToOptionId;
-    
-    public Dictionary<string, object> Data { get; }
-    
-    public Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
-    
-    public ClyshMap<IClyshCommand> SubCommands { get; }
-    
-    public ClyshMap<ClyshGroup> Groups { get; set; }
-    
-    public ClyshMap<ClyshOption> Options { get; }
-    
-    public IClyshCommand? Parent { get; set; }
-    
-    public int Order { get; set; }
-    
-    public string Description { get; set; }
-    
-    public bool Executed { get; set; }
-    
-    public bool RequireSubcommand { get; set; }
 
-    public string Name { get; set; } = default!;
+    private readonly Dictionary<string, string> shortcutToOptionId;
 
     public ClyshCommand()
     {
@@ -52,16 +30,27 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         AddDebugOption();
     }
 
-    private void AddDebugOption()
-    {
-        var builder = new ClyshOptionBuilder();
-        var debugOption = builder
-            .Id("debug")
-            .Description("Print debug log on screen")
-            .Build();
-            
-        AddOption(debugOption);
-    }
+    public Dictionary<string, object> Data { get; }
+
+    public Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
+
+    public ClyshMap<IClyshCommand> SubCommands { get; }
+
+    public ClyshMap<ClyshGroup> Groups { get; set; }
+
+    public ClyshMap<ClyshOption> Options { get; }
+
+    public IClyshCommand? Parent { get; set; }
+
+    public int Order { get; set; }
+
+    public string Description { get; set; }
+
+    public bool Executed { get; set; }
+
+    public bool RequireSubcommand { get; set; }
+
+    public string Name { get; set; } = default!;
 
     public void AddOption(ClyshOption option)
     {
@@ -84,7 +73,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         if (option.Shortcut != null)
             shortcutToOptionId.Add(option.Shortcut, option.Id);
     }
-    
+
     public void AddSubCommand(IClyshCommand subCommand)
     {
         if (subCommand.Parent != null)
@@ -94,14 +83,14 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         subCommand.Parent = this;
         SubCommands.Add(subCommand);
     }
-    
+
     public ClyshOption? GetOptionFromGroup(ClyshGroup group)
     {
         return Options
             .Values
             .SingleOrDefault(x => x.Group != null && x.Group.Equals(group) && x.Selected);
     }
-    
+
     public ClyshOption? GetOptionFromGroup(string groupId)
     {
         return GetOptionFromGroup(Groups[groupId]);
@@ -114,7 +103,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
             .Where(x => x.Group != null && x.Group.Equals(group))
             .ToList();
     }
-    
+
     public List<ClyshOption> GetAvailableOptionsFromGroup(string groupId)
     {
         return GetAvailableOptionsFromGroup(Groups[groupId]);
@@ -129,7 +118,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     {
         return Options.Has(key) || shortcutToOptionId.ContainsKey(key);
     }
-    
+
     public bool HasAnySubcommand()
     {
         return SubCommands.Any();
@@ -144,7 +133,18 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     {
         return SubCommands.Has(subCommandId);
     }
-    
+
+    private void AddDebugOption()
+    {
+        var builder = new ClyshOptionBuilder();
+        var debugOption = builder
+            .Id("debug")
+            .Description("Print debug log on screen")
+            .Build();
+            
+        AddOption(debugOption);
+    }
+
     private void AddHelpOption()
     {
         var builder = new ClyshOptionBuilder();
@@ -155,7 +155,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
             
         AddOption(helpOption);
     }
-    
+
     private void ParentRecursivity(IClyshCommand command)
     {
         var splittedId = command.Id.Split(".");

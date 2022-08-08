@@ -10,19 +10,19 @@ public interface IClyshConsole
     /// </summary>
     /// <returns>The input text in the console</returns>
     string ReadLine();
-    
+
     /// <summary>
     /// Read a sensitive input from console
     /// </summary>
     /// <returns>The input text in the console</returns>
     string ReadSensitive();
-    
+
     /// <summary>
     /// Write text with line break
     /// </summary>
     /// <param name="text">The text to be written to the console</param>
     void WriteLine(string? text);
-    
+
     /// <summary>
     /// Write text with line break
     /// </summary>
@@ -35,7 +35,7 @@ public interface IClyshConsole
     /// </summary>
     /// <param name="text">The text to be written to the console</param>
     void Write(string? text);
-    
+
     /// <summary>
     /// Write text
     /// </summary>

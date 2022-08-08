@@ -9,9 +9,6 @@ namespace Clysh.Core.Builder;
 /// <seealso cref="ClyshBuilder{T}"/>
 public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
 {
-    private bool hasProvidedOptionalParameterBefore;
-    private int lastParameterOrder = -1;
-    
     private const int MaxDescription = 500;
     private const int MinDescription = 10;
 
@@ -21,6 +18,8 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     private const string Pattern = "[a-zA-Z]";
 
     private readonly Regex regex;
+    private bool hasProvidedOptionalParameterBefore;
+    private int lastParameterOrder = -1;
 
     /// <summary>
     /// The builder constructor

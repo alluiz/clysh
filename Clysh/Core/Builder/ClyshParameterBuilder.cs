@@ -22,7 +22,7 @@ public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
         Result.Id = id;
         return this;
     }
-    
+
     /// <summary>
     /// Build the parameter order
     /// </summary>
@@ -36,7 +36,7 @@ public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
         Result.Order = order;
         return this;
     }
-    
+
     /// <summary>
     /// Build the parameter data pattern
     /// </summary>
@@ -52,7 +52,7 @@ public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
 
         return this;
     }
-    
+
     /// <summary>
     /// Build the required status
     /// </summary>
@@ -63,7 +63,7 @@ public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
         Result.Required = required;   
         return this;
     }
-    
+
     /// <summary>
     /// Build the range of parameter data
     /// </summary>

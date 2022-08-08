@@ -29,7 +29,7 @@ public class ClyshMap<TObject>: Dictionary<string, TObject> where TObject : ICly
     {
         
     }
-    
+
     /// <summary>
     /// Adds a object to the map
     /// </summary>
