@@ -73,7 +73,7 @@ public class ClyshConsole : IClyshConsole
     {
         Console.Write(text);
     }
-    
+
     /// <summary>
     /// Write text
     /// </summary>
@@ -83,7 +83,7 @@ public class ClyshConsole : IClyshConsole
     {
         Console.Write($"{lineNumber + ".",-5}{text}");
     }
-    
+
     /// <summary>
     /// Write text with line break
     /// </summary>
@@ -92,7 +92,7 @@ public class ClyshConsole : IClyshConsole
     {
         Console.WriteLine(text);
     }
-    
+
     /// <summary>
     /// Write text with line break
     /// </summary>

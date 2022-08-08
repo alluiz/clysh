@@ -8,9 +8,15 @@ namespace Clysh.Helper;
 /// </summary>
 public abstract class ClyshIndexable: IClyshIndexable
 {
-    private Regex? regex;
-    
     private string id = default!;
+    private const string InvalidIdTheIdMustFollowThePatternId = "Invalid id. The id must follow the pattern: {0}. Id: '{1}'";
+
+    /// <summary>
+    /// The pattern to validate the id
+    /// </summary>
+    protected string? Pattern;
+
+    private Regex? regex;
 
     /// <summary>
     /// The identifier
@@ -20,12 +26,7 @@ public abstract class ClyshIndexable: IClyshIndexable
         get => id;
         set => id = ValidatedId(value);
     }
-    
-    /// <summary>
-    /// The pattern to validate the id
-    /// </summary>
-    protected string? Pattern;
-    
+
     /// <summary>
     /// Validates the identifier
     /// </summary>
@@ -40,7 +41,9 @@ public abstract class ClyshIndexable: IClyshIndexable
         regex ??= new Regex(Pattern);
 
         if (!regex.IsMatch(identifier))
-            throw new ArgumentException($"Invalid id. The id must follow the pattern: {Pattern}", nameof(identifier));
+            throw new ArgumentException(
+                string.Format(InvalidIdTheIdMustFollowThePatternId, Pattern, identifier),
+                nameof(identifier));
 
         return identifier;
     }

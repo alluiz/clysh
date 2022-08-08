@@ -12,6 +12,13 @@ public class ClyshGroup: ClyshIndexable
     /// </summary>
     public IClyshCommand? Command { get; set; }
 
+    public List<string> Options { get; }
+
+    public ClyshGroup()
+    {
+        Options = new List<string>();
+    }
+
     /// <summary>
     /// Group in string format
     /// </summary>

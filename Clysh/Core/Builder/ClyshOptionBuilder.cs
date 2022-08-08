@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using Microsoft.VisualBasic;
 
 namespace Clysh.Core.Builder;
 
@@ -9,25 +10,23 @@ namespace Clysh.Core.Builder;
 /// <seealso cref="ClyshBuilder{T}"/>
 public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
 {
+    private const string InvalidShortcutReserved = "Shortcut 'h' is reserved to help shortcut. Option: {0}";
+
+    private const string ErrorOnCreateOption = "Error on create option. Option: {0}";
+
+    private const string InvalidParameterRequiredOrder = "Invalid parameter order. The required parameters must come first than optional parameters. Check the order. Parameter: {0}";
+
+    private const string InvalidParameterOrder = "Invalid parameter order. The order must be greater than the lastOrder: {0}. Parameter: {1}";
+
     private bool hasProvidedOptionalParameterBefore;
     private int lastParameterOrder = -1;
-    
-    private const int MaxDescription = 500;
-    private const int MinDescription = 10;
-
-    private const int MinShortcut = 1;
-    private const int MaxShortcut = 1;
-
-    private const string Pattern = "[a-zA-Z]";
-
-    private readonly Regex regex;
 
     /// <summary>
     /// The builder constructor
     /// </summary>
     public ClyshOptionBuilder()
     {
-        regex = new Regex(Pattern);
+        
     }
 
     /// <summary>
@@ -38,20 +37,27 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
     public ClyshOptionBuilder Id(string? id, string? shortcut = null)
     {
-        if (id == null)
-            throw new ArgumentNullException(id);
+        ArgumentNullException.ThrowIfNull(id);
 
-        if (shortcut != null && (shortcut.Length is < MinShortcut or > MaxShortcut || !regex.IsMatch(Pattern)))
-            throw new ArgumentException(
-                $"Invalid shortcut. The shortcut must be null or follow the pattern {Pattern} and between {MinShortcut} and {MaxShortcut} chars.",
-                nameof(shortcut));
+        try
+        {
+            Result.Id = id;
+            Result.Shortcut = shortcut;
 
+            ValidateHelpShortcut(id, shortcut);
+
+            return this;
+        }
+        catch (Exception e)
+        {
+            throw new ClyshException(string.Format(ErrorOnCreateOption, id), e);
+        }
+    }
+
+    private static void ValidateHelpShortcut(string id, string? shortcut)
+    {
         if (id is not "help" && shortcut is "h")
-            throw new ArgumentException("Shortcut 'h' is reserved to help shortcut.", nameof(shortcut));
-
-        Result.Id = id;
-        Result.Shortcut = shortcut;
-        return this;
+            throw new ArgumentException(string.Format(InvalidShortcutReserved, id), nameof(shortcut));
     }
 
     /// <summary>
@@ -61,13 +67,15 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
     public ClyshOptionBuilder Description(string? description)
     {
-        if (description == null || description.Trim().Length is < MinDescription or > MaxDescription)
-            throw new ArgumentException(
-                $"Option {nameof(description)} value '{description}' must be not null or empty and between {MinDescription} and {MaxDescription} chars.",
-                nameof(description));
-
-        Result.Description = description;
-        return this;
+        try
+        {
+            Result.Description = description;
+            return this;
+        }
+        catch (Exception e)
+        {
+            throw new ClyshException(string.Format(ErrorOnCreateOption, Result.Id), e);
+        }
     }
 
     /// <summary>
@@ -77,18 +85,29 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
     public ClyshOptionBuilder Parameter(ClyshParameter parameter)
     {
-        if (parameter.Order <= lastParameterOrder)
-            throw new ClyshException($"The order must be greater than the lastOrder: {lastParameterOrder}");
+        try
+        {
+            ValidateParameter(parameter);
 
-        if (parameter.Required && hasProvidedOptionalParameterBefore)
-            throw new ClyshException(
-                "Invalid order. The required parameters must come first than optional parameters. Check the order.");
-
-        hasProvidedOptionalParameterBefore = !parameter.Required;
-        lastParameterOrder = parameter.Order;
+            hasProvidedOptionalParameterBefore = !parameter.Required;
+            lastParameterOrder = parameter.Order;
         
-        Result.Parameters.Add(parameter);
-        return this;
+            Result.Parameters.Add(parameter);
+            return this;
+        }
+        catch (Exception e)
+        {
+            throw new ClyshException(string.Format(ErrorOnCreateOption, Result.Id), e);
+        }
+    }
+
+    private void ValidateParameter(ClyshParameter parameterValue)
+    {
+        if (parameterValue.Order <= lastParameterOrder)
+            throw new ArgumentException(string.Format(InvalidParameterOrder, lastParameterOrder, parameterValue.Id), nameof(parameterValue));
+
+        if (parameterValue.Required && hasProvidedOptionalParameterBefore)
+            throw new ArgumentException(string.Format(InvalidParameterRequiredOrder, parameterValue.Id), nameof(parameterValue));
     }
 
     /// <summary>

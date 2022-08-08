@@ -25,7 +25,7 @@ public class ClyshException : InvalidOperationException
     public ClyshException(string message):base(message)
     {
     }
-    
+
     /// <summary>
     /// Serialization constructor
     /// </summary>

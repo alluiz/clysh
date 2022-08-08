@@ -26,12 +26,12 @@ public class ClyshOptionData
     /// The CLI shortcut
     /// </summary>
     public string? Shortcut { get; set; }
-        
+
     /// <summary>
     /// The option parameters data list
     /// </summary>
     public List<ClyshParameterData>? Parameters { get; set; }
-    
+
     /// <summary>
     /// The option group
     /// </summary>

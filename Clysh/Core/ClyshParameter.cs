@@ -10,7 +10,16 @@ namespace Clysh.Core;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class ClyshParameter : ClyshIndexable
 {
+    private const int minLengthParam = 1;
+    private const int maxLengthParam = 1000;
+
+    private const string InvalidOrder = "All parameters must be greater or equal than 0 order. OrderValue: {0}";
+
+    private const string InvalidLength = "Invalid min length. The values must be between {0} and {1}.";
     private string data;
+    private int maxLength;
+    private int minLength;
+    private int order;
 
     /// <summary>
     /// Create a new parameter
@@ -19,14 +28,14 @@ public class ClyshParameter : ClyshIndexable
     {
         data = string.Empty;
     }
-    
+
     /// <summary>
     /// The parameter data
     /// </summary>
     public string Data { 
         get => data;
         set { Validate(value); data = value; } }
-    
+
     /// <summary>
     /// The parameter regex
     /// </summary>
@@ -36,7 +45,7 @@ public class ClyshParameter : ClyshIndexable
     /// The parameter data regex pattern
     /// </summary>
     public string? PatternData { get; set; }
-    
+
     /// <summary>
     /// The indicator if parameter is required
     /// </summary>
@@ -45,12 +54,20 @@ public class ClyshParameter : ClyshIndexable
     /// <summary>
     /// The parameter data minimum length
     /// </summary>
-    public int MinLength { get; set; }
+    public int MinLength
+    {
+        get => minLength; 
+        set => minLength = ValidateMin(value);
+    }
 
     /// <summary>
     /// The parameter data maximum length
     /// </summary>
-    public int MaxLength { get; set; }
+    public int MaxLength
+    {
+        get => maxLength; 
+        set => maxLength = ValidateMax(value);
+    }
 
     /// <summary>
     /// Check if parameter data is filled
@@ -60,7 +77,35 @@ public class ClyshParameter : ClyshIndexable
     /// <summary>
     /// Order of parameter
     /// </summary>
-    public int Order { get; set; }
+    public int Order
+    {
+        get => order; 
+        set => order = ValidateOrder(value);
+    }
+
+    private int ValidateMin(int minLengthValue)
+    {
+        if (minLengthValue < 1)
+            throw new ArgumentException(string.Format(InvalidLength, minLengthParam, maxLengthParam), nameof(minLengthValue));
+
+        return minLengthValue;
+    }
+
+    private int ValidateMax(int maxValue)
+    {
+        if (maxValue > 1000)
+            throw new ArgumentException(string.Format(InvalidLength, minLengthParam, maxLengthParam), nameof(maxValue));
+
+        return maxValue;
+    }
+
+    private int ValidateOrder(int orderValue)
+    {
+        if (orderValue < 0)
+            throw new ArgumentException(string.Format(InvalidOrder, orderValue), nameof(orderValue));
+        
+        return orderValue;
+    }
 
     /// <summary>
     /// Formats parameter exibition
@@ -70,7 +115,7 @@ public class ClyshParameter : ClyshIndexable
     {
         return Id + ":" + Data;
     }
-    
+
     private void Validate(string? value)
     {
         if (value == null || value.Trim().Length < MinLength || value.Trim().Length > MaxLength)

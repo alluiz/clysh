@@ -12,13 +12,13 @@ public interface IClyshService
     /// </summary>
     /// <seealso cref="IClyshCommand"/>
     IClyshCommand RootCommand { get; }
-    
+
     /// <summary>
     /// The view used to interact with user. Like a front-end.
     /// </summary>
     /// <seealso cref="IClyshView"/>
     IClyshView View { get; set; }
-    
+
     /// <summary>
     /// The main method of the CLI. Use to run the CLI rules with user args.
     /// </summary>

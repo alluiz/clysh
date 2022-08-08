@@ -9,9 +9,9 @@ namespace Clysh.Tests;
 
 public class ClyshViewTests
 {
+    private readonly Mock<IClyshConsole> consoleMock = new();
 
     private readonly ClyshData metadata = new(title: "Auth 2 API", "1.0");
-    private readonly Mock<IClyshConsole> consoleMock = new();
 
     [SetUp]
     public void Setup()
@@ -363,7 +363,7 @@ public class ClyshViewTests
 
         Assert.AreEqual(28, view.PrintedLines);
     }
-    
+
     [Test]
     public void SuccessfulPrintWithoutLineNumber()
     {
@@ -377,7 +377,7 @@ public class ClyshViewTests
 
         Assert.AreEqual(1, view.PrintedLines);
     }
-    
+
     [Test]
     public void SuccessfulPrintWithoutLineNumberAndNoBreak()
     {

@@ -7,8 +7,10 @@ namespace Clysh.Core.Builder;
 /// A builder for <see cref="ClyshParameter"/>
 /// </summary>
 /// <seealso cref="ClyshBuilder{T}"/>
-public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
+public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
 {
+    private const string ErrorOnCreateParameter = "Error on create parameter. Parameter: {0}";
+
     /// <summary>
     /// Build the parameter identifier
     /// </summary>
@@ -16,13 +18,12 @@ public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
     /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
     public ClyshParameterBuilder Id(string? id)
     {
-        if (id == null)
-            throw new ArgumentNullException(id);
-        
+        ArgumentNullException.ThrowIfNull(id);
+
         Result.Id = id;
         return this;
     }
-    
+
     /// <summary>
     /// Build the parameter order
     /// </summary>
@@ -30,13 +31,17 @@ public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
     /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
     public ClyshParameterBuilder Order(int order)
     {
-        if (order < 0)
-            throw new ClyshException("All parameters must be greater or equal than 0 order.");
-
-        Result.Order = order;
-        return this;
+        try
+        {
+            Result.Order = order;
+            return this;
+        }
+        catch (Exception e)
+        {
+            throw new ClyshException(string.Format(ErrorOnCreateParameter, Result.Id), e);
+        }
     }
-    
+
     /// <summary>
     /// Build the parameter data pattern
     /// </summary>
@@ -44,15 +49,22 @@ public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
     /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
     public ClyshParameterBuilder Pattern(string? pattern)
     {
-        if (pattern != null)
+        try
         {
-            Result.PatternData = pattern;
-            Result.Regex = new Regex(pattern);
+            if (pattern != null)
+            {
+                Result.PatternData = pattern;
+                Result.Regex = new Regex(pattern);
+            }
+        }
+        catch (Exception e)
+        {
+            throw new ClyshException(string.Format(ErrorOnCreateParameter, Result.Id), e);
         }
 
         return this;
     }
-    
+
     /// <summary>
     /// Build the required status
     /// </summary>
@@ -60,10 +72,10 @@ public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
     /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
     public ClyshParameterBuilder Required(bool required)
     {
-        Result.Required = required;   
+        Result.Required = required;
         return this;
     }
-    
+
     /// <summary>
     /// Build the range of parameter data
     /// </summary>
@@ -72,18 +84,20 @@ public class ClyshParameterBuilder: ClyshBuilder<ClyshParameter>
     /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
     public ClyshParameterBuilder Range(int minLength, int maxLength)
     {
-        if (minLength < 1)
-            throw new ArgumentException($"Invalid min length. The values must be between 1 and 1000.", nameof(minLength));
-        
-        if (maxLength > 1000)
-            throw new ArgumentException($"Invalid max length. The values must be between 1 and 1000.", nameof(maxLength));
-        
-        Result.MinLength = minLength;
-        Result.MaxLength = maxLength;
-        
-        if (Result.MinLength > Result.MaxLength)
-            throw new ArgumentException($"Invalid max length. The max length must be greater than min length.", nameof(maxLength));
-        
+        try
+        {
+            Result.MinLength = minLength;
+            Result.MaxLength = maxLength;
+            
+            if (Result.MinLength > Result.MaxLength)
+                throw new ArgumentException($"Invalid max length. The max length must be greater than min length.",
+                    nameof(maxLength));
+        }
+        catch (Exception e)
+        {
+            throw new ClyshException(string.Format(ErrorOnCreateParameter, Result.Id), e);
+        }
+
         return this;
     }
 }

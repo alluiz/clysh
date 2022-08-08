@@ -9,15 +9,7 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshAudit
 {
-    /// <summary>
-    /// The object with error
-    /// </summary>
-    public IClyshIndexable Obj { get; }
-    
-    /// <summary>
-    /// The object errors list
-    /// </summary>
-    public List<string> Messages { get; }
+    private readonly IClyshIndexable obj;
 
     /// <summary>
     /// The Clysh error representation
@@ -25,9 +17,14 @@ public class ClyshAudit
     /// <param name="obj">The object with error</param>
     public ClyshAudit(IClyshIndexable obj)
     {
-        Obj = obj;
-        Messages = new ();
+        this.obj = obj;
+        Messages = new List<string>();
     }
+
+    /// <summary>
+    /// The object errors list
+    /// </summary>
+    public List<string> Messages { get; }
 
     /// <summary>
     /// Check if has any error
@@ -44,7 +41,7 @@ public class ClyshAudit
     /// <returns>The audit text</returns>
     public override string ToString()
     {
-        var line =  $"ObjectId: {Obj.Id}, Type: {Obj.GetType()}\n";
+        var line =  $"ObjectId: {obj.Id}, Type: {obj.GetType()}\n";
 
         line += $"    Message(s): [{Messages.Aggregate("\n        ", (current, message) => $"{current}{message}\n        ")}]";
         
