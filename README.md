@@ -33,6 +33,8 @@ Clysh has some features to **facilitate** the process of create a CLI.
 - The commands can have **custom options** with your own shortcuts;
 - The options can have **required and/or optional parameter** to some user data input.
 - You can group options like **a radio button**.
+- The **help** command is auto-generated.
+- Easy to mocking for unit tests.
 
 ## Getting Started
 
@@ -70,9 +72,7 @@ Commands:
             MaxLength: 15
         Group: foo
     Root: true
-    SubCommands:
-      - mychild
-  - Id: mychild
+  - Id: mycli.mychild
     Description: My child
 ```
 
