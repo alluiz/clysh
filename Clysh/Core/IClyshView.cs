@@ -58,7 +58,15 @@ public interface IClyshView
     /// </summary>
     /// <param name="text">The text to be printed</param>
     void Print(string? text);
-
+    
+    /// <summary>
+    /// Print text with custom colors
+    /// </summary>
+    /// <param name="text">The text to be printed</param>
+    /// <param name="foregroundColor">The foreground color</param>
+    /// <param name="backgroundColor">The background color</param>
+    void Print(string? text, ConsoleColor foregroundColor, ConsoleColor backgroundColor = ConsoleColor.Black);
+    
     /// <summary>
     /// Print text
     /// </summary>
