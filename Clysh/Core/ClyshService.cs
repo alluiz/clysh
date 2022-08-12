@@ -395,7 +395,7 @@ public class ClyshService : IClyshService
         if (exception == null)
             View.PrintHelp(lastCommand);
         else
-            View.PrintHelp(lastCommand, exception);
+            View.PrintException(exception);
     }
 
     private static bool IsOption(string arg)

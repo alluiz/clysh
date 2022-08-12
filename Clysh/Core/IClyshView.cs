@@ -43,9 +43,27 @@ public interface IClyshView
     string AskForSensitive(string title);
 
     /// <summary>
+    /// Print alert (darkYellow text)
+    /// </summary>
+    /// <param name="text">The alert message</param>
+    void PrintAlert(string text);
+    
+    /// <summary>
     /// Print empty line
     /// </summary>
     void PrintEmpty();
+    
+    /// <summary>
+    /// Print error (red message)
+    /// </summary>
+    /// <param name="text">The error message</param>
+    void PrintError(string text);
+    
+    /// <summary>
+    /// Print exception (red message)
+    /// </summary>
+    /// <param name="exception">The exception</param>
+    void PrintException(Exception exception);
 
     /// <summary>
     /// Print text if verbose is active
@@ -58,7 +76,7 @@ public interface IClyshView
     /// </summary>
     /// <param name="text">The text to be printed</param>
     void Print(string? text);
-    
+
     /// <summary>
     /// Print text with custom colors
     /// </summary>
@@ -66,7 +84,7 @@ public interface IClyshView
     /// <param name="foregroundColor">The foreground color</param>
     /// <param name="backgroundColor">The background color</param>
     void Print(string? text, ConsoleColor foregroundColor, ConsoleColor backgroundColor = ConsoleColor.Black);
-    
+
     /// <summary>
     /// Print text
     /// </summary>
@@ -78,6 +96,12 @@ public interface IClyshView
     /// </summary>
     /// <param name="separator">The separator text</param>
     void PrintSeparator(string separator = "#");
+
+    /// <summary>
+    /// Print success message
+    /// </summary>
+    /// <param name="text">The success message</param>
+    void PrintSuccess(string text);
 
     /// <summary>
     /// Print <see cref="IClyshCommand"/> help text

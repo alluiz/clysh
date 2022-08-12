@@ -19,6 +19,7 @@ Create your **own CLI on .NET 6+** with simple steps.
 - 1.3.1 - BugFix: Debug mode
 - 1.3.4 - Data transfer between comands and description breakline after each 50 chars
 - 1.3.5 - Improvements to exception handling
+- 1.3.6 - Custom error messages and Colorized Console messages
 
 ## What is?
 

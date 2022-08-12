@@ -57,6 +57,8 @@ public class ClyshView : IClyshView
         return string.Equals(AskFor($"{question} ({yes}/{no})"), yes, StringComparison.CurrentCultureIgnoreCase);
     }
 
+    public virtual void PrintAlert(string text) => Print(text, ConsoleColor.DarkYellow);
+    
     public virtual void PrintDebug(string? text)
     {
        if (Debug)
@@ -64,7 +66,7 @@ public class ClyshView : IClyshView
     }
 
     public virtual void Print(string? text) => Print(text, false, false);
-    
+
     public virtual void Print(string? text, ConsoleColor foregroundColor, ConsoleColor backgroundColor = ConsoleColor.Black)
     {
         Console.ForegroundColor = foregroundColor;
@@ -74,7 +76,9 @@ public class ClyshView : IClyshView
     }
 
     public virtual void PrintEmpty() => Print("");
-    
+
+    public virtual void PrintError(string text) => Print(text, ConsoleColor.Red);
+
     public virtual void PrintHelp(IClyshCommand command, Exception exception)
     {
         PrintException(exception);
@@ -95,6 +99,8 @@ public class ClyshView : IClyshView
         
         Print($"{symbol}{separator}{symbol}");
     }
+    
+    public virtual void PrintSuccess(string text) => Print(text, ConsoleColor.Green);
 
     public virtual void PrintWithoutBreak(string? text) => Print(text, false, true);
 
@@ -138,14 +144,11 @@ public class ClyshView : IClyshView
         PrintEmpty();
     }
 
-    private void PrintException(Exception exception)
+    public void PrintException(Exception exception)
     {
         PrintEmpty();
-        PrintSeparator();
+        PrintError($"Error: {exception.GetType().Name}: {exception.Message}");
         PrintEmpty();
-        Print($"Error: {exception.GetType().Name}: {exception.Message}");
-        PrintEmpty();
-        PrintSeparator();
     }
 
     private void PrintCommand(IClyshCommand command)
