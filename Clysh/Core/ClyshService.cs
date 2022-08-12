@@ -91,7 +91,7 @@ public class ClyshService : IClyshService
     /// Execute the CLI with program arguments
     /// </summary>
     /// <param name="args">The arguments of CLI</param>
-    public void Execute(string[] args)
+    public virtual void Execute(string[] args)
     {
         try
         {
