@@ -83,6 +83,11 @@ public class ClyshSetup
     public ClyshData Data { get; private set; }
 
     /// <summary>
+    /// The CLI messages
+    /// </summary>
+    public Dictionary<string,string>? Messages { get; set; }
+
+    /// <summary>
     /// Make your custom command action
     /// </summary>
     /// <param name="commandId">The command id</param>
@@ -99,7 +104,7 @@ public class ClyshSetup
         try
         {
             ExtractDataFromFile();
-
+            SetupMessages();
             return CreateRootFromData();
         }
         catch (ClyshException)
@@ -109,6 +114,14 @@ public class ClyshSetup
         catch (Exception e)
         {
             throw new ClyshException(string.Format(ErrorOnLoad, path), e);
+        }
+    }
+
+    private void SetupMessages()
+    {
+        if (Data.Messages != null)
+        {
+            Messages = Data.Messages;
         }
     }
 

@@ -44,4 +44,9 @@ public class ClyshData
     /// </summary>
     [Required]
     public List<ClyshCommandData>? Commands { get; set; }
+
+    /// <summary>
+    /// The CLI custom messages
+    /// </summary>
+    public Dictionary<string, string>? Messages { get; set; }
 }
