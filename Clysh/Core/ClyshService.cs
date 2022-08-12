@@ -109,21 +109,24 @@ public class ClyshService : IClyshService
     {
         foreach (var arg in args)
         {
-            if (IsOption(arg))
+            if (!IsOption(arg))
+                ProcessAnotherArgumentType(arg);
+            else
             {
                 ProcessOption(arg);
 
                 if (OptionHelp())
                     break;
             }
-            else
-            {
-                if (IsSubcommand(arg))
-                    ProcessSubcommand(arg);
-                else //is parameter
-                    ProcessParameter(arg);
-            }
         }
+    }
+
+    private void ProcessAnotherArgumentType(string arg)
+    {
+        if (IsSubcommand(arg))
+            ProcessSubcommand(arg);
+        else //is parameter
+            ProcessParameter(arg);
     }
 
     private void FinishProcess()
