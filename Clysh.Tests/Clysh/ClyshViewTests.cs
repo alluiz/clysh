@@ -343,25 +343,20 @@ public class ClyshViewTests
     {
         IClyshView view = new ClyshView(consoleMock.Object, metadata, true);
 
-        var rootCommand = ClyshDataForTest.CreateRootCommand();
-
         try
         {
             throw new Exception("Test Exception");
         }
         catch (Exception exception)
         {
-            view.PrintHelp(rootCommand, exception);
+            view.PrintException(exception);
         }
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("----------------------#----------------------", 2), Times.Once);
+        consoleMock.Verify(x => x.WriteLine($"Error: Exception: Test Exception", 2), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
-        consoleMock.Verify(x => x.WriteLine($"Error: Exception: Test Exception", 4), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("----------------------#----------------------", 6), Times.Once);
-
-        Assert.AreEqual(28, view.PrintedLines);
+        
+        Assert.AreEqual(3, view.PrintedLines);
     }
 
     [Test]
