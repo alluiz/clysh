@@ -48,25 +48,37 @@ public class ClyshView : IClyshView
 
     public bool Debug { get; set; }
 
-    public string AskFor(string title) => AskFor(title, false);
+    public virtual string AskFor(string title) => AskFor(title, false);
 
-    public string AskForSensitive(string title) => AskFor(title, true);
+    public virtual string AskForSensitive(string title) => AskFor(title, true);
 
-    public bool Confirm(string question = "Do you agree?", string yes = "Y", string no = "n")
+    public virtual bool Confirm(string question = "Do you agree?", string yes = "Y", string no = "n")
     {
         return string.Equals(AskFor($"{question} ({yes}/{no})"), yes, StringComparison.CurrentCultureIgnoreCase);
     }
 
-    public void PrintDebug(string? text)
+    public virtual void PrintAlert(string text) => Print(text, ConsoleColor.DarkYellow);
+    
+    public virtual void PrintDebug(string? text)
     {
        if (Debug)
            Print(text);
     }
 
-    public void Print(string? text) => Print(text, false, false);
+    public virtual void Print(string? text) => Print(text, false, false);
 
-    public void PrintEmpty() => Print("");
-    
+    public virtual void Print(string? text, ConsoleColor foregroundColor, ConsoleColor backgroundColor = ConsoleColor.Black)
+    {
+        Console.ForegroundColor = foregroundColor;
+        Console.BackgroundColor = backgroundColor;
+        Print(text);
+        Console.ResetColor();
+    }
+
+    public virtual void PrintEmpty() => Print("");
+
+    public virtual void PrintError(string text) => Print(text, ConsoleColor.Red);
+
     public virtual void PrintHelp(IClyshCommand command, Exception exception)
     {
         PrintException(exception);
@@ -79,7 +91,7 @@ public class ClyshView : IClyshView
         PrintCommand(command);
     }
 
-    public void PrintSeparator(string separator = "#")
+    public virtual void PrintSeparator(string separator = "#")
     {
         var length = separator.Length;
         var count = (45 - length) / 2;
@@ -87,8 +99,10 @@ public class ClyshView : IClyshView
         
         Print($"{symbol}{separator}{symbol}");
     }
+    
+    public virtual void PrintSuccess(string text) => Print(text, ConsoleColor.Green);
 
-    public void PrintWithoutBreak(string? text) => Print(text, false, true);
+    public virtual void PrintWithoutBreak(string? text) => Print(text, false, true);
 
     private string AskFor(string title, bool sensitive)
     {
@@ -130,14 +144,11 @@ public class ClyshView : IClyshView
         PrintEmpty();
     }
 
-    private void PrintException(Exception exception)
+    public void PrintException(Exception exception)
     {
         PrintEmpty();
-        PrintSeparator();
+        PrintError($"Error: {exception.GetType().Name}: {exception.Message}");
         PrintEmpty();
-        Print($"Error: {exception.GetType().Name}: {exception.Message}");
-        PrintEmpty();
-        PrintSeparator();
     }
 
     private void PrintCommand(IClyshCommand command)

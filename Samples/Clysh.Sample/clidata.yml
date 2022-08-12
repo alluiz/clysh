@@ -1,5 +1,13 @@
 Title: MyCalc CLI
 Version: 1.0
+Messages:
+  InvalidOption: "A opção '{0}' é inválida. Use --help para ajuda."
+  InvalidSubcommand: "Você deve informar um subcomando para o comando '{0}'. Use --help para ajuda."
+  InvalidArgument: "Você não pode informar argumentos inválidos '{0}'. Use --help para ajuda."
+  InvalidParameter: "O parâmetro '{0}' está fora do intervalo permitido para a opção: {1}.. Use --help para ajuda."
+  IncorrectParameter: "O parâmetro '{0}' é inválido para a opção: {1}. Use --help para ajuda."
+  ParameterConflict: "O paramêtro '{0}' já foi preenchido para opção: {1}. Use --help para ajuda."
+  RequiredParameters: "Parâmetros obrigatórios [{0}] não foram preenchidos para opção: {1} (atalho: {2}). Use --help para ajuda."
 Commands:
   - Id: calc
     Description: My calculator using CLI

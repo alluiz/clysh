@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Clysh.Helper;
@@ -21,7 +22,11 @@ public class ClyshService : IClyshService
 
     private readonly bool disableAudit;
 
+    private readonly Dictionary<string, string> messages;
+
     private List<IClyshCommand> commandsToExecute;
+
+    private Dictionary<string, string>? defaultMessages;
 
     private IClyshCommand lastCommand;
 
@@ -47,7 +52,10 @@ public class ClyshService : IClyshService
         lastCommand = RootCommand;
         audits = new List<ClyshAudit>();
         commandsToExecute = new List<IClyshCommand>();
-        View = new ClyshView(clyshConsole, setup.Data);
+        View = new ClyshView(clyshConsole, setup.Data);        
+        FillDefaultMessages();
+        messages = defaultMessages!;
+        FillCustomMessages(setup.Messages);
     }
 
     /// <summary>
@@ -65,6 +73,8 @@ public class ClyshService : IClyshService
         View = view;
         audits = new List<ClyshAudit>();
         commandsToExecute = new List<IClyshCommand>();
+        FillDefaultMessages();
+        messages = defaultMessages!;
     }
 
     /// <summary>
@@ -81,7 +91,7 @@ public class ClyshService : IClyshService
     /// Execute the CLI with program arguments
     /// </summary>
     /// <param name="args">The arguments of CLI</param>
-    public void Execute(string[] args)
+    public virtual void Execute(string[] args)
     {
         try
         {
@@ -97,6 +107,31 @@ public class ClyshService : IClyshService
         }
     }
 
+    private void FillCustomMessages(Dictionary<string, string>? setupMessages)
+    {
+        if (setupMessages == null) return;
+        
+        foreach (var setupMessage in setupMessages
+                     .Where(setupMessage => messages.ContainsKey(setupMessage.Key)))
+        {
+            messages[setupMessage.Key] = setupMessage.Value;
+        }
+    }
+
+    private void FillDefaultMessages()
+    {
+        defaultMessages = new Dictionary<string, string>
+        {
+            { "InvalidOption", "The option '{0}' is invalid." },
+            { "InvalidSubcommand", "You need to provide some subcommand to command '{0}'" },
+            { "InvalidArgument", "You can't put parameters without any option that accept it '{0}'"},
+            { "InvalidParameter", "The parameter data '{0}' is out of bound for option: {1}."},
+            { "IncorrectParameter", "The parameter '{0}' is invalid for option: {1}."},
+            { "ParameterConflict", "The parameter '{0}' is already filled for option: {1}."},
+            { "RequiredParameters", "Required parameters [{0}] is missing for option: {1} (shortcut: {2})"}
+        };
+    }
+
     private void InitProcess()
     {
         commandsToExecute = new List<IClyshCommand> { lastCommand };
@@ -109,21 +144,24 @@ public class ClyshService : IClyshService
     {
         foreach (var arg in args)
         {
-            if (IsOption(arg))
+            if (!IsOption(arg))
+                ProcessAnotherArgumentType(arg);
+            else
             {
                 ProcessOption(arg);
 
                 if (OptionHelp())
                     break;
             }
-            else
-            {
-                if (IsSubcommand(arg))
-                    ProcessSubcommand(arg);
-                else //is parameter
-                    ProcessParameter(arg);
-            }
         }
+    }
+
+    private void ProcessAnotherArgumentType(string arg)
+    {
+        if (IsSubcommand(arg))
+            ProcessSubcommand(arg);
+        else //is parameter
+            ProcessParameter(arg);
     }
 
     private void FinishProcess()
@@ -210,8 +248,6 @@ public class ClyshService : IClyshService
     private void ProcessSubcommand(string arg)
     {
         CheckLastOptionStatus();
-        lastOption = null;
-        lastCommand.Executed = true;
         SetCommandToExecute(arg);
     }
 
@@ -222,7 +258,7 @@ public class ClyshService : IClyshService
         var key = IsOptionFull(arg) ? arg[2..] : arg[1..];
 
         if (!lastCommand.HasOption(key))
-            throw new InvalidOperationException($"The option '{arg}' is invalid.");
+            ShowErrorMessage("InvalidOption", arg);
 
         lastOption = lastCommand.GetOption(key);
 
@@ -267,7 +303,12 @@ public class ClyshService : IClyshService
         var waitingForAnySubcommand = lastCommand.RequireSubcommand && !lastCommand.HasAnySubcommandExecuted();
         
         if (waitingForAnySubcommand)
-            throw new InvalidOperationException($"You need to provide some subcommand to command '{lastCommand.Id}'");
+            ShowErrorMessage("InvalidSubcommand", lastCommand.Id);
+    }
+
+    private void ShowErrorMessage(string messageId, params object[] parameters)
+    {
+        throw new ValidationException(string.Format(messages[messageId], parameters));
     }
 
     private void ProcessParameter(string arg)
@@ -283,11 +324,10 @@ public class ClyshService : IClyshService
     private void ProcessParameterByPosition(string arg)
     {
         if (lastOption == null)
-            throw new InvalidOperationException("You can't put parameters without any option that accept it.");
+            ShowErrorMessage("InvalidArgument", arg);
 
-        if (!lastOption.Parameters.WaitingForAny())
-            throw new InvalidOperationException(
-                $"The parameter data '{arg}' is out of bound for option: {lastOption.Id}.");
+        if (!lastOption!.Parameters.WaitingForAny())
+            ShowErrorMessage("InvalidParameter", arg, lastOption.Id);
 
         lastOption.Parameters.Last().Data = arg;
         lastOption.Parameters.Last().Filled = true;
@@ -296,25 +336,23 @@ public class ClyshService : IClyshService
     private void ProcessParameterById(string arg)
     {
         if (lastOption == null)
-            throw new InvalidOperationException("You can't put parameters without any option that accept it.");
-
+            ShowErrorMessage("InvalidArgument", arg);
+        
         var parameter = arg.Split(":");
 
         var id = parameter[0];
         var data = parameter[1];
 
-        if (lastOption.Parameters.Has(id))
+        if (lastOption!.Parameters.Has(id))
         {
             if (!lastOption.Parameters[id].Data.IsEmpty())
-                throw new InvalidOperationException(
-                    $"The parameter '{id}' is already filled for option: {lastOption.Id}.");
+                ShowErrorMessage("ParameterConflict", id, lastOption.Id);
 
             lastOption.Parameters[id].Data = data;
             lastOption.Parameters[id].Filled = true;
         }
         else
-            throw new InvalidOperationException(
-                $"The parameter '{id}' is invalid for option: {lastOption.Id}.");
+            ShowErrorMessage("IncorrectParameter", id, lastOption.Id);
     }
 
     private void CheckLastOptionStatus()
@@ -322,8 +360,7 @@ public class ClyshService : IClyshService
         var waitingForRequiredParameters = lastOption != null && lastOption.Parameters.WaitingForRequired();
         
         if (waitingForRequiredParameters)
-            throw new InvalidOperationException(
-                $"Required parameters [{lastOption!.Parameters.RequiredToString()}] is missing for option: {lastOption.Id} (shortcut: {lastOption.Shortcut ?? "<null>"})");
+            ShowErrorMessage("RequiredParameters", lastOption!.Parameters.RequiredToString(), lastOption.Id, lastOption.Shortcut ?? "<null>");
     }
 
     private static bool ArgIsParameterById(string arg)
@@ -344,6 +381,9 @@ public class ClyshService : IClyshService
 
     private void SetCommandToExecute(string arg)
     {
+        lastOption = null;
+        lastCommand.Executed = true;
+        
         var order = lastCommand.Order + 1;
         lastCommand = lastCommand.SubCommands[GetCommandId(arg)];
         lastCommand.Order = order;
@@ -355,7 +395,7 @@ public class ClyshService : IClyshService
         if (exception == null)
             View.PrintHelp(lastCommand);
         else
-            View.PrintHelp(lastCommand, exception);
+            View.PrintException(exception);
     }
 
     private static bool IsOption(string arg)
