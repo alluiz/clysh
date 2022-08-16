@@ -5,18 +5,18 @@ namespace Clysh.Sample;
 
 public static class CliActions
 {
-    public static void CalcOperationAdd(IClyshCommand cmd, ClyshMap<ClyshOption> options, IClyshView view)
+    public static void CalcOperationAdd(IClyshCommand cmd, IClyshView view)
     {
-        CalcOperation(options, view, (a, b) => a + b);
+        CalcOperation(cmd.Options, view, (a, b) => a + b);
         
         //Get data from parent
         var root = (Root) cmd.Parent!.Data["root"];
         view.Print($"={root.Message}");
     }
     
-    public static void CalcOperationSub(IClyshCommand cmd, ClyshMap<ClyshOption> options, IClyshView view)
+    public static void CalcOperationSub(IClyshCommand cmd, IClyshView view)
     {
-        CalcOperation(options, view, (a, b) => a - b);
+        CalcOperation(cmd.Options, view, (a, b) => a - b);
     }
     
     private static void CalcOperation(ClyshMap<ClyshOption> options, IClyshView view, Func<int, int, int> operation)
@@ -36,7 +36,7 @@ public static class CliActions
        return Convert.ToInt32(value);
     }
 
-    public static void CalcRoot(IClyshCommand cmd, ClyshMap<ClyshOption> options, IClyshView view)
+    public static void CalcRoot(IClyshCommand cmd, IClyshView view)
     {
         cmd.Data.Add("root", new Root() { Message="Thanks for using my calc!" });
     }

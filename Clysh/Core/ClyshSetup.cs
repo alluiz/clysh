@@ -88,14 +88,13 @@ public class ClyshSetup
     public Dictionary<string,string>? Messages { get; set; }
 
     /// <summary>
-    /// Make your custom command action
+    /// Bind your command action
     /// </summary>
     /// <param name="commandId">The command id</param>
     /// <param name="action">The action to be executed</param>
-    public void MakeAction(string commandId, Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView> action)
+    public void BindAction(string commandId, Action<IClyshCommand, IClyshView> action)
     {
         var command = commandsLoaded[commandId];
-
         command.Action = action;
     }
 
@@ -178,13 +177,20 @@ public class ClyshSetup
 
     private ClyshCommandData GetRootData()
     {
-        //Must have one root command. Throw an error if has any number different than one.
-        var rootData = Data.Commands!.SingleOrDefault(x => x.Root);
+        try
+        {
+            //Must have one root command. Throw an error if has any number different than one.
+            var rootData = Data.Commands!.SingleOrDefault(x => x.Root);
 
-        if (rootData == null)
-            throw new ClyshException(OneCommandWithRootTrue);
+            if (rootData == null)
+                throw new ClyshException(OneCommandWithRootTrue);
 
-        return rootData;
+            return rootData;
+        }
+        catch (Exception e)
+        {
+            throw new ClyshException(OneCommandWithRootTrue, e);
+        }
     }
 
     private void VerifyCommands()

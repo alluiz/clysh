@@ -16,7 +16,7 @@ public interface IClyshCommand: IClyshIndexable
     /// <summary>
     /// The command action
     /// </summary>
-    Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
+    Action<IClyshCommand, IClyshView>? Action { get; set; }
 
     /// <summary>
     /// The command description

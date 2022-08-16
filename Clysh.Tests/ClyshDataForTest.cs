@@ -24,9 +24,9 @@ namespace Clysh.Tests
             return builder
                 .Id("auth2")
                 .Description("Execute Auth 2 API CLI Application")
-                .Action((cmd, _, view) =>
+                .Action((command, view) =>
                 {
-                    var envOption = cmd.GetOptionFromGroup("env");
+                    var envOption = command.GetOptionFromGroup("env");
 
                     if (envOption != null)
                     {
@@ -67,11 +67,11 @@ namespace Clysh.Tests
             return builder
                 .Id("auth2.credential")
                 .Description("Manager a credential")
-                .Action((_, options, view) =>
+                .Action((command, view) =>
                 {
-                    if (options[appNameOption].Selected)
+                    if (command.Options[appNameOption].Selected)
                     {
-                        var appname = options[appNameOption];
+                        var appname = command.Options[appNameOption];
 
                         view.Print("appname: " + appname.Parameters[appNameOption].Data);
                     }
@@ -81,10 +81,10 @@ namespace Clysh.Tests
                         view.Print("appname: (random) " + guid.ToString());
                     }
 
-                    if (options[scopeOption].Selected)
+                    if (command.Options[scopeOption].Selected)
                     {
-                        view.Print("scope: " + options[scopeOption].Parameters["scope"].Data);
-                        view.Print("tags: " + options[scopeOption].Parameters["tags"].Data);
+                        view.Print("scope: " + command.Options[scopeOption].Parameters["scope"].Data);
+                        view.Print("tags: " + command.Options[scopeOption].Parameters["tags"].Data);
                     }
                 })
                 .Option(optionBuilder.Id(appNameOption)
@@ -111,7 +111,7 @@ namespace Clysh.Tests
             return builder
                 .Id("auth2.credential.test")
                 .Description("Test credential command")
-                .Action((_, _, _) => { })
+                .Action((_, _) => { })
                 .Option(optionBuilder.Id(timeOption, "t")
                     .Description("time to expire credential in hours.")
                     .Parameter(parameterBuilder.Id("hours").Range(1, 2).Required(true).Order(1).Build())
@@ -131,16 +131,16 @@ namespace Clysh.Tests
             return builder
                 .Id("auth2.login")
                 .Description("User login command for system")
-                .Action((_, options, view) =>
+                .Action((command, view) =>
                 {
-                    if (options[promptOption].Selected)
+                    if (command.Options[promptOption].Selected)
                     {
                         view.Print($"Your username is: {view.AskFor("Username")}");
                         view.Print($"Your password is: {view.AskFor("Password")}");
                     }
-                    else if (options[credentialsOption].Selected)
+                    else if (command.Options[credentialsOption].Selected)
                     {
-                        var credential = options[credentialsOption];
+                        var credential = command.Options[credentialsOption];
                         view.Print("Your credential path is: " + credential.Parameters["path"].Data);
                     }
 

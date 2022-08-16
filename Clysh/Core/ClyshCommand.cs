@@ -44,7 +44,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
 
     public Dictionary<string, object> Data { get; }
 
-    public Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView>? Action { get; set; }
+    public Action<IClyshCommand, IClyshView>? Action { get; set; }
 
     public ClyshMap<IClyshCommand> SubCommands { get; }
 

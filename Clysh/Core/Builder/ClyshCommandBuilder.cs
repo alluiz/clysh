@@ -86,7 +86,7 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     /// </summary>
     /// <param name="action">The action of the command</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
-    public ClyshCommandBuilder Action(Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView> action)
+    public ClyshCommandBuilder Action(Action<IClyshCommand, IClyshView> action)
     {
         try
         {

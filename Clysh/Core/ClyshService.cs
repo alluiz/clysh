@@ -373,7 +373,7 @@ public class ClyshService : IClyshService
         foreach (var command in commandsToExecute.OrderBy(x => x.Order))
         {
             if (command.Action != null)
-                command.Action(command, command.Options, View);
+                command.Action(command, View);
             else if (!command.RequireSubcommand)
                 throw new ClyshException($"Action null (NOT READY TO PRODUCTION). Command: {command.Id}");
         }
