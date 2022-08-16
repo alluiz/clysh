@@ -28,7 +28,7 @@ public class ClyshSetupTests
 
         var setup = new ClyshSetup(Path, fs.Object);
         setup.Load();
-        setup.MakeAction("mycli", EmptyAction);
+        setup.BindAction("mycli", EmptyAction);
 
         var root = setup.RootCommand;
 
@@ -66,7 +66,7 @@ public class ClyshSetupTests
 
         var setup = new ClyshSetup(Path, fs.Object);
         setup.Load();
-        setup.MakeAction("mycli", EmptyAction);
+        setup.BindAction("mycli", EmptyAction);
 
         var root = setup.RootCommand;
 
@@ -105,7 +105,7 @@ public class ClyshSetupTests
         var setup = new ClyshSetup(Path, fs.Object);
         setup.Load();
 
-        setup.MakeAction("mycli", EmptyAction);
+        setup.BindAction("mycli", EmptyAction);
 
         var root = setup.RootCommand;
 
@@ -126,7 +126,7 @@ public class ClyshSetupTests
         Assert.AreEqual(15, root.Options["test"].Parameters["ab"].MaxLength);
     }
 
-    private void EmptyAction(IClyshCommand clyshCommand, ClyshMap<ClyshOption> map, IClyshView clyshView)
+    private void EmptyAction(IClyshCommand clyshCommand, IClyshView clyshView)
     {
         //Just a empty reference to test address memory
     }

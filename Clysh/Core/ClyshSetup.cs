@@ -88,14 +88,13 @@ public class ClyshSetup
     public Dictionary<string,string>? Messages { get; set; }
 
     /// <summary>
-    /// Make your custom command action
+    /// Bind your command action
     /// </summary>
     /// <param name="commandId">The command id</param>
     /// <param name="action">The action to be executed</param>
-    public void MakeAction(string commandId, Action<IClyshCommand, ClyshMap<ClyshOption>, IClyshView> action)
+    public void BindAction(string commandId, Action<IClyshCommand, IClyshView> action)
     {
         var command = commandsLoaded[commandId];
-
         command.Action = action;
     }
 
