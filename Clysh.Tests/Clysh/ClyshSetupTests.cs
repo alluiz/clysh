@@ -254,6 +254,25 @@ public class ClyshSetupTests
             "Data must have one root command. Consider marking only one command with 'Root': true.",
             exception?.Message);
     }
+    
+    [Test]
+    public void CreateSetupYamlWithMoreThanOneRootCommandError()
+    {
+        fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithMoreThanOneRootCommandText());
+
+        var exception = Assert.Throws<ClyshException>(() =>
+        {
+            var setup = new ClyshSetup(Path, fs.Object);
+            setup.Load();
+        });
+
+        Assert.AreEqual(
+            "Data must have one root command. Consider marking only one command with 'Root': true.",
+            exception?.Message);
+    }
 
     [Test]
     public void CreateSetupYamlWithRecursiveCommandError()
@@ -545,6 +564,29 @@ Commands:
             MaxLength: 15
   - Id: mycli.mychild
     Description: My child";
+    }
+    
+    private string GetYamlWithMoreThanOneRootCommandText()
+    {
+        return @"
+Title: MyCLI with only test command
+Version: 1.0
+Commands:
+  - Id: mycli
+    Description: My own CLI
+    Root: true
+    Options:
+      - Description: Test option
+        Id: test
+        Shortcut: T
+        Parameters:
+          - Id: ab
+            Required: true
+            MinLength: 1
+            MaxLength: 15
+  - Id: mycli.mychild
+    Description: My child
+    Root: true";
     }
 
     private string GetYamlWithoutCommandText()

@@ -178,13 +178,20 @@ public class ClyshSetup
 
     private ClyshCommandData GetRootData()
     {
-        //Must have one root command. Throw an error if has any number different than one.
-        var rootData = Data.Commands!.SingleOrDefault(x => x.Root);
+        try
+        {
+            //Must have one root command. Throw an error if has any number different than one.
+            var rootData = Data.Commands!.SingleOrDefault(x => x.Root);
 
-        if (rootData == null)
-            throw new ClyshException(OneCommandWithRootTrue);
+            if (rootData == null)
+                throw new ClyshException(OneCommandWithRootTrue);
 
-        return rootData;
+            return rootData;
+        }
+        catch (Exception e)
+        {
+            throw new ClyshException(OneCommandWithRootTrue, e);
+        }
     }
 
     private void VerifyCommands()
