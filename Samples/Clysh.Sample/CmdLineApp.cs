@@ -4,17 +4,16 @@ namespace Clysh.Sample;
 
 public abstract class CmdLineApp
 {
-    protected IClyshService cli;
-
-    protected CmdLineApp()
-    {
-        this.cli = GetCli();
-    }
+    private IClyshService? _cli;
 
     protected abstract IClyshService GetCli(); 
 
     public void Execute(string[] args)
     {
-        this.cli.Execute(args);
+        if (_cli == null) {
+            this._cli = GetCli();
+        }
+        
+        this._cli.Execute(args);
     }
 }

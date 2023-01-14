@@ -214,7 +214,7 @@ public class ClyshSetupTests
             setup.Load();
         });
 
-        Assert.AreEqual("Invalid commands: The data must contains at once one command.",
+        Assert.AreEqual("Invalid commands: The data must contains at least one command.",
             exception?.Message);
     }
 
@@ -355,7 +355,7 @@ public class ClyshSetupTests
             setup.Load();
         });
 
-        Assert.AreEqual("The commands loaded size is different than commands declared in file. Check if all your commands has a valid parent.",
+        Assert.AreEqual("The commands loaded size is different than commands size declared in file. Check if all your commands has a valid parent.",
             exception?.Message);
     }
 
