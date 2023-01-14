@@ -3,6 +3,6 @@
 //Use appsettings.json to control CLI create mode: Declarative or Compiled
 var appSettings = AppSettingsHandler.GetAppSettings();
 
-IApp app = appSettings.UseDeclarativeCli ? new DeclarativeApp() : new CompiledApp();
+ICmdLineApp app = appSettings.UseDeclarativeCli ? new DeclarativeCmdLineApp() : new CompiledCmdLineApp();
 
 app.Cli.Execute(args);

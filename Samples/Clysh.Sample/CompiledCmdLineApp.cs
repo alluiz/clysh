@@ -4,11 +4,11 @@ using Clysh.Data;
 
 namespace Clysh.Sample;
 
-public class CompiledApp: IApp
+public class CompiledCmdLineApp: ICmdLineApp
 {
     public IClyshService Cli { get; }
 
-    public CompiledApp()
+    public CompiledCmdLineApp()
     {
         Cli = GetCli();
     }

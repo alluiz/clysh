@@ -2,11 +2,11 @@
 
 namespace Clysh.Sample;
 
-public class DeclarativeApp: IApp
+public class DeclarativeCmdLineApp: ICmdLineApp
 {
     public IClyshService Cli { get; }
 
-    public DeclarativeApp()
+    public DeclarativeCmdLineApp()
     {
         this.Cli = GetCli();
     }
