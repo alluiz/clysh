@@ -2,16 +2,9 @@
 
 namespace Clysh.Sample;
 
-public class DeclarativeCmdLineApp: ICmdLineApp
+public class DeclarativeCmdLineApp: CmdLineApp
 {
-    public IClyshService Cli { get; }
-
-    public DeclarativeCmdLineApp()
-    {
-        this.Cli = GetCli();
-    }
-
-    private static IClyshService GetCli()
+    protected override IClyshService GetCli()
     {
         var setup = new ClyshSetup("clidata.yml");
 
