@@ -21,6 +21,7 @@ Create your **own CLI on .NET 6+** with simple steps.
 - 1.3.5 - Improvements to exception handling
 - 1.3.6 - Custom error messages and Colorized Console messages
 - 1.4.0 - Removed option parameter from action interface
+- 1.4.1 - Some code refactoring and fix example
 
 ## What is?
 
@@ -46,7 +47,7 @@ To use Clysh you need to install the package from NuGet.
 
 Then, to start create a _clidata.yml_ with the content below:
 
-```
+``` yaml
 Title: MyCLI with only test command
 Version: 1.0
 Commands:
@@ -75,23 +76,25 @@ Commands:
         Group: foo
     Root: true
   - Id: mycli.mychild
-    Description: My child
+    Description: My child for tests
 ```
 
 To use this create a new **Console Application**, then in your **Program.cs** write this:
 
-```
+``` csharp
 using Clysh.Core;
 
 var setup = new ClyshSetup("clidata.yml");
 
-setup.MakeAction("mycli", (_, options, view) =>
-{
-    view.Print(options["test"].Selected ? "mycli with test option" : "mycli without test option");
+setup.Load();
 
-    if (options["test"].Selected)
+setup.BindAction("mycli", (cmd, view) =>
+{
+    view.Print(cmd.Options["test"].Selected ? "mycli with test option" : "mycli without test option");
+
+    if (cmd.Options["test"].Selected)
     {
-        var option = options["test"];
+        var option = cmd.Options["test"];
 
         var data = option.Parameters["value"].Data;
 

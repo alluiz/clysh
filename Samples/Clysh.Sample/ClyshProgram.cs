@@ -1,8 +1,9 @@
 ﻿using Clysh.Sample;
 
 //Use appsettings.json to control CLI create mode: Declarative or Compiled
-var appSettingsHandler = new AppSettingsHandler("appsettings.json");
+var appSettings = AppSettingsHandler.GetAppSettings();
 
-IApp app = appSettingsHandler.Config.UseDeclarativeCli ? new DeclarativeApp() : new CompiledApp();
+//Here is implemented Declarative or Compiled App. Check these classes to show the examples
+CmdLineApp app = appSettings.UseDeclarativeCli ? new DeclarativeCmdLineApp() : new CompiledCmdLineApp();
 
-app.Cli.Execute(args);
+app.Execute(args);

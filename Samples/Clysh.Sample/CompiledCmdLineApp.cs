@@ -4,16 +4,9 @@ using Clysh.Data;
 
 namespace Clysh.Sample;
 
-public class CompiledApp: IApp
+public class CompiledCmdLineApp: CmdLineApp
 {
-    public IClyshService Cli { get; }
-
-    public CompiledApp()
-    {
-        Cli = GetCli();
-    }
-    
-    private static IClyshService GetCli()
+    protected override IClyshService GetCli()
     {
         var data = new ClyshData("MyCalc CLI", "1.0");
 
