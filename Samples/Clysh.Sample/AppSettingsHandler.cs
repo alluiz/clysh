@@ -5,25 +5,20 @@ namespace Clysh.Sample;
 
 public class AppSettingsHandler
 {
-    private readonly string _filename;
-
-    public AppSettings Config { get; }
-
-    public AppSettingsHandler(string filename)
-    {
-        _filename = filename;
-        Config = GetAppSettings();
-    }
+    private static AppSettings? _settings;
     
-    private AppSettings GetAppSettings()
+    public static AppSettings GetAppSettings(string filename)
     {
-        var config = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile(_filename, false, true)
-            .Build();
+        if (_settings == null) {
+            
+            var config = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile(filename, false, true)
+                .Build();
 
-        var settings = config.GetSection("App").Get<AppSettings>() ?? throw new InvalidOperationException("Settings cannot be null.");
-        
-        return settings;
+            _settings = config.GetSection("App").Get<AppSettings>() ?? throw new InvalidOperationException("Settings cannot be null.");
+        }
+
+        return _settings;
     }
 }
