@@ -326,7 +326,7 @@ public class ClyshSetup : IClyshSetup
             BuildOption(builder, command, option);
     }
 
-    private static void BuildOption(ClyshOptionBuilder builder, IClyshCommand command, ClyshOptionData option)
+    private static void BuildOption(ClyshOptionBuilder builder, IClyshCommand command, OptionData option)
     {
         builder
             .Id(option.Id, option.Shortcut)
@@ -338,7 +338,7 @@ public class ClyshSetup : IClyshSetup
         command.AddOption(builder.Build());
     }
 
-    private static void BuildOptionParameters(ClyshOptionBuilder builder, ClyshOptionData option)
+    private static void BuildOptionParameters(ClyshOptionBuilder builder, OptionData option)
     {
         if (option.Parameters == null)
             return;
@@ -363,7 +363,7 @@ public class ClyshSetup : IClyshSetup
         }
     }
 
-    private static void BuildOptionGroup(ClyshOptionBuilder builder, IClyshCommand command, ClyshOptionData option)
+    private static void BuildOptionGroup(ClyshOptionBuilder builder, IClyshCommand command, OptionData option)
     {
         if (option.Group == null) return;
 

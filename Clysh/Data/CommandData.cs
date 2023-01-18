@@ -33,7 +33,7 @@ public class CommandData
     /// <summary>
     /// The command options data
     /// </summary>
-    public List<ClyshOptionData>? Options { get; set; }
+    public List<OptionData>? Options { get; set; }
 
     /// <summary>
     /// The groups available for command

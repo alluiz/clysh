@@ -8,7 +8,7 @@ namespace Clysh.Data;
 /// Class used to deserialize option data from file
 /// </summary>
 // ReSharper disable once ClassNeverInstantiated.Global
-public class ClyshOptionData
+public class OptionData
 {
     /// <summary>
     /// The id of option
@@ -30,7 +30,7 @@ public class ClyshOptionData
     /// <summary>
     /// The option parameters data list
     /// </summary>
-    public List<ClyshParameterData>? Parameters { get; set; }
+    public List<ParameterData>? Parameters { get; set; }
 
     /// <summary>
     /// The option group
