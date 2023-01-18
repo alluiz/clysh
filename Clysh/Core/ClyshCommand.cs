@@ -13,23 +13,14 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
 {
     private const int MaxDescription = 100;
     private const int MinDescription = 10;
-    private const string CommandMustHaveOnlyOneParentCommand = "The command must have only one parent. Command: '{0}'";
+    private const string MessageCommandMustHaveOnlyOneParentCommand = "Invalid command: The command must have only one parent. Command: '{0}'";
+    private const string MessageOptionAddressMemory = "Invalid command: The option memory address is already related to another command. Option: '{0}'";
+    private const string MessageGroupAddressMemory = "Invalid command: The group memory address is already related to another command. Group: '{0}'";
+    private const string MessageGroupAddressMemoryIsDifferent = "Invalid command: The group memory address is different between command and option. Group: '{0}'";
+    private const string MessageInvalidDescription = "Invalid command: Command description must be not null or empty and between {0} and {1} chars. Description: '{2}'";
 
-    private const string TheOptionAddressMemoryIsAlreadyRelatedToAnotherCommandOption =
-        "The option address memory is already related to another command. Option: '{0}'";
-
-    private const string TheGroupAddressMemoryIsAlreadyRelatedToAnotherCommandOption =
-        "The group address memory is already related to another command. Group: '{0}'";
-
-    private const string TheGroupAddressMemoryIsDifferent =
-        "The group address memory is different between command and option. Group: '{0}'";
-
-    private const string InvalidDescription =
-        "Option description must be not null or empty and between {0} and {1} chars. Description: '{2}'";
-
-    private readonly Dictionary<string, string> shortcutToOptionId;
-
-    private string description = string.Empty;
+    private readonly Dictionary<string, string> _shortcutToOptionId;
+    private string _description = string.Empty;
 
     public ClyshCommand()
     {
@@ -37,7 +28,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         Options = new ClyshMap<ClyshOption>();
         SubCommands = new ClyshMap<IClyshCommand>();
         Data = new Dictionary<string, object>();
-        shortcutToOptionId = new Dictionary<string, string>();
+        _shortcutToOptionId = new Dictionary<string, string>();
         AddHelpOption();
         AddDebugOption();
     }
@@ -61,8 +52,8 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     /// </summary>
     public string Description
     {
-        get => description;
-        set => description = ValidateDescription(value);
+        get => _description;
+        set => _description = ValidateDescription(value);
     }
 
     public bool Executed { get; set; }
@@ -74,7 +65,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     public void AddOption(ClyshOption option)
     {
         if (option.Command != null)
-            throw new ClyshException(string.Format(TheOptionAddressMemoryIsAlreadyRelatedToAnotherCommandOption,
+            throw new ClyshException(string.Format(MessageOptionAddressMemory,
                 option.Id));
 
         option.Command = this;
@@ -82,7 +73,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         if (Options.Has(option.Id))
             throw new ClyshException($"Invalid option id. The command already has an option with id: {option.Id}.");
 
-        if (option.Shortcut != null && shortcutToOptionId.ContainsKey(option.Shortcut))
+        if (option.Shortcut != null && _shortcutToOptionId.ContainsKey(option.Shortcut))
             throw new ClyshException(
                 $"Invalid option shortcut. The command already has an option with shortcut: {option.Shortcut}.");
 
@@ -92,13 +83,13 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         Options.Add(option);
 
         if (option.Shortcut != null)
-            shortcutToOptionId.Add(option.Shortcut, option.Id);
+            _shortcutToOptionId.Add(option.Shortcut, option.Id);
     }
 
     public void AddSubCommand(IClyshCommand subCommand)
     {
         if (subCommand.Parent != null)
-            throw new ClyshException(string.Format(CommandMustHaveOnlyOneParentCommand, subCommand.Id));
+            throw new ClyshException(string.Format(MessageCommandMustHaveOnlyOneParentCommand, subCommand.Id));
 
         ParentRecursivity(subCommand);
         subCommand.Parent = this;
@@ -132,12 +123,12 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
 
     public ClyshOption GetOption(string arg)
     {
-        return Options.Has(arg) ? Options[arg] : Options[shortcutToOptionId[arg]];
+        return Options.Has(arg) ? Options[arg] : Options[_shortcutToOptionId[arg]];
     }
 
     public bool HasOption(string key)
     {
-        return Options.Has(key) || shortcutToOptionId.ContainsKey(key);
+        return Options.Has(key) || _shortcutToOptionId.ContainsKey(key);
     }
 
     public bool HasAnySubcommand()
@@ -159,7 +150,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     {
         if (descriptionValue == null || descriptionValue.Trim().Length is < MinDescription or > MaxDescription)
             throw new ArgumentException(
-                string.Format(InvalidDescription, MinDescription, MaxDescription, descriptionValue),
+                string.Format(MessageInvalidDescription, MinDescription, MaxDescription, descriptionValue),
                 nameof(descriptionValue));
 
         return descriptionValue;
@@ -199,7 +190,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     public void AddGroups(ClyshGroup group)
     {
         if (group.Command != null && !group.Command.Equals(this))
-            throw new ClyshException(string.Format(TheGroupAddressMemoryIsAlreadyRelatedToAnotherCommandOption,
+            throw new ClyshException(string.Format(MessageGroupAddressMemory,
                 group.Id));
 
         group.Command = this;
@@ -207,6 +198,6 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         if (!Groups.Has(group.Id))
             Groups.Add(group);
         else if (!Groups[group.Id].Equals(group))
-            throw new ClyshException(string.Format(TheGroupAddressMemoryIsDifferent, group.Id));
+            throw new ClyshException(string.Format(MessageGroupAddressMemoryIsDifferent, group.Id));
     }
 }
