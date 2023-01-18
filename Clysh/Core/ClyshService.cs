@@ -152,8 +152,16 @@ public class ClyshService : IClyshService
 
                 if (OptionHelp())
                     break;
+                
+                if (OptionVersion())
+                    break;
             }
         }
+    }
+
+    private bool OptionVersion()
+    {
+        return lastOption is { Id: "version" };
     }
 
     private void ProcessAnotherArgumentType(string arg)
@@ -167,9 +175,9 @@ public class ClyshService : IClyshService
     private void FinishProcess()
     {
         if (OptionHelp())
-        {
             ExecuteHelp();
-        }
+        else if (OptionVersion())
+            ExecuteVersion();
         else
         {
             lastCommand.Executed = true;
@@ -177,6 +185,11 @@ public class ClyshService : IClyshService
             CheckLastOptionStatus();
             ExecuteCommands();
         }
+    }
+
+    private void ExecuteVersion()
+    {
+        View.PrintVersion();
     }
 
     private bool OptionDebug()

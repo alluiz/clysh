@@ -115,4 +115,9 @@ public interface IClyshView
     /// <param name="command">The command to print help text</param>
     /// <param name="exception">The exception to be printed with help</param>
     void PrintHelp(IClyshCommand command, Exception exception);
+    
+    /// <summary>
+    /// Print CLI version on screen
+    /// </summary>
+    void PrintVersion();
 }

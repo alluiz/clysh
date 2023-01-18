@@ -246,7 +246,7 @@ public class ClyshViewTests
 
         consoleMock.Verify(x => x.WriteLine("", 14 + j), Times.Once);
 
-        Assert.AreEqual(22, view.PrintedLines);
+        Assert.AreEqual(23, view.PrintedLines);
     }
 
     [Test]
@@ -299,7 +299,7 @@ public class ClyshViewTests
 
         consoleMock.Verify(x => x.WriteLine("", 14 + j), Times.Once);
 
-        Assert.AreEqual(20, view.PrintedLines);
+        Assert.AreEqual(21, view.PrintedLines);
     }
 
     [Test]
@@ -335,7 +335,7 @@ public class ClyshViewTests
 
         consoleMock.Verify(x => x.WriteLine("", 12 + i), Times.Once);
 
-        Assert.AreEqual(15, view.PrintedLines);
+        Assert.AreEqual(16, view.PrintedLines);
     }
 
     [Test]
@@ -353,7 +353,7 @@ public class ClyshViewTests
         }
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
-        consoleMock.Verify(x => x.WriteLine($"Error: Exception: Test Exception", 2), Times.Once);
+        consoleMock.Verify(x => x.WriteLine($"Error: Test Exception", 2), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
         
         Assert.AreEqual(3, view.PrintedLines);

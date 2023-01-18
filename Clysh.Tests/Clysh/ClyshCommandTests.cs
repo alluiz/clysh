@@ -44,7 +44,7 @@ public class ClyshCommandTests
             .Id("option")
             .Build());
         Assert.NotNull(command.Options);
-        Assert.AreEqual(3, command.Options.Count);
+        Assert.AreEqual(4, command.Options.Count);
         Assert.AreEqual("option", command.Options["option"].Id);
     }
 }

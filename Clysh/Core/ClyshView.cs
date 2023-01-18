@@ -87,7 +87,7 @@ public class ClyshView : IClyshView
 
     public virtual void PrintHelp(IClyshCommand command)
     {
-        PrintTitle();
+        PrintVersion();
         PrintCommand(command);
     }
 
@@ -137,7 +137,7 @@ public class ClyshView : IClyshView
             PrintEmpty();
     }
 
-    private void PrintTitle()
+    public void PrintVersion()
     {
         PrintEmpty();
         Print($"{Data.Title}. Version: {Data.Version}");
@@ -147,7 +147,7 @@ public class ClyshView : IClyshView
     public void PrintException(Exception exception)
     {
         PrintEmpty();
-        PrintError($"Error: {exception.GetType().Name}: {exception.Message}");
+        PrintError($"Error: {exception.Message}");
         PrintEmpty();
     }
 

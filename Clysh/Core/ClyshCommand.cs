@@ -30,6 +30,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         Data = new Dictionary<string, object>();
         _shortcutToOptionId = new Dictionary<string, string>();
         AddHelpOption();
+        AddVersionOption();
         AddDebugOption();
     }
 
@@ -176,6 +177,17 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
             .Build();
 
         AddOption(helpOption);
+    }
+    
+    private void AddVersionOption()
+    {
+        var builder = new ClyshOptionBuilder();
+        var versionOption = builder
+            .Id("version", "v")
+            .Description("Show the CLI version")
+            .Build();
+
+        AddOption(versionOption);
     }
 
     private void ParentRecursivity(IClyshCommand command)
