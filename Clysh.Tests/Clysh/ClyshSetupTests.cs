@@ -27,7 +27,7 @@ public class ClyshSetupTests
         fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlText());
 
         var setup = new ClyshSetup(Path, fs.Object);
-        setup.Load();
+        
         setup.BindAction("mycli", EmptyAction);
 
         var root = setup.RootCommand;
@@ -65,7 +65,7 @@ public class ClyshSetupTests
         fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlText());
 
         var setup = new ClyshSetup(Path, fs.Object);
-        setup.Load();
+        
         setup.BindAction("mycli", EmptyAction);
 
         var root = setup.RootCommand;
@@ -103,7 +103,7 @@ public class ClyshSetupTests
         fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetJsonText());
 
         var setup = new ClyshSetup(Path, fs.Object);
-        setup.Load();
+        
 
         setup.BindAction("mycli", EmptyAction);
 
@@ -142,11 +142,11 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
         Assert.AreEqual(
-            "Invalid commands: The id(s): mycli must be unique check your schema and try again. (Parameter 'commands')",
+            "Invalid commands: The id(s): mycli must be unique. Check your schema and try again. (Parameter 'commands')",
             exception?.InnerException?.Message);
     }
 
@@ -158,10 +158,10 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
-        Assert.AreEqual("Invalid path: CLI data file was not found. Path: '/file'",
+        Assert.AreEqual("Invalid file: CLI data file was not found. Path: '/file'",
             exception?.Message);
     }
 
@@ -175,11 +175,11 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
         Assert.AreEqual(
-            "Invalid extension. Only JSON (.json) and YAML (.yml or .yaml) files are supported. Path: '/file'",
+            "Invalid file: Only JSON (.json) and YAML (.yml or .yaml) files are supported. Path: '/file'",
             exception?.Message);
     }
 
@@ -192,11 +192,11 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
         Assert.AreEqual(
-            "Invalid extension. Only JSON (.json) and YAML (.yml or .yaml) files are supported. Path: '/file'",
+            "Invalid file: Only JSON (.json) and YAML (.yml or .yaml) files are supported. Path: '/file'",
             exception?.Message);
     }
 
@@ -211,7 +211,7 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
         Assert.AreEqual("Invalid commands: The data must contains at least one command.",
@@ -229,7 +229,7 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
         Assert.AreEqual("The command is configured to require subcommand. So subcommands cannot be null.",
@@ -247,11 +247,11 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
         Assert.AreEqual(
-            "Data must have one root command. Consider marking only one command with 'Root': true.",
+            "Invalid commands: Data must have one root command. Consider marking only one command with 'Root': true.",
             exception?.Message);
     }
     
@@ -266,11 +266,11 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
         Assert.AreEqual(
-            "Data must have one root command. Consider marking only one command with 'Root': true.",
+            "Invalid commands: Data must have one root command. Consider marking only one command with 'Root': true.",
             exception?.Message);
     }
 
@@ -285,7 +285,7 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
         Assert.AreEqual("Error on create command. Command: mycli",
             exception?.Message);
@@ -308,7 +308,7 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
         Assert.AreEqual("Invalid parameter order. The order must be greater than the lastOrder: 0. Parameter: c (Parameter 'parameterValue')",
@@ -326,7 +326,7 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
         
         Assert.AreEqual(
@@ -352,10 +352,10 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
-        Assert.AreEqual("The commands loaded size is different than commands size declared in file. Check if all your commands has a valid parent.",
+        Assert.AreEqual("Invalid commands: The commands 'mytest.test' does not have a parent. Check if all your commands has a valid parent.",
             exception?.Message);
     }
 
@@ -370,7 +370,7 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
         Assert.AreEqual("The given key 'test' was not present in the dictionary.",
@@ -388,10 +388,10 @@ public class ClyshSetupTests
         var ex = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
-        Assert.AreEqual("Invalid JSON: The deserialization results in null object. JSON file path: '/file'", ex?.Message);
+        Assert.AreEqual("Invalid file: The JSON deserialization results in null object. JSON file path: '/file'", ex?.Message);
     }
 
     private string GetYamlWithInvalidGroupText()

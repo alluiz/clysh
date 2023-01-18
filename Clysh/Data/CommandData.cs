@@ -11,7 +11,7 @@ namespace Clysh.Data;
 /// Class used to deserialize command data from file
 /// </summary>
 // ReSharper disable once ClassNeverInstantiated.Global
-public class ClyshCommandData
+public class CommandData
 {
     /// <summary>
     /// The id of command

@@ -43,7 +43,7 @@ public class ClyshData
     /// The CLI Commands list
     /// </summary>
     [Required]
-    public List<ClyshCommandData>? Commands { get; set; }
+    public List<CommandData>? Commands { get; set; }
 
     /// <summary>
     /// The CLI custom messages
