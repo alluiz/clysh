@@ -1,51 +1,31 @@
-Title: MyCalc CLI
-Version: 1.0
-Messages:
-  InvalidOption: "A opção '{0}' é inválida. Use --help para ajuda."
-  InvalidSubcommand: "Você deve informar um subcomando para o comando '{0}'. Use --help para ajuda."
-  InvalidArgument: "Você não pode informar argumentos inválidos '{0}'. Use --help para ajuda."
-  InvalidParameter: "O parâmetro '{0}' está fora do intervalo permitido para a opção: {1}.. Use --help para ajuda."
-  IncorrectParameter: "O parâmetro '{0}' é inválido para a opção: {1}. Use --help para ajuda."
-  ParameterConflict: "O paramêtro '{0}' já foi preenchido para opção: {1}. Use --help para ajuda."
-  RequiredParameters: "Parâmetros obrigatórios [{0}] não foram preenchidos para opção: {1} (atalho: {2}). Use --help para ajuda."
-Commands:
-  - Id: calc
-    Description: My calculator using CLI
-    RequireSubcommand: true
-    Root: true
-  - Id: calc.add
-    Description: Add values "a" and "b"
-    Options:
+Title: MyCalc CLI                                                         #The CLI Title
+Version: 1.0                                                              #The CLI Version
+
+Messages:                                                                 #The CustomMessages to show when some validation error occurs. It can be useful to language custom output.
+  InvalidOption: "The option '{0}' is invalid."
+  
+Commands:                                                                 #The CLI commands declaration. Here you are able to create a chain of commands.
+  - Id: calc                                                              #The command 'Id' is the command key in the chain. The root Id must be a simple text.
+    Description: My calculator using CLI                                  #Command Description
+    RequireSubcommand: true                                               #It indicates that this command doesn't need to implement explicitly action. We will explain more about it soon.
+    Root: true                                                            #It indicates that this is the main command of the chain.
+    
+  - Id: calc.add                                                          #The subcommand id must contains the parent id.
+    Description: Add int32 values "a" and "b"                             
+    Options:                                                              #The command options can have one or more user input parameters
       - Id: values
-        Description: Values to some
+        Description: Values to be added                                   #The parameters can have some input validation like: Min and Max Length and Regex Pattern
         Parameters:
           - Id: a
-            Required: true
+            Required: true                                                #Indicates that this option needs this parameter input  
             MinLength: 1
-            MaxLength: 15
-            Order: 0
+            MaxLength: 10
+            Order: 0                                                      #The order of parameter input. Must be different than than the parameter 'b' order.
           - Id: b
             Required: true
             MinLength: 1
-            MaxLength: 15
+            MaxLength: 10
             Order: 1
-      - Id: zoo
-        Shortcut: z
-        Description: >
-          axqNOOjsARutWIVwzlGYS9UFjD8GLC3za0HR7rn9cLhgb6phP5chcuu
-          ODbR5U9nh8vmOkTo1w3y2lv1AMl5qGZtI7ZB7fIMzlESqvGWKRQkTxa
-          172xhBm5ndbtW55iBMBUnFd81ofaLrKqmeEAG5u52DIhWVocZzKTBPFk
-          l8nCPRA1nXUdQl97i0XtPQKPqmcaiwqiqd74G4v1YZD7a2Ch0ms2ZjWX
-          6VPo4tP3zF9MS7vNBSQEah8PXZCGcdaNK7rZVFSyzz3AxTbgEMtHazFF
-          QyKP2hLtbikYAGNymacMO1XIdKqksIAaMmoyLHblFQWF9Qg1vjTUgAvt
-          98Bg1ZmEzOHWoqBtUWdsOaWiyPbaxxI9LGXMj9wIO4PWcKKpCR7Q86c7
-          vAe270KkRXWoRo0vicCNc
-        Parameters:
-          - Id: a
-            Required: true
-            MinLength: 1
-            MaxLength: 15
-            Order: 0
   - Id: calc.sub
     Description: Subtract values "a" and "b"
     Options:
@@ -55,10 +35,10 @@ Commands:
           - Id: a
             Required: true
             MinLength: 1
-            MaxLength: 15
+            MaxLength: 10
             Order: 0
           - Id: b
             Required: true
             MinLength: 1
-            MaxLength: 15
+            MaxLength: 10
             Order: 1
