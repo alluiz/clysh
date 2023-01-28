@@ -24,7 +24,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
 
     public ClyshCommand()
     {
-        Pattern = @"^[a-z](\.*[a-z]*[0-9]*)+$";
+        Pattern = ClyshConstants.CommandPattern;
         Groups = new ClyshMap<ClyshGroup>();
         Options = new ClyshMap<ClyshOption>();
         SubCommands = new ClyshMap<IClyshCommand>();
@@ -193,7 +193,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
 
     private void ParentRecursivity(IClyshCommand command)
     {
-        var splittedId = command.Id.Split(".");
+        var splittedId = command.Id.Split(".", StringSplitOptions.RemoveEmptyEntries);
 
         if (splittedId.DistinctBy(x => x).Count() != splittedId.Length)
             throw new ClyshException(

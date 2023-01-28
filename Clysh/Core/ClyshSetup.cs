@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Clysh.Core.Builder;
 using Clysh.Data;
 using Clysh.Helper;
@@ -202,9 +203,22 @@ public class ClyshSetup : IClyshSetup
             _commandsData.AddRange(Data.Commands);
 
             VerifyDuplicatedCommands(Data.Commands);
+            VerifyCommandsPattern(Data.Commands);
         }
         else
             throw new ClyshException(MessageInvalidCommandsLengthAtLeastOne);
+    }
+
+    private static void VerifyCommandsPattern(List<CommandData> dataCommands)
+    {
+        const string pattern = ClyshConstants.CommandPattern;
+        var regex = new Regex(pattern);
+
+        dataCommands.ForEach(x=>
+        {
+            if (!regex.IsMatch(x.Id))
+                throw new ClyshException(string.Format(ClyshMessages.MessageInvalidId, pattern, x.Id));
+        });
     }
 
     private void BuildRootCommand()
