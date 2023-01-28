@@ -10,7 +10,8 @@ namespace Clysh.Core.Builder;
 public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
 {
     private const string ErrorOnCreateParameter = "Error on create parameter. Parameter: {0}";
-
+    private const string ErrorOnValidateMaxLength = "Invalid max length. The max length must be greater than min length.";
+    
     /// <summary>
     /// Build the parameter identifier
     /// </summary>
@@ -86,12 +87,11 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
     {
         try
         {
-            Result.MinLength = minLength;
-            Result.MaxLength = maxLength;
+            if (minLength > maxLength)
+                throw new ArgumentException(ErrorOnValidateMaxLength, nameof(maxLength));
             
-            if (Result.MinLength > Result.MaxLength)
-                throw new ArgumentException($"Invalid max length. The max length must be greater than min length.",
-                    nameof(maxLength));
+            Result.MinLength = minLength;
+            Result.MaxLength = maxLength;   
         }
         catch (Exception e)
         {
