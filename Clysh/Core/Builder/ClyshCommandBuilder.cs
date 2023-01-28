@@ -14,12 +14,10 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     /// <summary>
     /// Build the command identifier
     /// </summary>
-    /// <param name="id">The command identifier</param>
+    /// <param name="id">The command identifier, eg: "level0.level1.level2"</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
-    public ClyshCommandBuilder Id(string? id)
+    public ClyshCommandBuilder Id(string id)
     {
-        ArgumentNullException.ThrowIfNull(id);
-
         Result.Id = id;
         Result.Name = id.Split(".").Last();
         return this;

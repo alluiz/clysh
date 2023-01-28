@@ -9,17 +9,17 @@ namespace Clysh.Helper;
 public abstract class ClyshIndexable: IClyshIndexable
 {
     private string id = default!;
-    private const string InvalidIdTheIdMustFollowThePatternId = "Invalid id. The id must follow the pattern: {0}. Id: '{1}'";
+    private const string MessageInvalidId = "Invalid ID: The ID must follow the pattern: {0}. ID: '{1}'";
 
     /// <summary>
-    /// The pattern to validate the id
+    /// The pattern to validate the ID. Could be null if no pattern is required.
     /// </summary>
     protected string? Pattern;
 
     private Regex? regex;
 
     /// <summary>
-    /// The identifier
+    /// The ID text
     /// </summary>
     public string Id
     {
@@ -28,23 +28,22 @@ public abstract class ClyshIndexable: IClyshIndexable
     }
 
     /// <summary>
-    /// Validates the identifier
+    /// Validates the ID
     /// </summary>
-    /// <param name="identifier">The identifier</param>
-    /// <returns>The validation result</returns>
-    /// <exception cref="ArgumentException">The id must follow the pattern</exception>
-    private string ValidatedId(string identifier)
+    /// <param name="desiredId">The desired ID to be validated</param>
+    /// <returns>The validated ID</returns>
+    /// <exception cref="ArgumentException">The ID is invalid.</exception>
+    private string ValidatedId(string desiredId)
     {
+        //No validation if no pattern was provided before.
         if (Pattern == null) 
-            return identifier;
+            return desiredId;
         
         regex ??= new Regex(Pattern);
 
-        if (!regex.IsMatch(identifier))
-            throw new ArgumentException(
-                string.Format(InvalidIdTheIdMustFollowThePatternId, Pattern, identifier),
-                nameof(identifier));
+        if (!regex.IsMatch(desiredId))
+            throw new ArgumentException(string.Format(MessageInvalidId, Pattern, desiredId), nameof(desiredId));
 
-        return identifier;
+        return desiredId;
     }
 }

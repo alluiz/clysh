@@ -312,7 +312,7 @@ public class ClyshSetup : IClyshSetup
 
     private static int GetCommandLevel(string commandId)
     {
-        return commandId.Split(".").Length - 1;
+        return commandId.Split(".", StringSplitOptions.RemoveEmptyEntries).Length - 1;
     }
 
     private static void BuildCommandOptions(IClyshCommand command, CommandData commandData)

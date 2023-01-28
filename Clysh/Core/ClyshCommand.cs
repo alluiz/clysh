@@ -24,6 +24,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
 
     public ClyshCommand()
     {
+        Pattern = @"^[a-z](\.*[a-z]*[0-9]*)+$";
         Groups = new ClyshMap<ClyshGroup>();
         Options = new ClyshMap<ClyshOption>();
         SubCommands = new ClyshMap<IClyshCommand>();
