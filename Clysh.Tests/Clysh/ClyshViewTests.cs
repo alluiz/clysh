@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Clysh.Core;
 using Clysh.Data;
+using Clysh.Helper;
 using Moq;
 using NUnit.Framework;
 
@@ -187,8 +188,8 @@ public class ClyshViewTests
         var question = "     ";
         var exception = Assert.Throws<ArgumentException>(() => view.AskFor(question));
 
-        Assert.IsTrue(exception?.Message.Contains("Question must be not blank"));
-
+        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.QuestionMustBeNotBlank);
+        
         consoleMock.Verify(x => x.Write($"{question}:"), Times.Never);
         consoleMock.Verify(x => x.ReadLine(), Times.Never);
         Assert.AreEqual(0, view.PrintedLines);

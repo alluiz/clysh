@@ -1,6 +1,7 @@
 ﻿using System;
 using Clysh.Core;
 using Clysh.Core.Builder;
+using Clysh.Helper;
 using NUnit.Framework;
 
 namespace Clysh.Tests;
@@ -12,7 +13,7 @@ public class ClyshOptionBuilderTests
     {
         var builder = new ClyshOptionBuilder();
         var exception = Assert.Throws<ClyshException>(() =>  builder.Id("test", ""));
-        Assert.AreEqual("Invalid shortcut. The shortcut must be null or follow the pattern [a-zA-Z]{1} and between 1 and 1 chars. Shortcut: '' (Parameter 'shortcutId')", exception?.InnerException?.Message);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.InvalidShorcutMessage);
     }
 
     [Test]
@@ -20,7 +21,7 @@ public class ClyshOptionBuilderTests
     {
         var builder = new ClyshOptionBuilder();
         var exception = Assert.Throws<ClyshException>(() =>  builder.Id("test", "h"));
-        Assert.AreEqual("Shortcut 'h' is reserved to help shortcut. Option: test (Parameter 'shortcut')", exception?.InnerException?.Message);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.InvalidShortcutReserved);
     }
 
     [Test]
@@ -28,6 +29,6 @@ public class ClyshOptionBuilderTests
     {
         var builder = new ClyshOptionBuilder();
         var exception = Assert.Throws<ClyshException>(() =>  builder.Description("test"));
-        Assert.AreEqual("Option description must be not null or empty and between 10 and 500 chars. Description: 'test' (Parameter 'descriptionValue')", exception?.InnerException?.Message);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.InvalidDescription);
     }
 }

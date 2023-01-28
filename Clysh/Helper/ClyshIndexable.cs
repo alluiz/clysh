@@ -9,8 +9,6 @@ namespace Clysh.Helper;
 public abstract class ClyshIndexable: IClyshIndexable
 {
     private string id = default!;
-    private const string MessageInvalidId = "Invalid ID: The ID must follow the pattern: {0}. ID: '{1}'";
-    private const string MessageInvalidIdLength = "Invalid ID: The ID must be less or equal than {0} chars. ID: '{1}'";
 
     /// <summary>
     /// The pattern to validate the ID. Could be null if no pattern is required.
@@ -42,10 +40,10 @@ public abstract class ClyshIndexable: IClyshIndexable
     private string ValidatedId(string desiredId)
     {
         if (desiredId == null)
-            throw new ArgumentException(string.Format(MessageInvalidId, Pattern, desiredId), nameof(desiredId));
+            throw new ArgumentException(string.Format(ClyshMessages.MessageInvalidId, Pattern, desiredId), nameof(desiredId));
 
         if (MaxLength > 0 && desiredId.Length > MaxLength)
-            throw new ArgumentException(string.Format(MessageInvalidIdLength, MaxLength, desiredId), nameof(desiredId));
+            throw new ArgumentException(string.Format(ClyshMessages.MessageInvalidIdLength, MaxLength, desiredId), nameof(desiredId));
 
         //No validation if no pattern was provided before.
         if (Pattern == null) 
@@ -54,7 +52,7 @@ public abstract class ClyshIndexable: IClyshIndexable
         regex ??= new Regex(Pattern);
 
         if (!regex.IsMatch(desiredId))
-            throw new ArgumentException(string.Format(MessageInvalidId, Pattern, desiredId), nameof(desiredId));
+            throw new ArgumentException(string.Format(ClyshMessages.MessageInvalidId, Pattern, desiredId), nameof(desiredId));
 
         return desiredId;
     }

@@ -12,12 +12,6 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshService : IClyshService
 {
-    private const string YourCommandDoesNotHaveAnActionConfigured =
-        "Your command does NOT have an action configured. Command: '{0}'.";
-
-    private const string YourCommandDoesNotHaveASubcommandConfigured =
-        "Your command does NOT have a subcommand configured. Command: '{0}'.";
-
     private readonly List<ClyshAudit> audits;
 
     private readonly bool disableAudit;
@@ -122,13 +116,13 @@ public class ClyshService : IClyshService
     {
         defaultMessages = new Dictionary<string, string>
         {
-            { "InvalidOption", "The option '{0}' is invalid." },
-            { "InvalidSubcommand", "You need to provide some subcommand to command '{0}'" },
-            { "InvalidArgument", "You can't put parameters without any option that accept it '{0}'"},
-            { "InvalidParameter", "The parameter data '{0}' is out of bound for option: {1}."},
-            { "IncorrectParameter", "The parameter '{0}' is invalid for option: {1}."},
-            { "ParameterConflict", "The parameter '{0}' is already filled for option: {1}."},
-            { "RequiredParameters", "Required parameters [{0}] is missing for option: {1} (shortcut: {2})"}
+            { "InvalidOption", ClyshMessages.InvalidOption },
+            { "InvalidSubcommand", ClyshMessages.InvalidSubcommand },
+            { "InvalidArgument", ClyshMessages.InvalidArgument},
+            { "InvalidParameter", ClyshMessages.InvalidParameter},
+            { "IncorrectParameter", ClyshMessages.IncorrectParameter},
+            { "ParameterConflict", ClyshMessages.ParameterConflict},
+            { "RequiredParameters", ClyshMessages.RequiredParameters}
         };
     }
 
@@ -249,12 +243,12 @@ public class ClyshService : IClyshService
         if (cmd.RequireSubcommand)
         {
             if (!cmd.SubCommands.Any())
-                audit.Messages.Add(string.Format(YourCommandDoesNotHaveASubcommandConfigured, cmd.Id));
+                audit.Messages.Add(string.Format(ClyshMessages.YourCommandDoesNotHaveASubcommandConfigured, cmd.Id));
         }
         else
         {
             if (cmd.Action == null)
-                audit.Messages.Add(string.Format(YourCommandDoesNotHaveAnActionConfigured, cmd.Id));
+                audit.Messages.Add(string.Format(ClyshMessages.YourCommandDoesNotHaveAnActionConfigured, cmd.Id));
         }
     }
 

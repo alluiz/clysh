@@ -9,8 +9,6 @@ namespace Clysh.Core.Builder;
 /// <seealso cref="ClyshBuilder{T}"/>
 public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
 {
-    private const string ErrorOnCreateCommand = "Error on create command. Command: {0}";
-
     /// <summary>
     /// Build the command identifier
     /// </summary>
@@ -39,7 +37,7 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateCommand, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
         }
     }
 
@@ -57,7 +55,7 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateCommand, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
         }
     }
 
@@ -75,7 +73,7 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateCommand, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
         }
     }
 
@@ -93,7 +91,7 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateCommand, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
         }
     }
 
@@ -111,7 +109,7 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateCommand, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
         }
     }
 

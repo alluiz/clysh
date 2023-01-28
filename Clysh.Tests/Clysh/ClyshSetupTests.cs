@@ -145,9 +145,7 @@ public class ClyshSetupTests
             
         });
 
-        Assert.AreEqual(
-            "Invalid commands: The id(s): mycli must be unique. Check your schema and try again. (Parameter 'commands')",
-            exception?.InnerException?.Message);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.MessageInvalidCommandsDuplicated);
     }
 
     [Test]
@@ -161,8 +159,7 @@ public class ClyshSetupTests
             
         });
 
-        Assert.AreEqual("Invalid file: CLI data file was not found. Path: '/file'",
-            exception?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.MessageInvalidFilePath);
     }
 
     [Test]
@@ -178,9 +175,7 @@ public class ClyshSetupTests
             
         });
 
-        Assert.AreEqual(
-            "Invalid file: Only JSON (.json) and YAML (.yml or .yaml) files are supported. Path: '/file'",
-            exception?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.MessageInvalidFileExtension);
     }
 
     [Test]
@@ -195,9 +190,7 @@ public class ClyshSetupTests
             
         });
 
-        Assert.AreEqual(
-            "Invalid file: Only JSON (.json) and YAML (.yml or .yaml) files are supported. Path: '/file'",
-            exception?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.MessageInvalidFileExtension);
     }
 
     [Test]
@@ -214,8 +207,7 @@ public class ClyshSetupTests
             
         });
 
-        Assert.AreEqual("Invalid commands: The data must contains at least one command.",
-            exception?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.MessageInvalidCommandsLengthAtLeastOne);
     }
 
     [Test]
@@ -232,8 +224,8 @@ public class ClyshSetupTests
             
         });
 
-        Assert.AreEqual("The command is configured to require subcommand. So subcommands cannot be null.",
-            exception?.InnerException?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnCreateCommand);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.RequiredSubCommand);
     }
 
     [Test]
@@ -250,9 +242,7 @@ public class ClyshSetupTests
             
         });
 
-        Assert.AreEqual(
-            "Invalid commands: Data must have one root command. Consider marking only one command with 'Root': true.",
-            exception?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.MessageInvalidCommandsDuplicatedRoot);
     }
     
     [Test]
@@ -269,9 +259,7 @@ public class ClyshSetupTests
             
         });
 
-        Assert.AreEqual(
-            "Invalid commands: Data must have one root command. Consider marking only one command with 'Root': true.",
-            exception?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.MessageInvalidCommandsDuplicatedRoot);
     }
 
     [Test]
@@ -287,14 +275,10 @@ public class ClyshSetupTests
             var setup = new ClyshSetup(Path, fs.Object);
             
         });
-        Assert.AreEqual("Error on create command. Command: mycli",
-            exception?.Message);
         
-        Assert.AreEqual("Error on create subcommand. Subcommand: mycli.mycli",
-            exception?.InnerException?.Message);
-        
-        Assert.AreEqual("Invalid command: The commandId cannot have duplicated words. Command: mycli.mycli",
-            exception?.InnerException?.InnerException?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnCreateCommand);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.ErrorOnCreateSubCommand);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.InvalidCommandDuplicatedWords);
     }
 
     [Test]
@@ -311,8 +295,7 @@ public class ClyshSetupTests
             
         });
 
-        Assert.AreEqual("Invalid parameter order. The order must be greater than the lastOrder: 0. Parameter: c (Parameter 'parameterValue')",
-            exception?.InnerException?.InnerException?.Message);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.InvalidParameterOrder);
     }
 
     [Test]
@@ -329,16 +312,9 @@ public class ClyshSetupTests
             
         });
         
-        Assert.AreEqual(
-            "Error on create command. Command: mycli",
-            exception?.Message);
-        
-        Assert.AreEqual(
-            "Error on create option. Option: test",
-            exception?.InnerException?.Message);
-        Assert.AreEqual(
-            "Invalid parameter order. The required parameters must come first than optional parameters. Check the order. Parameter: c (Parameter 'parameterValue')",
-            exception?.InnerException?.InnerException?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnCreateCommand);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.ErrorOnCreateOption);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.InvalidParameterRequiredOrder);
     }
 
     [Test]
@@ -355,8 +331,7 @@ public class ClyshSetupTests
             
         });
 
-        Assert.AreEqual("Invalid commands: The commands 'mytest.test' does not have a parent. Check if all your commands has a valid parent.",
-            exception?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.MessageInvalidCommandsParent);
     }
 
     [Test]
@@ -391,7 +366,7 @@ public class ClyshSetupTests
             
         });
 
-        Assert.AreEqual("Invalid file: The JSON deserialization results in null object. JSON file path: '/file'", ex?.Message);
+        ExtendedAssert.MatchMessage(ex?.Message, ClyshMessages.MessageInvalidFileJson);
     }
 
     private string GetYamlWithInvalidGroupText()

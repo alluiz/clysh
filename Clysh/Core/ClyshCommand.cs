@@ -13,11 +13,6 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
 {
     private const int MaxDescription = 100;
     private const int MinDescription = 10;
-    private const string MessageCommandMustHaveOnlyOneParentCommand = "Invalid command: The command must have only one parent. Command: '{0}'";
-    private const string MessageOptionAddressMemory = "Invalid command: The option memory address is already related to another command. Option: '{0}'";
-    private const string MessageGroupAddressMemory = "Invalid command: The group memory address is already related to another command. Group: '{0}'";
-    private const string MessageGroupAddressMemoryIsDifferent = "Invalid command: The group memory address is different between command and option. Group: '{0}'";
-    private const string MessageInvalidDescription = "Invalid command: Command description must be not null or empty and between {0} and {1} chars. Description: '{2}'";
 
     private readonly Dictionary<string, string> _shortcutToOptionId;
     private string _description = string.Empty;
@@ -67,7 +62,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     public void AddOption(ClyshOption option)
     {
         if (option.Command != null)
-            throw new ClyshException(string.Format(MessageOptionAddressMemory,
+            throw new ClyshException(string.Format(ClyshMessages.MessageOptionAddressMemory,
                 option.Id));
 
         option.Command = this;
@@ -91,7 +86,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     public void AddSubCommand(IClyshCommand subCommand)
     {
         if (subCommand.Parent != null)
-            throw new ClyshException(string.Format(MessageCommandMustHaveOnlyOneParentCommand, subCommand.Id));
+            throw new ClyshException(string.Format(ClyshMessages.MessageCommandMustHaveOnlyOneParentCommand, subCommand.Id));
 
         ParentRecursivity(subCommand);
         subCommand.Parent = this;
@@ -152,7 +147,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     {
         if (descriptionValue == null || descriptionValue.Trim().Length is < MinDescription or > MaxDescription)
             throw new ArgumentException(
-                string.Format(MessageInvalidDescription, MinDescription, MaxDescription, descriptionValue),
+                string.Format(ClyshMessages.MessageInvalidDescription, MinDescription, MaxDescription, descriptionValue),
                 nameof(descriptionValue));
 
         return descriptionValue;
@@ -196,14 +191,13 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         var splittedId = command.Id.Split(".", StringSplitOptions.RemoveEmptyEntries);
 
         if (splittedId.DistinctBy(x => x).Count() != splittedId.Length)
-            throw new ClyshException(
-                $"Invalid command: The commandId cannot have duplicated words. Command: {command.Id}");
+            throw new ClyshException(ClyshMessages.InvalidCommandDuplicatedWords);
     }
 
     public void AddGroups(ClyshGroup group)
     {
         if (group.Command != null && !group.Command.Equals(this))
-            throw new ClyshException(string.Format(MessageGroupAddressMemory,
+            throw new ClyshException(string.Format(ClyshMessages.MessageGroupAddressMemory,
                 group.Id));
 
         group.Command = this;
@@ -211,6 +205,6 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         if (!Groups.Has(group.Id))
             Groups.Add(group);
         else if (!Groups[group.Id].Equals(group))
-            throw new ClyshException(string.Format(MessageGroupAddressMemoryIsDifferent, group.Id));
+            throw new ClyshException(string.Format(ClyshMessages.MessageGroupAddressMemoryIsDifferent, group.Id));
     }
 }

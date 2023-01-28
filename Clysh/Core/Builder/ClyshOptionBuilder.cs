@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using Clysh.Helper;
 using Microsoft.VisualBasic;
 
 namespace Clysh.Core.Builder;
@@ -10,13 +11,7 @@ namespace Clysh.Core.Builder;
 /// <seealso cref="ClyshBuilder{T}"/>
 public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
 {
-    private const string InvalidShortcutReserved = "Shortcut 'h' is reserved to help shortcut. Option: {0}";
-
-    private const string ErrorOnCreateOption = "Error on create option. Option: {0}";
-
-    private const string InvalidParameterRequiredOrder = "Invalid parameter order. The required parameters must come first than optional parameters. Check the order. Parameter: {0}";
-
-    private const string InvalidParameterOrder = "Invalid parameter order. The order must be greater than the lastOrder: {0}. Parameter: {1}";
+    
 
     private bool hasProvidedOptionalParameterBefore;
     private int lastParameterOrder = -1;
@@ -48,14 +43,14 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateOption, id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateOption, id), e);
         }
     }
 
     private static void ValidateHelpShortcut(string id, string? shortcut)
     {
         if (id is not "help" && shortcut is "h")
-            throw new ArgumentException(string.Format(InvalidShortcutReserved, id), nameof(shortcut));
+            throw new ArgumentException(string.Format(ClyshMessages.InvalidShortcutReserved, id), nameof(shortcut));
     }
 
     /// <summary>
@@ -72,7 +67,7 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateOption, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateOption, Result.Id), e);
         }
     }
 
@@ -95,17 +90,17 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateOption, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateOption, Result.Id), e);
         }
     }
 
     private void ValidateParameter(ClyshParameter parameterValue)
     {
         if (parameterValue.Order <= lastParameterOrder)
-            throw new ArgumentException(string.Format(InvalidParameterOrder, lastParameterOrder, parameterValue.Id), nameof(parameterValue));
+            throw new ArgumentException(string.Format(ClyshMessages.InvalidParameterOrder, lastParameterOrder, parameterValue.Id), nameof(parameterValue));
 
         if (parameterValue.Required && hasProvidedOptionalParameterBefore)
-            throw new ArgumentException(string.Format(InvalidParameterRequiredOrder, parameterValue.Id), nameof(parameterValue));
+            throw new ArgumentException(string.Format(ClyshMessages.InvalidParameterRequiredOrder, parameterValue.Id), nameof(parameterValue));
     }
 
     /// <summary>

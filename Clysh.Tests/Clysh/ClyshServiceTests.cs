@@ -734,7 +734,7 @@ public class ClyshServiceTests
         viewMock.Verify(
             x => x.PrintException(
                 It.Is<ValidationException>(
-                    y => y.Message == $"The option '{invalidOptionWithDashes}' is invalid.")), Times.Once);
+                    y => ClyshMessages.Match(y.Message, ClyshMessages.InvalidOption, invalidOptionWithDashes))), Times.Once);
     }
 
     [Test]
@@ -757,7 +757,7 @@ public class ClyshServiceTests
         viewMock.Verify(
             x => x.PrintException(
                 It.Is<ValidationException>(
-                    y => y.Message == $"The option '{invalidOptionWithDashes}' is invalid.")), Times.Once);
+                    y => ClyshMessages.Match(y.Message, ClyshMessages.InvalidOption, invalidOptionWithDashes))), Times.Once);
     }
 
     [Test]
@@ -775,10 +775,13 @@ public class ClyshServiceTests
 
         rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
         rootCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
+        
+        const string arg = "testarg";
+        
         var option = optionBuilder
             .Id(someOption)
             .Description("some option")
-            .Parameter(parameterBuilder.Id("testarg").Range(6, 10).Required(true).Build())
+            .Parameter(parameterBuilder.Id(arg).Range(6, 10).Required(true).Build())
             .Build();
         rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(option);
         rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<ClyshOption>() { { someOption, option } });
@@ -787,9 +790,7 @@ public class ClyshServiceTests
 
         viewMock.Verify(
             x => x.PrintException(
-                It.Is<ValidationException>(y =>
-                    y.Message ==
-                    $"Required parameters [testarg] is missing for option: some-option (shortcut: <null>)")),
+                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.RequiredParameters, arg, someOption, "<null>"))),
             Times.Once);
     }
 
@@ -836,8 +837,7 @@ public class ClyshServiceTests
 
         viewMock.Verify(
             x => x.PrintException(
-                It.Is<ValidationException>(y =>
-                    y.Message == "You can't put parameters without any option that accept it 'testarg:mytest'")), Times.Once);
+                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.InvalidArgument, args[0]))), Times.Once);
     }
 
     [Test]
@@ -868,8 +868,7 @@ public class ClyshServiceTests
 
         viewMock.Verify(
             x => x.PrintException(
-                It.Is<ValidationException>(y =>
-                    y.Message == $"The parameter 'testarg' is invalid for option: {someOption}.")), Times.Once);
+                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.IncorrectParameter, "testarg", someOption))), Times.Once);
     }
 
     [Test]
@@ -902,8 +901,7 @@ public class ClyshServiceTests
 
         viewMock.Verify(
             x => x.PrintException(
-                It.Is<ValidationException>(y =>
-                    y.Message == $"The parameter data 'testarg' is out of bound for option: {someOption}.")),
+                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.InvalidParameter, "testarg", someOption) )),
             Times.Once);
     }
 
@@ -935,8 +933,7 @@ public class ClyshServiceTests
 
         viewMock.Verify(
             x => x.PrintException(
-                It.Is<ValidationException>(y =>
-                    y.Message == $"The parameter 'testarg' is already filled for option: {someOption}.")), Times.Once);
+                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.ParameterConflict, "testarg", someOption))), Times.Once);
     }
 
     [Test]

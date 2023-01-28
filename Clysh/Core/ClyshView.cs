@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Clysh.Data;
+using Clysh.Helper;
 
 namespace Clysh.Core;
 
@@ -9,8 +10,6 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshView : IClyshView
 {
-    private const string QuestionMustBeNotBlank = "Question must be not blank";
-
     private readonly IClyshConsole clyshConsole;
     private readonly bool printLineNumber;
 
@@ -107,7 +106,7 @@ public class ClyshView : IClyshView
     private string AskFor(string title, bool sensitive)
     {
         if (string.IsNullOrWhiteSpace(title))
-            throw new ArgumentException(QuestionMustBeNotBlank, nameof(title));
+            throw new ArgumentException(ClyshMessages.QuestionMustBeNotBlank, nameof(title));
 
         Print($"{title}:", false, true);
 

@@ -13,9 +13,6 @@ public class ClyshParameter : ClyshIndexable
     private const int minLengthParam = 1;
     private const int maxLengthParam = 1000;
 
-    private const string InvalidOrder = "All parameters must be greater or equal than 0 order. OrderValue: {0}";
-
-    private const string InvalidLength = "Invalid min length. The values must be between {0} and {1}.";
     private string data;
     private int maxLength;
     private int minLength;
@@ -86,7 +83,7 @@ public class ClyshParameter : ClyshIndexable
     private int ValidateMin(int minLengthValue)
     {
         if (minLengthValue < 1)
-            throw new ArgumentException(string.Format(InvalidLength, minLengthParam, maxLengthParam), nameof(minLengthValue));
+            throw new ArgumentException(string.Format(ClyshMessages.InvalidLength, minLengthParam, maxLengthParam), nameof(minLengthValue));
 
         return minLengthValue;
     }
@@ -94,7 +91,7 @@ public class ClyshParameter : ClyshIndexable
     private int ValidateMax(int maxValue)
     {
         if (maxValue > 1000)
-            throw new ArgumentException(string.Format(InvalidLength, minLengthParam, maxLengthParam), nameof(maxValue));
+            throw new ArgumentException(string.Format(ClyshMessages.InvalidLength, minLengthParam, maxLengthParam), nameof(maxValue));
 
         return maxValue;
     }
@@ -102,7 +99,7 @@ public class ClyshParameter : ClyshIndexable
     private int ValidateOrder(int orderValue)
     {
         if (orderValue < 0)
-            throw new ArgumentException(string.Format(InvalidOrder, orderValue), nameof(orderValue));
+            throw new ArgumentException(string.Format(ClyshMessages.InvalidOrder, orderValue), nameof(orderValue));
         
         return orderValue;
     }

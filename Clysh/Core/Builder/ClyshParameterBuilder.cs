@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using Clysh.Helper;
 
 namespace Clysh.Core.Builder;
 
@@ -9,9 +10,6 @@ namespace Clysh.Core.Builder;
 /// <seealso cref="ClyshBuilder{T}"/>
 public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
 {
-    private const string ErrorOnCreateParameter = "Error on create parameter. Parameter: {0}";
-    private const string ErrorOnValidateMaxLength = "Invalid max length. The max length must be greater than min length.";
-    
     /// <summary>
     /// Build the parameter identifier
     /// </summary>
@@ -39,7 +37,7 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateParameter, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateParameter, Result.Id), e);
         }
     }
 
@@ -60,7 +58,7 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateParameter, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateParameter, Result.Id), e);
         }
 
         return this;
@@ -88,14 +86,14 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
         try
         {
             if (minLength > maxLength)
-                throw new ArgumentException(ErrorOnValidateMaxLength, nameof(maxLength));
+                throw new ArgumentException(ClyshMessages.ErrorOnValidateMaxLength, nameof(maxLength));
             
             Result.MinLength = minLength;
             Result.MaxLength = maxLength;   
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateParameter, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateParameter, Result.Id), e);
         }
 
         return this;

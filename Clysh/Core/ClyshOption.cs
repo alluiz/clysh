@@ -15,11 +15,6 @@ public class ClyshOption : ClyshIndexable
     private const int MaxDescription = 500;
     private const int MinDescription = 10;
 
-    private const string InvalidShorcutMessage = "Invalid shortcut. The shortcut must be null or follow the pattern {0} and between {1} and {2} chars. Shortcut: '{3}'";
-
-    private const string InvalidDescription =
-        "Option description must be not null or empty and between {0} and {1} chars. Description: '{2}'";
-
     private readonly Regex regexShortcut;
 
     private readonly string shorcutPattern;
@@ -81,7 +76,7 @@ public class ClyshOption : ClyshIndexable
     {
         if (descriptionValue == null || descriptionValue.Trim().Length is < MinDescription or > MaxDescription)
             throw new ArgumentException(
-                string.Format(InvalidDescription, MinDescription, MaxDescription, descriptionValue),
+                string.Format(ClyshMessages.InvalidDescription, MinDescription, MaxDescription, descriptionValue),
                 nameof(descriptionValue));
 
         return descriptionValue;
@@ -101,7 +96,7 @@ public class ClyshOption : ClyshIndexable
     {
         if (InvalidShortcut(shortcutId))
             throw new ArgumentException(
-                string.Format(InvalidShorcutMessage, shorcutPattern, MinShortcut, MaxShortcut, shortcutId),
+                string.Format(ClyshMessages.InvalidShorcutMessage, shorcutPattern, MinShortcut, MaxShortcut, shortcutId),
                 nameof(shortcutId));
 
         return shortcutId;
