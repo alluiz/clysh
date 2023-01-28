@@ -71,7 +71,7 @@ public class ClyshSetup : IClyshSetup
     public void BindAction(string commandId, Action<IClyshCommand, IClyshView> action)
     {
         if (!Commands.Has(commandId))
-            throw new ClyshException(string.Format(ClyshMessages.MessageErrorOnBindAction, commandId));
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupBindAction, commandId));
 
         var command = Commands[commandId];
         command.Action = action;
@@ -85,7 +85,7 @@ public class ClyshSetup : IClyshSetup
     private void ExtractDataFromFileSystem(IFileSystem fs)
     {
         if (!fs.File.Exists(_path))
-            throw new ClyshException(string.Format(ClyshMessages.MessageInvalidFilePath, _path));
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupLoadFilePath, _path));
 
         var extension = fs.Path.GetExtension(_path);
 
@@ -94,7 +94,7 @@ public class ClyshSetup : IClyshSetup
             ".json" => JsonSerializer(fs),
             ".yml" => YamlSerializer(fs),
             ".yaml" => YamlSerializer(fs),
-            _ => throw new ClyshException(string.Format(ClyshMessages.MessageInvalidFileExtension, _path))
+            _ => throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupLoadFileExtension, _path))
         };
     }
 
@@ -111,7 +111,7 @@ public class ClyshSetup : IClyshSetup
         }
         catch (Exception e)
         {
-            throw new ClyshException(ClyshMessages.MessageErrorOnCreateCommands, e);
+            throw new ClyshException(ClyshMessages.ErrorOnSetupCommands, e);
         }
     }
 
@@ -151,7 +151,7 @@ public class ClyshSetup : IClyshSetup
                 commandsWithoutParent.Add(c.Id);
         });
 
-        throw new ClyshException(string.Format(ClyshMessages.MessageInvalidCommandsParent, string.Join(';', commandsWithoutParent)));
+        throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupCommandsParent, string.Join(';', commandsWithoutParent)));
     }
 
     private CommandData GetRootData()
@@ -163,7 +163,7 @@ public class ClyshSetup : IClyshSetup
         }
         catch (Exception)
         {
-            throw new ClyshException(ClyshMessages.MessageInvalidCommandsDuplicatedRoot);
+            throw new ClyshException(ClyshMessages.ErrorOnSetupCommandsDuplicatedRoot);
         }
     }
 
@@ -177,7 +177,7 @@ public class ClyshSetup : IClyshSetup
             VerifyCommandsPattern(Data.Commands);
         }
         else
-            throw new ClyshException(ClyshMessages.MessageInvalidCommandsLengthAtLeastOne);
+            throw new ClyshException(ClyshMessages.ErrorOnSetupCommandsLength);
     }
 
     private static void VerifyCommandsPattern(List<CommandData> dataCommands)
@@ -188,7 +188,7 @@ public class ClyshSetup : IClyshSetup
         dataCommands.ForEach(x=>
         {
             if (!regex.IsMatch(x.Id))
-                throw new ClyshException(string.Format(ClyshMessages.MessageInvalidId, pattern, x.Id));
+                throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateIdPattern, pattern, x.Id));
         });
     }
 
@@ -215,7 +215,7 @@ public class ClyshSetup : IClyshSetup
 
         ids = ids[..^1];
 
-        throw new ArgumentException(string.Format(ClyshMessages.MessageInvalidCommandsDuplicated, ids), nameof(commands));
+        throw new ArgumentException(string.Format(ClyshMessages.ErrorOnSetupCommandsDuplicated, ids), nameof(commands));
     }
 
     /// <summary>
@@ -235,7 +235,7 @@ public class ClyshSetup : IClyshSetup
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.MessageErrorOnCreateCommand, command.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, command.Id), e);
         }
     }
 
@@ -246,7 +246,7 @@ public class ClyshSetup : IClyshSetup
         if (!subcommands.Any())
         {
             if (command.RequireSubcommand)
-                throw new ClyshException(ClyshMessages.RequiredSubCommand);
+                throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupSubCommands, command.Id));
 
             return;
         }
@@ -259,7 +259,7 @@ public class ClyshSetup : IClyshSetup
                 var subcommandData = _commandsData.SingleOrDefault(x => x.Id == subcommandId);
 
                 if (subcommandData?.Id == null)
-                    throw new ClyshException(string.Format(ClyshMessages.MessageInvalidCommandsNotFound, subcommandId));
+                    throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupCommandsNotFound, subcommandId));
 
                 var commandBuilder = new ClyshCommandBuilder();
 
@@ -376,7 +376,7 @@ public class ClyshSetup : IClyshSetup
         var data = JsonConvert.DeserializeObject<ClyshData>(config);
 
         if (data == null)
-            throw new ClyshException(string.Format(ClyshMessages.MessageInvalidFileJson, _path));
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupLoadFileJson, _path));
 
         return data;
     }
@@ -413,7 +413,7 @@ public class ClyshSetup : IClyshSetup
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.MessageErrorOnLoad, _path), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupLoad, _path), e);
         }
     }
 }

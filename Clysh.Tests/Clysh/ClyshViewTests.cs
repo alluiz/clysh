@@ -188,7 +188,7 @@ public class ClyshViewTests
         var question = "     ";
         var exception = Assert.Throws<ArgumentException>(() => view.AskFor(question));
 
-        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.QuestionMustBeNotBlank);
+        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnValidateUserInputQuestionAnswer);
         
         consoleMock.Verify(x => x.Write($"{question}:"), Times.Never);
         consoleMock.Verify(x => x.ReadLine(), Times.Never);
@@ -206,7 +206,7 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
         consoleMock.Verify(x => x.WriteLine($"{metadata.Title}. Version: {metadata.Version}", 2), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("Usage: auth2 [options] [commands]", 4), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("Usage: auth2 [options] [subcommands]", 4), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
         consoleMock.Verify(x => x.WriteLine(command.Description, 6), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
@@ -229,7 +229,7 @@ public class ClyshViewTests
         //i=4
 
         consoleMock.Verify(x => x.WriteLine("", 12 + i), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("[commands]:", 13 + i), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("[subcommands]:", 13 + i), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 14 + i), Times.Once);
 
         var j = i + 1;
@@ -261,7 +261,7 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
         consoleMock.Verify(x => x.WriteLine($"{metadata.Title}. Version: {metadata.Version}", 2), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("Usage: auth2 credential [options] [commands]", 4), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("Usage: auth2 credential [options] [subcommands]", 4), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
         consoleMock.Verify(x => x.WriteLine(command.Description, 6), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
@@ -282,7 +282,7 @@ public class ClyshViewTests
         //i=4
 
         consoleMock.Verify(x => x.WriteLine("", 12 + i), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("[commands]:", 13 + i), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("[subcommands]:", 13 + i), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 14 + i), Times.Once);
 
         var j = i + 1;

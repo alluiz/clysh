@@ -734,7 +734,7 @@ public class ClyshServiceTests
         viewMock.Verify(
             x => x.PrintException(
                 It.Is<ValidationException>(
-                    y => ClyshMessages.Match(y.Message, ClyshMessages.InvalidOption, invalidOptionWithDashes))), Times.Once);
+                    y => ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputOption, invalidOptionWithDashes))), Times.Once);
     }
 
     [Test]
@@ -757,7 +757,7 @@ public class ClyshServiceTests
         viewMock.Verify(
             x => x.PrintException(
                 It.Is<ValidationException>(
-                    y => ClyshMessages.Match(y.Message, ClyshMessages.InvalidOption, invalidOptionWithDashes))), Times.Once);
+                    y => ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputOption, invalidOptionWithDashes))), Times.Once);
     }
 
     [Test]
@@ -790,7 +790,7 @@ public class ClyshServiceTests
 
         viewMock.Verify(
             x => x.PrintException(
-                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.RequiredParameters, arg, someOption, "<null>"))),
+                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputRequiredParameters, arg, someOption, "<null>"))),
             Times.Once);
     }
 
@@ -837,7 +837,7 @@ public class ClyshServiceTests
 
         viewMock.Verify(
             x => x.PrintException(
-                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.InvalidArgument, args[0]))), Times.Once);
+                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputArgument, args[0]))), Times.Once);
     }
 
     [Test]
@@ -868,7 +868,7 @@ public class ClyshServiceTests
 
         viewMock.Verify(
             x => x.PrintException(
-                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.IncorrectParameter, "testarg", someOption))), Times.Once);
+                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputParameterInvalid, "testarg", someOption))), Times.Once);
     }
 
     [Test]
@@ -901,7 +901,7 @@ public class ClyshServiceTests
 
         viewMock.Verify(
             x => x.PrintException(
-                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.InvalidParameter, "testarg", someOption) )),
+                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputArgumentOutOfBound, "testarg", someOption) )),
             Times.Once);
     }
 
@@ -933,7 +933,7 @@ public class ClyshServiceTests
 
         viewMock.Verify(
             x => x.PrintException(
-                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.ParameterConflict, "testarg", someOption))), Times.Once);
+                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputParameterConflict, "testarg", someOption))), Times.Once);
     }
 
     [Test]

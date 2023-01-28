@@ -86,7 +86,7 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
         try
         {
             if (minLength > maxLength)
-                throw new ArgumentException(ClyshMessages.ErrorOnValidateMaxLength, nameof(maxLength));
+                throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterMaxLength, Result.Id), nameof(maxLength));
             
             Result.MinLength = minLength;
             Result.MaxLength = maxLength;   

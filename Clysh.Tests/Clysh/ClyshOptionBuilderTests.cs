@@ -13,7 +13,7 @@ public class ClyshOptionBuilderTests
     {
         var builder = new ClyshOptionBuilder();
         var exception = Assert.Throws<ClyshException>(() =>  builder.Id("test", ""));
-        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.InvalidShorcutMessage);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.ErrorOnValidateShorcut);
     }
 
     [Test]
@@ -21,7 +21,7 @@ public class ClyshOptionBuilderTests
     {
         var builder = new ClyshOptionBuilder();
         var exception = Assert.Throws<ClyshException>(() =>  builder.Id("test", "h"));
-        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.InvalidShortcutReserved);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.ErrorOnValidateOptionShortcut);
     }
 
     [Test]
@@ -29,6 +29,6 @@ public class ClyshOptionBuilderTests
     {
         var builder = new ClyshOptionBuilder();
         var exception = Assert.Throws<ClyshException>(() =>  builder.Description("test"));
-        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.InvalidDescription);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.ErrorOnValidateDescription);
     }
 }

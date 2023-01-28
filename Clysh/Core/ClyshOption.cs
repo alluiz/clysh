@@ -76,7 +76,7 @@ public class ClyshOption : ClyshIndexable
     {
         if (descriptionValue == null || descriptionValue.Trim().Length is < MinDescription or > MaxDescription)
             throw new ArgumentException(
-                string.Format(ClyshMessages.InvalidDescription, MinDescription, MaxDescription, descriptionValue),
+                string.Format(ClyshMessages.ErrorOnValidateDescription, MinDescription, MaxDescription, descriptionValue),
                 nameof(descriptionValue));
 
         return descriptionValue;
@@ -96,7 +96,7 @@ public class ClyshOption : ClyshIndexable
     {
         if (InvalidShortcut(shortcutId))
             throw new ArgumentException(
-                string.Format(ClyshMessages.InvalidShorcutMessage, shorcutPattern, MinShortcut, MaxShortcut, shortcutId),
+                string.Format(ClyshMessages.ErrorOnValidateShorcut, shorcutPattern, MinShortcut, MaxShortcut, shortcutId),
                 nameof(shortcutId));
 
         return shortcutId;

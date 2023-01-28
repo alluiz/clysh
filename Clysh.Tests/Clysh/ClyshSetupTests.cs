@@ -145,7 +145,7 @@ public class ClyshSetupTests
             
         });
 
-        ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.MessageInvalidCommandsDuplicated);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.ErrorOnSetupCommandsDuplicated);
     }
 
     [Test]
@@ -159,7 +159,7 @@ public class ClyshSetupTests
             
         });
 
-        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.MessageInvalidFilePath);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnSetupLoadFilePath);
     }
 
     [Test]
@@ -175,7 +175,7 @@ public class ClyshSetupTests
             
         });
 
-        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.MessageInvalidFileExtension);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnSetupLoadFileExtension);
     }
 
     [Test]
@@ -190,7 +190,7 @@ public class ClyshSetupTests
             
         });
 
-        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.MessageInvalidFileExtension);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnSetupLoadFileExtension);
     }
 
     [Test]
@@ -207,7 +207,7 @@ public class ClyshSetupTests
             
         });
 
-        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.MessageInvalidCommandsLengthAtLeastOne);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnSetupCommandsLength);
     }
 
     [Test]
@@ -225,7 +225,7 @@ public class ClyshSetupTests
         });
 
         ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnCreateCommand);
-        ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.RequiredSubCommand);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.ErrorOnSetupSubCommands);
     }
 
     [Test]
@@ -242,7 +242,7 @@ public class ClyshSetupTests
             
         });
 
-        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.MessageInvalidCommandsDuplicatedRoot);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnSetupCommandsDuplicatedRoot);
     }
     
     [Test]
@@ -259,7 +259,7 @@ public class ClyshSetupTests
             
         });
 
-        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.MessageInvalidCommandsDuplicatedRoot);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnSetupCommandsDuplicatedRoot);
     }
 
     [Test]
@@ -278,7 +278,7 @@ public class ClyshSetupTests
         
         ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnCreateCommand);
         ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.ErrorOnCreateSubCommand);
-        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.InvalidCommandDuplicatedWords);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.ErrorOnValidateCommandId);
     }
 
     [Test]
@@ -295,7 +295,7 @@ public class ClyshSetupTests
             
         });
 
-        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.InvalidParameterOrder);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.ErrorOnValidateParameterOrder);
     }
 
     [Test]
@@ -314,7 +314,7 @@ public class ClyshSetupTests
         
         ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnCreateCommand);
         ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.ErrorOnCreateOption);
-        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.InvalidParameterRequiredOrder);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.ErrorOnValidateParameterRequiredOrder);
     }
 
     [Test]
@@ -331,7 +331,7 @@ public class ClyshSetupTests
             
         });
 
-        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.MessageInvalidCommandsParent);
+        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnSetupCommandsParent);
     }
 
     [Test]
@@ -366,7 +366,7 @@ public class ClyshSetupTests
             
         });
 
-        ExtendedAssert.MatchMessage(ex?.Message, ClyshMessages.MessageInvalidFileJson);
+        ExtendedAssert.MatchMessage(ex?.Message, ClyshMessages.ErrorOnSetupLoadFileJson);
     }
 
     private string GetYamlWithInvalidGroupText()

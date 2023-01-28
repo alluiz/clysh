@@ -37,7 +37,7 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
             Result.Id = id;
             Result.Shortcut = shortcut;
 
-            ValidateHelpShortcut(id, shortcut);
+            ValidateShortcut(id, shortcut);
 
             return this;
         }
@@ -47,10 +47,19 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
         }
     }
 
-    private static void ValidateHelpShortcut(string id, string? shortcut)
+    private static void ValidateShortcut(string id, string? shortcut)
     {
-        if (id is not "help" && shortcut is "h")
-            throw new ArgumentException(string.Format(ClyshMessages.InvalidShortcutReserved, id), nameof(shortcut));
+        var reserved = new Dictionary<string, string>
+        {
+            { "help", "h" },
+            { "version", "v" }
+        };
+        
+        foreach (var pair in reserved)
+        {
+            if (!id.Equals(pair.Key) && pair.Value.Equals(shortcut))
+                throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateOptionShortcut, pair.Value, pair.Key, id), nameof(shortcut));
+        }
     }
 
     /// <summary>
@@ -97,10 +106,10 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     private void ValidateParameter(ClyshParameter parameterValue)
     {
         if (parameterValue.Order <= lastParameterOrder)
-            throw new ArgumentException(string.Format(ClyshMessages.InvalidParameterOrder, lastParameterOrder, parameterValue.Id), nameof(parameterValue));
+            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterOrder, parameterValue.Id), nameof(parameterValue));
 
         if (parameterValue.Required && hasProvidedOptionalParameterBefore)
-            throw new ArgumentException(string.Format(ClyshMessages.InvalidParameterRequiredOrder, parameterValue.Id), nameof(parameterValue));
+            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRequiredOrder, parameterValue.Id), nameof(parameterValue));
     }
 
     /// <summary>

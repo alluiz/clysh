@@ -106,7 +106,7 @@ public class ClyshView : IClyshView
     private string AskFor(string title, bool sensitive)
     {
         if (string.IsNullOrWhiteSpace(title))
-            throw new ArgumentException(ClyshMessages.QuestionMustBeNotBlank, nameof(title));
+            throw new ArgumentException(ClyshMessages.ErrorOnValidateUserInputQuestionAnswer, nameof(title));
 
         Print($"{title}:", false, true);
 
@@ -165,7 +165,7 @@ public class ClyshView : IClyshView
 
     private void PrintSubCommands(IClyshCommand command)
     {
-        Print("[commands]:");
+        Print("[subcommands]:");
         PrintEmpty();
 
         foreach (var item in command.SubCommands.OrderBy(obj => obj.Key)
@@ -238,7 +238,7 @@ public class ClyshView : IClyshView
     {
         var parentCommands = command.Id.Replace(".", " ");
 
-        Print($"Usage: {parentCommands} [options]{(hasCommands ? " [commands]" : "")}");
+        Print($"Usage: {parentCommands} [options]{(hasCommands ? " [subcommands]" : "")}");
         PrintEmpty();
         Print(command.Description);
         PrintEmpty();

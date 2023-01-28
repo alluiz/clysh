@@ -40,10 +40,10 @@ public abstract class ClyshIndexable: IClyshIndexable
     private string ValidatedId(string desiredId)
     {
         if (desiredId == null)
-            throw new ArgumentException(string.Format(ClyshMessages.MessageInvalidId, Pattern, desiredId), nameof(desiredId));
+            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateIdPattern, Pattern, desiredId), nameof(desiredId));
 
         if (MaxLength > 0 && desiredId.Length > MaxLength)
-            throw new ArgumentException(string.Format(ClyshMessages.MessageInvalidIdLength, MaxLength, desiredId), nameof(desiredId));
+            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateIdLength, MaxLength, desiredId), nameof(desiredId));
 
         //No validation if no pattern was provided before.
         if (Pattern == null) 
@@ -52,7 +52,7 @@ public abstract class ClyshIndexable: IClyshIndexable
         regex ??= new Regex(Pattern);
 
         if (!regex.IsMatch(desiredId))
-            throw new ArgumentException(string.Format(ClyshMessages.MessageInvalidId, Pattern, desiredId), nameof(desiredId));
+            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateIdPattern, Pattern, desiredId), nameof(desiredId));
 
         return desiredId;
     }

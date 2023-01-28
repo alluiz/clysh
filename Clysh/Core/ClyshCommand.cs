@@ -62,7 +62,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     public void AddOption(ClyshOption option)
     {
         if (option.Command != null)
-            throw new ClyshException(string.Format(ClyshMessages.MessageOptionAddressMemory,
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandPropertyMemory,
                 option.Id));
 
         option.Command = this;
@@ -86,7 +86,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     public void AddSubCommand(IClyshCommand subCommand)
     {
         if (subCommand.Parent != null)
-            throw new ClyshException(string.Format(ClyshMessages.MessageCommandMustHaveOnlyOneParentCommand, subCommand.Id));
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandParent, subCommand.Id));
 
         ParentRecursivity(subCommand);
         subCommand.Parent = this;
@@ -147,7 +147,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     {
         if (descriptionValue == null || descriptionValue.Trim().Length is < MinDescription or > MaxDescription)
             throw new ArgumentException(
-                string.Format(ClyshMessages.MessageInvalidDescription, MinDescription, MaxDescription, descriptionValue),
+                string.Format(ClyshMessages.ErrorOnValidateDescription, MinDescription, MaxDescription, descriptionValue),
                 nameof(descriptionValue));
 
         return descriptionValue;
@@ -191,13 +191,13 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         var splittedId = command.Id.Split(".", StringSplitOptions.RemoveEmptyEntries);
 
         if (splittedId.DistinctBy(x => x).Count() != splittedId.Length)
-            throw new ClyshException(ClyshMessages.InvalidCommandDuplicatedWords);
+            throw new ClyshException(ClyshMessages.ErrorOnValidateCommandId);
     }
 
     public void AddGroups(ClyshGroup group)
     {
         if (group.Command != null && !group.Command.Equals(this))
-            throw new ClyshException(string.Format(ClyshMessages.MessageGroupAddressMemory,
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandPropertyMemory,
                 group.Id));
 
         group.Command = this;
@@ -205,6 +205,6 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         if (!Groups.Has(group.Id))
             Groups.Add(group);
         else if (!Groups[group.Id].Equals(group))
-            throw new ClyshException(string.Format(ClyshMessages.MessageGroupAddressMemoryIsDifferent, group.Id));
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandGroupMemory, group.Id));
     }
 }

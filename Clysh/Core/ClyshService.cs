@@ -116,13 +116,13 @@ public class ClyshService : IClyshService
     {
         defaultMessages = new Dictionary<string, string>
         {
-            { "InvalidOption", ClyshMessages.InvalidOption },
-            { "InvalidSubcommand", ClyshMessages.InvalidSubcommand },
-            { "InvalidArgument", ClyshMessages.InvalidArgument},
-            { "InvalidParameter", ClyshMessages.InvalidParameter},
-            { "IncorrectParameter", ClyshMessages.IncorrectParameter},
-            { "ParameterConflict", ClyshMessages.ParameterConflict},
-            { "RequiredParameters", ClyshMessages.RequiredParameters}
+            { "InvalidOption", ClyshMessages.ErrorOnValidateUserInputOption },
+            { "InvalidSubcommand", ClyshMessages.ErrorOnValidateUserInputSubcommand },
+            { "InvalidArgument", ClyshMessages.ErrorOnValidateUserInputArgument},
+            { "InvalidParameter", ClyshMessages.ErrorOnValidateUserInputArgumentOutOfBound},
+            { "IncorrectParameter", ClyshMessages.ErrorOnValidateUserInputParameterInvalid},
+            { "ParameterConflict", ClyshMessages.ErrorOnValidateUserInputParameterConflict},
+            { "RequiredParameters", ClyshMessages.ErrorOnValidateUserInputRequiredParameters}
         };
     }
 
@@ -243,12 +243,12 @@ public class ClyshService : IClyshService
         if (cmd.RequireSubcommand)
         {
             if (!cmd.SubCommands.Any())
-                audit.Messages.Add(string.Format(ClyshMessages.YourCommandDoesNotHaveASubcommandConfigured, cmd.Id));
+                audit.Messages.Add(string.Format(ClyshMessages.ErrorOnValidateCommandSubcommands, cmd.Id));
         }
         else
         {
             if (cmd.Action == null)
-                audit.Messages.Add(string.Format(ClyshMessages.YourCommandDoesNotHaveAnActionConfigured, cmd.Id));
+                audit.Messages.Add(string.Format(ClyshMessages.ErrorOnValidateCommandAction, cmd.Id));
         }
     }
 
