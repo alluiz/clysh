@@ -35,10 +35,8 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     /// <param name="id">The option identifier</param>
     /// <param name="shortcut">The option shortcut</param>
     /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
-    public ClyshOptionBuilder Id(string? id, string? shortcut = null)
+    public ClyshOptionBuilder Id(string id, string? shortcut = null)
     {
-        ArgumentNullException.ThrowIfNull(id);
-
         try
         {
             Result.Id = id;

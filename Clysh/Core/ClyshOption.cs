@@ -32,7 +32,8 @@ public class ClyshOption : ClyshIndexable
     /// </summary>
     public ClyshOption()
     {
-        Pattern = @"[a-zA-Z]+\w+";
+        Pattern = @"^[a-z]+(-{0,1}[a-z0-9]+)+$";
+        MaxLength = 30;
         shorcutPattern = @"[a-zA-Z]{1}";
         regexShortcut = new Regex(shorcutPattern);
         Parameters = new ClyshParameters();

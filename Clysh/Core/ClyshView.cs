@@ -188,7 +188,7 @@ public class ClyshView : IClyshView
         Print($"" +
               $"{"",-3}" +
               $"{"Shortcut",-11}" +
-              $"{"Option",-13}" +
+              $"{"Option",-33}" +
               $"{"Group",-15}" +
               $"{"Description",-55}" +
               $"Parameters: (R)equired | (O)ptional");
@@ -214,13 +214,10 @@ public class ClyshView : IClyshView
 
     private void PrintParameter(KeyValuePair<string, ClyshOption> item, string desc, string paramsText)
     {
+        var option = item.Value;
+        
         Print(
-            $"{"",-2}" +
-              $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}" +
-            $"--{item.Key,-13}" +
-            $"{item.Value.Group?.Id,-15}" +
-            $"{(desc.Length > 50 ? desc[..50] : desc),-55}" +
-            $"{paramsText}");
+            $"{"",-2}{(option.Shortcut == null ? "" : "-" + option.Shortcut),-10}--{item.Key,-33}{option.Group?.Id,-15}{(desc.Length > 50 ? desc[..50] : desc),-55}{paramsText}");
 
         if (desc.Length <= 50) return;
         
