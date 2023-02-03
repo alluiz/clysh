@@ -122,11 +122,11 @@ My own CLI
 
 [options]:
 
-   Shortcut   Option       Group          Description                                            Parameters: (R)equired | (O)ptional = Length
+   Option       Group          Description             Parameters
 
-  -h        --help                        Show help on screen
-  -d        --dummy        foo            Test option                                            [0:<value:R>]: 1
-  -T        --test         foo            Test option                                            [0:<value:R>]: 1
+   -h, --help                  Show help on screen
+   -d, --dummy  foo            Test option             <value:Required>
+   -T, --test   foo            Test option             <value:Required>
 
 [commands]:
 

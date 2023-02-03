@@ -40,7 +40,7 @@ namespace Clysh.Tests
                     }
                 })
                 .Option(optionBuilder.Id(developmentOption, "d")
-                    .Description("Development environment option. Default value.")
+                    .Description("Development option.")
                     .Group(group)
                     .Build())
                 .Option(optionBuilder.Id(homologOption, "s")
@@ -114,7 +114,7 @@ namespace Clysh.Tests
                 .Description("Test credential command")
                 .Action((_, _) => { })
                 .Option(optionBuilder.Id(timeOption, "t")
-                    .Description("time to expire credential in hours.")
+                    .Description("time to expire in hours.")
                     .Parameter(parameterBuilder.Id("hours").Range(1, 2).Required(true).Order(1).Build())
                     .Build())
                 .Build();

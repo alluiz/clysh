@@ -12,7 +12,7 @@ public class ClyshOption : ClyshIndexable
     private const int MinShortcut = 1;
     private const int MaxShortcut = 1;
 
-    private const int MaxDescription = 500;
+    private const int MaxDescription = 150;
     private const int MinDescription = 10;
 
     private readonly Regex regexShortcut;
@@ -28,7 +28,7 @@ public class ClyshOption : ClyshIndexable
     public ClyshOption()
     {
         Pattern = @"^[a-z]+(-{0,1}[a-z0-9]+)+$";
-        MaxLength = 30;
+        MaxLength = 15;
         shorcutPattern = @"[a-zA-Z]{1}";
         regexShortcut = new Regex(shorcutPattern);
         Parameters = new ClyshParameters();
@@ -37,7 +37,7 @@ public class ClyshOption : ClyshIndexable
     /// <summary>
     /// The description
     /// </summary>
-    public string? Description
+    public string Description
     {
         get => description; 
         set => description = ValidateDescription(value);
@@ -117,5 +117,10 @@ public class ClyshOption : ClyshIndexable
     private static bool InvalidShortcurtLength(string shortcut)
     {
         return shortcut.Length is < MinShortcut or > MaxShortcut;
+    }
+
+    public override string ToString()
+    {
+        return $"{(Shortcut == null ? "" : "-" + Shortcut + ","),-4}--{Id}";
     }
 }

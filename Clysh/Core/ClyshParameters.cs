@@ -72,7 +72,7 @@ public sealed class ClyshParameters: ClyshMap<ClyshParameter>
             
         foreach (var parameter in Values)
         {
-            var type = parameter.Required ? "R" : "O";
+            var type = parameter.Required ? "Required" : "Optional";
             paramsText.Append($"<{parameter.Id}:{type}>{(i < Count - 1 ? " " : "")}");
             i++;
         }

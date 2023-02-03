@@ -19,10 +19,11 @@ Commands:                                                                 #The C
         Description: Calculate from params
         Group: input-mode
   - Id: calc.sub
-    Description: Subtract values "a" and "b"
+    Description: Subtract values "a" and "b". Its a greatest feature for break line on CLI view
 
 GlobalOptions:
   - Id: values
+    Shortcut: V
     Description: Values to be added                                       #The parameters can have some input validation like: Min and Max Length and Regex Pattern
     Parameters:
       - Id: a
@@ -45,14 +46,14 @@ GlobalOptions:
       - calc.add
       - calc.sub
   - Id: blue
-    Description: Blue color output
+    Description: Blue color output for simple description tests. Its a greatest feature for break line on CLI view
     Group: color
     Commands:
       - calc.add
       - calc.sub
-  - Id: green
+  - Id: colorizedoption
     Description: Green color output
-    Group: color
+    Group: colorizedi
     Commands:
       - calc.add
       - calc.sub
