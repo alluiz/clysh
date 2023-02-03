@@ -36,11 +36,6 @@ public class CommandData
     public List<OptionData>? Options { get; set; }
 
     /// <summary>
-    /// The groups available for command
-    /// </summary>
-    public List<string>? Groups { get; set; }
-
-    /// <summary>
     /// Indicates if require subcommand
     /// </summary>
     public bool RequireSubcommand { get; set; }

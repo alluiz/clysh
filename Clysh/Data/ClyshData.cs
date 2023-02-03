@@ -49,4 +49,10 @@ public class ClyshData
     /// The CLI custom messages
     /// </summary>
     public Dictionary<string, string>? Messages { get; set; }
+
+    /// <summary>
+    /// The Global Options list
+    /// </summary>
+    [Required]
+    public List<GlobalOptionData>? GlobalOptions { get; set; }
 }

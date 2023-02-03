@@ -22,6 +22,7 @@ Create your **own CLI on .NET 6+** with simple steps.
 - 1.3.6 - Custom error messages and Colorized Console messages
 - 1.4.0 - Removed option parameter from action interface
 - 1.4.1 - Some code refactoring and fix example
+- 2.0.0 - New Feature: Global Options
 
 ## What is?
 
@@ -38,6 +39,7 @@ Clysh has some features to **facilitate** the process of create a CLI.
 - You can group options like **a radio button**.
 - The **help** command is auto-generated.
 - Easy to mocking for unit tests.
+- 2.0 NEW: Global options feature to reuse option structure with N commands
 
 ## Getting Started
 
@@ -53,11 +55,9 @@ Version: 1.0
 Commands:
   - Id: mycli
     Description: My own CLI
-    Groups:
-      - foo
     Options:
-      - Description: Test option
-        Id: test
+      - Id: test
+        Description: Test option
         Shortcut: T
         Parameters:
           - Id: value
@@ -65,8 +65,8 @@ Commands:
             MinLength: 1
             MaxLength: 15
         Group: foo
-      - Description: Test option
-        Id: dummy
+      - Id: dummy
+        Description: Dummy option      
         Shortcut: d
         Parameters:
           - Id: value
@@ -85,8 +85,6 @@ To use this create a new **Console Application**, then in your **Program.cs** wr
 using Clysh.Core;
 
 var setup = new ClyshSetup("clidata.yml");
-
-setup.Load();
 
 setup.BindAction("mycli", (cmd, view) =>
 {

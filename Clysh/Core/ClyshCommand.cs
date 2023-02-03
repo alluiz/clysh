@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Clysh.Core.Builder;
 using Clysh.Helper;
 
@@ -66,7 +67,18 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
                 option.Id));
 
         option.Command = this;
-
+        option.IsGlobal = false;
+        AddSimpleOption(option);
+    }
+    
+    public void AddGlobalOption(ClyshOption option)
+    {
+        option.IsGlobal = true;
+        AddSimpleOption(option);
+    }
+    
+    private void AddSimpleOption(ClyshOption option)
+    {
         if (Options.Has(option.Id))
             throw new ClyshException($"Invalid option id. The command already has an option with id: {option.Id}.");
 
@@ -75,7 +87,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
                 $"Invalid option shortcut. The command already has an option with shortcut: {option.Shortcut}.");
 
         if (option.Group != null && !Groups.Has(option.Group.Id))
-            AddGroups(option.Group);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandGroupNotFound, option.Group.Id));
 
         Options.Add(option);
 
@@ -102,6 +114,9 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
 
     public ClyshOption? GetOptionFromGroup(string groupId)
     {
+        if (!Groups.Has(groupId))
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnGetOptionFromGroupNotFound, groupId));
+            
         return GetOptionFromGroup(Groups[groupId]);
     }
 
@@ -202,9 +217,14 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
 
         group.Command = this;
 
+        AddGlobalGroups(group);
+    }
+    
+    public void AddGlobalGroups(ClyshGroup group)
+    {
         if (!Groups.Has(group.Id))
             Groups.Add(group);
         else if (!Groups[group.Id].Equals(group))
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandGroupMemory, group.Id));
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandGroupDuplicated, group.Id));
     }
 }

@@ -72,6 +72,8 @@ public class ClyshOption : ClyshIndexable
     /// </summary>
     public IClyshCommand? Command { get; set; }
 
+    public bool IsGlobal { get; set; }
+
     private static string ValidateDescription(string? descriptionValue)
     {
         if (descriptionValue == null || descriptionValue.Trim().Length is < MinDescription or > MaxDescription)

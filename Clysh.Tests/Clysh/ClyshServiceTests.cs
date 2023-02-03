@@ -1002,7 +1002,7 @@ public class ClyshServiceTests
         var someOption = "hom";
         var someOptionWithDashes = $"--{someOption}";
 
-        var args = new[] { someOptionWithDashes };
+        var args = new[] { "--dev", someOptionWithDashes };
 
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
@@ -1026,7 +1026,6 @@ public class ClyshServiceTests
         var devOption = optBuilder
             .Id("dev")
             .Group(group)
-            .Selected(true)
             .Build();
 
         var homOption = optBuilder

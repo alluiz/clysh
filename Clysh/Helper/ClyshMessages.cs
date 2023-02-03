@@ -8,9 +8,12 @@ public static class ClyshMessages
     public const string ErrorOnCreateOption = "Error on create option. Option: '{0}'";
     public const string ErrorOnCreateParameter = "Error on create parameter. Parameter: '{0}'";
     public const string ErrorOnCreateSubCommand = "Error on create subcommand. Subcommand: '{0}'";
+    public const string ErrorOnGetOptionFromGroupNotFound = "Error on option from group. The group is not found. Group: '{0}'";
     public const string ErrorOnValidateCommandAction = "Error on validate command. The command does NOT have an action configured. Command: '{0}'.";
     public const string ErrorOnValidateCommandId = "Error on validate command. The ID must not have duplicated words. Command: '{0}'";
     public const string ErrorOnValidateCommandGroupMemory = "Error on validate command. The group memory address is different between command and option. Group: '{0}'";
+    public const string ErrorOnValidateCommandGroupNotFound = "Error on validate command. The group is not found. Group: '{0}'";
+    public const string ErrorOnValidateCommandGroupDuplicated = "Error on validate command. The group is duplicated. Group: '{0}'";
     public const string ErrorOnValidateCommandPropertyMemory = "Error on validate command. The memory address is already related to another command. Object: '{0}'";
     public const string ErrorOnValidateCommandParent = "Error on validate command parent. The command must have only one parent. Command: '{0}'";
     public const string ErrorOnValidateCommandSubcommands = "Error on validate command. The command does NOT have a subcommand configured. Command: '{0}'.";
@@ -43,7 +46,8 @@ public static class ClyshMessages
     public const string ErrorOnSetupLoadFileJson = "Error on load data. The JSON deserialization results in null object. JSON file path: '{0}'";
     public const string ErrorOnSetupLoadFilePath = "Error on load data. The CLI data file was not found. Path: '{0}'";
     public const string ErrorOnSetupSubCommands = "Error on setup subcommands. The command is configured to require subcommand. Therefore, subcommands must not be null. Command: '{0}'";
-    
+    public const string ErrorOnSetupGlobalOptions = "Error on setup global options. The global options must have at least one command.";
+
     public static bool Match(string message, string messagePattern)
     {
         var regex = new Regex("{[0-9]+}");

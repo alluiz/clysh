@@ -17,6 +17,8 @@ public class ClyshService : IClyshService
     private readonly bool disableAudit;
 
     private readonly Dictionary<string, string> messages;
+    
+    private readonly Dictionary<string, ClyshOption> optionsFromGroup;
 
     private List<IClyshCommand> commandsToExecute;
 
@@ -46,7 +48,8 @@ public class ClyshService : IClyshService
         lastCommand = RootCommand;
         audits = new List<ClyshAudit>();
         commandsToExecute = new List<IClyshCommand>();
-        View = new ClyshView(clyshConsole, setup.Data);        
+        View = new ClyshView(clyshConsole, setup.Data);
+        optionsFromGroup = new Dictionary<string, ClyshOption>();
         FillDefaultMessages();
         messages = defaultMessages!;
         FillCustomMessages(setup.Data.Messages);
@@ -67,6 +70,7 @@ public class ClyshService : IClyshService
         View = view;
         audits = new List<ClyshAudit>();
         commandsToExecute = new List<IClyshCommand>();
+        optionsFromGroup = new Dictionary<string, ClyshOption>();
         FillDefaultMessages();
         messages = defaultMessages!;
     }
@@ -175,10 +179,17 @@ public class ClyshService : IClyshService
         else
         {
             lastCommand.Executed = true;
+            CheckGroups();
             CheckLastCommandStatus();
             CheckLastOptionStatus();
             ExecuteCommands();
         }
+    }
+
+    private void CheckGroups()
+    {
+        foreach (var option in optionsFromGroup.Values) 
+            option.Selected = true;
     }
 
     private void ExecuteVersion()
@@ -270,8 +281,9 @@ public class ClyshService : IClyshService
         lastOption = lastCommand.GetOption(key);
 
         HandleOptionGroup();
-
-        lastOption.Selected = true;
+        
+        if (lastOption.Group == null)
+            lastOption.Selected = true;
         
         if (OptionDebug())
             View.Debug = true;
@@ -290,14 +302,9 @@ public class ClyshService : IClyshService
 
     private void HandleOptionGroup()
     {
-        if (lastOption?.Group != null)
-        {
-            var oldOptionOfGroupSelected = lastCommand
-                .GetOptionFromGroup(lastOption.Group);
+        if (lastOption?.Group == null) return;
 
-            if (oldOptionOfGroupSelected != null)
-                oldOptionOfGroupSelected.Selected = false;
-        }
+        optionsFromGroup[lastOption.Group.Id] = lastOption;
     }
 
     private bool OptionHelp()

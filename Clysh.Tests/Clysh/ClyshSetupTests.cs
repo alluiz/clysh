@@ -335,24 +335,6 @@ public class ClyshSetupTests
     }
 
     [Test]
-    public void CreateSetupYamlWithInvalidGroupError()
-    {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithInvalidGroupText());
-
-        var exception = Assert.Throws<ClyshException>(() =>
-        {
-            var setup = new ClyshSetup(Path, fs.Object);
-            
-        });
-
-        Assert.AreEqual("The given key 'test' was not present in the dictionary.",
-            exception?.InnerException?.Message);
-    }
-
-    [Test]
     public void CreateSetupJsonNullError()
     {
         fs.Setup(x => x.File.Exists(Path)).Returns(true);
@@ -495,8 +477,6 @@ Version: 1.0
 Commands:
   - Id: mycli
     Description: My own CLI
-    Groups:
-      - env
     Options:
       - Description: Test option
         Id: dev
@@ -579,8 +559,6 @@ Version: 1.0
 Commands:
   - Id: mycli
     Description: My own CLI
-    Groups:
-      - env
     Options:
       - Description: Test option
         Id: dev
@@ -610,8 +588,6 @@ Version: 1.0
 Commands:
   - Id: mycli
     Description: My own CLI
-    Groups:
-      - env
     Options:
       - Description: Test option
         Id: dev
@@ -646,8 +622,6 @@ Version: 1.0
 Commands:
   - Id: mycli
     Description: My own CLI
-    Groups:
-      - env
     Options:
       - Description: Test option
         Id: dev
