@@ -19,12 +19,7 @@ public interface IClyshSetup
     /// The CLI Data
     /// </summary>
     ClyshData Data { get; }
-
-    /// <summary>
-    /// The CLI messages
-    /// </summary>
-    Dictionary<string, string>? Messages { get; set; }
-
+    
     /// <summary>
     /// Bind your command action
     /// </summary>

@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Clysh.Core.Builder;
 using Clysh.Data;
 using Clysh.Helper;
-using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using YamlDotNet.Serialization;
 using FileSystem = System.IO.Abstractions.FileSystem;
@@ -19,13 +14,6 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshSetup : IClyshSetup
 {
-    
-
-    private readonly List<CommandData> _commandsData;
-    private readonly string _path;
-
-    public ClyshMap<IClyshCommand> Commands { get; }
-
     /// <summary>
     /// The <b>ClyshDataSetup</b> object
     /// </summary>
@@ -33,11 +21,9 @@ public class ClyshSetup : IClyshSetup
     /// <param name="path">The path of file. YAML or JSON format only</param>
     public ClyshSetup(string path, IFileSystem fs)
     {
-        _path = path;
-        _commandsData = new List<CommandData>();
         Commands = new ClyshMap<IClyshCommand>();
         Data = new ClyshData();
-        Load(fs);
+        Load(fs, path);
     }
 
     /// <summary>
@@ -59,9 +45,9 @@ public class ClyshSetup : IClyshSetup
     public ClyshData Data { get; private set; }
 
     /// <summary>
-    /// The CLI messages
+    /// The CLI Commands
     /// </summary>
-    public Dictionary<string, string>? Messages { get; set; }
+    public ClyshMap<IClyshCommand> Commands { get; }
 
     /// <summary>
     /// Bind your command action
@@ -77,24 +63,19 @@ public class ClyshSetup : IClyshSetup
         command.Action = action;
     }
 
-    private void SetupMessages()
+    private void ExtractDataFromFileSystem(IFileSystem fs, string path)
     {
-        if (Data.Messages != null) Messages = Data.Messages;
-    }
+        if (!fs.File.Exists(path))
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupLoadFilePath, path));
 
-    private void ExtractDataFromFileSystem(IFileSystem fs)
-    {
-        if (!fs.File.Exists(_path))
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupLoadFilePath, _path));
-
-        var extension = fs.Path.GetExtension(_path);
+        var extension = fs.Path.GetExtension(path);
 
         Data = extension switch
         {
-            ".json" => JsonSerializer(fs),
-            ".yml" => YamlSerializer(fs),
-            ".yaml" => YamlSerializer(fs),
-            _ => throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupLoadFileExtension, _path))
+            ".json" => JsonSerializer(fs, path),
+            ".yml" => YamlSerializer(fs, path),
+            ".yaml" => YamlSerializer(fs, path),
+            _ => throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupLoadFileExtension, path))
         };
     }
 
@@ -140,12 +121,12 @@ public class ClyshSetup : IClyshSetup
     private void ValidateCommandsParent()
     {
         //Every command declared into file must has a parent, except root
-        var everyCommandHasParent = Commands.Count == _commandsData.Count;
+        var everyCommandHasParent = Commands.Count == Data.Commands!.Count;
 
         if (everyCommandHasParent) return;
 
         var commandsWithoutParent = new List<string>();
-        _commandsData.ForEach(c =>
+        Data.Commands.ForEach(c =>
         {
             if (!Commands.Has(c.Id))
                 commandsWithoutParent.Add(c.Id);
@@ -171,8 +152,6 @@ public class ClyshSetup : IClyshSetup
     {
         if (Data.Commands != null && Data.Commands.Any())
         {
-            _commandsData.AddRange(Data.Commands);
-
             VerifyDuplicatedCommands(Data.Commands);
             VerifyCommandsPattern(Data.Commands);
         }
@@ -190,11 +169,6 @@ public class ClyshSetup : IClyshSetup
             if (!regex.IsMatch(x.Id))
                 throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateIdPattern, pattern, x.Id));
         });
-    }
-
-    private void BuildRootCommand()
-    {
-        
     }
 
     private static void VerifyDuplicatedCommands(List<CommandData> commands)
@@ -256,7 +230,7 @@ public class ClyshSetup : IClyshSetup
             try
             {
                 //Throw an error if command id was not found
-                var subcommandData = _commandsData.SingleOrDefault(x => x.Id == subcommandId);
+                var subcommandData = Data.Commands!.SingleOrDefault(x => x.Id == subcommandId);
 
                 if (subcommandData?.Id == null)
                     throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupCommandsNotFound, subcommandId));
@@ -285,7 +259,7 @@ public class ClyshSetup : IClyshSetup
         var commandLevel = GetCommandLevel(command.Id);
         var nextLevel = commandLevel + 1;
 
-        var subcommands = _commandsData.Where(c =>
+        var subcommands = Data.Commands!.Where(c =>
                 c.Id.Contains(command.Id) &&
                 GetCommandLevel(c.Id) == nextLevel)
             .Select(c => c.Id)
@@ -313,7 +287,7 @@ public class ClyshSetup : IClyshSetup
     private static void BuildOption(ClyshOptionBuilder builder, IClyshCommand command, OptionData option)
     {
         builder
-            .Id(option.Id, option.Shortcut)
+            .Id(option.Id!, option.Shortcut)
             .Description(option.Description);
 
         BuildOptionGroup(builder, command, option);
@@ -369,42 +343,37 @@ public class ClyshSetup : IClyshSetup
             command.Groups.Add(groupBuilder.Id(group).Build());
     }
 
-    private ClyshData JsonSerializer(IFileSystem fs)
+    private ClyshData JsonSerializer(IFileSystem fs, string path)
     {
-        var config = GetDataFromFilePath(fs);
+        var config = GetDataFromFilePath(fs, path);
 
         var data = JsonConvert.DeserializeObject<ClyshData>(config);
 
         if (data == null)
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupLoadFileJson, _path));
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupLoadFileJson, path));
 
         return data;
     }
 
-    private string GetDataFromFilePath(IFileSystem fs)
+    private string GetDataFromFilePath(IFileSystem fs, string path)
     {
-        return fs.File.ReadAllText(_path);
+        return fs.File.ReadAllText(path);
     }
 
-    private ClyshData YamlSerializer(IFileSystem fs)
+    private ClyshData YamlSerializer(IFileSystem fs, string path)
     {
-        var data = GetDataFromFilePath(fs);
+        var data = GetDataFromFilePath(fs, path);
 
         var deserializer = new DeserializerBuilder().Build();
 
         return deserializer.Deserialize<ClyshData>(data);
     }
 
-    /// <summary>
-    /// Load CLI data from path and parse it
-    /// </summary>
-    /// <param name="fs">File system</param>
-    private void Load(IFileSystem fs)
+    private void Load(IFileSystem fs, string path)
     {
         try
         {
-            ExtractDataFromFileSystem(fs);
-            SetupMessages();
+            ExtractDataFromFileSystem(fs, path);
             CreateCommandsFromData();
         }
         catch (ClyshException)
@@ -413,7 +382,7 @@ public class ClyshSetup : IClyshSetup
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupLoad, _path), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupLoad, path), e);
         }
     }
 }

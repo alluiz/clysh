@@ -49,7 +49,7 @@ public class ClyshService : IClyshService
         View = new ClyshView(clyshConsole, setup.Data);        
         FillDefaultMessages();
         messages = defaultMessages!;
-        FillCustomMessages(setup.Messages);
+        FillCustomMessages(setup.Data.Messages);
     }
 
     /// <summary>
