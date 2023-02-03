@@ -7,7 +7,7 @@ namespace Clysh.Data
     /// Class used to deserialize parameter data from a file
     /// </summary>
     // ReSharper disable once ClassNeverInstantiated.Global
-    public class ClyshParameterData
+    public class ParameterData
     {
         /// <summary>
         /// The id of parameter

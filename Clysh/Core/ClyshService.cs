@@ -12,17 +12,13 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshService : IClyshService
 {
-    private const string YourCommandDoesNotHaveAnActionConfigured =
-        "Your command does NOT have an action configured. Command: '{0}'.";
-
-    private const string YourCommandDoesNotHaveASubcommandConfigured =
-        "Your command does NOT have a subcommand configured. Command: '{0}'.";
-
     private readonly List<ClyshAudit> audits;
 
     private readonly bool disableAudit;
 
     private readonly Dictionary<string, string> messages;
+    
+    private readonly Dictionary<string, ClyshOption> optionsFromGroup;
 
     private List<IClyshCommand> commandsToExecute;
 
@@ -52,10 +48,11 @@ public class ClyshService : IClyshService
         lastCommand = RootCommand;
         audits = new List<ClyshAudit>();
         commandsToExecute = new List<IClyshCommand>();
-        View = new ClyshView(clyshConsole, setup.Data);        
+        View = new ClyshView(clyshConsole, setup.Data);
+        optionsFromGroup = new Dictionary<string, ClyshOption>();
         FillDefaultMessages();
         messages = defaultMessages!;
-        FillCustomMessages(setup.Messages);
+        FillCustomMessages(setup.Data.Messages);
     }
 
     /// <summary>
@@ -73,6 +70,7 @@ public class ClyshService : IClyshService
         View = view;
         audits = new List<ClyshAudit>();
         commandsToExecute = new List<IClyshCommand>();
+        optionsFromGroup = new Dictionary<string, ClyshOption>();
         FillDefaultMessages();
         messages = defaultMessages!;
     }
@@ -122,13 +120,13 @@ public class ClyshService : IClyshService
     {
         defaultMessages = new Dictionary<string, string>
         {
-            { "InvalidOption", "The option '{0}' is invalid." },
-            { "InvalidSubcommand", "You need to provide some subcommand to command '{0}'" },
-            { "InvalidArgument", "You can't put parameters without any option that accept it '{0}'"},
-            { "InvalidParameter", "The parameter data '{0}' is out of bound for option: {1}."},
-            { "IncorrectParameter", "The parameter '{0}' is invalid for option: {1}."},
-            { "ParameterConflict", "The parameter '{0}' is already filled for option: {1}."},
-            { "RequiredParameters", "Required parameters [{0}] is missing for option: {1} (shortcut: {2})"}
+            { "InvalidOption", ClyshMessages.ErrorOnValidateUserInputOption },
+            { "InvalidSubcommand", ClyshMessages.ErrorOnValidateUserInputSubcommand },
+            { "InvalidArgument", ClyshMessages.ErrorOnValidateUserInputArgument},
+            { "InvalidParameter", ClyshMessages.ErrorOnValidateUserInputArgumentOutOfBound},
+            { "IncorrectParameter", ClyshMessages.ErrorOnValidateUserInputParameterInvalid},
+            { "ParameterConflict", ClyshMessages.ErrorOnValidateUserInputParameterConflict},
+            { "RequiredParameters", ClyshMessages.ErrorOnValidateUserInputRequiredParameters}
         };
     }
 
@@ -152,8 +150,16 @@ public class ClyshService : IClyshService
 
                 if (OptionHelp())
                     break;
+                
+                if (OptionVersion())
+                    break;
             }
         }
+    }
+
+    private bool OptionVersion()
+    {
+        return lastOption is { Id: "version" };
     }
 
     private void ProcessAnotherArgumentType(string arg)
@@ -167,16 +173,28 @@ public class ClyshService : IClyshService
     private void FinishProcess()
     {
         if (OptionHelp())
-        {
             ExecuteHelp();
-        }
+        else if (OptionVersion())
+            ExecuteVersion();
         else
         {
             lastCommand.Executed = true;
+            CheckGroups();
             CheckLastCommandStatus();
             CheckLastOptionStatus();
             ExecuteCommands();
         }
+    }
+
+    private void CheckGroups()
+    {
+        foreach (var option in optionsFromGroup.Values) 
+            option.Selected = true;
+    }
+
+    private void ExecuteVersion()
+    {
+        View.PrintVersion();
     }
 
     private bool OptionDebug()
@@ -236,12 +254,12 @@ public class ClyshService : IClyshService
         if (cmd.RequireSubcommand)
         {
             if (!cmd.SubCommands.Any())
-                audit.Messages.Add(string.Format(YourCommandDoesNotHaveASubcommandConfigured, cmd.Id));
+                audit.Messages.Add(string.Format(ClyshMessages.ErrorOnValidateCommandSubcommands, cmd.Id));
         }
         else
         {
             if (cmd.Action == null)
-                audit.Messages.Add(string.Format(YourCommandDoesNotHaveAnActionConfigured, cmd.Id));
+                audit.Messages.Add(string.Format(ClyshMessages.ErrorOnValidateCommandAction, cmd.Id));
         }
     }
 
@@ -263,8 +281,9 @@ public class ClyshService : IClyshService
         lastOption = lastCommand.GetOption(key);
 
         HandleOptionGroup();
-
-        lastOption.Selected = true;
+        
+        if (lastOption.Group == null)
+            lastOption.Selected = true;
         
         if (OptionDebug())
             View.Debug = true;
@@ -283,14 +302,9 @@ public class ClyshService : IClyshService
 
     private void HandleOptionGroup()
     {
-        if (lastOption?.Group != null)
-        {
-            var oldOptionOfGroupSelected = lastCommand
-                .GetOptionFromGroup(lastOption.Group);
+        if (lastOption?.Group == null) return;
 
-            if (oldOptionOfGroupSelected != null)
-                oldOptionOfGroupSelected.Selected = false;
-        }
+        optionsFromGroup[lastOption.Group.Id] = lastOption;
     }
 
     private bool OptionHelp()

@@ -12,13 +12,8 @@ public class ClyshOption : ClyshIndexable
     private const int MinShortcut = 1;
     private const int MaxShortcut = 1;
 
-    private const int MaxDescription = 500;
+    private const int MaxDescription = 150;
     private const int MinDescription = 10;
-
-    private const string InvalidShorcutMessage = "Invalid shortcut. The shortcut must be null or follow the pattern {0} and between {1} and {2} chars. Shortcut: '{3}'";
-
-    private const string InvalidDescription =
-        "Option description must be not null or empty and between {0} and {1} chars. Description: '{2}'";
 
     private readonly Regex regexShortcut;
 
@@ -32,7 +27,8 @@ public class ClyshOption : ClyshIndexable
     /// </summary>
     public ClyshOption()
     {
-        Pattern = @"[a-zA-Z]+\w+";
+        Pattern = @"^[a-z]+(-{0,1}[a-z0-9]+)+$";
+        MaxLength = 15;
         shorcutPattern = @"[a-zA-Z]{1}";
         regexShortcut = new Regex(shorcutPattern);
         Parameters = new ClyshParameters();
@@ -41,7 +37,7 @@ public class ClyshOption : ClyshIndexable
     /// <summary>
     /// The description
     /// </summary>
-    public string? Description
+    public string Description
     {
         get => description; 
         set => description = ValidateDescription(value);
@@ -76,11 +72,13 @@ public class ClyshOption : ClyshIndexable
     /// </summary>
     public IClyshCommand? Command { get; set; }
 
+    public bool IsGlobal { get; set; }
+
     private static string ValidateDescription(string? descriptionValue)
     {
         if (descriptionValue == null || descriptionValue.Trim().Length is < MinDescription or > MaxDescription)
             throw new ArgumentException(
-                string.Format(InvalidDescription, MinDescription, MaxDescription, descriptionValue),
+                string.Format(ClyshMessages.ErrorOnValidateDescription, MinDescription, MaxDescription, descriptionValue),
                 nameof(descriptionValue));
 
         return descriptionValue;
@@ -100,7 +98,7 @@ public class ClyshOption : ClyshIndexable
     {
         if (InvalidShortcut(shortcutId))
             throw new ArgumentException(
-                string.Format(InvalidShorcutMessage, shorcutPattern, MinShortcut, MaxShortcut, shortcutId),
+                string.Format(ClyshMessages.ErrorOnValidateShorcut, shorcutPattern, MinShortcut, MaxShortcut, shortcutId),
                 nameof(shortcutId));
 
         return shortcutId;
@@ -119,5 +117,10 @@ public class ClyshOption : ClyshIndexable
     private static bool InvalidShortcurtLength(string shortcut)
     {
         return shortcut.Length is < MinShortcut or > MaxShortcut;
+    }
+
+    public override string ToString()
+    {
+        return $"{(Shortcut == null ? "" : "-" + Shortcut + ","),-4}--{Id}";
     }
 }

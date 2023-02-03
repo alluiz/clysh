@@ -11,7 +11,7 @@ namespace Clysh.Data;
 /// Class used to deserialize command data from file
 /// </summary>
 // ReSharper disable once ClassNeverInstantiated.Global
-public class ClyshCommandData
+public class CommandData
 {
     /// <summary>
     /// The id of command
@@ -33,12 +33,7 @@ public class ClyshCommandData
     /// <summary>
     /// The command options data
     /// </summary>
-    public List<ClyshOptionData>? Options { get; set; }
-
-    /// <summary>
-    /// The groups available for command
-    /// </summary>
-    public List<string>? Groups { get; set; }
+    public List<OptionData>? Options { get; set; }
 
     /// <summary>
     /// Indicates if require subcommand

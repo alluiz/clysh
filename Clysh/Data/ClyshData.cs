@@ -43,10 +43,16 @@ public class ClyshData
     /// The CLI Commands list
     /// </summary>
     [Required]
-    public List<ClyshCommandData>? Commands { get; set; }
+    public List<CommandData>? Commands { get; set; }
 
     /// <summary>
     /// The CLI custom messages
     /// </summary>
     public Dictionary<string, string>? Messages { get; set; }
+
+    /// <summary>
+    /// The Global Options list
+    /// </summary>
+    [Required]
+    public List<GlobalOptionData>? GlobalOptions { get; set; }
 }

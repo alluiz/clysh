@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using Clysh.Helper;
 
 namespace Clysh.Core.Builder;
 
@@ -9,8 +10,6 @@ namespace Clysh.Core.Builder;
 /// <seealso cref="ClyshBuilder{T}"/>
 public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
 {
-    private const string ErrorOnCreateParameter = "Error on create parameter. Parameter: {0}";
-
     /// <summary>
     /// Build the parameter identifier
     /// </summary>
@@ -38,7 +37,7 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateParameter, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateParameter, Result.Id), e);
         }
     }
 
@@ -59,7 +58,7 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateParameter, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateParameter, Result.Id), e);
         }
 
         return this;
@@ -86,16 +85,15 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
     {
         try
         {
-            Result.MinLength = minLength;
-            Result.MaxLength = maxLength;
+            if (minLength > maxLength)
+                throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterMaxLength, Result.Id), nameof(maxLength));
             
-            if (Result.MinLength > Result.MaxLength)
-                throw new ArgumentException($"Invalid max length. The max length must be greater than min length.",
-                    nameof(maxLength));
+            Result.MinLength = minLength;
+            Result.MaxLength = maxLength;   
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateParameter, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateParameter, Result.Id), e);
         }
 
         return this;

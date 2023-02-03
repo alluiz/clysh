@@ -1,7 +1,7 @@
 namespace Clysh.Core.Builder;
 
 /// <summary>
-/// The builder`s base
+/// The builders base
 /// </summary>
 /// <typeparam name="T">The type to be builded</typeparam>
 public abstract class ClyshBuilder<T> where T: new()
@@ -20,7 +20,7 @@ public abstract class ClyshBuilder<T> where T: new()
     }
 
     /// <summary>
-    /// Create a new instance of type
+    /// Create a new instance of a type
     /// </summary>
     protected virtual void Reset()
     {
@@ -30,7 +30,7 @@ public abstract class ClyshBuilder<T> where T: new()
     /// <summary>
     /// Finish build 
     /// </summary>
-    /// <returns>The instance builded</returns>
+    /// <returns>The new instance</returns>
     public T Build()
     {
         var build = Result;

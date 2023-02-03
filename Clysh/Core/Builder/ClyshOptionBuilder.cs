@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using Clysh.Helper;
 using Microsoft.VisualBasic;
 
 namespace Clysh.Core.Builder;
@@ -10,13 +11,7 @@ namespace Clysh.Core.Builder;
 /// <seealso cref="ClyshBuilder{T}"/>
 public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
 {
-    private const string InvalidShortcutReserved = "Shortcut 'h' is reserved to help shortcut. Option: {0}";
-
-    private const string ErrorOnCreateOption = "Error on create option. Option: {0}";
-
-    private const string InvalidParameterRequiredOrder = "Invalid parameter order. The required parameters must come first than optional parameters. Check the order. Parameter: {0}";
-
-    private const string InvalidParameterOrder = "Invalid parameter order. The order must be greater than the lastOrder: {0}. Parameter: {1}";
+    
 
     private bool hasProvidedOptionalParameterBefore;
     private int lastParameterOrder = -1;
@@ -35,29 +30,36 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     /// <param name="id">The option identifier</param>
     /// <param name="shortcut">The option shortcut</param>
     /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
-    public ClyshOptionBuilder Id(string? id, string? shortcut = null)
+    public ClyshOptionBuilder Id(string id, string? shortcut = null)
     {
-        ArgumentNullException.ThrowIfNull(id);
-
         try
         {
             Result.Id = id;
             Result.Shortcut = shortcut;
 
-            ValidateHelpShortcut(id, shortcut);
+            ValidateShortcut(id, shortcut);
 
             return this;
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateOption, id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateOption, id), e);
         }
     }
 
-    private static void ValidateHelpShortcut(string id, string? shortcut)
+    private static void ValidateShortcut(string id, string? shortcut)
     {
-        if (id is not "help" && shortcut is "h")
-            throw new ArgumentException(string.Format(InvalidShortcutReserved, id), nameof(shortcut));
+        var reserved = new Dictionary<string, string>
+        {
+            { "help", "h" },
+            { "version", "v" }
+        };
+        
+        foreach (var pair in reserved)
+        {
+            if (!id.Equals(pair.Key) && pair.Value.Equals(shortcut))
+                throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateOptionShortcut, pair.Value, pair.Key, id), nameof(shortcut));
+        }
     }
 
     /// <summary>
@@ -74,7 +76,7 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateOption, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateOption, Result.Id), e);
         }
     }
 
@@ -97,17 +99,17 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ErrorOnCreateOption, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateOption, Result.Id), e);
         }
     }
 
     private void ValidateParameter(ClyshParameter parameterValue)
     {
         if (parameterValue.Order <= lastParameterOrder)
-            throw new ArgumentException(string.Format(InvalidParameterOrder, lastParameterOrder, parameterValue.Id), nameof(parameterValue));
+            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterOrder, parameterValue.Id), nameof(parameterValue));
 
         if (parameterValue.Required && hasProvidedOptionalParameterBefore)
-            throw new ArgumentException(string.Format(InvalidParameterRequiredOrder, parameterValue.Id), nameof(parameterValue));
+            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRequiredOrder, parameterValue.Id), nameof(parameterValue));
     }
 
     /// <summary>

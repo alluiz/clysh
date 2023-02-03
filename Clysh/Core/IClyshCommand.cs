@@ -101,6 +101,24 @@ public interface IClyshCommand: IClyshIndexable
     /// </summary>
     /// <param name="option">The option</param>
     void AddOption(ClyshOption option);
+    
+    /// <summary>
+    /// Adds a global option to the command
+    /// </summary>
+    /// <param name="option">The option</param>
+    void AddGlobalOption(ClyshOption option);
+    
+    /// <summary>
+    /// Adds a group to the command
+    /// </summary>
+    /// <param name="group"></param>
+    void AddGroups(ClyshGroup group);
+
+    /// <summary>
+    /// Adds a global group to the command
+    /// </summary>
+    /// <param name="group"></param>
+    void AddGlobalGroups(ClyshGroup group);
 
     /// <summary>
     /// Adds a subcommand to the command and mark it as parent

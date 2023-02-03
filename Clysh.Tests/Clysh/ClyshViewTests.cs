@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Clysh.Core;
 using Clysh.Data;
+using Clysh.Helper;
 using Moq;
 using NUnit.Framework;
 
@@ -187,8 +188,8 @@ public class ClyshViewTests
         var question = "     ";
         var exception = Assert.Throws<ArgumentException>(() => view.AskFor(question));
 
-        Assert.IsTrue(exception?.Message.Contains("Question must be not blank"));
-
+        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnValidateUserInputQuestionAnswer);
+        
         consoleMock.Verify(x => x.Write($"{question}:"), Times.Never);
         consoleMock.Verify(x => x.ReadLine(), Times.Never);
         Assert.AreEqual(0, view.PrintedLines);
@@ -205,30 +206,31 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
         consoleMock.Verify(x => x.WriteLine($"{metadata.Title}. Version: {metadata.Version}", 2), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("Usage: auth2 [options] [commands]", 4), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("Usage: auth2 [options] [subcommands]", 4), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
         consoleMock.Verify(x => x.WriteLine(command.Description, 6), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
         consoleMock.Verify(x => x.WriteLine("[options]:", 8), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 9), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional", 10), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Option".PadRight(22) + "Group".PadRight(11) + "Description".PadRight(35) + "Parameters", 10), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
 
         var i = 0;
 
-        foreach (var item in command.Options
+        foreach (var option in command.Options
                      .OrderBy(x => x.Value.Group?.Id)
-                     .ThenBy(y=>y.Key))
+                     .ThenBy(y=>y.Key)
+                     .Select(z => z.Value))
         {
             var i1 = i;
-            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-13}{item.Value.Group,-15}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);
+            consoleMock.Verify(x => x.WriteLine("".PadRight(3) + $"{option,-22}{option.Group,-11}{option.Description,-35}{option.Parameters}", 12 + i1), Times.Once);
             i++;
         }
 
         //i=4
 
         consoleMock.Verify(x => x.WriteLine("", 12 + i), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("[commands]:", 13 + i), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("[subcommands]:", 13 + i), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 14 + i), Times.Once);
 
         var j = i + 1;
@@ -246,7 +248,7 @@ public class ClyshViewTests
 
         consoleMock.Verify(x => x.WriteLine("", 14 + j), Times.Once);
 
-        Assert.AreEqual(22, view.PrintedLines);
+        Assert.AreEqual(23, view.PrintedLines);
     }
 
     [Test]
@@ -260,28 +262,30 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
         consoleMock.Verify(x => x.WriteLine($"{metadata.Title}. Version: {metadata.Version}", 2), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("Usage: auth2 credential [options] [commands]", 4), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("Usage: auth2 credential [options] [subcommands]", 4), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
         consoleMock.Verify(x => x.WriteLine(command.Description, 6), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
         consoleMock.Verify(x => x.WriteLine("[options]:", 8), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 9), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional", 10), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Option".PadRight(22) + "Group".PadRight(11) + "Description".PadRight(35) + "Parameters", 10), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
 
         var i = 0;
 
-        foreach (var item in command.Options.OrderBy(x => x.Key))
+        foreach (var option in command.Options.OrderBy(x => x.Value.Group?.Id)
+                     .ThenBy(y => y.Key)
+                     .Select(z => z.Value))
         {
             var i1 = i;
-            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-28}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);
+            consoleMock.Verify(x => x.WriteLine("".PadRight(3) + $"{option,-33}{option.Description,-35}{option.Parameters}", 12 + i1), Times.Once);
             i++;
         }
 
         //i=4
 
         consoleMock.Verify(x => x.WriteLine("", 12 + i), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("[commands]:", 13 + i), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("[subcommands]:", 13 + i), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 14 + i), Times.Once);
 
         var j = i + 1;
@@ -299,7 +303,7 @@ public class ClyshViewTests
 
         consoleMock.Verify(x => x.WriteLine("", 14 + j), Times.Once);
 
-        Assert.AreEqual(20, view.PrintedLines);
+        Assert.AreEqual(21, view.PrintedLines);
     }
 
     [Test]
@@ -319,15 +323,20 @@ public class ClyshViewTests
         consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
         consoleMock.Verify(x => x.WriteLine("[options]:", 8), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 9), Times.Once);
-        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Shortcut".PadRight(11) + "Option".PadRight(13) + "Group".PadRight(15) + "Description".PadRight(55) + "Parameters: (R)equired | (O)ptional", 10), Times.Once);
+        consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Option".PadRight(22) + "Group".PadRight(11) + "Description".PadRight(35) + "Parameters", 10), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
 
         var i = 0;
 
-        foreach (var item in command.Options.OrderBy(x => x.Key))
+        foreach (var option in command.Options.OrderBy(x => x.Value.Group?.Id)
+                     .ThenBy(y => y.Key)
+                     .Select(z => z.Value))
         {
             var i1 = i;
-            consoleMock.Verify(x => x.WriteLine("".PadRight(2) + $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}--{item.Key,-13}{(item.Value.Group == null?"":item.Value.Group.Id),-15}{item.Value.Description,-55}{item.Value.Parameters}", 12 + i1), Times.Once);
+            var groupId = option.Group?.Id;
+            var truncate = option.Description.Length > 30;
+            var firstDescriptionLine = truncate ? option.Description[..30] : option.Description;
+            consoleMock.Verify(x => x.WriteLine("".PadRight(3) + $"{option, -22}{groupId,-11}{firstDescriptionLine,-35}{option.Parameters}", 12 + i1), Times.Once);
             i++;
         }
 
@@ -335,7 +344,7 @@ public class ClyshViewTests
 
         consoleMock.Verify(x => x.WriteLine("", 12 + i), Times.Once);
 
-        Assert.AreEqual(15, view.PrintedLines);
+        Assert.AreEqual(16, view.PrintedLines);
     }
 
     [Test]
@@ -353,7 +362,7 @@ public class ClyshViewTests
         }
 
         consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
-        consoleMock.Verify(x => x.WriteLine($"Error: Exception: Test Exception", 2), Times.Once);
+        consoleMock.Verify(x => x.WriteLine($"Error: Test Exception", 2), Times.Once);
         consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
         
         Assert.AreEqual(3, view.PrintedLines);

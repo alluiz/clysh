@@ -27,7 +27,7 @@ public class ClyshSetupTests
         fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlText());
 
         var setup = new ClyshSetup(Path, fs.Object);
-        setup.Load();
+        
         setup.BindAction("mycli", EmptyAction);
 
         var root = setup.RootCommand;
@@ -37,7 +37,7 @@ public class ClyshSetupTests
 
         Assert.AreEqual("mycli", root.Id);
         Assert.AreEqual("My own CLI", root.Description);
-        Assert.AreEqual(5, root.Options.Count);
+        Assert.AreEqual(6, root.Options.Count);
         Assert.AreEqual(1, root.SubCommands.Count);
         Assert.AreEqual(EmptyAction, root.Action);
         Assert.IsFalse(root.RequireSubcommand);
@@ -65,7 +65,7 @@ public class ClyshSetupTests
         fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlText());
 
         var setup = new ClyshSetup(Path, fs.Object);
-        setup.Load();
+        
         setup.BindAction("mycli", EmptyAction);
 
         var root = setup.RootCommand;
@@ -75,7 +75,7 @@ public class ClyshSetupTests
 
         Assert.AreEqual("mycli", root.Id);
         Assert.AreEqual("My own CLI", root.Description);
-        Assert.AreEqual(5, root.Options.Count);
+        Assert.AreEqual(6, root.Options.Count);
         Assert.AreEqual(1, root.SubCommands.Count);
         Assert.AreEqual(EmptyAction, root.Action);
         Assert.IsFalse(root.RequireSubcommand);
@@ -103,7 +103,7 @@ public class ClyshSetupTests
         fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetJsonText());
 
         var setup = new ClyshSetup(Path, fs.Object);
-        setup.Load();
+        
 
         setup.BindAction("mycli", EmptyAction);
 
@@ -114,7 +114,7 @@ public class ClyshSetupTests
 
         Assert.AreEqual("mycli", root.Id);
         Assert.AreEqual("My own CLI", root.Description);
-        Assert.AreEqual(3, root.Options.Count);
+        Assert.AreEqual(4, root.Options.Count);
         Assert.IsEmpty(root.SubCommands);
 
         Assert.AreEqual("Test option", root.Options["test"].Description);
@@ -142,12 +142,10 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
-        Assert.AreEqual(
-            "Invalid commands: The id(s): mycli must be unique check your schema and try again. (Parameter 'commands')",
-            exception?.InnerException?.Message);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.ErrorOnSetupCommandsDuplicated);
     }
 
     [Test]
@@ -158,11 +156,10 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
-        Assert.AreEqual("Invalid path: CLI data file was not found. Path: '/file'",
-            exception?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnSetupLoadFilePath);
     }
 
     [Test]
@@ -175,12 +172,10 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
-        Assert.AreEqual(
-            "Invalid extension. Only JSON (.json) and YAML (.yml or .yaml) files are supported. Path: '/file'",
-            exception?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnSetupLoadFileExtension);
     }
 
     [Test]
@@ -192,12 +187,10 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
-        Assert.AreEqual(
-            "Invalid extension. Only JSON (.json) and YAML (.yml or .yaml) files are supported. Path: '/file'",
-            exception?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnSetupLoadFileExtension);
     }
 
     [Test]
@@ -211,11 +204,10 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
-        Assert.AreEqual("Invalid commands: The data must contains at least one command.",
-            exception?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnSetupCommandsLength);
     }
 
     [Test]
@@ -229,11 +221,11 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
-        Assert.AreEqual("The command is configured to require subcommand. So subcommands cannot be null.",
-            exception?.InnerException?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnCreateCommand);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.ErrorOnSetupSubCommands);
     }
 
     [Test]
@@ -247,12 +239,10 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
-        Assert.AreEqual(
-            "Data must have one root command. Consider marking only one command with 'Root': true.",
-            exception?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnSetupCommandsDuplicatedRoot);
     }
     
     [Test]
@@ -266,12 +256,10 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
-        Assert.AreEqual(
-            "Data must have one root command. Consider marking only one command with 'Root': true.",
-            exception?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnSetupCommandsDuplicatedRoot);
     }
 
     [Test]
@@ -285,16 +273,12 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
-        Assert.AreEqual("Error on create command. Command: mycli",
-            exception?.Message);
         
-        Assert.AreEqual("Error on create subcommand. Subcommand: mycli.mycli",
-            exception?.InnerException?.Message);
-        
-        Assert.AreEqual("Invalid command: The commandId cannot have duplicated words. Command: mycli.mycli",
-            exception?.InnerException?.InnerException?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnCreateCommand);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.ErrorOnCreateSubCommand);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.ErrorOnValidateCommandId);
     }
 
     [Test]
@@ -308,11 +292,10 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
-        Assert.AreEqual("Invalid parameter order. The order must be greater than the lastOrder: 0. Parameter: c (Parameter 'parameterValue')",
-            exception?.InnerException?.InnerException?.Message);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.ErrorOnValidateParameterOrder);
     }
 
     [Test]
@@ -326,19 +309,12 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
         
-        Assert.AreEqual(
-            "Error on create command. Command: mycli",
-            exception?.Message);
-        
-        Assert.AreEqual(
-            "Error on create option. Option: test",
-            exception?.InnerException?.Message);
-        Assert.AreEqual(
-            "Invalid parameter order. The required parameters must come first than optional parameters. Check the order. Parameter: c (Parameter 'parameterValue')",
-            exception?.InnerException?.InnerException?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnCreateCommand);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.ErrorOnCreateOption);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.ErrorOnValidateParameterRequiredOrder);
     }
 
     [Test]
@@ -352,29 +328,10 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
-        Assert.AreEqual("The commands loaded size is different than commands size declared in file. Check if all your commands has a valid parent.",
-            exception?.Message);
-    }
-
-    [Test]
-    public void CreateSetupYamlWithInvalidGroupError()
-    {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithInvalidGroupText());
-
-        var exception = Assert.Throws<ClyshException>(() =>
-        {
-            var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
-        });
-
-        Assert.AreEqual("The given key 'test' was not present in the dictionary.",
-            exception?.InnerException?.Message);
+        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnSetupCommandsParent);
     }
 
     [Test]
@@ -388,10 +345,10 @@ public class ClyshSetupTests
         var ex = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, fs.Object);
-            setup.Load();
+            
         });
 
-        Assert.AreEqual("Invalid JSON: The deserialization results in null object. JSON file path: '/file'", ex?.Message);
+        ExtendedAssert.MatchMessage(ex?.Message, ClyshMessages.ErrorOnSetupLoadFileJson);
     }
 
     private string GetYamlWithInvalidGroupText()
@@ -520,8 +477,6 @@ Version: 1.0
 Commands:
   - Id: mycli
     Description: My own CLI
-    Groups:
-      - env
     Options:
       - Description: Test option
         Id: dev
@@ -604,8 +559,6 @@ Version: 1.0
 Commands:
   - Id: mycli
     Description: My own CLI
-    Groups:
-      - env
     Options:
       - Description: Test option
         Id: dev
@@ -635,8 +588,6 @@ Version: 1.0
 Commands:
   - Id: mycli
     Description: My own CLI
-    Groups:
-      - env
     Options:
       - Description: Test option
         Id: dev
@@ -671,8 +622,6 @@ Version: 1.0
 Commands:
   - Id: mycli
     Description: My own CLI
-    Groups:
-      - env
     Options:
       - Description: Test option
         Id: dev

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Clysh.Data;
+using Clysh.Helper;
 
 namespace Clysh.Core;
 
@@ -9,8 +10,6 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshView : IClyshView
 {
-    private const string QuestionMustBeNotBlank = "Question must be not blank";
-
     private readonly IClyshConsole clyshConsole;
     private readonly bool printLineNumber;
 
@@ -87,7 +86,7 @@ public class ClyshView : IClyshView
 
     public virtual void PrintHelp(IClyshCommand command)
     {
-        PrintTitle();
+        PrintVersion();
         PrintCommand(command);
     }
 
@@ -107,7 +106,7 @@ public class ClyshView : IClyshView
     private string AskFor(string title, bool sensitive)
     {
         if (string.IsNullOrWhiteSpace(title))
-            throw new ArgumentException(QuestionMustBeNotBlank, nameof(title));
+            throw new ArgumentException(ClyshMessages.ErrorOnValidateUserInputQuestionAnswer, nameof(title));
 
         Print($"{title}:", false, true);
 
@@ -137,7 +136,7 @@ public class ClyshView : IClyshView
             PrintEmpty();
     }
 
-    private void PrintTitle()
+    public void PrintVersion()
     {
         PrintEmpty();
         Print($"{Data.Title}. Version: {Data.Version}");
@@ -147,7 +146,7 @@ public class ClyshView : IClyshView
     public void PrintException(Exception exception)
     {
         PrintEmpty();
-        PrintError($"Error: {exception.GetType().Name}: {exception.Message}");
+        PrintError($"Error: {exception.Message}");
         PrintEmpty();
     }
 
@@ -166,7 +165,7 @@ public class ClyshView : IClyshView
 
     private void PrintSubCommands(IClyshCommand command)
     {
-        Print("[commands]:");
+        Print("[subcommands]:");
         PrintEmpty();
 
         foreach (var item in command.SubCommands.OrderBy(obj => obj.Key)
@@ -186,63 +185,62 @@ public class ClyshView : IClyshView
         Print("[options]:");
         PrintEmpty();
         Print($"" +
-              $"{"",-3}" +
-              $"{"Shortcut",-11}" +
-              $"{"Option",-13}" +
-              $"{"Group",-15}" +
-              $"{"Description",-55}" +
-              $"Parameters: (R)equired | (O)ptional");
+              $"{string.Empty,-3}" +
+              $"{"Option",-22}" +
+              $"{"Group",-11}" +
+              $"{"Description",-35}" +
+              $"Parameters");
         PrintEmpty();
 
-        foreach (var item in command.Options
+        foreach (var option in command.Options
                      .OrderBy(x => x.Value.Group?.Id)
-                     .ThenBy(y => y.Key))
+                     .ThenBy(y => y.Key)
+                     .Select(z => z.Value))
         {
-            var paramsText = item.Value.Parameters.ToString();
-
-            var desc = item.Value.Description!;
-            var emptyLine = desc.Length > 50;
-            
-            if (emptyLine)
-                PrintEmpty();
-            
-            PrintParameter(item, desc, paramsText);
+            PrintParameter(option);
         }
 
         PrintEmpty();
     }
 
-    private void PrintParameter(KeyValuePair<string, ClyshOption> item, string desc, string paramsText)
+    private void PrintParameter(ClyshOption option)
     {
-        Print(
-            $"{"",-2}" +
-              $"{(item.Value.Shortcut == null ? "" : "-" + item.Value.Shortcut),-10}" +
-            $"--{item.Key,-13}" +
-            $"{item.Value.Group?.Id,-15}" +
-            $"{(desc.Length > 50 ? desc[..50] : desc),-55}" +
-            $"{paramsText}");
+        const int maxDescriptionlengthPerLine = 30;
 
-        if (desc.Length <= 50) return;
-        
-        var startIndex = 50;
+        var description = option.Description;
 
-        for (var j = 1; j < desc.Length / 50; j++)
+        var truncate = description.Length > maxDescriptionlengthPerLine;
+
+        var firstDescriptionLine = truncate ? description[..maxDescriptionlengthPerLine] : description;
+        Print($"{string.Empty,-3}{option,-22}{option.Group?.Id,-11}{firstDescriptionLine,-35}{option.Parameters}");
+
+        if (truncate)
+            PrintDescriptionMultiline(maxDescriptionlengthPerLine, description);
+
+        //Print($"{"",-35}{description[startIndex..]}");
+    }
+
+    private void PrintDescriptionMultiline(int maxDescriptionlengthPerLine, string description)
+    {
+        var startIndex = maxDescriptionlengthPerLine;
+
+        var numberOfLines = description.Length / maxDescriptionlengthPerLine;
+
+        for (var line = 1; line <= numberOfLines; line++)
         {
-            Print(desc[startIndex..].Length < 50
-                ? $"{"",-42}{desc[startIndex..]}"
-                : $"{"",-42}{desc.Substring(startIndex, 50)}");
+            Print(description[startIndex..].Length < maxDescriptionlengthPerLine
+                ? $"{string.Empty,-36}{description[startIndex..]}"
+                : $"{string.Empty,-36}{description.Substring(startIndex, maxDescriptionlengthPerLine)}");
 
-            startIndex = 50 * (j + 1);
+            startIndex = maxDescriptionlengthPerLine * (line + 1);
         }
-
-        Print($"{"",-42}{desc[startIndex..]}");
     }
 
     private void PrintHeader(IClyshCommand command, bool hasCommands)
     {
         var parentCommands = command.Id.Replace(".", " ");
 
-        Print($"Usage: {parentCommands} [options]{(hasCommands ? " [commands]" : "")}");
+        Print($"Usage: {parentCommands} [options]{(hasCommands ? " [subcommands]" : "")}");
         PrintEmpty();
         Print(command.Description);
         PrintEmpty();
