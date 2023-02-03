@@ -20,6 +20,8 @@ Commands:                                                                 #The C
         Group: input-mode
   - Id: calc.sub
     Description: Subtract values "a" and "b". Its a greatest feature for break line on CLI view
+    Groups:
+      - a
 
 GlobalOptions:
   - Id: values
