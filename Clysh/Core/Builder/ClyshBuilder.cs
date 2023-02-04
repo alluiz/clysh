@@ -9,14 +9,14 @@ public abstract class ClyshBuilder<T> where T: new()
     /// <summary>
     /// The instance of type
     /// </summary>
-    protected T Result;
+    protected T result;
 
     /// <summary>
     /// The builder constructor
     /// </summary>
     protected ClyshBuilder()
     {
-        Result = new T();
+        result = new T();
     }
 
     /// <summary>
@@ -24,7 +24,7 @@ public abstract class ClyshBuilder<T> where T: new()
     /// </summary>
     protected virtual void Reset()
     {
-        Result = new T();
+        result = new T();
     }
 
     /// <summary>
@@ -33,7 +33,7 @@ public abstract class ClyshBuilder<T> where T: new()
     /// <returns>The new instance</returns>
     public T Build()
     {
-        var build = Result;
+        var build = result;
         Reset();
         return build;
     }

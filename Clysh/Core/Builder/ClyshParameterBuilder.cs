@@ -18,7 +18,7 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
     {
         ArgumentNullException.ThrowIfNull(id);
 
-        Result.Id = id;
+        result.Id = id;
         return this;
     }
 
@@ -31,12 +31,12 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
     {
         try
         {
-            Result.Order = order;
+            result.Order = order;
             return this;
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateParameter, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateParameter, result.Id), e);
         }
     }
 
@@ -51,13 +51,13 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
         {
             if (pattern != null)
             {
-                Result.PatternData = pattern;
-                Result.Regex = new Regex(pattern);
+                result.PatternData = pattern;
+                result.Regex = new Regex(pattern);
             }
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateParameter, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateParameter, result.Id), e);
         }
 
         return this;
@@ -70,7 +70,7 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
     /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
     public ClyshParameterBuilder Required(bool required)
     {
-        Result.Required = required;
+        result.Required = required;
         return this;
     }
 
@@ -85,14 +85,14 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
         try
         {
             if (minLength > maxLength)
-                throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterMaxLength, Result.Id), nameof(maxLength));
+                throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterMaxLength, result.Id), nameof(maxLength));
             
-            Result.MinLength = minLength;
-            Result.MaxLength = maxLength;   
+            result.MinLength = minLength;
+            result.MaxLength = maxLength;   
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateParameter, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateParameter, result.Id), e);
         }
 
         return this;

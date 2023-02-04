@@ -16,7 +16,7 @@ public class ClyshGroup: ClyshIndexable
 
     public ClyshGroup()
     {
-        MaxLength = 10;
+        maxLength = 10;
         Options = new List<string>();
     }
 

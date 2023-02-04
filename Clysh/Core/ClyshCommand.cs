@@ -16,7 +16,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
 
     public ClyshCommand()
     {
-        Pattern = ClyshConstants.CommandPattern;
+        pattern = ClyshConstants.CommandPattern;
         Groups = new ClyshMap<ClyshGroup>();
         Options = new ClyshMap<ClyshOption>();
         SubCommands = new ClyshMap<IClyshCommand>();

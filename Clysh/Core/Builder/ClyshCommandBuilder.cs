@@ -15,8 +15,8 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
     public ClyshCommandBuilder Id(string id)
     {
-        Result.Id = id;
-        Result.Name = id.Split(".").Last();
+        result.Id = id;
+        result.Name = id.Split(".").Last();
         return this;
     }
 
@@ -31,12 +31,12 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
 
         try
         {
-            Result.Description = description;
+            result.Description = description;
             return this;
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, result.Id), e);
         }
     }
     
@@ -47,7 +47,7 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
     public ClyshCommandBuilder RequireSubcommand(bool require)
     {
-        Result.RequireSubcommand = require;
+        result.RequireSubcommand = require;
         return this;
     }
 
@@ -62,15 +62,15 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
         try
         {
             if (global)
-                Result.AddGlobalOption(option);
+                result.AddGlobalOption(option);
             else
-                Result.AddOption(option);
+                result.AddOption(option);
     
             return this;
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, result.Id), e);
         }
     }
 
@@ -83,12 +83,12 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     {
         try
         {
-            Result.AddSubCommand(subCommand);
+            result.AddSubCommand(subCommand);
             return this;
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, result.Id), e);
         }
     }
 
@@ -103,15 +103,15 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
         try
         {
             if (global)
-                Result.AddGlobalGroups(group);
+                result.AddGlobalGroups(group);
             else
-                Result.AddGroups(group);
+                result.AddGroups(group);
             
             return this;
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, result.Id), e);
         }
     }
     
@@ -124,12 +124,12 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     {
         try
         {
-            Result.Action = action;
+            result.Action = action;
             return this;
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, result.Id), e);
         }
     }
 }

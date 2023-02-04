@@ -31,8 +31,8 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     {
         try
         {
-            Result.Id = id;
-            Result.Shortcut = shortcut;
+            result.Id = id;
+            result.Shortcut = shortcut;
 
             ValidateShortcut(id, shortcut);
 
@@ -68,12 +68,12 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     {
         try
         {
-            Result.Description = description;
+            result.Description = description;
             return this;
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateOption, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateOption, result.Id), e);
         }
     }
 
@@ -91,12 +91,12 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
             _hasProvidedOptionalParameterBefore = !parameter.Required;
             _lastParameterOrder = parameter.Order;
         
-            Result.Parameters.Add(parameter);
+            result.Parameters.Add(parameter);
             return this;
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateOption, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateOption, result.Id), e);
         }
     }
 
@@ -116,7 +116,7 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
     public ClyshOptionBuilder Group(ClyshGroup group)
     {
-        Result.Group = group;
+        result.Group = group;
         return this;
     }
 
@@ -127,7 +127,7 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
     public ClyshOptionBuilder Selected(bool selected)
     {
-        Result.Selected = selected;
+        result.Selected = selected;
         return this;
     }
 
