@@ -8,8 +8,8 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshView : IClyshView
 {
-    private readonly IClyshConsole clyshConsole;
-    private readonly bool printLineNumber;
+    private readonly IClyshConsole _clyshConsole;
+    private readonly bool _printLineNumber;
 
     /// <summary>
     /// The constructor of view
@@ -22,9 +22,9 @@ public class ClyshView : IClyshView
         ClyshData clyshData,
         bool printLineNumber = false)
     {
-        this.clyshConsole = clyshConsole;
+        this._clyshConsole = clyshConsole;
         Data = clyshData;
-        this.printLineNumber = printLineNumber;
+        this._printLineNumber = printLineNumber;
     }
 
     /// <summary>
@@ -108,26 +108,26 @@ public class ClyshView : IClyshView
 
         Print($"{title}:", false, true);
 
-        return sensitive ? clyshConsole.ReadSensitive() : clyshConsole.ReadLine();
+        return sensitive ? _clyshConsole.ReadSensitive() : _clyshConsole.ReadLine();
     }
 
     private void Print(string? text, bool emptyLineAfterPrint, bool noBreak)
     {
         PrintedLines++;
 
-        if (printLineNumber)
+        if (_printLineNumber)
         {
             if (noBreak)
-                clyshConsole.Write(text, PrintedLines);
+                _clyshConsole.Write(text, PrintedLines);
             else
-                clyshConsole.WriteLine(text, PrintedLines);
+                _clyshConsole.WriteLine(text, PrintedLines);
         }
         else
         {
             if (noBreak)
-                clyshConsole.Write(text);
+                _clyshConsole.Write(text);
             else
-                clyshConsole.WriteLine(text);
+                _clyshConsole.WriteLine(text);
         }
 
         if (emptyLineAfterPrint)

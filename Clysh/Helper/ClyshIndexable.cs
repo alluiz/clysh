@@ -7,7 +7,7 @@ namespace Clysh.Helper;
 /// </summary>
 public abstract class ClyshIndexable: IClyshIndexable
 {
-    private string id = default!;
+    private string _id = default!;
 
     /// <summary>
     /// The pattern to validate the ID. Could be null if no pattern is required.
@@ -19,15 +19,15 @@ public abstract class ClyshIndexable: IClyshIndexable
     /// </summary>
     protected int MaxLength = 0;
     
-    private Regex? regex;
+    private Regex? _regex;
 
     /// <summary>
     /// The ID text
     /// </summary>
     public string Id
     {
-        get => id;
-        set => id = ValidatedId(value);
+        get => _id;
+        set => _id = ValidatedId(value);
     }
 
     /// <summary>
@@ -48,9 +48,9 @@ public abstract class ClyshIndexable: IClyshIndexable
         if (Pattern == null) 
             return desiredId;
         
-        regex ??= new Regex(Pattern);
+        _regex ??= new Regex(Pattern);
 
-        if (!regex.IsMatch(desiredId))
+        if (!_regex.IsMatch(desiredId))
             throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateIdPattern, Pattern, desiredId), nameof(desiredId));
 
         return desiredId;

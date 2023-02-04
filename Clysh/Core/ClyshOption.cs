@@ -14,12 +14,12 @@ public class ClyshOption : ClyshIndexable
     private const int MaxDescription = 150;
     private const int MinDescription = 10;
 
-    private readonly Regex regexShortcut;
+    private readonly Regex _regexShortcut;
 
-    private readonly string shorcutPattern;
-    private string description = string.Empty;
+    private readonly string _shorcutPattern;
+    private string _description = string.Empty;
 
-    private string? shortcut;
+    private string? _shortcut;
 
     /// <summary>
     /// The option constructor
@@ -28,8 +28,8 @@ public class ClyshOption : ClyshIndexable
     {
         Pattern = @"^[a-z]+(-{0,1}[a-z0-9]+)+$";
         MaxLength = 15;
-        shorcutPattern = @"[a-zA-Z]{1}";
-        regexShortcut = new Regex(shorcutPattern);
+        _shorcutPattern = @"[a-zA-Z]{1}";
+        _regexShortcut = new Regex(_shorcutPattern);
         Parameters = new ClyshParameters();
     }
 
@@ -38,8 +38,8 @@ public class ClyshOption : ClyshIndexable
     /// </summary>
     public string Description
     {
-        get => description; 
-        set => description = ValidateDescription(value);
+        get => _description; 
+        set => _description = ValidateDescription(value);
     }
 
     /// <summary>
@@ -52,8 +52,8 @@ public class ClyshOption : ClyshIndexable
     /// </summary>
     public string? Shortcut
     {
-        get => shortcut;
-        set => shortcut = ValidateShortcut(value);
+        get => _shortcut;
+        set => _shortcut = ValidateShortcut(value);
     }
 
     /// <summary>
@@ -95,31 +95,31 @@ public class ClyshOption : ClyshIndexable
 
     private string? ValidateShortcut(string? shortcutId)
     {
-        if (InvalidShortcut(shortcutId))
+        if (IsValidShortcut(shortcutId))
             throw new ArgumentException(
-                string.Format(ClyshMessages.ErrorOnValidateShorcut, shorcutPattern, MinShortcut, MaxShortcut, shortcutId),
+                string.Format(ClyshMessages.ErrorOnValidateShorcut, _shorcutPattern, MinShortcut, MaxShortcut, shortcutId),
                 nameof(shortcutId));
 
         return shortcutId;
     }
 
-    private bool InvalidShortcut(string? shortcutId)
+    private bool IsValidShortcut(string? shortcutId)
     {
-        return shortcutId != null && (InvalidShortcurtLength(shortcutId) || InvalidFormat(shortcutId));
+        return shortcutId != null && (ShortcurtLength(shortcutId) || Format(shortcutId));
     }
 
-    private bool InvalidFormat(string shortcutId)
+    private bool Format(string shortcutId)
     {
-        return !regexShortcut.IsMatch(shortcutId);
+        return !_regexShortcut.IsMatch(shortcutId);
     }
 
-    private static bool InvalidShortcurtLength(string shortcut)
+    private static bool ShortcurtLength(string shortcut)
     {
         return shortcut.Length is < MinShortcut or > MaxShortcut;
     }
 
     public override string ToString()
     {
-        return $"{(Shortcut == null ? "" : "-" + Shortcut + ","),-4}--{Id}";
+        return $"{(IsValidShortcut == null ? "" : "-" + IsValidShortcut + ","),-4}--{Id}";
     }
 }

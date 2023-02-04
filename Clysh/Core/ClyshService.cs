@@ -9,21 +9,21 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshService : IClyshService
 {
-    private readonly List<ClyshAudit> audits;
+    private readonly List<ClyshAudit> _audits;
 
-    private readonly bool disableAudit;
+    private readonly bool _disableAudit;
 
-    private readonly Dictionary<string, string> messages;
+    private readonly Dictionary<string, string> _messages;
     
-    private readonly Dictionary<string, ClyshOption> optionsFromGroup;
+    private readonly Dictionary<string, ClyshOption> _optionsFromGroup;
 
-    private List<IClyshCommand> commandsToExecute;
+    private List<IClyshCommand> _commandsToExecute;
 
-    private Dictionary<string, string>? defaultMessages;
+    private Dictionary<string, string>? _defaultMessages;
 
-    private IClyshCommand lastCommand;
+    private IClyshCommand _lastCommand;
 
-    private ClyshOption? lastOption;
+    private ClyshOption? _lastOption;
 
     /// <summary>
     /// The constructor of service
@@ -39,16 +39,16 @@ public class ClyshService : IClyshService
     [ExcludeFromCodeCoverage]
     private ClyshService(ClyshSetup setup, IClyshConsole clyshConsole, bool disableAudit = false)
     {
-        this.disableAudit = disableAudit;
+        this._disableAudit = disableAudit;
         RootCommand = setup.RootCommand;
         RootCommand.Order = 0;
-        lastCommand = RootCommand;
-        audits = new List<ClyshAudit>();
-        commandsToExecute = new List<IClyshCommand>();
+        _lastCommand = RootCommand;
+        _audits = new List<ClyshAudit>();
+        _commandsToExecute = new List<IClyshCommand>();
         View = new ClyshView(clyshConsole, setup.Data);
-        optionsFromGroup = new Dictionary<string, ClyshOption>();
+        _optionsFromGroup = new Dictionary<string, ClyshOption>();
         FillDefaultMessages();
-        messages = defaultMessages!;
+        _messages = _defaultMessages!;
         FillCustomMessages(setup.Data.Messages);
     }
 
@@ -60,16 +60,16 @@ public class ClyshService : IClyshService
     /// <param name="disableAudit">Indicates if the service shouldn't validate production rules</param>
     public ClyshService(IClyshCommand rootCommand, IClyshView view, bool disableAudit = false)
     {
-        this.disableAudit = disableAudit;
+        this._disableAudit = disableAudit;
         RootCommand = rootCommand;
         RootCommand.Order = 0;
-        lastCommand = RootCommand;
+        _lastCommand = RootCommand;
         View = view;
-        audits = new List<ClyshAudit>();
-        commandsToExecute = new List<IClyshCommand>();
-        optionsFromGroup = new Dictionary<string, ClyshOption>();
+        _audits = new List<ClyshAudit>();
+        _commandsToExecute = new List<IClyshCommand>();
+        _optionsFromGroup = new Dictionary<string, ClyshOption>();
         FillDefaultMessages();
-        messages = defaultMessages!;
+        _messages = _defaultMessages!;
     }
 
     /// <summary>
@@ -107,15 +107,15 @@ public class ClyshService : IClyshService
         if (setupMessages == null) return;
         
         foreach (var setupMessage in setupMessages
-                     .Where(setupMessage => messages.ContainsKey(setupMessage.Key)))
+                     .Where(setupMessage => _messages.ContainsKey(setupMessage.Key)))
         {
-            messages[setupMessage.Key] = setupMessage.Value;
+            _messages[setupMessage.Key] = setupMessage.Value;
         }
     }
 
     private void FillDefaultMessages()
     {
-        defaultMessages = new Dictionary<string, string>
+        _defaultMessages = new Dictionary<string, string>
         {
             { "InvalidOption", ClyshMessages.ErrorOnValidateUserInputOption },
             { "InvalidSubcommand", ClyshMessages.ErrorOnValidateUserInputSubcommand },
@@ -129,7 +129,7 @@ public class ClyshService : IClyshService
 
     private void InitProcess()
     {
-        commandsToExecute = new List<IClyshCommand> { lastCommand };
+        _commandsToExecute = new List<IClyshCommand> { _lastCommand };
         View.Debug = false;
         
         AuditClysh();
@@ -156,7 +156,7 @@ public class ClyshService : IClyshService
 
     private bool OptionVersion()
     {
-        return lastOption is { Id: "version" };
+        return _lastOption is { Id: "version" };
     }
 
     private void ProcessAnotherArgumentType(string arg)
@@ -175,7 +175,7 @@ public class ClyshService : IClyshService
             ExecuteVersion();
         else
         {
-            lastCommand.Executed = true;
+            _lastCommand.Executed = true;
             CheckGroups();
             CheckLastCommandStatus();
             CheckLastOptionStatus();
@@ -185,7 +185,7 @@ public class ClyshService : IClyshService
 
     private void CheckGroups()
     {
-        foreach (var option in optionsFromGroup.Values) 
+        foreach (var option in _optionsFromGroup.Values) 
             option.Selected = true;
     }
 
@@ -196,7 +196,7 @@ public class ClyshService : IClyshService
 
     private bool OptionDebug()
     {
-        return lastOption is { Id: "debug" };
+        return _lastOption is { Id: "debug" };
     }
 
     private void AuditLogMessages()
@@ -209,7 +209,7 @@ public class ClyshService : IClyshService
         View.PrintSeparator("LIST TO CHECK");
         View.PrintEmpty();
 
-        var array = audits.Where(x => x.AnyError()).ToArray();
+        var array = _audits.Where(x => x.AnyError()).ToArray();
         
         for (var i = 0; i < array.Length; i++)
         {
@@ -223,11 +223,11 @@ public class ClyshService : IClyshService
 
     private void AuditClysh()
     {
-        if (disableAudit) return;
+        if (_disableAudit) return;
 
         AuditRecursive(RootCommand);
 
-        if (audits.Any(x => x.AnyError()))
+        if (_audits.Any(x => x.AnyError()))
             AuditLogMessages();
     }
 
@@ -235,7 +235,7 @@ public class ClyshService : IClyshService
     {
         var audit = new ClyshAudit(cmd);
 
-        audits.Add(audit);
+        _audits.Add(audit);
 
         AuditCommand(cmd, audit);
 
@@ -272,15 +272,15 @@ public class ClyshService : IClyshService
 
         var key = IsOptionFull(arg) ? arg[2..] : arg[1..];
 
-        if (!lastCommand.HasOption(key))
+        if (!_lastCommand.HasOption(key))
             ShowErrorMessage("InvalidOption", arg);
 
-        lastOption = lastCommand.GetOption(key);
+        _lastOption = _lastCommand.GetOption(key);
 
         HandleOptionGroup();
         
-        if (lastOption.Group == null)
-            lastOption.Selected = true;
+        if (_lastOption.Group == null)
+            _lastOption.Selected = true;
         
         if (OptionDebug())
             View.Debug = true;
@@ -289,37 +289,37 @@ public class ClyshService : IClyshService
     private bool IsSubcommand(string arg)
     {
         var commandId = GetCommandId(arg);
-        return lastCommand.HasSubcommand(commandId);
+        return _lastCommand.HasSubcommand(commandId);
     }
 
     private string GetCommandId(string arg)
     {
-        return $"{lastCommand.Id}.{arg}";
+        return $"{_lastCommand.Id}.{arg}";
     }
 
     private void HandleOptionGroup()
     {
-        if (lastOption?.Group == null) return;
+        if (_lastOption?.Group == null) return;
 
-        optionsFromGroup[lastOption.Group.Id] = lastOption;
+        _optionsFromGroup[_lastOption.Group.Id] = _lastOption;
     }
 
     private bool OptionHelp()
     {
-        return lastOption is { Id: "help" };
+        return _lastOption is { Id: "help" };
     }
 
     private void CheckLastCommandStatus()
     {
-        var waitingForAnySubcommand = lastCommand.RequireSubcommand && !lastCommand.HasAnySubcommandExecuted();
+        var waitingForAnySubcommand = _lastCommand.RequireSubcommand && !_lastCommand.HasAnySubcommandExecuted();
         
         if (waitingForAnySubcommand)
-            ShowErrorMessage("InvalidSubcommand", lastCommand.Id);
+            ShowErrorMessage("InvalidSubcommand", _lastCommand.Id);
     }
 
     private void ShowErrorMessage(string messageId, params object[] parameters)
     {
-        throw new ValidationException(string.Format(messages[messageId], parameters));
+        throw new ValidationException(string.Format(_messages[messageId], parameters));
     }
 
     private void ProcessParameter(string arg)
@@ -334,19 +334,19 @@ public class ClyshService : IClyshService
 
     private void ProcessParameterByPosition(string arg)
     {
-        if (lastOption == null)
+        if (_lastOption == null)
             ShowErrorMessage("InvalidArgument", arg);
 
-        if (!lastOption!.Parameters.WaitingForAny())
-            ShowErrorMessage("InvalidParameter", arg, lastOption.Id);
+        if (!_lastOption!.Parameters.WaitingForAny())
+            ShowErrorMessage("InvalidParameter", arg, _lastOption.Id);
 
-        lastOption.Parameters.Last().Data = arg;
-        lastOption.Parameters.Last().Filled = true;
+        _lastOption.Parameters.Last().Data = arg;
+        _lastOption.Parameters.Last().Filled = true;
     }
 
     private void ProcessParameterById(string arg)
     {
-        if (lastOption == null)
+        if (_lastOption == null)
             ShowErrorMessage("InvalidArgument", arg);
         
         var parameter = arg.Split(":");
@@ -354,24 +354,24 @@ public class ClyshService : IClyshService
         var id = parameter[0];
         var data = parameter[1];
 
-        if (lastOption!.Parameters.Has(id))
+        if (_lastOption!.Parameters.Has(id))
         {
-            if (!lastOption.Parameters[id].Data.IsEmpty())
-                ShowErrorMessage("ParameterConflict", id, lastOption.Id);
+            if (!_lastOption.Parameters[id].Data.IsEmpty())
+                ShowErrorMessage("ParameterConflict", id, _lastOption.Id);
 
-            lastOption.Parameters[id].Data = data;
-            lastOption.Parameters[id].Filled = true;
+            _lastOption.Parameters[id].Data = data;
+            _lastOption.Parameters[id].Filled = true;
         }
         else
-            ShowErrorMessage("IncorrectParameter", id, lastOption.Id);
+            ShowErrorMessage("IncorrectParameter", id, _lastOption.Id);
     }
 
     private void CheckLastOptionStatus()
     {
-        var waitingForRequiredParameters = lastOption != null && lastOption.Parameters.WaitingForRequired();
+        var waitingForRequiredParameters = _lastOption != null && _lastOption.Parameters.WaitingForRequired();
         
         if (waitingForRequiredParameters)
-            ShowErrorMessage("RequiredParameters", lastOption!.Parameters.RequiredToString(), lastOption.Id, lastOption.Shortcut ?? "<null>");
+            ShowErrorMessage("RequiredParameters", _lastOption!.Parameters.RequiredToString(), _lastOption.Id, _lastOption.Shortcut ?? "<null>");
     }
 
     private static bool ArgIsParameterById(string arg)
@@ -381,7 +381,7 @@ public class ClyshService : IClyshService
 
     private void ExecuteCommands()
     {
-        foreach (var command in commandsToExecute.OrderBy(x => x.Order))
+        foreach (var command in _commandsToExecute.OrderBy(x => x.Order))
         {
             if (command.Action != null)
                 command.Action(command, View);
@@ -392,19 +392,19 @@ public class ClyshService : IClyshService
 
     private void SetCommandToExecute(string arg)
     {
-        lastOption = null;
-        lastCommand.Executed = true;
+        _lastOption = null;
+        _lastCommand.Executed = true;
         
-        var order = lastCommand.Order + 1;
-        lastCommand = lastCommand.SubCommands[GetCommandId(arg)];
-        lastCommand.Order = order;
-        commandsToExecute.Add(lastCommand);
+        var order = _lastCommand.Order + 1;
+        _lastCommand = _lastCommand.SubCommands[GetCommandId(arg)];
+        _lastCommand.Order = order;
+        _commandsToExecute.Add(_lastCommand);
     }
 
     private void ExecuteHelp(Exception? exception = null)
     {
         if (exception == null)
-            View.PrintHelp(lastCommand);
+            View.PrintHelp(_lastCommand);
         else
             View.PrintException(exception);
     }

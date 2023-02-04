@@ -9,28 +9,28 @@ namespace Clysh.Core;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class ClyshParameter : ClyshIndexable
 {
-    private const int minLengthParam = 1;
-    private const int maxLengthParam = 1000;
+    private const int MinLengthParam = 1;
+    private const int MaxLengthParam = 1000;
 
-    private string data;
-    private int maxLength;
-    private int minLength;
-    private int order;
+    private string _data;
+    private int _maxLength;
+    private int _minLength;
+    private int _order;
 
     /// <summary>
     /// Create a new parameter
     /// </summary>
     public ClyshParameter()
     {
-        data = string.Empty;
+        _data = string.Empty;
     }
 
     /// <summary>
     /// The parameter data
     /// </summary>
     public string Data { 
-        get => data;
-        set { Validate(value); data = value; } }
+        get => _data;
+        set { Validate(value); _data = value; } }
 
     /// <summary>
     /// The parameter regex
@@ -52,8 +52,8 @@ public class ClyshParameter : ClyshIndexable
     /// </summary>
     public int MinLength
     {
-        get => minLength; 
-        set => minLength = ValidateMin(value);
+        get => _minLength; 
+        set => _minLength = ValidateMin(value);
     }
 
     /// <summary>
@@ -61,8 +61,8 @@ public class ClyshParameter : ClyshIndexable
     /// </summary>
     public int MaxLength
     {
-        get => maxLength; 
-        set => maxLength = ValidateMax(value);
+        get => _maxLength; 
+        set => _maxLength = ValidateMax(value);
     }
 
     /// <summary>
@@ -75,14 +75,14 @@ public class ClyshParameter : ClyshIndexable
     /// </summary>
     public int Order
     {
-        get => order; 
-        set => order = ValidateOrder(value);
+        get => _order; 
+        set => _order = ValidateOrder(value);
     }
 
     private int ValidateMin(int minLengthValue)
     {
         if (minLengthValue < 1)
-            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, minLengthParam, maxLengthParam), nameof(minLengthValue));
+            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, MinLengthParam, MaxLengthParam), nameof(minLengthValue));
 
         return minLengthValue;
     }
@@ -90,7 +90,7 @@ public class ClyshParameter : ClyshIndexable
     private int ValidateMax(int maxValue)
     {
         if (maxValue > 1000)
-            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, minLengthParam, maxLengthParam), nameof(maxValue));
+            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, MinLengthParam, MaxLengthParam), nameof(maxValue));
 
         return maxValue;
     }

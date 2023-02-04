@@ -10,8 +10,8 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
 {
     
 
-    private bool hasProvidedOptionalParameterBefore;
-    private int lastParameterOrder = -1;
+    private bool _hasProvidedOptionalParameterBefore;
+    private int _lastParameterOrder = -1;
 
     /// <summary>
     /// The builder constructor
@@ -88,8 +88,8 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
         {
             ValidateParameter(parameter);
 
-            hasProvidedOptionalParameterBefore = !parameter.Required;
-            lastParameterOrder = parameter.Order;
+            _hasProvidedOptionalParameterBefore = !parameter.Required;
+            _lastParameterOrder = parameter.Order;
         
             Result.Parameters.Add(parameter);
             return this;
@@ -102,10 +102,10 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
 
     private void ValidateParameter(ClyshParameter parameterValue)
     {
-        if (parameterValue.Order <= lastParameterOrder)
+        if (parameterValue.Order <= _lastParameterOrder)
             throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterOrder, parameterValue.Id), nameof(parameterValue));
 
-        if (parameterValue.Required && hasProvidedOptionalParameterBefore)
+        if (parameterValue.Required && _hasProvidedOptionalParameterBefore)
             throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRequiredOrder, parameterValue.Id), nameof(parameterValue));
     }
 
@@ -136,8 +136,8 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     /// </summary>
     protected override void Reset()
     {
-        lastParameterOrder = -1;
-        hasProvidedOptionalParameterBefore = false;
+        _lastParameterOrder = -1;
+        _hasProvidedOptionalParameterBefore = false;
         base.Reset();
     }
 }

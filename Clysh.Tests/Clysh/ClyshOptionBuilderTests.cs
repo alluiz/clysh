@@ -8,7 +8,7 @@ namespace Clysh.Tests;
 public class ClyshOptionBuilderTests
 {
     [Test]
-    public void InvalidShortcut()
+    public void Shortcut()
     {
         var builder = new ClyshOptionBuilder();
         var exception = Assert.Throws<ClyshException>(() =>  builder.Id("test", ""));
@@ -16,7 +16,7 @@ public class ClyshOptionBuilderTests
     }
 
     [Test]
-    public void InvalidShortcutUsingHelpShortcut()
+    public void ShortcutUsingHelpShortcut()
     {
         var builder = new ClyshOptionBuilder();
         var exception = Assert.Throws<ClyshException>(() =>  builder.Id("test", "h"));
@@ -24,7 +24,7 @@ public class ClyshOptionBuilderTests
     }
 
     [Test]
-    public void InvalidDescription()
+    public void Description()
     {
         var builder = new ClyshOptionBuilder();
         var exception = Assert.Throws<ClyshException>(() =>  builder.Description("test"));

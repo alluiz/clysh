@@ -6,18 +6,18 @@ namespace Clysh.Tests;
 
 public class ClyshCommandTests
 {
-    private ClyshCommand command = default!;
+    private ClyshCommand _command = default!;
 
     [SetUp]
     public void Setup()
     {
-        command = new ClyshCommand();
+        _command = new ClyshCommand();
     }
 
     [Test]
     public void TestHelpCommand()
     {
-        var help = command.GetOption("help");
+        var help = _command.GetOption("help");
         Assert.NotNull(help);
         Assert.AreEqual("help", help.Id);
         Assert.AreEqual("h", help.Shortcut);
@@ -30,21 +30,21 @@ public class ClyshCommandTests
     {
         var builder = new ClyshCommandBuilder();
         var child = builder.Id("child").Build();
-        command.AddSubCommand(child);
-        Assert.NotNull(command.SubCommands);
-        Assert.AreEqual(1, command.SubCommands.Count);
-        Assert.NotNull(command.SubCommands["child"]);
+        _command.AddSubCommand(child);
+        Assert.NotNull(_command.SubCommands);
+        Assert.AreEqual(1, _command.SubCommands.Count);
+        Assert.NotNull(_command.SubCommands["child"]);
     }
 
     [Test]
     public void TestAddOption()
     {
         var builder = new ClyshOptionBuilder();
-        command.AddOption(builder
+        _command.AddOption(builder
             .Id("option")
             .Build());
-        Assert.NotNull(command.Options);
-        Assert.AreEqual(4, command.Options.Count);
-        Assert.AreEqual("option", command.Options["option"].Id);
+        Assert.NotNull(_command.Options);
+        Assert.AreEqual(4, _command.Options.Count);
+        Assert.AreEqual("option", _command.Options["option"].Id);
     }
 }
