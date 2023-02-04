@@ -407,18 +407,23 @@ public class ClyshSetup : IClyshSetup
 
     private void CreateGlobalFromData()
     {
+        if (Data.GlobalOptions == null) return;
+        
         var groupBuilder = new ClyshGroupBuilder();
         var optionBuilder = new ClyshOptionBuilder();
         var groups = new ClyshMap<ClyshGroup>();
 
-        Data.GlobalOptions?.ForEach(o =>
+        foreach (var o in Data.GlobalOptions)
         {
             if (o.Group != null && !groups.Has(o.Group))
                 groups.Add(groupBuilder.Id(o.Group).Build());
-            
+
             var option = BuildOption(optionBuilder, o, groups);
 
-            foreach (var c in o.Commands!)
+            if (o.Commands == null || o.Commands.Count == 0)
+                throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupGlobalOptions, o.Id));
+
+            foreach (var c in o.Commands)
             {
                 if (_commandGlobalOptions.ContainsKey(c))
                     _commandGlobalOptions[c].Add(option);
@@ -428,6 +433,6 @@ public class ClyshSetup : IClyshSetup
                         option
                     });
             }
-        });
+        }
     }
 }

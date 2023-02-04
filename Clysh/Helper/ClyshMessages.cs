@@ -45,7 +45,7 @@ public static class ClyshMessages
     public const string ErrorOnSetupLoadFileJson = "Error on load data. The JSON deserialization results in null object. JSON file path: '{0}'";
     public const string ErrorOnSetupLoadFilePath = "Error on load data. The CLI data file was not found. Path: '{0}'";
     public const string ErrorOnSetupSubCommands = "Error on setup subcommands. The command is configured to require subcommand. Therefore, subcommands must not be null. Command: '{0}'";
-    public const string ErrorOnSetupGlobalOptions = "Error on setup global options. The global options must have at least one command.";
+    public const string ErrorOnSetupGlobalOptions = "Error on setup global option. The global option must have at least one command. GlobalOption: '{0}'";
 
     public static bool Match(string message, string messagePattern)
     {
