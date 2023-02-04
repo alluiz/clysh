@@ -1,5 +1,4 @@
 ﻿using Clysh.Core;
-using Clysh.Helper;
 
 namespace Clysh.Sample;
 

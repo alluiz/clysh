@@ -1,5 +1,4 @@
-﻿using System;
-using Clysh.Core;
+﻿using Clysh.Core;
 using Clysh.Core.Builder;
 using Clysh.Helper;
 using NUnit.Framework;

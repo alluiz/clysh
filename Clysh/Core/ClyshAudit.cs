@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Clysh.Helper;
+﻿using Clysh.Helper;
 
 namespace Clysh.Core;
 

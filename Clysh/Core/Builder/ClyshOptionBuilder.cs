@@ -1,7 +1,4 @@
-using System;
-using System.Text.RegularExpressions;
 using Clysh.Helper;
-using Microsoft.VisualBasic;
 
 namespace Clysh.Core.Builder;
 
