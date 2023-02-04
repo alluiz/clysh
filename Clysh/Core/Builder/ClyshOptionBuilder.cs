@@ -32,8 +32,10 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
         try
         {
             result.Id = id;
-            result.Shortcut = shortcut;
 
+            if (shortcut == null) return this;
+            
+            result.Shortcut = shortcut;
             ValidateShortcut(id, shortcut);
 
             return this;
@@ -44,18 +46,17 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
         }
     }
 
-    private static void ValidateShortcut(string id, string? shortcut)
+    private static void ValidateShortcut(string id, string shortcut)
     {
         var reserved = new Dictionary<string, string>
         {
             { "help", "h" },
             { "version", "v" }
         };
-        
-        foreach (var pair in reserved)
+
+        if (reserved.Any(pair => !id.Equals(pair.Key) && pair.Value.Equals(shortcut)))
         {
-            if (!id.Equals(pair.Key) && pair.Value.Equals(shortcut))
-                throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateOptionShortcut, pair.Value, pair.Key, id), nameof(shortcut));
+            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateOptionShortcut, shortcut, id), nameof(shortcut));
         }
     }
 
@@ -64,7 +65,7 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     /// </summary>
     /// <param name="description">The option description</param>
     /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
-    public ClyshOptionBuilder Description(string? description)
+    public ClyshOptionBuilder Description(string description)
     {
         try
         {

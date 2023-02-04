@@ -120,6 +120,6 @@ public class ClyshOption : ClyshIndexable
 
     public override string ToString()
     {
-        return $"{(IsValidShortcut == null ? "" : "-" + IsValidShortcut + ","),-4}--{Id}";
+        return $"{(Shortcut == null ? "" : "-" + Shortcut + ","),-4}--{Id}";
     }
 }

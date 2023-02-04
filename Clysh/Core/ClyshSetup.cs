@@ -191,8 +191,8 @@ public class ClyshSetup : IClyshSetup
     /// <summary>
     /// Build a command from parent
     /// </summary>
-    /// <param name="command">The parent command</param>
-    /// <param name="commandData">The parent command data</param>
+    /// <param name="commandBuilder">The command builder</param>
+    /// <param name="commandData">The command data</param>
     /// <exception cref="ClyshException"></exception>
     private IClyshCommand BuildCommand(ClyshCommandBuilder commandBuilder, CommandData commandData)
     {
@@ -311,10 +311,10 @@ public class ClyshSetup : IClyshSetup
         }
     }
 
-    private static ClyshOption BuildOption(ClyshOptionBuilder builder, OptionData option, ClyshMap<ClyshGroup> groups)
+    private static ClyshOption BuildOption(ClyshOptionBuilder builder, OptionData option, IReadOnlyDictionary<string, ClyshGroup> groups)
     {
         builder
-            .Id(option.Id!, option.Shortcut)
+            .Id(option.Id, option.Shortcut)
             .Description(option.Description);
 
         BuildOptionGroup(builder, option, groups);
@@ -348,18 +348,18 @@ public class ClyshSetup : IClyshSetup
         }
     }
 
-    private static void BuildOptionGroup(ClyshOptionBuilder builder, OptionData option, ClyshMap<ClyshGroup> groups)
+    private static void BuildOptionGroup(ClyshOptionBuilder builder, OptionData option, IReadOnlyDictionary<string, ClyshGroup> groups)
     {
         if (option.Group == null) return;
 
         var group = groups[option.Group];
 
-        group.Options.Add(option.Id!);
+        group.Options.Add(option.Id);
 
         builder.Group(group);
     }
     
-    private ClyshData JsonSerializer(IFileSystem fs, string path)
+    private static ClyshData JsonSerializer(IFileSystem fs, string path)
     {
         var config = GetDataFromFilePath(fs, path);
 
@@ -371,12 +371,12 @@ public class ClyshSetup : IClyshSetup
         return data;
     }
 
-    private string GetDataFromFilePath(IFileSystem fs, string path)
+    private static string GetDataFromFilePath(IFileSystem fs, string path)
     {
         return fs.File.ReadAllText(path);
     }
 
-    private ClyshData YamlSerializer(IFileSystem fs, string path)
+    private static ClyshData YamlSerializer(IFileSystem fs, string path)
     {
         var data = GetDataFromFilePath(fs, path);
 

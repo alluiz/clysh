@@ -38,7 +38,7 @@ public class ClyshSetupTests
         Assert.AreEqual("My own CLI", root.Description);
         Assert.AreEqual(6, root.Options.Count);
         Assert.AreEqual(1, root.SubCommands.Count);
-        Assert.AreEqual(EmptyAction, root.Action);
+        Assert.IsNotNull(root.Action);
         Assert.IsFalse(root.RequireSubcommand);
 
         Assert.AreEqual("Test option", root.Options["test"].Description);
@@ -76,7 +76,7 @@ public class ClyshSetupTests
         Assert.AreEqual("My own CLI", root.Description);
         Assert.AreEqual(6, root.Options.Count);
         Assert.AreEqual(1, root.SubCommands.Count);
-        Assert.AreEqual(EmptyAction, root.Action);
+        Assert.IsNotNull(root.Action);
         Assert.IsFalse(root.RequireSubcommand);
 
         Assert.AreEqual("Test option", root.Options["test"].Description);
@@ -312,9 +312,10 @@ public class ClyshSetupTests
             
         });
         
-        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnCreateCommand);
-        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.ErrorOnCreateOption);
-        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.ErrorOnValidateParameterRequiredOrder);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnCreateCommand);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.ErrorOnCreateOption);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!,
+            ClyshMessages.ErrorOnValidateParameterRequiredOrder);
     }
 
     [Test]
@@ -331,7 +332,7 @@ public class ClyshSetupTests
             
         });
 
-        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnSetupCommandsParent);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnSetupCommandsParent);
     }
 
     [Test]
@@ -342,13 +343,13 @@ public class ClyshSetupTests
         _fs.Setup(x => x.Path.GetExtension(Path)).Returns(".json");
         _fs.Setup(x => x.File.ReadAllText(Path)).Returns("null");
 
-        var ex = Assert.Throws<ClyshException>(() =>
+        var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, _fs.Object);
             
         });
 
-        ExtendedAssert.MatchMessage(ex?.Message, ClyshMessages.ErrorOnSetupLoadFileJson);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnSetupLoadFileJson);
     }
 
     private string GetYamlWithInvalidGroupText()

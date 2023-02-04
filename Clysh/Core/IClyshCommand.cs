@@ -45,7 +45,7 @@ public interface IClyshCommand: IClyshIndexable
     /// <summary>
     /// The command groups
     /// </summary>
-    ClyshMap<ClyshGroup> Groups { get; set; }
+    ClyshMap<ClyshGroup> Groups { get; }
 
     /// <summary>
     /// The command status
@@ -55,12 +55,12 @@ public interface IClyshCommand: IClyshIndexable
     /// <summary>
     /// Indicates if command require subcommands to be executed
     /// </summary>
-    bool RequireSubcommand { get; set; }
+    bool RequireSubcommand { get; }
 
     /// <summary>
     /// The path of command in the tree
     /// </summary>
-    string Name { get; set; }
+    string Name { get; }
 
     /// <summary>
     /// Get an option by arg
@@ -94,36 +94,6 @@ public interface IClyshCommand: IClyshIndexable
     /// <param name="subCommandId">The subcommand id</param>
     /// <returns>The indicator</returns>
     bool HasSubcommand(string subCommandId);
-
-    /// <summary>
-    /// Adds an option to the command
-    /// </summary>
-    /// <param name="option">The option</param>
-    void AddOption(ClyshOption option);
-    
-    /// <summary>
-    /// Adds a global option to the command
-    /// </summary>
-    /// <param name="option">The option</param>
-    void AddGlobalOption(ClyshOption option);
-    
-    /// <summary>
-    /// Adds a group to the command
-    /// </summary>
-    /// <param name="group"></param>
-    void AddGroups(ClyshGroup group);
-
-    /// <summary>
-    /// Adds a global group to the command
-    /// </summary>
-    /// <param name="group"></param>
-    void AddGlobalGroups(ClyshGroup group);
-
-    /// <summary>
-    /// Adds a subcommand to the command and mark it as parent
-    /// </summary>
-    /// <param name="subCommand">The subcommand</param>
-    void AddSubCommand(IClyshCommand subCommand);
 
     /// <summary>
     /// Get an option selected by group

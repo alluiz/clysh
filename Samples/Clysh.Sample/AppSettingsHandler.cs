@@ -1,11 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Configuration;
 
 namespace Clysh.Sample;
 
 public class AppSettingsHandler
 {
     private static AppSettings? _settings;
-    
+
     public static AppSettings GetAppSettings(string filename = "appsettings.json")
     {
         if (_settings == null) {

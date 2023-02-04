@@ -96,7 +96,11 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         if (subCommand.Parent != null)
             throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandParent, subCommand.Id));
 
-        ParentRecursivity(subCommand);
+        var splittedId = subCommand.Id.Split(".", StringSplitOptions.RemoveEmptyEntries);
+
+        if (splittedId.DistinctBy(x => x).Count() != splittedId.Length)
+            throw new ClyshException(ClyshMessages.ErrorOnValidateCommandId);
+        
         subCommand.Parent = this;
         SubCommands.Add(subCommand);
     }
@@ -195,14 +199,6 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
             .Build();
 
         AddOption(versionOption);
-    }
-
-    private void ParentRecursivity(IClyshCommand command)
-    {
-        var splittedId = command.Id.Split(".", StringSplitOptions.RemoveEmptyEntries);
-
-        if (splittedId.DistinctBy(x => x).Count() != splittedId.Length)
-            throw new ClyshException(ClyshMessages.ErrorOnValidateCommandId);
     }
 
     public void AddGroups(ClyshGroup group)

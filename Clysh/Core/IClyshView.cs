@@ -1,3 +1,5 @@
+// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedMemberInSuper.Global
 namespace Clysh.Core;
 
 /// <summary>

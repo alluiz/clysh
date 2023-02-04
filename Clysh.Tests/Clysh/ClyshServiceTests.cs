@@ -11,6 +11,9 @@ namespace Clysh.Tests;
 
 public class ClyshServiceTests
 {
+    private readonly ClyshCommandBuilder _builder = new();
+    private readonly ClyshOptionBuilder _optionBuilder = new();
+    private readonly ClyshGroupBuilder _groupBuilder = new();
     private readonly ClyshParameterBuilder _parameterBuilder = new();
     private readonly Mock<IClyshCommand> _rootCommandMock = new();
     private readonly Mock<IClyshView> _viewMock = new();
@@ -37,9 +40,7 @@ public class ClyshServiceTests
         const string name = "new";
         const string description = "new command for test";
 
-        var builder = new ClyshCommandBuilder();
-
-        IClyshCommand command = builder
+        IClyshCommand command = _builder
             .Id(name)
             .Description(description)
             .Action(EmptyAction)
@@ -136,16 +137,19 @@ public class ClyshServiceTests
             expectedCliFront = view;
         }
 
-        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
+        IClyshCommand rootCommand = _builder
+            .Id("root")
+            .Description("root command")
+            .Action(Action)
+            .Option(_optionBuilder
+                .Id(someOption, someAbbrevOption)
+                .Description(someOptionDescription)
+                .Build())
+            .Build();
 
         IClyshService cli = new ClyshService(rootCommand, _viewMock.Object);
 
-        var optionBuilder = new ClyshOptionBuilder();
-
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption, someAbbrevOption).Description(someOptionDescription)
-            .Build());
 
         cli.Execute(args);
 
@@ -180,23 +184,23 @@ public class ClyshServiceTests
             expectedCliFront = view;
         }
 
-        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
+        IClyshCommand rootCommand = _builder
+            .Id("root")
+            .Description("root command")
+            .Action(Action)
+            .Option(_optionBuilder
+                .Id(someOption)
+                .Description(someOptionDescription)
+                .Parameter(_parameterBuilder
+                    .Id("testarg")
+                    .Range(6, 10)
+                    .Required(true)
+                    .Build())
+                .Build())
+            .Build();
 
         IClyshService cli = new ClyshService(rootCommand, _viewMock.Object);
-
-        var optionBuilder = new ClyshOptionBuilder();
-
-        cli.RootCommand.AddOption(optionBuilder
-            .Id(someOption)
-            .Description(someOptionDescription)
-            .Parameter(_parameterBuilder
-                .Id("testarg")
-                .Range(6, 10)
-                .Required(true)
-                .Build())
-            .Build());
 
         cli.Execute(args);
 
@@ -231,17 +235,19 @@ public class ClyshServiceTests
             expectedCliFront = view;
         }
 
-        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
+        IClyshCommand rootCommand = _builder
+            .Id("root")
+            .Description("root command")
+            .Action(Action)
+            .Option(_optionBuilder
+                .Id(someOption).Description(someOptionDescription)
+                .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Required(true).Build())
+                .Build())
+            .Build();
 
         IClyshService cli = new ClyshService(rootCommand, _viewMock.Object);
 
-        var optionBuilder = new ClyshOptionBuilder();
-
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription)
-            .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Required(true).Build())
-            .Build());
 
         cli.Execute(args);
 
@@ -276,21 +282,21 @@ public class ClyshServiceTests
             expectedCliFront = view;
         }
 
-        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
+        IClyshCommand rootCommand = _builder
+            .Id("root")
+            .Description("root command")
+            .Action(Action)
+            .Option(_optionBuilder
+                .Id(someOption)
+                .Description(someOptionDescription)
+                .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Order(0).Required(true).Build())
+                .Parameter(_parameterBuilder.Id("testarg2").Range(6, 10).Order(1).Required(true).Build())
+                .Parameter(_parameterBuilder.Id("testarg3").Range(6, 10).Order(2).Required(true).Build())
+                .Build())
+            .Build();
 
         IClyshService cli = new ClyshService(rootCommand, _viewMock.Object);
-
-        var optionBuilder = new ClyshOptionBuilder();
-
-        cli.RootCommand.AddOption(optionBuilder
-            .Id(someOption)
-            .Description(someOptionDescription)
-            .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Order(0).Required(true).Build())
-            .Parameter(_parameterBuilder.Id("testarg2").Range(6, 10).Order(1).Required(true).Build())
-            .Parameter(_parameterBuilder.Id("testarg3").Range(6, 10).Order(2).Required(true).Build())
-            .Build());
 
         cli.Execute(args);
 
@@ -327,17 +333,23 @@ public class ClyshServiceTests
             expectedCliFront = view;
         }
 
-        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
+        IClyshCommand rootCommand = _builder
+            .Id("root")
+            .Description("root command")
+            .Action(Action)
+            .Option(_optionBuilder
+                .Id(someOption)
+                .Description(someOptionDescription)
+                .Parameter(_parameterBuilder
+                    .Id("testarg")
+                    .Range(6, 10)
+                    .Required(false)
+                    .Build())
+                .Build())
+            .Build();
 
         IClyshService cli = new ClyshService(rootCommand, _viewMock.Object);
-
-        var optionBuilder = new ClyshOptionBuilder();
-
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription)
-            .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Required(false).Build())
-            .Build());
 
         cli.Execute(args);
 
@@ -372,19 +384,21 @@ public class ClyshServiceTests
             expectedCliFront = view;
         }
 
-        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
+        IClyshCommand rootCommand = _builder
+            .Id("root")
+            .Description("root command")
+            .Action(Action)
+            .Option(_optionBuilder
+                .Id(someOption).Description(someOptionDescription)
+                .Parameter(_parameterBuilder.Id("testarg2").Range(6, 10).Order(0).Required(false).Build())
+                .Parameter(_parameterBuilder.Id("testarg3").Range(6, 10).Order(1).Required(false).Build())
+                .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Order(2).Required(false).Build())
+                .Build())
+            .Build();
 
         IClyshService cli = new ClyshService(rootCommand, _viewMock.Object);
 
-        var optionBuilder = new ClyshOptionBuilder();
-
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription)
-            .Parameter(_parameterBuilder.Id("testarg2").Range(6, 10).Order(0).Required(false).Build())
-            .Parameter(_parameterBuilder.Id("testarg3").Range(6, 10).Order(1).Required(false).Build())
-            .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Order(2).Required(false).Build())
-            .Build());
 
         cli.Execute(args);
 
@@ -421,20 +435,20 @@ public class ClyshServiceTests
             expectedCliFront = view;
         }
 
-        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
+        IClyshCommand rootCommand = _builder
+            .Id("root")
+            .Description("root command")
+            .Action(Action)
+            .Option(_optionBuilder
+                .Id(someOption)
+                .Description(someOptionDescription)
+                .Parameter(_parameterBuilder.Id("testarg2").Range(6, 10).Order(0).Required(true).Build())
+                .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Order(1).Required(false).Build())
+                .Build())
+            .Build();
 
         IClyshService cli = new ClyshService(rootCommand, _viewMock.Object);
-
-        var optionBuilder = new ClyshOptionBuilder();
-
-        cli.RootCommand.AddOption(optionBuilder
-            .Id(someOption)
-            .Description(someOptionDescription)
-            .Parameter(_parameterBuilder.Id("testarg2").Range(6, 10).Order(0).Required(true).Build())
-            .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Order(1).Required(false).Build())
-            .Build());
 
         cli.Execute(args);
 
@@ -474,21 +488,23 @@ public class ClyshServiceTests
             expectedCliFront = view;
         }
 
-        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
+        IClyshCommand rootCommand = _builder
+            .Id("root")
+            .Description("root command")
+            .Action(Action)
+            .Option(_optionBuilder
+                .Id(someOption)
+                .Description(someOptionDescription)
+                .Parameter(_parameterBuilder.Id("testarg5").Range(6, 10).Order(0).Required(true).Build())
+                .Parameter(_parameterBuilder.Id("testarg2").Range(6, 10).Order(1).Required(true).Build())
+                .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Order(2).Required(false).Build())
+                .Parameter(_parameterBuilder.Id("testarg3").Range(6, 10).Order(3).Required(false).Build())
+                .Parameter(_parameterBuilder.Id("testarg4").Range(6, 10).Order(4).Required(false).Build())
+                .Build())
+            .Build();
 
         IClyshService cli = new ClyshService(rootCommand, _viewMock.Object);
-
-        var optionBuilder = new ClyshOptionBuilder();
-
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription)
-            .Parameter(_parameterBuilder.Id("testarg5").Range(6, 10).Order(0).Required(true).Build())
-            .Parameter(_parameterBuilder.Id("testarg2").Range(6, 10).Order(1).Required(true).Build())
-            .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Order(2).Required(false).Build())
-            .Parameter(_parameterBuilder.Id("testarg3").Range(6, 10).Order(3).Required(false).Build())
-            .Parameter(_parameterBuilder.Id("testarg4").Range(6, 10).Order(4).Required(false).Build())
-            .Build());
 
         cli.Execute(args);
 
@@ -534,24 +550,27 @@ public class ClyshServiceTests
             expectedCliFront = view;
         }
 
-        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
+        IClyshCommand rootCommand = _builder
+            .Id("root")
+            .Description("root command")
+            .Action(Action)
+            .Option(_optionBuilder
+                .Id(someOption)
+                .Description(someOptionDescription)
+                .Parameter(_parameterBuilder.Id("testarg2").Range(6, 10).Order(1).Required(true).Build())
+                .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Order(2).Required(false).Build())
+                .Build())
+            .Option(_optionBuilder
+                .Id(someOption2)
+                .Description(someOptionDescription2)
+                .Parameter(_parameterBuilder.Id("testarg5").Range(6, 10).Order(0).Required(true).Build())
+                .Parameter(_parameterBuilder.Id("testarg3").Range(6, 10).Order(1).Required(false).Build())
+                .Parameter(_parameterBuilder.Id("testarg4").Range(6, 10).Order(2).Required(false).Build())
+                .Build())
+            .Build();
 
         IClyshService cli = new ClyshService(rootCommand, _viewMock.Object);
-
-        var optionBuilder = new ClyshOptionBuilder();
-
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption).Description(someOptionDescription)
-            .Parameter(_parameterBuilder.Id("testarg2").Range(6, 10).Order(1).Required(true).Build())
-            .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Order(2).Required(false).Build())
-            .Build());
-
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption2).Description(someOptionDescription2)
-            .Parameter(_parameterBuilder.Id("testarg5").Range(6, 10).Order(0).Required(true).Build())
-            .Parameter(_parameterBuilder.Id("testarg3").Range(6, 10).Order(1).Required(false).Build())
-            .Parameter(_parameterBuilder.Id("testarg4").Range(6, 10).Order(2).Required(false).Build())
-            .Build());
 
         cli.Execute(args);
 
@@ -601,10 +620,8 @@ public class ClyshServiceTests
         ClyshMap<ClyshOption>? expectedOptionsCustom = null;
         IClyshView? expectedCliFrontCustom = null;
 
-        var builder = new ClyshCommandBuilder();
-        var optionBuilder = new ClyshOptionBuilder();
 
-        var customCommand = builder
+        var customCommand = _builder
             .Id("root.test")
             .Description("test command description")
             .Action((command, view) =>
@@ -612,7 +629,7 @@ public class ClyshServiceTests
                 expectedOptionsCustom = command.Options;
                 expectedCliFrontCustom = view;
             })
-            .Option(optionBuilder
+            .Option(_optionBuilder
                 .Id(someOption2)
                 .Description(someOptionDescription2)
                 .Parameter(_parameterBuilder.Id("testarg5").Range(6, 10).Required(true).Order(0).Build())
@@ -621,7 +638,7 @@ public class ClyshServiceTests
                 .Build())
             .Build();
 
-        var rootCommand = builder
+        var rootCommand = _builder
             .Id("root")
             .Description("root command")
             .Action((command, view) =>
@@ -629,7 +646,7 @@ public class ClyshServiceTests
                 expectedOptions = command.Options;
                 expectedCliFront = view;
             })
-            .Option(optionBuilder
+            .Option(_optionBuilder
                 .Id(someOption)
                 .Description(someOptionDescription)
                 .Parameter(_parameterBuilder.Id("testarg2").Range(6, 10).Order(0).Required(true).Build())
@@ -689,16 +706,18 @@ public class ClyshServiceTests
             expectedCliFront = view;
         }
 
-        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(Action).Build();
+        IClyshCommand rootCommand = _builder
+            .Id("root")
+            .Description("root command")
+            .Action(Action)
+            .Option(_optionBuilder
+                .Id(someOption, someAbbrevOption)
+                .Description(someOptionDescription)
+                .Build())
+            .Build();
 
         IClyshService cli = new ClyshService(rootCommand, _viewMock.Object);
-
-        var optionBuilder = new ClyshOptionBuilder();
-
-        cli.RootCommand.AddOption(optionBuilder.Id(someOption, someAbbrevOption).Description(someOptionDescription)
-            .Build());
 
         cli.Execute(args);
 
@@ -734,7 +753,8 @@ public class ClyshServiceTests
         _viewMock.Verify(
             x => x.PrintException(
                 It.Is<ValidationException>(
-                    y => ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputOption, invalidOptionWithDashes))), Times.Once);
+                    y => ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputOption,
+                        invalidOptionWithDashes))), Times.Once);
     }
 
     [Test]
@@ -757,7 +777,8 @@ public class ClyshServiceTests
         _viewMock.Verify(
             x => x.PrintException(
                 It.Is<ValidationException>(
-                    y => ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputOption, invalidOptionWithDashes))), Times.Once);
+                    y => ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputOption,
+                        invalidOptionWithDashes))), Times.Once);
     }
 
     [Test]
@@ -771,14 +792,13 @@ public class ClyshServiceTests
 
         IClyshService cli = new ClyshService(_rootCommandMock.Object, _viewMock.Object);
 
-        var optionBuilder = new ClyshOptionBuilder();
 
         _rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
         _rootCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
-        
+
         const string arg = "testarg";
-        
-        var option = optionBuilder
+
+        var option = _optionBuilder
             .Id(someOption)
             .Description("some option")
             .Parameter(_parameterBuilder.Id(arg).Range(6, 10).Required(true).Build())
@@ -790,7 +810,8 @@ public class ClyshServiceTests
 
         _viewMock.Verify(
             x => x.PrintException(
-                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputRequiredParameters, arg, someOption, "<null>"))),
+                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message,
+                    ClyshMessages.ErrorOnValidateUserInputRequiredParameters, arg, someOption, "<null>"))),
             Times.Once);
     }
 
@@ -808,9 +829,8 @@ public class ClyshServiceTests
         _rootCommandMock.Setup(x => x.HasOption(helpOption)).Returns(true);
         _rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
 
-        var optionBuilder = new ClyshOptionBuilder();
 
-        var option = optionBuilder
+        var option = _optionBuilder
             .Id(helpOption, "h")
             .Description("Show help on screen")
             .Build();
@@ -837,7 +857,9 @@ public class ClyshServiceTests
 
         _viewMock.Verify(
             x => x.PrintException(
-                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputArgument, args[0]))), Times.Once);
+                It.Is<ValidationException>(y =>
+                    ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputArgument, args[0]))),
+            Times.Once);
     }
 
     [Test]
@@ -854,9 +876,8 @@ public class ClyshServiceTests
         _rootCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
         _rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
 
-        var optionBuilder = new ClyshOptionBuilder();
 
-        var option = optionBuilder
+        var option = _optionBuilder
             .Id(someOption)
             .Description("some option")
             .Build();
@@ -868,7 +889,8 @@ public class ClyshServiceTests
 
         _viewMock.Verify(
             x => x.PrintException(
-                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputParameterInvalid, "testarg", someOption))), Times.Once);
+                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message,
+                    ClyshMessages.ErrorOnValidateUserInputParameterInvalid, "testarg", someOption))), Times.Once);
     }
 
     [Test]
@@ -885,9 +907,8 @@ public class ClyshServiceTests
         _rootCommandMock.Setup(x => x.HasOption(someOption)).Returns(true);
         _rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
 
-        var optionBuilder = new ClyshOptionBuilder();
 
-        var option = optionBuilder
+        var option = _optionBuilder
             .Id(someOption)
             .Description("some option")
             .Build();
@@ -901,7 +922,8 @@ public class ClyshServiceTests
 
         _viewMock.Verify(
             x => x.PrintException(
-                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputArgumentOutOfBound, "testarg", someOption) )),
+                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message,
+                    ClyshMessages.ErrorOnValidateUserInputArgumentOutOfBound, "testarg", someOption))),
             Times.Once);
     }
 
@@ -915,25 +937,26 @@ public class ClyshServiceTests
 
         var args = new[] { someOptionWithDashes, "mytest", "testarg:mytest" };
 
-        var builder = new ClyshCommandBuilder();
 
-        IClyshCommand rootCommand = builder.Id("root").Description("root command").Action(EmptyAction).Build();
+        IClyshCommand rootCommand = _builder
+            .Id("root")
+            .Description("root command")
+            .Action(EmptyAction)
+            .Option(_optionBuilder
+                .Id(someOption)
+                .Description(someOptionDescription)
+                .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Required(true).Build())
+                .Build())
+            .Build();
 
         IClyshService cli = new ClyshService(rootCommand, _viewMock.Object);
-
-        var optionBuilder = new ClyshOptionBuilder();
-
-        cli.RootCommand.AddOption(optionBuilder
-            .Id(someOption)
-            .Description(someOptionDescription)
-            .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Required(true).Build())
-            .Build());
 
         cli.Execute(args);
 
         _viewMock.Verify(
             x => x.PrintException(
-                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message, ClyshMessages.ErrorOnValidateUserInputParameterConflict, "testarg", someOption))), Times.Once);
+                It.Is<ValidationException>(y => ClyshMessages.Match(y.Message,
+                    ClyshMessages.ErrorOnValidateUserInputParameterConflict, "testarg", someOption))), Times.Once);
     }
 
     [Test]
@@ -952,28 +975,22 @@ public class ClyshServiceTests
             expectedCliFront = view;
         }
 
-        var builder = new ClyshCommandBuilder();
-
-        var optBuilder = new ClyshOptionBuilder();
-
-        var groupBuilder = new ClyshGroupBuilder();
-
-        var group = groupBuilder
+        var group = _groupBuilder
             .Id("env")
             .Build();
 
-        var devOption = optBuilder
+        var devOption = _optionBuilder
             .Id("dev")
             .Group(group)
             .Selected(true)
             .Build();
 
-        var homOption = optBuilder
+        var homOption = _optionBuilder
             .Id("hom")
             .Group(group)
             .Build();
 
-        IClyshCommand rootCommand = builder
+        IClyshCommand rootCommand = _builder
             .Id("root")
             .Description("root command")
             .Group(group)
@@ -1013,27 +1030,22 @@ public class ClyshServiceTests
             expectedCliFront = view;
         }
 
-        var builder = new ClyshCommandBuilder();
 
-        var optBuilder = new ClyshOptionBuilder();
-
-        var groupBuilder = new ClyshGroupBuilder();
-
-        var group = groupBuilder
+        var group = _groupBuilder
             .Id("env")
             .Build();
 
-        var devOption = optBuilder
+        var devOption = _optionBuilder
             .Id("dev")
             .Group(group)
             .Build();
 
-        var homOption = optBuilder
+        var homOption = _optionBuilder
             .Id("hom")
             .Group(group)
             .Build();
 
-        IClyshCommand rootCommand = builder
+        IClyshCommand rootCommand = _builder
             .Id("root")
             .Description("root command")
             .Action(Action)
@@ -1041,7 +1053,7 @@ public class ClyshServiceTests
             .Option(devOption)
             .Option(homOption)
             .Build();
-
+        
         IClyshService cli = new ClyshService(rootCommand, _viewMock.Object);
 
         cli.Execute(args);
@@ -1073,27 +1085,21 @@ public class ClyshServiceTests
             expectedCliFront = view;
         }
 
-        var builder = new ClyshCommandBuilder();
-
-        var optBuilder = new ClyshOptionBuilder();
-
-        var groupBuilder = new ClyshGroupBuilder();
-
-        var group = groupBuilder
+        var group = _groupBuilder
             .Id("env")
             .Build();
 
-        var devOption = optBuilder
+        var devOption = _optionBuilder
             .Id("dev")
             .Group(group)
             .Build();
 
-        var homOption = optBuilder
+        var homOption = _optionBuilder
             .Id("hom")
             .Group(group)
             .Build();
 
-        IClyshCommand rootCommand = builder
+        IClyshCommand rootCommand = _builder
             .Id("root")
             .Description("root command")
             .Action(Action)
@@ -1133,30 +1139,25 @@ public class ClyshServiceTests
             expectedCliFront = view;
         }
 
-        var builder = new ClyshCommandBuilder();
 
-        var optBuilder = new ClyshOptionBuilder();
-
-        var groupBuilder = new ClyshGroupBuilder();
-
-        var group = groupBuilder
+        var group = _groupBuilder
             .Id("env")
             .Build();
 
-        IClyshCommand rootCommand = builder
+        IClyshCommand rootCommand = _builder
             .Id("root")
             .Description("root command")
             .Action(Action)
             .Group(group)
-            .Option(optBuilder
+            .Option(_optionBuilder
                 .Id("dev")
                 .Group(group)
                 .Build())
-            .Option(optBuilder
+            .Option(_optionBuilder
                 .Id("hom")
                 .Group(group)
                 .Build())
-            .Option(optBuilder
+            .Option(_optionBuilder
                 .Id("opt2")
                 .Build())
             .Build();
@@ -1194,30 +1195,24 @@ public class ClyshServiceTests
             expectedCliFront = view;
         }
 
-        var builder = new ClyshCommandBuilder();
-
-        var optBuilder = new ClyshOptionBuilder();
-
-        var groupBuilder = new ClyshGroupBuilder();
-
-        var group = groupBuilder
+        var group = _groupBuilder
             .Id("env")
             .Build();
 
-        IClyshCommand rootCommand = builder
+        IClyshCommand rootCommand = _builder
             .Id("root")
             .Description("root command")
             .Action(Action)
             .Group(group)
-            .Option(optBuilder
+            .Option(_optionBuilder
                 .Id("dev")
                 .Group(group)
                 .Build())
-            .Option(optBuilder
+            .Option(_optionBuilder
                 .Id("hom")
                 .Group(group)
                 .Build())
-            .Option(optBuilder
+            .Option(_optionBuilder
                 .Id("opt2")
                 .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Required(true).Build())
                 .Build())

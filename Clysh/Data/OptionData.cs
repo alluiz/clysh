@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
+#pragma warning disable CS8618
 
 namespace Clysh.Data;
 
@@ -13,13 +14,13 @@ public class OptionData
     /// The id of option
     /// </summary>
     [Required]
-    public string? Id { get; set; }
+    public string Id { get; set; }
 
     /// <summary>
     /// The description
     /// </summary>
     [Required]
-    public string? Description { get; set; }
+    public string Description { get; set; }
 
     /// <summary>
     /// The CLI shortcut

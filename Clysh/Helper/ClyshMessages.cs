@@ -19,7 +19,7 @@ public static class ClyshMessages
     public const string ErrorOnValidateDescription = "Error on validate description. The description must be not null or empty and between {0} and {1} chars. Description: '{2}'";
     public const string ErrorOnValidateIdLength = "Error on validate ID. The ID must be less or equal than {0} chars. ID: '{1}'";
     public const string ErrorOnValidateIdPattern = "Error on validate ID. The ID must follow the pattern: '{0}'. ID: '{1}'";
-    public const string ErrorOnValidateOptionShortcut = "Error on validate option. The shortcut '{0}' is reserved to {1} shortcut. Option: '{2}'";
+    public const string ErrorOnValidateOptionShortcut = "Error on validate option. The shortcut '{0}' is reserved. Option: '{1}'";
     public const string ErrorOnValidateParameterMaxLength = "Error on validate parameter. The max length must be greater than min length. Parameter: '{0}'";
     public const string ErrorOnValidateParameterRange = "Error on validate parameter. The min and max length must be between {0} and {1}, respectively.";
     public const string ErrorOnValidateParameterOrder = "Error on validate parameter. The order must be greater than the PREVIOUS order and must be greater or equal than 0. Parameter: '{0}'";

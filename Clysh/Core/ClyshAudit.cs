@@ -15,7 +15,7 @@ public class ClyshAudit
     /// <param name="obj">The object with error</param>
     public ClyshAudit(IClyshIndexable obj)
     {
-        this._obj = obj;
+        _obj = obj;
         Messages = new List<string>();
     }
 

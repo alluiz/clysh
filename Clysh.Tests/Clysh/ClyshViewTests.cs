@@ -188,7 +188,7 @@ public class ClyshViewTests
         var question = "     ";
         var exception = Assert.Throws<ArgumentException>(() => view.AskFor(question));
 
-        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnValidateUserInputQuestionAnswer);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnValidateUserInputQuestionAnswer);
         
         _consoleMock.Verify(x => x.Write($"{question}:"), Times.Never);
         _consoleMock.Verify(x => x.ReadLine(), Times.Never);
@@ -212,7 +212,7 @@ public class ClyshViewTests
         _consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
         _consoleMock.Verify(x => x.WriteLine("[options]:", 8), Times.Once);
         _consoleMock.Verify(x => x.WriteLine("", 9), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Option".PadRight(22) + "Group".PadRight(11) + "Description".PadRight(35) + "Parameters", 10), Times.Once);
+        _consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Option".PadRight(22) + "Group".PadRight(11) + "Description".PadRight(35) + "Parameters".PadRight(29), 10), Times.Once);
         _consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
 
         var i = 0;
@@ -268,7 +268,7 @@ public class ClyshViewTests
         _consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
         _consoleMock.Verify(x => x.WriteLine("[options]:", 8), Times.Once);
         _consoleMock.Verify(x => x.WriteLine("", 9), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Option".PadRight(22) + "Group".PadRight(11) + "Description".PadRight(35) + "Parameters", 10), Times.Once);
+        _consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Option".PadRight(22) + "Group".PadRight(11) + "Description".PadRight(35) + "Parameters".PadRight(29), 10), Times.Once);
         _consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
 
         var i = 0;
@@ -323,7 +323,7 @@ public class ClyshViewTests
         _consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
         _consoleMock.Verify(x => x.WriteLine("[options]:", 8), Times.Once);
         _consoleMock.Verify(x => x.WriteLine("", 9), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Option".PadRight(22) + "Group".PadRight(11) + "Description".PadRight(35) + "Parameters", 10), Times.Once);
+        _consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Option".PadRight(22) + "Group".PadRight(11) + "Description".PadRight(35) + "Parameters".PadRight(29), 10), Times.Once);
         _consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
 
         var i = 0;

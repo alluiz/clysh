@@ -79,7 +79,7 @@ public class ClyshParameter : ClyshIndexable
         set => _order = ValidateOrder(value);
     }
 
-    private int ValidateMin(int minLengthValue)
+    private static int ValidateMin(int minLengthValue)
     {
         if (minLengthValue < 1)
             throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, MinLengthParam, MaxLengthParam), nameof(minLengthValue));
@@ -87,7 +87,7 @@ public class ClyshParameter : ClyshIndexable
         return minLengthValue;
     }
 
-    private int ValidateMax(int maxValue)
+    private static int ValidateMax(int maxValue)
     {
         if (maxValue > 1000)
             throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, MinLengthParam, MaxLengthParam), nameof(maxValue));

@@ -7,7 +7,7 @@ namespace Clysh.Core;
 /// <summary>
 /// The main service of <see cref="Clysh"/>
 /// </summary>
-public class ClyshService : IClyshService
+public sealed class ClyshService : IClyshService
 {
     private readonly List<ClyshAudit> _audits;
 
@@ -31,15 +31,15 @@ public class ClyshService : IClyshService
     /// <param name="setup">The setup of <see cref="Clysh"/></param>
     /// <param name="disableAudit">Indicates if the service shouldn't validate production rules</param>
     [ExcludeFromCodeCoverage]
-    public ClyshService(ClyshSetup setup, bool disableAudit = false) : this(setup, new ClyshConsole(),
+    public ClyshService(IClyshSetup setup, bool disableAudit = false) : this(setup, new ClyshConsole(),
         disableAudit)
     {
     }
 
     [ExcludeFromCodeCoverage]
-    private ClyshService(ClyshSetup setup, IClyshConsole clyshConsole, bool disableAudit = false)
+    private ClyshService(IClyshSetup setup, IClyshConsole clyshConsole, bool disableAudit = false)
     {
-        this._disableAudit = disableAudit;
+        _disableAudit = disableAudit;
         RootCommand = setup.RootCommand;
         RootCommand.Order = 0;
         _lastCommand = RootCommand;
@@ -60,7 +60,7 @@ public class ClyshService : IClyshService
     /// <param name="disableAudit">Indicates if the service shouldn't validate production rules</param>
     public ClyshService(IClyshCommand rootCommand, IClyshView view, bool disableAudit = false)
     {
-        this._disableAudit = disableAudit;
+        _disableAudit = disableAudit;
         RootCommand = rootCommand;
         RootCommand.Order = 0;
         _lastCommand = RootCommand;
@@ -86,7 +86,7 @@ public class ClyshService : IClyshService
     /// Execute the CLI with program arguments
     /// </summary>
     /// <param name="args">The arguments of CLI</param>
-    public virtual void Execute(string[] args)
+    public void Execute(IEnumerable<string> args)
     {
         try
         {
@@ -239,11 +239,10 @@ public class ClyshService : IClyshService
 
         AuditCommand(cmd, audit);
 
-        if (cmd.SubCommands.Any())
-        {
-            foreach (var subCommand in cmd.SubCommands.Values)
-                AuditRecursive(subCommand);
-        }
+        if (!cmd.SubCommands.Any()) return;
+        
+        foreach (var subCommand in cmd.SubCommands.Values)
+            AuditRecursive(subCommand);
     }
 
     private static void AuditCommand(IClyshCommand cmd, ClyshAudit audit)

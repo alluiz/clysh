@@ -1,5 +1,6 @@
 ﻿using Clysh.Data;
 using Clysh.Helper;
+// ReSharper disable UnusedMemberInSuper.Global
 
 namespace Clysh.Core;
 
