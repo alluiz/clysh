@@ -11,7 +11,6 @@ public static class ClyshMessages
     public const string ErrorOnGetOptionFromGroupNotFound = "Error on option from group. The group is not found. Group: '{0}'";
     public const string ErrorOnValidateCommandAction = "Error on validate command. The command does NOT have an action configured. Command: '{0}'.";
     public const string ErrorOnValidateCommandId = "Error on validate command. The ID must not have duplicated words. Command: '{0}'";
-    public const string ErrorOnValidateCommandGroupMemory = "Error on validate command. The group memory address is different between command and option. Group: '{0}'";
     public const string ErrorOnValidateCommandGroupNotFound = "Error on validate command. The group is not found. Group: '{0}'";
     public const string ErrorOnValidateCommandGroupDuplicated = "Error on validate command. The group is duplicated. Group: '{0}'";
     public const string ErrorOnValidateCommandPropertyMemory = "Error on validate command. The memory address is already related to another command. Object: '{0}'";
@@ -51,7 +50,7 @@ public static class ClyshMessages
     public static bool Match(string message, string messagePattern)
     {
         var regex = new Regex("{[0-9]+}");
-        var escapeChars = new string[] { ".", "[", "]", "(", ")" };
+        var escapeChars = new[] { ".", "[", "]", "(", ")" };
 
         messagePattern = escapeChars.Aggregate(messagePattern, (current, escapeChar) => current.Replace(escapeChar, $"\\{escapeChar}"));
 
@@ -62,7 +61,7 @@ public static class ClyshMessages
         return regex.IsMatch(message);
     }
     
-    public static bool Match(string message, string messagePattern, params string[] values)
+    public static bool Match(string message, string messagePattern, params object?[] values)
     {
         var expectedMessage = string.Format(messagePattern, values);
 
