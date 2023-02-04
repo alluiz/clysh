@@ -103,17 +103,10 @@ public class ClyshSetup : IClyshSetup
     {
         var rootData = GetRootData();
 
-        var commandBuilder = new ClyshCommandBuilder();
-        var root = commandBuilder
-            .Id(rootData.Id)
-            .Description(rootData.Description)
-            .RequireSubcommand(rootData.RequireSubcommand)
-            .Build();
+        var commandBuilder = GetCommandBuilder(rootData);
 
-        BuildCommand(root, rootData);
+        RootCommand = BuildCommand(commandBuilder, rootData);
 
-        RootCommand = root;
-        
         ValidateCommandsParent();
     }
 
@@ -201,28 +194,32 @@ public class ClyshSetup : IClyshSetup
     /// <param name="command">The parent command</param>
     /// <param name="commandData">The parent command data</param>
     /// <exception cref="ClyshException"></exception>
-    private void BuildCommand(IClyshCommand command, CommandData commandData)
+    private IClyshCommand BuildCommand(ClyshCommandBuilder commandBuilder, CommandData commandData)
     {
         try
         {
-            Commands.Add(command.Id, command);
-            BuildCommandOptions(command, commandData);
-            BuildCommandSubcommands(command);
+            BuildCommandOptions(commandBuilder, commandData);
+            BuildCommandSubcommands(commandBuilder, commandData);
+
+            var command = commandBuilder.Build();
+            Commands.Add(commandData.Id, command);
+
+            return command;
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, command.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, commandData.Id), e);
         }
     }
 
-    private void BuildCommandSubcommands(IClyshCommand command)
+    private void BuildCommandSubcommands(ClyshCommandBuilder commandBuilder, CommandData commandData)
     {
-        var subcommands = GetSubcommands(command);
+        var subcommands = GetSubcommands(commandData);
 
         if (!subcommands.Any())
         {
-            if (command.RequireSubcommand)
-                throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupSubCommands, command.Id));
+            if (commandData.RequireSubcommand)
+                throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupSubCommands, commandData.Id));
 
             return;
         }
@@ -237,17 +234,11 @@ public class ClyshSetup : IClyshSetup
                 if (subcommandData?.Id == null)
                     throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupCommandsNotFound, subcommandId));
 
-                var commandBuilder = new ClyshCommandBuilder();
+                var subCommandBuilder = GetCommandBuilder(subcommandData);
 
-                var subCommand = commandBuilder
-                    .Id(subcommandData.Id)
-                    .Description(subcommandData.Description)
-                    .RequireSubcommand(subcommandData.RequireSubcommand)
-                    .Build();
-
-                command.AddSubCommand(subCommand);
-
-                BuildCommand(subCommand, subcommandData);
+                var subCommand = BuildCommand(subCommandBuilder, subcommandData);
+                
+                commandBuilder.SubCommand(subCommand);
             }
             catch (Exception e)
             {
@@ -256,13 +247,25 @@ public class ClyshSetup : IClyshSetup
         }
     }
 
-    private List<string> GetSubcommands(IClyshCommand command)
+    private static ClyshCommandBuilder GetCommandBuilder(CommandData commandData)
     {
-        var commandLevel = GetCommandLevel(command.Id);
+        var subCommandBuilder = new ClyshCommandBuilder();
+
+        subCommandBuilder
+            .Id(commandData.Id)
+            .Description(commandData.Description)
+            .RequireSubcommand(commandData.RequireSubcommand);
+        
+        return subCommandBuilder;
+    }
+
+    private List<string> GetSubcommands(CommandData commandData)
+    {
+        var commandLevel = GetCommandLevel(commandData.Id);
         var nextLevel = commandLevel + 1;
 
         var subcommands = Data.Commands!.Where(c =>
-                c.Id.Contains(command.Id) &&
+                c.Id.Contains(commandData.Id) &&
                 GetCommandLevel(c.Id) == nextLevel)
             .Select(c => c.Id)
             .ToList();
@@ -275,7 +278,7 @@ public class ClyshSetup : IClyshSetup
         return commandId.Split(".", StringSplitOptions.RemoveEmptyEntries).Length - 1;
     }
 
-    private void BuildCommandOptions(IClyshCommand command, CommandData commandData)
+    private void BuildCommandOptions(ClyshCommandBuilder commandBuilder, CommandData commandData)
     {
         if (commandData.Options != null)
         {
@@ -291,20 +294,20 @@ public class ClyshSetup : IClyshSetup
                 var option = BuildOption(optionBuilder, o, groups);
                 
                 if (option.Group != null)
-                    command.AddGroups(option.Group);
+                    commandBuilder.Group(option.Group);
                 
-                command.AddOption(option);
+                commandBuilder.Option(option);
             }
         }
 
-        if (!_commandGlobalOptions.ContainsKey(command.Id)) return;
+        if (!_commandGlobalOptions.ContainsKey(commandData.Id)) return;
         
-        foreach (var option in _commandGlobalOptions[command.Id])
+        foreach (var option in _commandGlobalOptions[commandData.Id])
         {
             if (option.Group != null)
-               command.AddGlobalGroups(option.Group);
+               commandBuilder.Group(option.Group, true);
     
-            command.AddGlobalOption(option);
+            commandBuilder.Option(option, true);
         }
     }
 

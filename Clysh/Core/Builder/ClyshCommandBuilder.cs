@@ -10,7 +10,7 @@ namespace Clysh.Core.Builder;
 public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
 {
     /// <summary>
-    /// Build the command identifier
+    /// Set the command identifier
     /// </summary>
     /// <param name="id">The command identifier, eg: "level0.level1.level2"</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
@@ -22,7 +22,7 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     }
 
     /// <summary>
-    /// Build the command description
+    /// Set the command description
     /// </summary>
     /// <param name="description">The command description</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
@@ -40,17 +40,33 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
             throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
         }
     }
+    
+    /// <summary>
+    /// Set the command require subcommand flag
+    /// </summary>
+    /// <param name="require">The require flag</param>
+    /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
+    public ClyshCommandBuilder RequireSubcommand(bool require)
+    {
+        Result.RequireSubcommand = require;
+        return this;
+    }
 
     /// <summary>
     /// Build the command option
     /// </summary>
     /// <param name="option">The command option</param>
+    /// <param name="global">The global indicator</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
-    public ClyshCommandBuilder Option(ClyshOption option)
+    public ClyshCommandBuilder Option(ClyshOption option, bool global = false)
     {
         try
         {
-            Result.AddOption(option);
+            if (global)
+                Result.AddGlobalOption(option);
+            else
+                Result.AddOption(option);
+    
             return this;
         }
         catch (Exception e)
@@ -64,7 +80,7 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     /// </summary>
     /// <param name="subCommand">The subcommand of the command</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
-    public ClyshCommandBuilder SubCommand(ClyshCommand subCommand)
+    public ClyshCommandBuilder SubCommand(IClyshCommand subCommand)
     {
         try
         {
@@ -77,6 +93,29 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
         }
     }
 
+    /// <summary>
+    /// Build the group
+    /// </summary>
+    /// <param name="group">The group</param>
+    /// <param name="global">The global indicator</param>
+    /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
+    public ClyshCommandBuilder Group(ClyshGroup group, bool global = false)
+    {
+        try
+        {
+            if (global)
+                Result.AddGlobalGroups(group);
+            else
+                Result.AddGroups(group);
+            
+            return this;
+        }
+        catch (Exception e)
+        {
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
+        }
+    }
+    
     /// <summary>
     /// Build the action
     /// </summary>
@@ -93,29 +132,5 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
         {
             throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
         }
-    }
-
-    /// <summary>
-    /// Build the group
-    /// </summary>
-    /// <param name="group">The group</param>
-    /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
-    public ClyshCommandBuilder Group(ClyshGroup group)
-    {
-        try
-        {
-            Result.AddGroups(group);
-            return this;
-        }
-        catch (Exception e)
-        {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
-        }
-    }
-
-    public ClyshCommandBuilder RequireSubcommand(bool require)
-    {
-        Result.RequireSubcommand = require;
-        return this;
     }
 }

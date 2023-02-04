@@ -276,9 +276,10 @@ public class ClyshSetupTests
             
         });
         
-        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnCreateCommand);
-        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.ErrorOnCreateSubCommand);
-        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.ErrorOnValidateCommandId);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnCreateCommand);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.ErrorOnCreateSubCommand);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.ErrorOnCreateCommand);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.InnerException?.Message!, ClyshMessages.ErrorOnValidateCommandId);
     }
 
     [Test]
