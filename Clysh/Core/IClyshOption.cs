@@ -2,7 +2,7 @@ using Clysh.Helper;
 
 namespace Clysh.Core;
 
-public interface IClyshOption: IClyshIndexable
+public interface IClyshOption: IClyshEntity
 {
     /// <summary>
     /// The description

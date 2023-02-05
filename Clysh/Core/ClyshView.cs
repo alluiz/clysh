@@ -150,7 +150,7 @@ public sealed class ClyshView : IClyshView
 
     private void PrintCommand(IClyshCommand command)
     {
-        var hasCommands = command.HasAnySubcommand();
+        var hasCommands = command.AnySubcommand();
 
         PrintHeader(command, hasCommands);
         PrintOptions(command);

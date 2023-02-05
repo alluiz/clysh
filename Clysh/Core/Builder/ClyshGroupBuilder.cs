@@ -16,4 +16,12 @@ public class ClyshGroupBuilder: ClyshBuilder<ClyshGroup>
         result.Id = id;
         return this;
     }
+    
+    /// <summary>
+    /// Create a new instance of a type
+    /// </summary>
+    protected override void Reset()
+    {
+        result = new ClyshGroup();
+    }
 }

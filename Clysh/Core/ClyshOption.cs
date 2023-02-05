@@ -6,40 +6,24 @@ namespace Clysh.Core;
 /// <summary>
 /// The option for <see cref="Clysh"/>
 /// </summary>
-public class ClyshOption : ClyshIndexable, IClyshOption
+public class ClyshOption : ClyshEntity, IClyshOption
 {
     private const int MinShortcut = 1;
     private const int MaxShortcut = 1;
-
-    private const int MaxDescription = 150;
-    private const int MinDescription = 10;
 
     private readonly Regex _regexShortcut;
 
     private readonly string _shorcutPattern;
     private string _description = string.Empty;
 
-    private string? _shortcut;
-
     /// <summary>
     /// The option constructor
     /// </summary>
-    public ClyshOption()
+    internal ClyshOption(): base(15, 10, 150, ClyshConstants.OptionPattern)
     {
-        pattern = @"^[a-z]+(-{0,1}[a-z0-9]+)+$";
-        maxLength = 15;
         _shorcutPattern = @"[a-zA-Z]{1}";
         _regexShortcut = new Regex(_shorcutPattern);
         Parameters = new ClyshParameters();
-    }
-
-    /// <summary>
-    /// The description
-    /// </summary>
-    public string Description
-    {
-        get => _description; 
-        set => _description = ValidateDescription(value);
     }
 
     /// <summary>
@@ -50,11 +34,7 @@ public class ClyshOption : ClyshIndexable, IClyshOption
     /// <summary>
     /// The shortcut
     /// </summary>
-    public string? Shortcut
-    {
-        get => _shortcut;
-        set => _shortcut = ValidateShortcut(value);
-    }
+    public string? Shortcut { get; set; }
 
     /// <summary>
     /// The status of option
@@ -73,16 +53,6 @@ public class ClyshOption : ClyshIndexable, IClyshOption
 
     public bool IsGlobal { get; set; }
 
-    private static string ValidateDescription(string? descriptionValue)
-    {
-        if (descriptionValue == null || descriptionValue.Trim().Length is < MinDescription or > MaxDescription)
-            throw new ArgumentException(
-                string.Format(ClyshMessages.ErrorOnValidateDescription, MinDescription, MaxDescription, descriptionValue),
-                nameof(descriptionValue));
-
-        return descriptionValue;
-    }
-
     /// <summary>
     /// Check the optionId
     /// </summary>
@@ -93,14 +63,10 @@ public class ClyshOption : ClyshIndexable, IClyshOption
         return Id.Equals(id, StringComparison.CurrentCultureIgnoreCase);
     }
 
-    private string? ValidateShortcut(string? shortcutId)
+    private void ValidateShortcut()
     {
-        if (IsValidShortcut(shortcutId))
-            throw new ArgumentException(
-                string.Format(ClyshMessages.ErrorOnValidateShorcut, _shorcutPattern, MinShortcut, MaxShortcut, shortcutId),
-                nameof(shortcutId));
-
-        return shortcutId;
+        if (IsValidShortcut(Shortcut))
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateShorcut, _shorcutPattern, MinShortcut, MaxShortcut, Shortcut));
     }
 
     private bool IsValidShortcut(string? shortcutId)
@@ -121,5 +87,11 @@ public class ClyshOption : ClyshIndexable, IClyshOption
     public override string ToString()
     {
         return $"{(Shortcut == null ? "" : "-" + Shortcut + ","),-4}--{Id}";
+    }
+
+    public override void Validate()
+    {
+        base.Validate();
+        ValidateShortcut();
     }
 }

@@ -12,7 +12,8 @@ public class ClyshCommandTests
     public void TestHelpCommand()
     {
         var command = _commandBuilder
-            .Id("aa")
+            .Id("test")
+            .Description("The test option")
             .Build();
         
         var help = command.Options["help"];
@@ -28,10 +29,12 @@ public class ClyshCommandTests
     {
         var child = _commandBuilder
             .Id("child")
+            .Description("The child of command")
             .Build();
         
         var command = _commandBuilder
             .Id("aa")
+            .Description("The parent of the child")
             .SubCommand(child)
             .Build();
         
@@ -46,9 +49,11 @@ public class ClyshCommandTests
         var optionBuilder = new ClyshOptionBuilder();
         
         var command = _commandBuilder
-            .Id("aa")
+            .Id("test")
+            .Description("The test command")
             .Option(optionBuilder
                 .Id("option")
+                .Description("The option of the command")
                 .Build())
             .Build();
         

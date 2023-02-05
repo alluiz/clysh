@@ -6,7 +6,7 @@ namespace Clysh.Core.Builder;
 /// A builder for <see cref="ClyshCommand"/>
 /// </summary>
 /// <seealso cref="ClyshBuilder{T}"/>
-public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
+public sealed class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
 {
     /// <summary>
     /// Set the command identifier
@@ -105,10 +105,12 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
             throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, result.Id), e);
         }
     }
-
-    public override ClyshCommand Build()
+    
+    /// <summary>
+    /// Create a new instance of a type
+    /// </summary>
+    protected override void Reset()
     {
-        result.Validate();
-        return base.Build();
+        result = new ClyshCommand();
     }
 }

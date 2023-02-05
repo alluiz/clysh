@@ -147,6 +147,6 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     {
         _lastParameterOrder = -1;
         _hasProvidedOptionalParameterBefore = false;
-        base.Reset();
+        result = new ClyshOption();
     }
 }

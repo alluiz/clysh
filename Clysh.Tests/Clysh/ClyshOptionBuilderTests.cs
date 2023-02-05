@@ -11,15 +11,15 @@ public class ClyshOptionBuilderTests
     public void Shortcut()
     {
         var builder = new ClyshOptionBuilder();
-        var exception = Assert.Throws<ClyshException>(() =>  builder.Id("test", ""));
-        ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.ErrorOnValidateShorcut);
+        var exception = Assert.Throws<ClyshException>(() =>  builder.Id("test", "").Description("The test command").Build());
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnValidateShorcut);
     }
 
     [Test]
     public void ShortcutUsingHelpShortcut()
     {
         var builder = new ClyshOptionBuilder();
-        var exception = Assert.Throws<ClyshException>(() =>  builder.Id("test", "h"));
+        var exception = Assert.Throws<ClyshException>(() =>  builder.Id("test", "h").Build());
         ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.ErrorOnValidateOptionShortcut);
     }
 
@@ -27,7 +27,8 @@ public class ClyshOptionBuilderTests
     public void Description()
     {
         var builder = new ClyshOptionBuilder();
-        var exception = Assert.Throws<ClyshException>(() =>  builder.Description("test"));
-        ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.ErrorOnValidateDescription);
+        var exception = Assert.Throws<ClyshException>(() =>  builder.Id("test")
+            .Description("test").Build());
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnValidateDescription);
     }
 }

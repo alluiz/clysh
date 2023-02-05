@@ -5,7 +5,7 @@ namespace Clysh.Core;
 /// <summary>
 /// The command interface for <see cref="Clysh"/>
 /// </summary>
-public interface IClyshCommand: IClyshIndexable
+public interface IClyshCommand: IClyshEntity
 {
     /// <summary>
     /// The command data output
@@ -80,13 +80,13 @@ public interface IClyshCommand: IClyshIndexable
     /// Indicates if the command has any subcommand
     /// </summary>
     /// <returns>The indicator</returns>
-    bool HasAnySubcommand();
+    bool AnySubcommand();
 
     /// <summary>
     /// Indicates if the command has any subcommand executed
     /// </summary>
     /// <returns>The indicator</returns>
-    bool HasAnySubcommandExecuted();
+    bool AnySubcommandExecuted();
 
     /// <summary>
     /// Indicates if the command has the subcommand

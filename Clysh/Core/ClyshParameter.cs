@@ -7,22 +7,19 @@ namespace Clysh.Core;
 /// The parameter for <see cref="Clysh"/>
 /// </summary>
 // ReSharper disable once ClassNeverInstantiated.Global
-public class ClyshParameter : ClyshIndexable
+public class ClyshParameter : ClyshEntity
 {
     private const int MinLengthParam = 1;
     private const int MaxLengthParam = 1000;
 
-    private string _data;
-    private int _maxLength;
-    private int _minLength;
-    private int _order;
+    private string _data = string.Empty;
 
     /// <summary>
     /// Create a new parameter
     /// </summary>
-    public ClyshParameter()
+    internal ClyshParameter(): base(20, 0)
     {
-        _data = string.Empty;
+        
     }
 
     /// <summary>
@@ -30,7 +27,7 @@ public class ClyshParameter : ClyshIndexable
     /// </summary>
     public string Data { 
         get => _data;
-        set { Validate(value); _data = value; } }
+        set { ValidateData(value); _data = value; } }
 
     /// <summary>
     /// The parameter regex
@@ -50,20 +47,12 @@ public class ClyshParameter : ClyshIndexable
     /// <summary>
     /// The parameter data minimum length
     /// </summary>
-    public int MinLength
-    {
-        get => _minLength; 
-        set => _minLength = ValidateMin(value);
-    }
+    public int MinLength { get; set; }
 
     /// <summary>
     /// The parameter data maximum length
     /// </summary>
-    public int MaxLength
-    {
-        get => _maxLength; 
-        set => _maxLength = ValidateMax(value);
-    }
+    public int MaxLength { get; set; }
 
     /// <summary>
     /// Check if parameter data is filled
@@ -73,34 +62,41 @@ public class ClyshParameter : ClyshIndexable
     /// <summary>
     /// Order of parameter
     /// </summary>
-    public int Order
+    public int Order { get; set; }
+
+    private void ValidateMin()
     {
-        get => _order; 
-        set => _order = ValidateOrder(value);
+        if (MinLength < 1)
+            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, MinLengthParam, MaxLengthParam), nameof(MinLength));
     }
 
-    private static int ValidateMin(int minLengthValue)
+    private void ValidateMax()
     {
-        if (minLengthValue < 1)
-            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, MinLengthParam, MaxLengthParam), nameof(minLengthValue));
-
-        return minLengthValue;
+        if (MaxLength > 1000)
+            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, MinLengthParam, MaxLengthParam), nameof(MaxLength));
     }
 
-    private static int ValidateMax(int maxValue)
+    private void ValidateOrder()
     {
-        if (maxValue > 1000)
-            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, MinLengthParam, MaxLengthParam), nameof(maxValue));
-
-        return maxValue;
-    }
-
-    private int ValidateOrder(int orderValue)
-    {
-        if (orderValue < 0)
+        if (Order < 0)
             throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateParameterOrder, Id));
-        
-        return orderValue;
+    }
+
+    private void ValidateData(string value)
+    {
+        if (value == null || value.Trim().Length < MinLength || value.Trim().Length > MaxLength)
+            throw new ArgumentException($"Parameter {Id} must be not null or empty and between {MinLength} and {MaxLength} chars.", Id);
+
+        if (Regex != null && !Regex.IsMatch(value))
+            throw new ArgumentException($"Parameter {Id} must match the follow regex pattern: {PatternData}.", Id);
+    }
+
+    public override void Validate()
+    {
+        base.Validate();
+        ValidateOrder();
+        ValidateMin();
+        ValidateMax();
     }
 
     /// <summary>
@@ -110,15 +106,5 @@ public class ClyshParameter : ClyshIndexable
     public override string ToString()
     {
         return Id + ":" + Data;
-    }
-
-    private void Validate(string? value)
-    {
-        if (value == null || value.Trim().Length < MinLength || value.Trim().Length > MaxLength)
-            throw new ArgumentException($"Parameter {Id} must be not null or empty and between {MinLength} and {MaxLength} chars.", Id);
-
-        if (Regex != null && !Regex.IsMatch(value))
-            throw new ArgumentException($"Parameter {Id} must match the follow regex pattern: {PatternData}.", Id);
-
     }
 }

@@ -1,27 +1,23 @@
 using Clysh.Core.Builder;
 using Clysh.Helper;
+// ReSharper disable ClassNeverInstantiated.Global
 
 namespace Clysh.Core;
 
 /// <summary>
 /// The command for <see cref="Clysh"/>
 /// </summary>
-public class ClyshCommand : ClyshIndexable, IClyshCommand
+public class ClyshCommand : ClyshEntity, IClyshCommand
 {
-    private const int MaxDescription = 100;
-    private const int MinDescription = 10;
+    private readonly Dictionary<string, IClyshOption> _shortcuts;
 
-    private readonly Dictionary<string, string> _shortcutToOptionId;
-    private string _description = string.Empty;
-
-    public ClyshCommand()
+    internal ClyshCommand(): base(100, 10, 100, ClyshConstants.CommandPattern)
     {
-        pattern = ClyshConstants.CommandPattern;
         Groups = new ClyshMap<ClyshGroup>();
         Options = new ClyshMap<IClyshOption>();
         SubCommands = new ClyshMap<IClyshCommand>();
         Data = new Dictionary<string, object>();
-        _shortcutToOptionId = new Dictionary<string, string>();
+        _shortcuts = new Dictionary<string, IClyshOption>();
         AddHelpOption();
         AddVersionOption();
         AddDebugOption();
@@ -41,20 +37,11 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
 
     public int Order { get; set; }
 
-    /// <summary>
-    /// The description
-    /// </summary>
-    public string Description
-    {
-        get => _description;
-        set => _description = ValidateDescription(value);
-    }
-
-    public bool Executed { get; set; }
+    public bool Executed { get; set; } = false;
 
     public bool RequireSubcommand { get; set; }
 
-    public string Name { get; set; } = default!;
+    public string Name { get; set; } = string.Empty;
 
     internal void AddOption(ClyshOption option)
     {
@@ -75,7 +62,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         if (Options.Has(option.Id))
             throw new ClyshException($"Invalid option id. The command already has an option with id: {option.Id}.");
 
-        if (option.Shortcut != null && _shortcutToOptionId.ContainsKey(option.Shortcut))
+        if (option.Shortcut != null && _shortcuts.ContainsKey(option.Shortcut))
             throw new ClyshException(
                 $"Invalid option shortcut. The command already has an option with shortcut: {option.Shortcut}.");
 
@@ -85,7 +72,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         Options.Add(option);
 
         if (option.Shortcut != null)
-            _shortcutToOptionId.Add(option.Shortcut, option.Id);
+            _shortcuts.Add(option.Shortcut, option);
     }
 
     internal void AddSubCommand(IClyshCommand subCommand)
@@ -132,20 +119,20 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
 
     public IClyshOption GetOption(string arg)
     {
-        return Options.Has(arg) ? Options[arg] : Options[_shortcutToOptionId[arg]];
+        return Options.Has(arg) ? Options[arg] : _shortcuts[arg];
     }
 
     public bool HasOption(string key)
     {
-        return Options.Has(key) || _shortcutToOptionId.ContainsKey(key);
+        return Options.Has(key) || _shortcuts.ContainsKey(key);
     }
 
-    public bool HasAnySubcommand()
+    public bool AnySubcommand()
     {
         return SubCommands.Any();
     }
 
-    public bool HasAnySubcommandExecuted()
+    public bool AnySubcommandExecuted()
     {
         return SubCommands.Any(x => x.Value.Executed);
     }
@@ -155,44 +142,15 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         return SubCommands.Has(subCommandId);
     }
 
-    private static string ValidateDescription(string? descriptionValue)
-    {
-        if (descriptionValue == null || descriptionValue.Trim().Length is < MinDescription or > MaxDescription)
-            throw new ArgumentException(
-                string.Format(ClyshMessages.ErrorOnValidateDescription, MinDescription, MaxDescription, descriptionValue),
-                nameof(descriptionValue));
-
-        return descriptionValue;
-    }
-
-    private void AddDebugOption()
-    {
-        var builder = new ClyshOptionBuilder();
-        var debugOption = builder
-            .Id("debug")
-            .Description("Print debug log on screen")
-            .Build();
-
-        AddOption(debugOption);
-    }
-
-    private void AddHelpOption()
-    {
-        var builder = new ClyshOptionBuilder();
-        var helpOption = builder
-            .Id("help", "h")
-            .Description("Show help on screen")
-            .Build();
-
-        AddOption(helpOption);
-    }
-    
-    private void AddVersionOption()
+    private void AddDebugOption() => AddDefaultOption("debug", "Print debug log on screen");
+    private void AddHelpOption() => AddDefaultOption("help", "Show help on screen", "h");
+    private void AddVersionOption() => AddDefaultOption("version", "Show the CLI version", "v");
+    private void AddDefaultOption(string id, string description, string? shortcut = null)
     {
         var builder = new ClyshOptionBuilder();
         var versionOption = builder
-            .Id("version", "v")
-            .Description("Show the CLI version")
+            .Id(id, shortcut)
+            .Description(description)
             .Build();
 
         AddOption(versionOption);
@@ -204,10 +162,5 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
             Groups.Add(group);
         else if (!Groups[group.Id].Equals(group))
             throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandGroupDuplicated, group.Id));
-    }
-
-    public void Validate()
-    {
-        
     }
 }

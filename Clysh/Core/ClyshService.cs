@@ -310,7 +310,7 @@ public sealed class ClyshService : IClyshService
 
     private void CheckLastCommandStatus()
     {
-        var waitingForAnySubcommand = _lastCommand.RequireSubcommand && !_lastCommand.HasAnySubcommandExecuted();
+        var waitingForAnySubcommand = _lastCommand.RequireSubcommand && !_lastCommand.AnySubcommandExecuted();
         
         if (waitingForAnySubcommand)
             ShowErrorMessage("InvalidSubcommand", _lastCommand.Id);

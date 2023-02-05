@@ -981,12 +981,14 @@ public class ClyshServiceTests
 
         var devOption = _optionBuilder
             .Id("dev")
+            .Description("The dev option")
             .Group(group)
             .Selected(true)
             .Build();
 
         var homOption = _optionBuilder
             .Id("hom")
+            .Description("The hom option")
             .Group(group)
             .Build();
 
@@ -1036,11 +1038,13 @@ public class ClyshServiceTests
 
         var devOption = _optionBuilder
             .Id("dev")
+            .Description("The dev option")
             .Group(group)
             .Build();
 
         var homOption = _optionBuilder
             .Id("hom")
+            .Description("The hom option")
             .Group(group)
             .Build();
 
@@ -1090,11 +1094,13 @@ public class ClyshServiceTests
         var devOption = _optionBuilder
             .Id("dev")
             .Group(group)
+            .Description("The dev option")
             .Build();
 
         var homOption = _optionBuilder
             .Id("hom")
             .Group(group)
+            .Description("The hom option")
             .Build();
 
         IClyshCommand rootCommand = _builder
@@ -1147,14 +1153,17 @@ public class ClyshServiceTests
             .Action(Action)
             .Option(_optionBuilder
                 .Id("dev")
+                .Description("The dev option")
                 .Group(group)
                 .Build())
             .Option(_optionBuilder
                 .Id("hom")
+                .Description("The hom option")
                 .Group(group)
                 .Build())
             .Option(_optionBuilder
                 .Id("opt2")
+                .Description("The opt2 option")
                 .Build())
             .Build();
 
@@ -1201,14 +1210,17 @@ public class ClyshServiceTests
             .Action(Action)
             .Option(_optionBuilder
                 .Id("dev")
+                .Description("The dev option")
                 .Group(group)
                 .Build())
             .Option(_optionBuilder
                 .Id("hom")
+                .Description("The hom option")
                 .Group(group)
                 .Build())
             .Option(_optionBuilder
                 .Id("opt2")
+                .Description("The opt2 option")
                 .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Required(true).Build())
                 .Build())
             .Build();

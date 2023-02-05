@@ -97,4 +97,12 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
 
         return this;
     }
+    
+    /// <summary>
+    /// Create a new instance of a type
+    /// </summary>
+    protected override void Reset()
+    {
+        result = new ClyshParameter();
+    }
 }

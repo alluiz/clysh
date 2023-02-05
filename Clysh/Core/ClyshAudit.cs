@@ -7,13 +7,13 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshAudit
 {
-    private readonly IClyshIndexable _obj;
+    private readonly IClyshEntity _obj;
 
     /// <summary>
     /// The Clysh error representation
     /// </summary>
     /// <param name="obj">The object with error</param>
-    public ClyshAudit(IClyshIndexable obj)
+    public ClyshAudit(IClyshEntity obj)
     {
         _obj = obj;
         Messages = new List<string>();
