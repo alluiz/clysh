@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using System.Text;
 using Clysh.Helper;
 
@@ -10,10 +9,6 @@ namespace Clysh.Core;
 [Serializable]
 public sealed class ClyshParameters: ClyshMap<ClyshParameter>
 {
-    private ClyshParameters(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-    }
-
     /// <summary>
     /// Create an empty ClyshParameters
     /// </summary>

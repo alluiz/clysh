@@ -9,7 +9,7 @@ public class ClyshGroup: ClyshEntity
 {
     public List<string> Options { get; }
 
-    internal ClyshGroup(): base(10, 0, 0, ClyshConstants.GroupPattern)
+    internal ClyshGroup(): base(10, ClyshConstants.GroupPattern)
     {
         Options = new List<string>();
     }

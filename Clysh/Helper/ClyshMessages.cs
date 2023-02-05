@@ -4,6 +4,7 @@ namespace Clysh.Helper;
 
 public static class ClyshMessages
 {
+    public const string ErrorOnBuildCommand = "Error on build command. Command: '{0}'";
     public const string ErrorOnCreateCommand = "Error on create command. Command: '{0}'";
     public const string ErrorOnCreateOption = "Error on create option. Option: '{0}'";
     public const string ErrorOnCreateParameter = "Error on create parameter. Parameter: '{0}'";
@@ -15,7 +16,7 @@ public static class ClyshMessages
     public const string ErrorOnValidateCommandGroupDuplicated = "Error on validate command. The group is duplicated. Group: '{0}'";
     public const string ErrorOnValidateCommandPropertyMemory = "Error on validate command. The memory address is already related to another command. Object: '{0}'";
     public const string ErrorOnValidateCommandParent = "Error on validate command parent. The command must have only one parent. Command: '{0}'";
-    public const string ErrorOnValidateCommandSubcommands = "Error on validate command. The command does NOT have a subcommand configured. Command: '{0}'.";
+    public const string ErrorOnValidateCommandSubcommands = "Error on validate command. The ABSTRACT command does NOT have any subcommand configured. Command: '{0}'.";
     public const string ErrorOnValidateDescription = "Error on validate description. The description must be not null or empty and between {0} and {1} chars. Description: '{2}'";
     public const string ErrorOnValidateIdLength = "Error on validate ID. The ID must be less or equal than {0} chars. ID: '{1}'";
     public const string ErrorOnValidateIdPattern = "Error on validate ID. The ID must follow the pattern: '{0}'. ID: '{1}'";

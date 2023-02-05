@@ -17,7 +17,7 @@ public class ClyshParameter : ClyshEntity
     /// <summary>
     /// Create a new parameter
     /// </summary>
-    internal ClyshParameter(): base(20, 0)
+    internal ClyshParameter(): base(20)
     {
         
     }

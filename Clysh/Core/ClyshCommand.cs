@@ -1,5 +1,7 @@
 using Clysh.Core.Builder;
 using Clysh.Helper;
+using Microsoft.VisualBasic;
+
 // ReSharper disable ClassNeverInstantiated.Global
 
 namespace Clysh.Core;
@@ -11,7 +13,7 @@ public class ClyshCommand : ClyshEntity, IClyshCommand
 {
     private readonly Dictionary<string, IClyshOption> _shortcuts;
 
-    internal ClyshCommand(): base(100, 10, 100, ClyshConstants.CommandPattern)
+    internal ClyshCommand(): base(100, ClyshConstants.CommandPattern, 10, 100)
     {
         Groups = new ClyshMap<ClyshGroup>();
         Options = new ClyshMap<IClyshOption>();
@@ -48,7 +50,7 @@ public class ClyshCommand : ClyshEntity, IClyshCommand
         if (!option.IsGlobal)
         {
             if (option.Command != null)
-                throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandPropertyMemory,
+                throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateCommandPropertyMemory,
                     option.Id));
             
             option.Command = this;
@@ -60,10 +62,10 @@ public class ClyshCommand : ClyshEntity, IClyshCommand
     private void AddSimpleOption(IClyshOption option)
     {
         if (Options.Has(option.Id))
-            throw new ClyshException($"Invalid option id. The command already has an option with id: {option.Id}.");
+            throw new EntityException($"Invalid option id. The command already has an option with id: {option.Id}.");
 
         if (option.Shortcut != null && _shortcuts.ContainsKey(option.Shortcut))
-            throw new ClyshException(
+            throw new EntityException(
                 $"Invalid option shortcut. The command already has an option with shortcut: {option.Shortcut}.");
 
         if (option.Group != null && !Groups.Has(option.Group.Id))
@@ -162,5 +164,20 @@ public class ClyshCommand : ClyshEntity, IClyshCommand
             Groups.Add(group);
         else if (!Groups[group.Id].Equals(group))
             throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandGroupDuplicated, group.Id));
+    }
+
+    public override void Validate()
+    {
+        base.Validate();
+        ValidateSubcommands();
+    }
+
+    private void ValidateSubcommands()
+    {
+        if (!RequireSubcommand)
+            return;
+
+        if (!AnySubcommand())
+            throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateCommandSubcommands, Id));
     }
 }

@@ -19,7 +19,7 @@ public class ClyshOption : ClyshEntity, IClyshOption
     /// <summary>
     /// The option constructor
     /// </summary>
-    internal ClyshOption(): base(15, 10, 150, ClyshConstants.OptionPattern)
+    internal ClyshOption(): base(15, ClyshConstants.OptionPattern, 10, 150)
     {
         _shorcutPattern = @"[a-zA-Z]{1}";
         _regexShortcut = new Regex(_shorcutPattern);
@@ -65,8 +65,22 @@ public class ClyshOption : ClyshEntity, IClyshOption
 
     private void ValidateShortcut()
     {
+        if (Shortcut == null) 
+            return;
+
+        var reserved = new Dictionary<string, string>
+        {
+            { "help", "h" },
+            { "version", "v" }
+        };
+
+        if (reserved.Any(pair => !Id.Equals(pair.Key) && pair.Value.Equals(Shortcut)))
+        {
+            throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateOptionShortcut, Shortcut, Id));
+        }
+        
         if (IsValidShortcut(Shortcut))
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateShorcut, _shorcutPattern, MinShortcut, MaxShortcut, Shortcut));
+            throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateShorcut, _shorcutPattern, MinShortcut, MaxShortcut, Shortcut));
     }
 
     private bool IsValidShortcut(string? shortcutId)

@@ -61,7 +61,7 @@ public class CompiledCmdLineApp: CmdLineApp
         var rootCommand = commandBuilder
             .Id("calc")
             .Description("My calculator using CLI")
-            .RequireSubcommand(true)
+            .MarkAsAbstract()
             .SubCommand(addOperationCommand)
             .SubCommand(subOperationCommand)
             .Build();

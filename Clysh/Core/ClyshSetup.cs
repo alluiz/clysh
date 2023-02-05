@@ -253,8 +253,10 @@ public class ClyshSetup : IClyshSetup
 
         subCommandBuilder
             .Id(commandData.Id)
-            .Description(commandData.Description)
-            .RequireSubcommand(commandData.RequireSubcommand);
+            .Description(commandData.Description);
+        
+        if (commandData.RequireSubcommand)
+            subCommandBuilder.MarkAsAbstract();
         
         return subCommandBuilder;
     }

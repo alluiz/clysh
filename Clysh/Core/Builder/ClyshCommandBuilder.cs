@@ -13,9 +13,10 @@ public sealed class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     /// </summary>
     /// <param name="id">The command identifier, eg: "level0.level1.level2"</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
+    /// <exception cref="ArgumentNullException">Thrown an exception if ID is null</exception>
     public ClyshCommandBuilder Id(string id)
     {
-        result.Id = id;
+        result.Id = id ?? throw new ArgumentNullException(nameof(id));
         result.Name = id.Split(".").Last();
         return this;
     }
@@ -24,30 +25,22 @@ public sealed class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     /// Set the command description
     /// </summary>
     /// <param name="description">The command description</param>
-    /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
-    public ClyshCommandBuilder Description(string? description)
+    /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>    ,
+    /// <exception cref="ArgumentNullException">Thrown an exception if description is null</exception>
+    public ClyshCommandBuilder Description(string description)
     {
         ArgumentNullException.ThrowIfNull(description);
-
-        try
-        {
-            result.Description = description;
-            return this;
-        }
-        catch (Exception e)
-        {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, result.Id), e);
-        }
+        result.Description = description.Trim();
+        return this;
     }
     
     /// <summary>
     /// Set the command require subcommand flag
     /// </summary>
-    /// <param name="require">The require flag</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
-    public ClyshCommandBuilder RequireSubcommand(bool require)
+    public ClyshCommandBuilder MarkAsAbstract()
     {
-        result.RequireSubcommand = require;
+        result.RequireSubcommand = true;
         return this;
     }
 
@@ -55,19 +48,11 @@ public sealed class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     /// Build the command option
     /// </summary>
     /// <param name="option">The command option</param>
-    /// <param name="global">The global indicator</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
     public ClyshCommandBuilder Option(ClyshOption option)
     {
-        try
-        {
-            result.AddOption(option);
-            return this;
-        }
-        catch (Exception e)
-        {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, result.Id), e);
-        }
+        result.AddOption(option);
+        return this;
     }
 
     /// <summary>

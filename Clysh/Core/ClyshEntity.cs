@@ -9,69 +9,87 @@ namespace Clysh.Core;
 public abstract class ClyshEntity: IClyshEntity
 {
     /// <summary>
+    /// The entity constructor
+    /// </summary>
+    /// <param name="idMaxLength">The maximum length of ID</param>
+    /// <param name="idPattern">The ID pattern</param>
+    /// <param name="descriptionMinLength">The minimum length of description. If is ZERO or less, description is not required</param>
+    /// <param name="descriptionMaxLength">The maximum length of description.</param>
+    /// <exception cref="ArgumentNullException">The ID maximum length is less OR equal than ZERO.</exception>
+    /// <exception cref="ArgumentException">The ID maximum length is less OR equal than ZERO.</exception>
+    /// <exception cref="ArgumentException">The description minimum length is greater than description maximum length.</exception>
+    /// <exception cref="ArgumentException">The description maximum length is less than ZERO.</exception>
+    protected ClyshEntity(int idMaxLength, string? idPattern = null, int descriptionMinLength = 0, int descriptionMaxLength = 0)
+    {
+        if (idMaxLength <= 0)
+            throw new ArgumentException("The ID maximum length is less OR equal than ZERO.", nameof(descriptionMaxLength));
+        
+        _idMaxLength = idMaxLength;
+        _idPattern = idPattern;
+
+        if (descriptionMinLength > descriptionMaxLength)
+            throw new ArgumentException("The description minimum length is greater than description maximum length.", nameof(descriptionMinLength));
+        
+        if (descriptionMaxLength < 0)
+            throw new ArgumentException("The description maximum length is less than ZERO.", nameof(descriptionMaxLength));
+
+        _descriptionMinLength = descriptionMinLength;
+        _descriptionMaxLength = descriptionMaxLength;
+        _requireDescription = descriptionMinLength > 0;
+    }
+    
+    /// <summary>
     /// The ID max length
     /// </summary>
-    private readonly int _maxIdLength;
+    private readonly int _idMaxLength;
     
     /// <summary>
     /// The description max length
     /// </summary>
-    private readonly int _maxDescriptionLength;
+    private readonly int _descriptionMaxLength;
     
     /// <summary>
     /// The description min length
     /// </summary>
-    private readonly int _minDescriptionLength;
+    private readonly int _descriptionMinLength;
     
     /// <summary>
     /// The pattern to validate the ID. Could be null if no pattern is required.
     /// </summary>
-    private readonly string? _pattern;
+    private readonly string? _idPattern;
 
-    private Regex? _regex;
-    
+    /// <summary>
+    /// Indicates the entity requires description
+    /// </summary>
     private readonly bool _requireDescription;
-
-    protected ClyshEntity(int maxIdLength, int minDescriptionLength, int maxDescriptionLength = 0, string? pattern = null)
-    {
-        _maxIdLength = maxIdLength;
-        _minDescriptionLength = minDescriptionLength;
-        _maxDescriptionLength = maxDescriptionLength;
-        _requireDescription = minDescriptionLength > 0;
-        _pattern = pattern;
-    }
 
     /// <summary>
     /// The ID text
     /// </summary>
-    public string Id { get; set; } = string.Empty;
+    public string Id { get; internal set; } = string.Empty;
 
     /// <summary>
     /// The description
     /// </summary>
-    public string Description { get; set; } = string.Empty;
+    public string Description { get; internal set; } = string.Empty;
 
     /// <summary>
     /// Validates the ID
     /// </summary>
-    /// <param name="Id">The desired ID to be validated</param>
     /// <exception cref="ArgumentException">The ID is invalid.</exception>
     private void ValidateId()
     {
-        if (Id == null)
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateIdPattern, _pattern, Id));
-
-        if (_maxIdLength > 0 && Id.Length > _maxIdLength)
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateIdLength, _maxIdLength, Id));
+        if (_idMaxLength > 0 && Id.Length > _idMaxLength)
+            throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateIdLength, _idMaxLength, Id));
 
         //No validation if no pattern was provided before.
-        if (_pattern == null)
+        if (_idPattern == null)
             return;
         
-        _regex ??= new Regex(_pattern);
+        var regex = new Regex(_idPattern);
 
-        if (!_regex.IsMatch(Id))
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateIdPattern, _pattern, Id));
+        if (!regex.IsMatch(Id))
+            throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateIdPattern, _idPattern, Id));
     }
     
     private void ValidateDescription()
@@ -79,9 +97,11 @@ public abstract class ClyshEntity: IClyshEntity
         if (!_requireDescription)
             return;
         
-        if (Description == null || Description.Trim().Length < _minDescriptionLength || Description.Trim().Length > _maxDescriptionLength)
-            throw new ClyshException(
-                string.Format(ClyshMessages.ErrorOnValidateDescription, _minDescriptionLength, _maxDescriptionLength, Description));
+        if (Description.Length < _descriptionMinLength || Description.Length > _descriptionMaxLength)
+            throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateDescription,
+                _descriptionMinLength,
+                _descriptionMaxLength,
+                Description));
     }
 
     public virtual void Validate()
