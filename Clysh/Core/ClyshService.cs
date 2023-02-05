@@ -15,7 +15,7 @@ public sealed class ClyshService : IClyshService
 
     private readonly Dictionary<string, string> _messages;
     
-    private readonly Dictionary<string, ClyshOption> _optionsFromGroup;
+    private readonly Dictionary<string, IClyshOption> _optionsFromGroup;
 
     private List<IClyshCommand> _commandsToExecute;
 
@@ -23,7 +23,7 @@ public sealed class ClyshService : IClyshService
 
     private IClyshCommand _lastCommand;
 
-    private ClyshOption? _lastOption;
+    private IClyshOption? _lastOption;
 
     /// <summary>
     /// The constructor of service
@@ -46,7 +46,7 @@ public sealed class ClyshService : IClyshService
         _audits = new List<ClyshAudit>();
         _commandsToExecute = new List<IClyshCommand>();
         View = new ClyshView(clyshConsole, setup.Data);
-        _optionsFromGroup = new Dictionary<string, ClyshOption>();
+        _optionsFromGroup = new Dictionary<string, IClyshOption>();
         FillDefaultMessages();
         _messages = _defaultMessages!;
         FillCustomMessages(setup.Data.Messages);
@@ -67,7 +67,7 @@ public sealed class ClyshService : IClyshService
         View = view;
         _audits = new List<ClyshAudit>();
         _commandsToExecute = new List<IClyshCommand>();
-        _optionsFromGroup = new Dictionary<string, ClyshOption>();
+        _optionsFromGroup = new Dictionary<string, IClyshOption>();
         FillDefaultMessages();
         _messages = _defaultMessages!;
     }

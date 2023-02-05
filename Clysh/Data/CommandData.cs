@@ -1,27 +1,27 @@
 using System.ComponentModel.DataAnnotations;
-
-// ReSharper disable All
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+#pragma warning disable CS8618
 
 namespace Clysh.Data;
+
+// ReSharper disable once ClassNeverInstantiated.Global
 
 // This class is used only to deserialize command data from JSON or YAML.
 /// <summary>
 /// Class used to deserialize command data from file
 /// </summary>
-// ReSharper disable once ClassNeverInstantiated.Global
 public class CommandData
 {
     /// <summary>
     /// The id of command
     /// </summary>
     [Required]
-    public string Id { get; set; } = default!;
-
+    public string Id { get; set; }
     /// <summary>
     /// The description
     /// </summary>
     [Required]
-    public string Description { get; set; } = default!;
+    public string Description { get; set; }
 
     /// <summary>
     /// Indicates if it is the root command

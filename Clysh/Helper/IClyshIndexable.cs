@@ -8,5 +8,5 @@ public interface IClyshIndexable
     /// <summary>
     /// The identifier
     /// </summary>
-    string Id { get; }
+    public string Id { get; }
 }

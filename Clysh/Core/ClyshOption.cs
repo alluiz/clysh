@@ -6,7 +6,7 @@ namespace Clysh.Core;
 /// <summary>
 /// The option for <see cref="Clysh"/>
 /// </summary>
-public class ClyshOption : ClyshIndexable
+public class ClyshOption : ClyshIndexable, IClyshOption
 {
     private const int MinShortcut = 1;
     private const int MaxShortcut = 1;

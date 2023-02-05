@@ -194,7 +194,7 @@ public sealed class ClyshView : IClyshView
         PrintEmpty();
     }
 
-    private void PrintParameter(ClyshOption option)
+    private void PrintParameter(IClyshOption option)
     {
         const int maxDescriptionlengthPerLine = 30;
 

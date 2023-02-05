@@ -65,7 +65,7 @@ public class ClyshServiceTests
         IClyshService cli = new ClyshService(_rootCommandMock.Object, _viewMock.Object);
 
         _rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
-        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<ClyshOption>());
+        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<IClyshOption>());
 
         cli.Execute(args);
 
@@ -80,7 +80,7 @@ public class ClyshServiceTests
         IClyshService cli = new ClyshService(_rootCommandMock.Object, _viewMock.Object);
 
         _rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
-        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<ClyshOption>());
+        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<IClyshOption>());
 
         cli.Execute(args);
 
@@ -95,7 +95,7 @@ public class ClyshServiceTests
         IClyshService cli = new ClyshService(_rootCommandMock.Object, _viewMock.Object);
 
         _rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
-        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<ClyshOption>());
+        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<IClyshOption>());
 
         cli.Execute(args);
 
@@ -110,7 +110,7 @@ public class ClyshServiceTests
         IClyshService cli = new ClyshService(_rootCommandMock.Object, _viewMock.Object);
 
         _rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
-        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<ClyshOption>());
+        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<IClyshOption>());
 
         cli.Execute(args);
 
@@ -128,7 +128,7 @@ public class ClyshServiceTests
 
         var args = new[] { someOptionWithDashes };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        ClyshMap<IClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
         void Action(IClyshCommand command, IClyshView view)
@@ -175,7 +175,7 @@ public class ClyshServiceTests
 
         var args = new[] { someOptionWithDashes, "testarg:mytest" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        ClyshMap<IClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
         void Action(IClyshCommand command, IClyshView view)
@@ -226,7 +226,7 @@ public class ClyshServiceTests
 
         var args = new[] { someOptionWithDashes, "mytest" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        ClyshMap<IClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
         void Action(IClyshCommand command, IClyshView view)
@@ -273,7 +273,7 @@ public class ClyshServiceTests
 
         var args = new[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        ClyshMap<IClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
         void Action(IClyshCommand command, IClyshView view)
@@ -324,7 +324,7 @@ public class ClyshServiceTests
 
         var args = new[] { someOptionWithDashes, "testarg:mytest" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        ClyshMap<IClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
         void Action(IClyshCommand command, IClyshView view)
@@ -375,7 +375,7 @@ public class ClyshServiceTests
 
         var args = new[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        ClyshMap<IClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
         void Action(IClyshCommand command, IClyshView view)
@@ -426,7 +426,7 @@ public class ClyshServiceTests
 
         var args = new[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        ClyshMap<IClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
         void Action(IClyshCommand command, IClyshView view)
@@ -479,7 +479,7 @@ public class ClyshServiceTests
             "testarg5:mytest5"
         };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        ClyshMap<IClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
         void Action(IClyshCommand command, IClyshView view)
@@ -541,7 +541,7 @@ public class ClyshServiceTests
             "testarg4:mytest4", "testarg5:mytest5"
         };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        ClyshMap<IClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
         void Action(IClyshCommand command, IClyshView view)
@@ -614,10 +614,10 @@ public class ClyshServiceTests
             "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5"
         };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        ClyshMap<IClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        ClyshMap<ClyshOption>? expectedOptionsCustom = null;
+        ClyshMap<IClyshOption>? expectedOptionsCustom = null;
         IClyshView? expectedCliFrontCustom = null;
 
 
@@ -697,7 +697,7 @@ public class ClyshServiceTests
 
         var args = new[] { someAbbrevOptionWithDash };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        ClyshMap<IClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
         void Action(IClyshCommand command, IClyshView view)
@@ -746,7 +746,7 @@ public class ClyshServiceTests
 
         _rootCommandMock.Setup(x => x.HasOption(invalidOption)).Returns(false);
         _rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
-        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<ClyshOption>());
+        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<IClyshOption>());
 
         cli.Execute(args);
 
@@ -770,7 +770,7 @@ public class ClyshServiceTests
 
         _rootCommandMock.Setup(x => x.HasOption(invalidOption)).Returns(false);
         _rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
-        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<ClyshOption>());
+        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<IClyshOption>());
 
         cli.Execute(args);
 
@@ -804,7 +804,7 @@ public class ClyshServiceTests
             .Parameter(_parameterBuilder.Id(arg).Range(6, 10).Required(true).Build())
             .Build();
         _rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(option);
-        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<ClyshOption>() { { someOption, option } });
+        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<IClyshOption>() { { someOption, option } });
 
         cli.Execute(args);
 
@@ -836,7 +836,7 @@ public class ClyshServiceTests
             .Build();
 
         _rootCommandMock.Setup(x => x.GetOption(helpOption)).Returns(option);
-        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<ClyshOption>() { { helpOption, option } });
+        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<IClyshOption>() { { helpOption, option } });
 
         cli.Execute(args);
 
@@ -848,7 +848,7 @@ public class ClyshServiceTests
     {
         var args = new[] { "testarg:mytest" };
 
-        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<ClyshOption>());
+        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<IClyshOption>());
         _rootCommandMock.Setup(x => x.SubCommands).Returns(new ClyshMap<IClyshCommand>());
 
         IClyshService cli = new ClyshService(_rootCommandMock.Object, _viewMock.Object);
@@ -883,7 +883,7 @@ public class ClyshServiceTests
             .Build();
         _rootCommandMock.Setup(x => x.GetOption(someOption)).Returns(option);
 
-        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<ClyshOption>() { { someOption, option } });
+        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<IClyshOption>() { { someOption, option } });
 
         cli.Execute(args);
 
@@ -917,7 +917,7 @@ public class ClyshServiceTests
             .Returns(
                 option);
 
-        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<ClyshOption>() { { someOption, option } });
+        _rootCommandMock.Setup(x => x.Options).Returns(new ClyshMap<IClyshOption>() { { someOption, option } });
         cli.Execute(args);
 
         _viewMock.Verify(
@@ -966,7 +966,7 @@ public class ClyshServiceTests
 
         var someOption = "dev";
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        ClyshMap<IClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
         void Action(IClyshCommand command, IClyshView view)
@@ -993,7 +993,6 @@ public class ClyshServiceTests
         IClyshCommand rootCommand = _builder
             .Id("root")
             .Description("root command")
-            .Group(group)
             .Action(Action)
             .Option(devOption)
             .Option(homOption)
@@ -1021,7 +1020,7 @@ public class ClyshServiceTests
 
         var args = new[] { "--dev", someOptionWithDashes };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        ClyshMap<IClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
         void Action(IClyshCommand command, IClyshView view)
@@ -1049,7 +1048,6 @@ public class ClyshServiceTests
             .Id("root")
             .Description("root command")
             .Action(Action)
-            .Group(group)
             .Option(devOption)
             .Option(homOption)
             .Build();
@@ -1076,7 +1074,7 @@ public class ClyshServiceTests
 
         var args = new[] { someOptionWithDashes };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        ClyshMap<IClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
         void Action(IClyshCommand command, IClyshView view)
@@ -1103,7 +1101,6 @@ public class ClyshServiceTests
             .Id("root")
             .Description("root command")
             .Action(Action)
-            .Group(group)
             .Option(devOption)
             .Option(homOption)
             .Build();
@@ -1130,7 +1127,7 @@ public class ClyshServiceTests
 
         var args = new[] { someOptionWithDashes, "--opt2" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        ClyshMap<IClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
         void Action(IClyshCommand command, IClyshView view)
@@ -1148,7 +1145,6 @@ public class ClyshServiceTests
             .Id("root")
             .Description("root command")
             .Action(Action)
-            .Group(group)
             .Option(_optionBuilder
                 .Id("dev")
                 .Group(group)
@@ -1186,7 +1182,7 @@ public class ClyshServiceTests
 
         var args = new[] { someOptionWithDashes, "--opt2", "testarg" };
 
-        ClyshMap<ClyshOption>? expectedOptions = null;
+        ClyshMap<IClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
         void Action(IClyshCommand command, IClyshView view)
@@ -1203,7 +1199,6 @@ public class ClyshServiceTests
             .Id("root")
             .Description("root command")
             .Action(Action)
-            .Group(group)
             .Option(_optionBuilder
                 .Id("dev")
                 .Group(group)

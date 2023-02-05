@@ -57,15 +57,11 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     /// <param name="option">The command option</param>
     /// <param name="global">The global indicator</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
-    public ClyshCommandBuilder Option(ClyshOption option, bool global = false)
+    public ClyshCommandBuilder Option(ClyshOption option)
     {
         try
         {
-            if (global)
-                result.AddGlobalOption(option);
-            else
-                result.AddOption(option);
-    
+            result.AddOption(option);
             return this;
         }
         catch (Exception e)
@@ -93,29 +89,6 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     }
 
     /// <summary>
-    /// Build the group
-    /// </summary>
-    /// <param name="group">The group</param>
-    /// <param name="global">The global indicator</param>
-    /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
-    public ClyshCommandBuilder Group(ClyshGroup group, bool global = false)
-    {
-        try
-        {
-            if (global)
-                result.AddGlobalGroups(group);
-            else
-                result.AddGroups(group);
-            
-            return this;
-        }
-        catch (Exception e)
-        {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, result.Id), e);
-        }
-    }
-    
-    /// <summary>
     /// Build the action
     /// </summary>
     /// <param name="action">The action of the command</param>
@@ -131,5 +104,11 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
         {
             throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, result.Id), e);
         }
+    }
+
+    public override ClyshCommand Build()
+    {
+        result.Validate();
+        return base.Build();
     }
 }

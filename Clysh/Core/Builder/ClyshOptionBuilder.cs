@@ -8,8 +8,6 @@ namespace Clysh.Core.Builder;
 /// <seealso cref="ClyshBuilder{T}"/>
 public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
 {
-    
-
     private bool _hasProvidedOptionalParameterBefore;
     private int _lastParameterOrder = -1;
 
@@ -132,6 +130,16 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
         return this;
     }
 
+    /// <summary>
+    /// Mark option with global flag
+    /// </summary>
+    /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
+    public ClyshOptionBuilder MarkAsGlobal()
+    {
+        result.IsGlobal = true;
+        return this;
+    }
+    
     /// <summary>
     /// Reset the builder state
     /// </summary>

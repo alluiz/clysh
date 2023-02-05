@@ -6,18 +6,16 @@ namespace Clysh.Tests;
 
 public class ClyshCommandTests
 {
-    private ClyshCommand _command = default!;
-
-    [SetUp]
-    public void Setup()
-    {
-        _command = new ClyshCommand();
-    }
-
+    private readonly ClyshCommandBuilder _commandBuilder = new();
+    
     [Test]
     public void TestHelpCommand()
     {
-        var help = _command.GetOption("help");
+        var command = _commandBuilder
+            .Id("aa")
+            .Build();
+        
+        var help = command.Options["help"];
         Assert.NotNull(help);
         Assert.AreEqual("help", help.Id);
         Assert.AreEqual("h", help.Shortcut);
@@ -28,23 +26,34 @@ public class ClyshCommandTests
     [Test]
     public void TestAddChild()
     {
-        var builder = new ClyshCommandBuilder();
-        var child = builder.Id("child").Build();
-        _command.AddSubCommand(child);
-        Assert.NotNull(_command.SubCommands);
-        Assert.AreEqual(1, _command.SubCommands.Count);
-        Assert.NotNull(_command.SubCommands["child"]);
+        var child = _commandBuilder
+            .Id("child")
+            .Build();
+        
+        var command = _commandBuilder
+            .Id("aa")
+            .SubCommand(child)
+            .Build();
+        
+        Assert.NotNull(command.SubCommands);
+        Assert.AreEqual(1, command.SubCommands.Count);
+        Assert.NotNull(command.SubCommands["child"]);
     }
 
     [Test]
     public void TestAddOption()
     {
-        var builder = new ClyshOptionBuilder();
-        _command.AddOption(builder
-            .Id("option")
-            .Build());
-        Assert.NotNull(_command.Options);
-        Assert.AreEqual(4, _command.Options.Count);
-        Assert.AreEqual("option", _command.Options["option"].Id);
+        var optionBuilder = new ClyshOptionBuilder();
+        
+        var command = _commandBuilder
+            .Id("aa")
+            .Option(optionBuilder
+                .Id("option")
+                .Build())
+            .Build();
+        
+        Assert.NotNull(command.Options);
+        Assert.AreEqual(4, command.Options.Count);
+        Assert.AreEqual("option", command.Options["option"].Id);
     }
 }

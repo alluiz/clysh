@@ -7,11 +7,6 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshGroup: ClyshIndexable
 {
-    /// <summary>
-    /// The command of group
-    /// </summary>
-    public IClyshCommand? Command { get; set; }
-
     public List<string> Options { get; }
 
     public ClyshGroup()

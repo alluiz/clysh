@@ -25,7 +25,7 @@ public interface IClyshCommand: IClyshIndexable
     /// <summary>
     /// The command options
     /// </summary>
-    ClyshMap<ClyshOption> Options { get; }
+    ClyshMap<IClyshOption> Options { get; }
 
     /// <summary>
     /// The command execution order
@@ -67,7 +67,7 @@ public interface IClyshCommand: IClyshIndexable
     /// </summary>
     /// <param name="arg">The argument</param>
     /// <returns></returns>
-    ClyshOption GetOption(string arg);
+    IClyshOption GetOption(string arg);
 
     /// <summary>
     /// Indicates if the command has the option
@@ -100,26 +100,26 @@ public interface IClyshCommand: IClyshIndexable
     /// </summary>
     /// <param name="group">The group filter</param>
     /// <returns>The selected option</returns>
-    ClyshOption? GetOptionFromGroup(ClyshGroup group);
+    IClyshOption? GetOptionFromGroup(ClyshGroup group);
 
     /// <summary>
     /// Get an option selected by group
     /// </summary>
     /// <param name="groupId">The groupId filter</param>
     /// <returns>The selected option</returns>
-    ClyshOption? GetOptionFromGroup(string groupId);
+    IClyshOption? GetOptionFromGroup(string groupId);
 
     /// <summary>
     /// Get all options from group
     /// </summary>
     /// <param name="group">The group filter</param>
     /// <returns>The group available options</returns>
-    List<ClyshOption> GetAvailableOptionsFromGroup(ClyshGroup group);
+    List<IClyshOption> GetAvailableOptionsFromGroup(ClyshGroup group);
 
     /// <summary>
     /// Get all options from group
     /// </summary>
     /// <param name="groupId">The groupId filter</param>
     /// <returns>The group available options</returns>
-    List<ClyshOption> GetAvailableOptionsFromGroup(string groupId);
+    List<IClyshOption> GetAvailableOptionsFromGroup(string groupId);
 }

@@ -31,7 +31,7 @@ public abstract class ClyshBuilder<T> where T: new()
     /// Finish build 
     /// </summary>
     /// <returns>The new instance</returns>
-    public T Build()
+    public virtual T Build()
     {
         var build = result;
         Reset();

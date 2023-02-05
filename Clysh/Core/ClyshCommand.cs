@@ -18,7 +18,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
     {
         pattern = ClyshConstants.CommandPattern;
         Groups = new ClyshMap<ClyshGroup>();
-        Options = new ClyshMap<ClyshOption>();
+        Options = new ClyshMap<IClyshOption>();
         SubCommands = new ClyshMap<IClyshCommand>();
         Data = new Dictionary<string, object>();
         _shortcutToOptionId = new Dictionary<string, string>();
@@ -35,7 +35,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
 
     public ClyshMap<ClyshGroup> Groups { get; set; }
 
-    public ClyshMap<ClyshOption> Options { get; }
+    public ClyshMap<IClyshOption> Options { get; }
 
     public IClyshCommand? Parent { get; set; }
 
@@ -56,24 +56,21 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
 
     public string Name { get; set; } = default!;
 
-    public void AddOption(ClyshOption option)
+    internal void AddOption(ClyshOption option)
     {
-        if (option.Command != null)
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandPropertyMemory,
-                option.Id));
+        if (!option.IsGlobal)
+        {
+            if (option.Command != null)
+                throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandPropertyMemory,
+                    option.Id));
+            
+            option.Command = this;
+        }
 
-        option.Command = this;
-        option.IsGlobal = false;
         AddSimpleOption(option);
     }
-    
-    public void AddGlobalOption(ClyshOption option)
-    {
-        option.IsGlobal = true;
-        AddSimpleOption(option);
-    }
-    
-    private void AddSimpleOption(ClyshOption option)
+
+    private void AddSimpleOption(IClyshOption option)
     {
         if (Options.Has(option.Id))
             throw new ClyshException($"Invalid option id. The command already has an option with id: {option.Id}.");
@@ -83,7 +80,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
                 $"Invalid option shortcut. The command already has an option with shortcut: {option.Shortcut}.");
 
         if (option.Group != null && !Groups.Has(option.Group.Id))
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandGroupNotFound, option.Group.Id));
+            AddGroup(option.Group);
 
         Options.Add(option);
 
@@ -91,7 +88,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
             _shortcutToOptionId.Add(option.Shortcut, option.Id);
     }
 
-    public void AddSubCommand(IClyshCommand subCommand)
+    internal void AddSubCommand(IClyshCommand subCommand)
     {
         if (subCommand.Parent != null)
             throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandParent, subCommand.Id));
@@ -105,14 +102,14 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         SubCommands.Add(subCommand);
     }
 
-    public ClyshOption? GetOptionFromGroup(ClyshGroup group)
+    public IClyshOption? GetOptionFromGroup(ClyshGroup group)
     {
         return Options
             .Values
-            .SingleOrDefault(x => x.Group != null && x.Group.Equals(group) && x.Selected);
+            .SingleOrDefault(option => option.Group != null && option.Group.Equals(group) && option.Selected);
     }
 
-    public ClyshOption? GetOptionFromGroup(string groupId)
+    public IClyshOption? GetOptionFromGroup(string groupId)
     {
         if (!Groups.Has(groupId))
             throw new ClyshException(string.Format(ClyshMessages.ErrorOnGetOptionFromGroupNotFound, groupId));
@@ -120,7 +117,7 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         return GetOptionFromGroup(Groups[groupId]);
     }
 
-    public List<ClyshOption> GetAvailableOptionsFromGroup(ClyshGroup group)
+    public List<IClyshOption> GetAvailableOptionsFromGroup(ClyshGroup group)
     {
         return Options
             .Values
@@ -128,12 +125,12 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
             .ToList();
     }
 
-    public List<ClyshOption> GetAvailableOptionsFromGroup(string groupId)
+    public List<IClyshOption> GetAvailableOptionsFromGroup(string groupId)
     {
         return GetAvailableOptionsFromGroup(Groups[groupId]);
     }
 
-    public ClyshOption GetOption(string arg)
+    public IClyshOption GetOption(string arg)
     {
         return Options.Has(arg) ? Options[arg] : Options[_shortcutToOptionId[arg]];
     }
@@ -201,22 +198,16 @@ public class ClyshCommand : ClyshIndexable, IClyshCommand
         AddOption(versionOption);
     }
 
-    public void AddGroups(ClyshGroup group)
-    {
-        if (group.Command != null && !group.Command.Equals(this))
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandPropertyMemory,
-                group.Id));
-
-        group.Command = this;
-
-        AddGlobalGroups(group);
-    }
-    
-    public void AddGlobalGroups(ClyshGroup group)
+    private void AddGroup(ClyshGroup group)
     {
         if (!Groups.Has(group.Id))
             Groups.Add(group);
         else if (!Groups[group.Id].Equals(group))
             throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandGroupDuplicated, group.Id));
+    }
+
+    public void Validate()
+    {
+        
     }
 }

@@ -286,17 +286,14 @@ public class ClyshSetup : IClyshSetup
             var optionBuilder = new ClyshOptionBuilder();
             var groups = new ClyshMap<ClyshGroup>();
             
-            foreach (var o in commandData.Options)
+            foreach (var optionData in commandData.Options)
             {
-                if (o.Group != null && !groups.Has(o.Group))
-                    groups.Add(groupBuilder.Id(o.Group).Build());
+                if (optionData.Group != null && !groups.Has(optionData.Group))
+                    groups.Add(groupBuilder
+                        .Id(optionData.Group)
+                        .Build());
                 
-                var option = BuildOption(optionBuilder, o, groups);
-                
-                if (option.Group != null)
-                    commandBuilder.Group(option.Group);
-                
-                commandBuilder.Option(option);
+                commandBuilder.Option(BuildOption(optionBuilder, optionData, groups));
             }
         }
 
@@ -304,19 +301,22 @@ public class ClyshSetup : IClyshSetup
         
         foreach (var option in _commandGlobalOptions[commandData.Id])
         {
-            if (option.Group != null)
-               commandBuilder.Group(option.Group, true);
-    
-            commandBuilder.Option(option, true);
+            commandBuilder.Option(option);
         }
     }
 
-    private static ClyshOption BuildOption(ClyshOptionBuilder builder, OptionData option, IReadOnlyDictionary<string, ClyshGroup> groups)
+    private static ClyshOption BuildOption(ClyshOptionBuilder builder,
+        OptionData option,
+        IReadOnlyDictionary<string, ClyshGroup> groups,
+        bool globalOption = false)
     {
         builder
             .Id(option.Id, option.Shortcut)
             .Description(option.Description);
 
+        if (globalOption)
+            builder.MarkAsGlobal();
+        
         BuildOptionGroup(builder, option, groups);
         BuildOptionParameters(builder, option);
 
@@ -348,13 +348,13 @@ public class ClyshSetup : IClyshSetup
         }
     }
 
-    private static void BuildOptionGroup(ClyshOptionBuilder builder, OptionData option, IReadOnlyDictionary<string, ClyshGroup> groups)
+    private static void BuildOptionGroup(ClyshOptionBuilder builder, OptionData optionData, IReadOnlyDictionary<string, ClyshGroup> groups)
     {
-        if (option.Group == null) return;
+        if (optionData.Group == null) return;
 
-        var group = groups[option.Group];
+        var group = groups[optionData.Group];
 
-        group.Options.Add(option.Id);
+        group.Options.Add(optionData.Id);
 
         builder.Group(group);
     }
@@ -413,17 +413,19 @@ public class ClyshSetup : IClyshSetup
         var optionBuilder = new ClyshOptionBuilder();
         var groups = new ClyshMap<ClyshGroup>();
 
-        foreach (var o in Data.GlobalOptions)
+        foreach (var optionData in Data.GlobalOptions)
         {
-            if (o.Group != null && !groups.Has(o.Group))
-                groups.Add(groupBuilder.Id(o.Group).Build());
+            if (optionData.Group != null && !groups.Has(optionData.Group))
+                groups.Add(groupBuilder
+                    .Id(optionData.Group)
+                    .Build());
 
-            var option = BuildOption(optionBuilder, o, groups);
+            var option = BuildOption(optionBuilder, optionData, groups, true);
 
-            if (o.Commands == null || o.Commands.Count == 0)
-                throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupGlobalOptions, o.Id));
+            if (optionData.Commands == null || optionData.Commands.Count == 0)
+                throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupGlobalOptions, optionData.Id));
 
-            foreach (var c in o.Commands)
+            foreach (var c in optionData.Commands)
             {
                 if (_commandGlobalOptions.ContainsKey(c))
                     _commandGlobalOptions[c].Add(option);

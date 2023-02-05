@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
+#pragma warning disable CS8618
 
 namespace Clysh.Data;
 
@@ -13,7 +14,7 @@ public class ParameterData
     /// The id of parameter
     /// </summary>
     [Required]
-    public string? Id { get; set; }
+    public string Id { get; set; }
 
     /// <summary>
     /// The regular expression pattern
