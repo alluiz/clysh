@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Clysh.Helper;
 
 namespace Clysh.Core.Builder;
@@ -15,11 +14,11 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
     /// </summary>
     /// <param name="id">The parameter identifier</param>
     /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
+    /// <exception cref="ArgumentNullException">Thrown an error if ID is null</exception>
     public ClyshParameterBuilder Id(string? id)
     {
         ArgumentNullException.ThrowIfNull(id);
-
-        Result.Id = id;
+        result.Id = id;
         return this;
     }
 
@@ -30,15 +29,8 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
     /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
     public ClyshParameterBuilder Order(int order)
     {
-        try
-        {
-            Result.Order = order;
-            return this;
-        }
-        catch (Exception e)
-        {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateParameter, Result.Id), e);
-        }
+        result.Order = order;
+        return this;
     }
 
     /// <summary>
@@ -48,18 +40,10 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
     /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
     public ClyshParameterBuilder Pattern(string? pattern)
     {
-        try
-        {
-            if (pattern != null)
-            {
-                Result.PatternData = pattern;
-                Result.Regex = new Regex(pattern);
-            }
-        }
-        catch (Exception e)
-        {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateParameter, Result.Id), e);
-        }
+        if (pattern == null) return this;
+
+        result.PatternData = pattern;
+        result.Regex = new Regex(pattern);
 
         return this;
     }
@@ -69,9 +53,9 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
     /// </summary>
     /// <param name="required">Indicates if the parameter is required for option</param>
     /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
-    public ClyshParameterBuilder Required(bool required)
+    public ClyshParameterBuilder MarkAsRequired()
     {
-        Result.Required = required;
+        result.Required = true;
         return this;
     }
 
@@ -81,21 +65,24 @@ public class ClyshParameterBuilder : ClyshBuilder<ClyshParameter>
     /// <param name="minLength">Indicates the minimum length</param>
     /// <param name="maxLength">Indicates the maximum length</param>
     /// <returns>An instance of <see cref="ClyshParameterBuilder"/></returns>
+    /// <exception cref="ArgumentException">Thrown an error if MIN length is greater than MAX length</exception>
     public ClyshParameterBuilder Range(int minLength, int maxLength)
     {
-        try
-        {
-            if (minLength > maxLength)
-                throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterMaxLength, Result.Id), nameof(maxLength));
-            
-            Result.MinLength = minLength;
-            Result.MaxLength = maxLength;   
-        }
-        catch (Exception e)
-        {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateParameter, Result.Id), e);
-        }
+        if (minLength > maxLength)
+            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterMaxLength, result.Id),
+                nameof(maxLength));
+
+        result.MinLength = minLength;
+        result.MaxLength = maxLength;
 
         return this;
+    }
+
+    /// <summary>
+    /// Create a new instance of a type
+    /// </summary>
+    protected override void Reset()
+    {
+        result = new ClyshParameter();
     }
 }

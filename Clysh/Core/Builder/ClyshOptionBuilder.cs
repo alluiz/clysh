@@ -1,7 +1,4 @@
-using System;
-using System.Text.RegularExpressions;
 using Clysh.Helper;
-using Microsoft.VisualBasic;
 
 namespace Clysh.Core.Builder;
 
@@ -11,17 +8,14 @@ namespace Clysh.Core.Builder;
 /// <seealso cref="ClyshBuilder{T}"/>
 public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
 {
-    
-
-    private bool hasProvidedOptionalParameterBefore;
-    private int lastParameterOrder = -1;
+    private bool _hasProvidedOptionalParameterBefore;
+    private int _lastParameterOrder = -1;
 
     /// <summary>
     /// The builder constructor
     /// </summary>
     public ClyshOptionBuilder()
     {
-        
     }
 
     /// <summary>
@@ -32,34 +26,9 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
     public ClyshOptionBuilder Id(string id, string? shortcut = null)
     {
-        try
-        {
-            Result.Id = id;
-            Result.Shortcut = shortcut;
-
-            ValidateShortcut(id, shortcut);
-
-            return this;
-        }
-        catch (Exception e)
-        {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateOption, id), e);
-        }
-    }
-
-    private static void ValidateShortcut(string id, string? shortcut)
-    {
-        var reserved = new Dictionary<string, string>
-        {
-            { "help", "h" },
-            { "version", "v" }
-        };
-        
-        foreach (var pair in reserved)
-        {
-            if (!id.Equals(pair.Key) && pair.Value.Equals(shortcut))
-                throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateOptionShortcut, pair.Value, pair.Key, id), nameof(shortcut));
-        }
+        result.Id = id;
+        result.Shortcut = shortcut;
+        return this;
     }
 
     /// <summary>
@@ -67,16 +36,16 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     /// </summary>
     /// <param name="description">The option description</param>
     /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
-    public ClyshOptionBuilder Description(string? description)
+    public ClyshOptionBuilder Description(string description)
     {
         try
         {
-            Result.Description = description;
+            result.Description = description;
             return this;
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateOption, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateOption, result.Id), e);
         }
     }
 
@@ -91,25 +60,28 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
         {
             ValidateParameter(parameter);
 
-            hasProvidedOptionalParameterBefore = !parameter.Required;
-            lastParameterOrder = parameter.Order;
-        
-            Result.Parameters.Add(parameter);
+            _hasProvidedOptionalParameterBefore = !parameter.Required;
+            _lastParameterOrder = parameter.Order;
+
+            result.Parameters.Add(parameter);
             return this;
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateOption, Result.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateOption, result.Id), e);
         }
     }
 
     private void ValidateParameter(ClyshParameter parameterValue)
     {
-        if (parameterValue.Order <= lastParameterOrder)
-            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterOrder, parameterValue.Id), nameof(parameterValue));
+        if (parameterValue.Order <= _lastParameterOrder)
+            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterOrder, parameterValue.Id),
+                nameof(parameterValue));
 
-        if (parameterValue.Required && hasProvidedOptionalParameterBefore)
-            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRequiredOrder, parameterValue.Id), nameof(parameterValue));
+        if (parameterValue.Required && _hasProvidedOptionalParameterBefore)
+            throw new ArgumentException(
+                string.Format(ClyshMessages.ErrorOnValidateParameterRequiredOrder, parameterValue.Id),
+                nameof(parameterValue));
     }
 
     /// <summary>
@@ -119,7 +91,7 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
     public ClyshOptionBuilder Group(ClyshGroup group)
     {
-        Result.Group = group;
+        result.Group = group;
         return this;
     }
 
@@ -130,7 +102,17 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
     public ClyshOptionBuilder Selected(bool selected)
     {
-        Result.Selected = selected;
+        result.Selected = selected;
+        return this;
+    }
+
+    /// <summary>
+    /// Mark option with global flag
+    /// </summary>
+    /// <returns>An instance of <see cref="ClyshOptionBuilder"/></returns>
+    public ClyshOptionBuilder MarkAsGlobal()
+    {
+        result.IsGlobal = true;
         return this;
     }
 
@@ -139,8 +121,8 @@ public class ClyshOptionBuilder : ClyshBuilder<ClyshOption>
     /// </summary>
     protected override void Reset()
     {
-        lastParameterOrder = -1;
-        hasProvidedOptionalParameterBefore = false;
-        base.Reset();
+        _lastParameterOrder = -1;
+        _hasProvidedOptionalParameterBefore = false;
+        result = new ClyshOption();
     }
 }

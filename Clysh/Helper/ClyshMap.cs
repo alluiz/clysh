@@ -1,6 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Clysh.Core;
 
 namespace Clysh.Helper;
 
@@ -9,7 +8,7 @@ namespace Clysh.Helper;
 /// </summary>
 /// <typeparam name="TObject">The type of object to map</typeparam>
 [Serializable]
-public class ClyshMap<TObject>: Dictionary<string, TObject> where TObject : IClyshIndexable
+public class ClyshMap<TObject>: Dictionary<string, TObject> where TObject : IClyshEntity
 {
     /// <summary>
     /// Serialization constructor

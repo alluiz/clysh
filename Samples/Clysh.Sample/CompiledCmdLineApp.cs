@@ -22,13 +22,13 @@ public class CompiledCmdLineApp: CmdLineApp
                 .Description("Add two numbers (a + b)")
                 .Parameter(parameterBuilder
                     .Id("a")
-                    .Required(true)
+                    .MarkAsRequired()
                     .Range(1, 15)
                     .Order(0)
                     .Build())
                 .Parameter(parameterBuilder
                     .Id("b")
-                    .Required(true)
+                    .MarkAsRequired()
                     .Range(1, 15)
                     .Order(1)
                     .Build())
@@ -44,13 +44,13 @@ public class CompiledCmdLineApp: CmdLineApp
                 .Description("Subtract two numbers (a - b)")
                 .Parameter(parameterBuilder
                     .Id("a")
-                    .Required(true)
+                    .MarkAsRequired()
                     .Range(1, 15)
                     .Order(0)
                     .Build())
                 .Parameter(parameterBuilder
                     .Id("b")
-                    .Required(true)
+                    .MarkAsRequired()
                     .Range(1, 15)
                     .Order(1)
                     .Build())
@@ -61,7 +61,7 @@ public class CompiledCmdLineApp: CmdLineApp
         var rootCommand = commandBuilder
             .Id("calc")
             .Description("My calculator using CLI")
-            .RequireSubcommand(true)
+            .MarkAsAbstract()
             .SubCommand(addOperationCommand)
             .SubCommand(subOperationCommand)
             .Build();

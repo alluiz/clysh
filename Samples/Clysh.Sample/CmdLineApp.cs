@@ -11,9 +11,9 @@ public abstract class CmdLineApp
     public void Execute(string[] args)
     {
         if (_cli == null) {
-            this._cli = GetCli();
+            _cli = GetCli();
         }
         
-        this._cli.Execute(args);
+        _cli.Execute(args);
     }
 }

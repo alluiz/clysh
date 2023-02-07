@@ -1,4 +1,3 @@
-using System;
 using Clysh.Helper;
 
 namespace Clysh.Core.Builder;
@@ -7,38 +6,42 @@ namespace Clysh.Core.Builder;
 /// A builder for <see cref="ClyshCommand"/>
 /// </summary>
 /// <seealso cref="ClyshBuilder{T}"/>
-public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
+public sealed class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
 {
     /// <summary>
-    /// Build the command identifier
+    /// Set the command identifier
     /// </summary>
     /// <param name="id">The command identifier, eg: "level0.level1.level2"</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
+    /// <exception cref="ArgumentNullException">Thrown an exception if ID is null</exception>
     public ClyshCommandBuilder Id(string id)
     {
-        Result.Id = id;
-        Result.Name = id.Split(".").Last();
+        result.Id = id ?? throw new ArgumentNullException(nameof(id));
+        result.Name = id.Split(".").Last();
         return this;
     }
 
     /// <summary>
-    /// Build the command description
+    /// Set the command description
     /// </summary>
     /// <param name="description">The command description</param>
-    /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
-    public ClyshCommandBuilder Description(string? description)
+    /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>    ,
+    /// <exception cref="ArgumentNullException">Thrown an exception if description is null</exception>
+    public ClyshCommandBuilder Description(string description)
     {
         ArgumentNullException.ThrowIfNull(description);
+        result.Description = description.Trim();
+        return this;
+    }
 
-        try
-        {
-            Result.Description = description;
-            return this;
-        }
-        catch (Exception e)
-        {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
-        }
+    /// <summary>
+    /// Set the command require subcommand flag
+    /// </summary>
+    /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
+    public ClyshCommandBuilder MarkAsAbstract()
+    {
+        result.RequireSubcommand = true;
+        return this;
     }
 
     /// <summary>
@@ -48,15 +51,8 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
     public ClyshCommandBuilder Option(ClyshOption option)
     {
-        try
-        {
-            Result.AddOption(option);
-            return this;
-        }
-        catch (Exception e)
-        {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
-        }
+        result.AddOption(option);
+        return this;
     }
 
     /// <summary>
@@ -66,15 +62,8 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
     public ClyshCommandBuilder SubCommand(ClyshCommand subCommand)
     {
-        try
-        {
-            Result.AddSubCommand(subCommand);
-            return this;
-        }
-        catch (Exception e)
-        {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
-        }
+        result.AddSubCommand(subCommand);
+        return this;
     }
 
     /// <summary>
@@ -82,40 +71,17 @@ public class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     /// </summary>
     /// <param name="action">The action of the command</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
-    public ClyshCommandBuilder Action(Action<IClyshCommand, IClyshView> action)
+    public ClyshCommandBuilder Action(Action<ClyshCommand, IClyshView> action)
     {
-        try
-        {
-            Result.Action = action;
-            return this;
-        }
-        catch (Exception e)
-        {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
-        }
+        result.Action = action;
+        return this;
     }
 
     /// <summary>
-    /// Build the group
+    /// Create a new instance of a type
     /// </summary>
-    /// <param name="group">The group</param>
-    /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
-    public ClyshCommandBuilder Group(ClyshGroup group)
+    protected override void Reset()
     {
-        try
-        {
-            Result.AddGroups(group);
-            return this;
-        }
-        catch (Exception e)
-        {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, Result.Id), e);
-        }
-    }
-
-    public ClyshCommandBuilder RequireSubcommand(bool require)
-    {
-        Result.RequireSubcommand = require;
-        return this;
+        result = new ClyshCommand();
     }
 }

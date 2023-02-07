@@ -1,11 +1,10 @@
 ﻿using Clysh.Core;
-using Clysh.Helper;
 
 namespace Clysh.Sample;
 
 public static class CliActions
 {
-    public static void CalcOperationAdd(IClyshCommand cmd, IClyshView view)
+    public static void CalcOperationAdd(ClyshCommand cmd, IClyshView view)
     {
         CalcOperation(cmd, view, (a, b) => a + b);
         
@@ -15,12 +14,12 @@ public static class CliActions
         view.Print($"={root.Message}");
     }
     
-    public static void CalcOperationSub(IClyshCommand cmd, IClyshView view)
+    public static void CalcOperationSub(ClyshCommand cmd, IClyshView view)
     {
         CalcOperation(cmd, view, (a, b) => a - b);
     }
     
-    private static void CalcOperation(IClyshCommand cmd, IClyshView view, Func<int, int, int> operation)
+    private static void CalcOperation(ClyshCommand cmd, IClyshView view, Func<int, int, int> operation)
     {
         var color = cmd.GetOptionFromGroup("color");
         var values = cmd.Options["values"];
@@ -68,7 +67,7 @@ public static class CliActions
        return Convert.ToInt32(value);
     }
 
-    public static void CalcRoot(IClyshCommand cmd, IClyshView view)
+    public static void CalcRoot(ClyshCommand cmd, IClyshView view)
     {
         cmd.Data.Add("root", new Root() { Message="Thanks for using my calc!" });
     }

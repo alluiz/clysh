@@ -1,12 +1,12 @@
-namespace Clysh.Helper;
+namespace Clysh.Core;
 
 /// <summary>
 /// The indexable interface for <see cref="Clysh"/>
 /// </summary>
-public interface IClyshIndexable
+public interface IClyshEntity
 {
     /// <summary>
     /// The identifier
     /// </summary>
-    string Id { get; }
+    public string Id { get; }
 }

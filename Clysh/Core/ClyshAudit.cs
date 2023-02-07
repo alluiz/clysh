@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Clysh.Helper;
+﻿using Clysh.Helper;
 
 namespace Clysh.Core;
 
@@ -9,15 +7,15 @@ namespace Clysh.Core;
 /// </summary>
 public class ClyshAudit
 {
-    private readonly IClyshIndexable obj;
+    private readonly IClyshEntity _obj;
 
     /// <summary>
     /// The Clysh error representation
     /// </summary>
     /// <param name="obj">The object with error</param>
-    public ClyshAudit(IClyshIndexable obj)
+    public ClyshAudit(IClyshEntity obj)
     {
-        this.obj = obj;
+        _obj = obj;
         Messages = new List<string>();
     }
 
@@ -41,7 +39,7 @@ public class ClyshAudit
     /// <returns>The audit text</returns>
     public override string ToString()
     {
-        var line =  $"ObjectId: {obj.Id}, Type: {obj.GetType()}\n";
+        var line =  $"ObjectId: {_obj.Id}, Type: {_obj.GetType()}\n";
 
         line += $"    Message(s): [{Messages.Aggregate("\n        ", (current, message) => $"{current}{message}\n        ")}]";
         

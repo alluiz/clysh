@@ -1,4 +1,3 @@
-using System;
 using System.Text.RegularExpressions;
 using Clysh.Helper;
 
@@ -7,60 +6,40 @@ namespace Clysh.Core;
 /// <summary>
 /// The option for <see cref="Clysh"/>
 /// </summary>
-public class ClyshOption : ClyshIndexable
+public class ClyshOption : ClyshEntity
 {
     private const int MinShortcut = 1;
     private const int MaxShortcut = 1;
 
-    private const int MaxDescription = 150;
-    private const int MinDescription = 10;
+    private readonly Regex _regexShortcut;
 
-    private readonly Regex regexShortcut;
-
-    private readonly string shorcutPattern;
-    private string description = string.Empty;
-
-    private string? shortcut;
+    private readonly string _shorcutPattern;
+    private string _description = string.Empty;
 
     /// <summary>
     /// The option constructor
     /// </summary>
-    public ClyshOption()
+    internal ClyshOption(): base(15, ClyshConstants.OptionPattern, 10, 150)
     {
-        Pattern = @"^[a-z]+(-{0,1}[a-z0-9]+)+$";
-        MaxLength = 15;
-        shorcutPattern = @"[a-zA-Z]{1}";
-        regexShortcut = new Regex(shorcutPattern);
+        _shorcutPattern = @"[a-zA-Z]{1}";
+        _regexShortcut = new Regex(_shorcutPattern);
         Parameters = new ClyshParameters();
-    }
-
-    /// <summary>
-    /// The description
-    /// </summary>
-    public string Description
-    {
-        get => description; 
-        set => description = ValidateDescription(value);
     }
 
     /// <summary>
     /// The parameters
     /// </summary>
-    public ClyshParameters Parameters { get; set; }
+    public ClyshParameters Parameters { get; }
 
     /// <summary>
     /// The shortcut
     /// </summary>
-    public string? Shortcut
-    {
-        get => shortcut;
-        set => shortcut = ValidateShortcut(value);
-    }
+    public string? Shortcut { get; internal set; }
 
     /// <summary>
     /// The status of option
     /// </summary>
-    public bool Selected { get; set; }
+    public bool Selected { get; internal set; }
 
     /// <summary>
     /// The group
@@ -70,19 +49,9 @@ public class ClyshOption : ClyshIndexable
     /// <summary>
     /// The command owner
     /// </summary>
-    public IClyshCommand? Command { get; set; }
+    public ClyshCommand? Command { get; internal set; }
 
-    public bool IsGlobal { get; set; }
-
-    private static string ValidateDescription(string? descriptionValue)
-    {
-        if (descriptionValue == null || descriptionValue.Trim().Length is < MinDescription or > MaxDescription)
-            throw new ArgumentException(
-                string.Format(ClyshMessages.ErrorOnValidateDescription, MinDescription, MaxDescription, descriptionValue),
-                nameof(descriptionValue));
-
-        return descriptionValue;
-    }
+    public bool IsGlobal { get; internal set; }
 
     /// <summary>
     /// Check the optionId
@@ -94,27 +63,37 @@ public class ClyshOption : ClyshIndexable
         return Id.Equals(id, StringComparison.CurrentCultureIgnoreCase);
     }
 
-    private string? ValidateShortcut(string? shortcutId)
+    private void ValidateShortcut()
     {
-        if (InvalidShortcut(shortcutId))
-            throw new ArgumentException(
-                string.Format(ClyshMessages.ErrorOnValidateShorcut, shorcutPattern, MinShortcut, MaxShortcut, shortcutId),
-                nameof(shortcutId));
+        if (Shortcut == null) 
+            return;
 
-        return shortcutId;
+        var reserved = new Dictionary<string, string>
+        {
+            { "help", "h" },
+            { "version", "v" }
+        };
+
+        if (reserved.Any(pair => !Id.Equals(pair.Key) && pair.Value.Equals(Shortcut)))
+        {
+            throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateOptionShortcut, Shortcut, Id));
+        }
+        
+        if (IsValidShortcut(Shortcut))
+            throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateShorcut, _shorcutPattern, MinShortcut, MaxShortcut, Shortcut));
     }
 
-    private bool InvalidShortcut(string? shortcutId)
+    private bool IsValidShortcut(string? shortcutId)
     {
-        return shortcutId != null && (InvalidShortcurtLength(shortcutId) || InvalidFormat(shortcutId));
+        return shortcutId != null && (ShortcurtLength(shortcutId) || Format(shortcutId));
     }
 
-    private bool InvalidFormat(string shortcutId)
+    private bool Format(string shortcutId)
     {
-        return !regexShortcut.IsMatch(shortcutId);
+        return !_regexShortcut.IsMatch(shortcutId);
     }
 
-    private static bool InvalidShortcurtLength(string shortcut)
+    private static bool ShortcurtLength(string shortcut)
     {
         return shortcut.Length is < MinShortcut or > MaxShortcut;
     }
@@ -122,5 +101,11 @@ public class ClyshOption : ClyshIndexable
     public override string ToString()
     {
         return $"{(Shortcut == null ? "" : "-" + Shortcut + ","),-4}--{Id}";
+    }
+
+    internal override void Validate()
+    {
+        base.Validate();
+        ValidateShortcut();
     }
 }

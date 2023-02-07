@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 using Clysh.Core;
 using Clysh.Helper;
 using Moq;
@@ -10,23 +9,23 @@ namespace Clysh.Tests;
 public class ClyshSetupTests
 {
     private const string Path = "/file";
-    private readonly Mock<IFileSystem> fs = new();
+    private readonly Mock<IFileSystem> _fs = new();
 
     [SetUp]
     public void Setup()
     {
-        fs.Reset();
+        _fs.Reset();
     }
 
     [Test]
     public void CreateSetupYamlSuccessful()
     {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlText());
+        _fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        _fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        _fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        _fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlText());
 
-        var setup = new ClyshSetup(Path, fs.Object);
+        var setup = new ClyshSetup(Path, _fs.Object);
         
         setup.BindAction("mycli", EmptyAction);
 
@@ -39,7 +38,7 @@ public class ClyshSetupTests
         Assert.AreEqual("My own CLI", root.Description);
         Assert.AreEqual(6, root.Options.Count);
         Assert.AreEqual(1, root.SubCommands.Count);
-        Assert.AreEqual(EmptyAction, root.Action);
+        Assert.IsNotNull(root.Action);
         Assert.IsFalse(root.RequireSubcommand);
 
         Assert.AreEqual("Test option", root.Options["test"].Description);
@@ -59,12 +58,12 @@ public class ClyshSetupTests
     [Test]
     public void CreateSetupYmlSuccessful()
     {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlText());
+        _fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        _fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        _fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yml");
+        _fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlText());
 
-        var setup = new ClyshSetup(Path, fs.Object);
+        var setup = new ClyshSetup(Path, _fs.Object);
         
         setup.BindAction("mycli", EmptyAction);
 
@@ -77,7 +76,7 @@ public class ClyshSetupTests
         Assert.AreEqual("My own CLI", root.Description);
         Assert.AreEqual(6, root.Options.Count);
         Assert.AreEqual(1, root.SubCommands.Count);
-        Assert.AreEqual(EmptyAction, root.Action);
+        Assert.IsNotNull(root.Action);
         Assert.IsFalse(root.RequireSubcommand);
 
         Assert.AreEqual("Test option", root.Options["test"].Description);
@@ -97,12 +96,12 @@ public class ClyshSetupTests
     [Test]
     public void CreateSetupJsonSuccessful()
     {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".json");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetJsonText());
+        _fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        _fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        _fs.Setup(x => x.Path.GetExtension(Path)).Returns(".json");
+        _fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetJsonText());
 
-        var setup = new ClyshSetup(Path, fs.Object);
+        var setup = new ClyshSetup(Path, _fs.Object);
         
 
         setup.BindAction("mycli", EmptyAction);
@@ -126,7 +125,7 @@ public class ClyshSetupTests
         Assert.AreEqual(15, root.Options["test"].Parameters["ab"].MaxLength);
     }
 
-    private void EmptyAction(IClyshCommand clyshCommand, IClyshView clyshView)
+    private void EmptyAction(ClyshCommand clyshCommand, IClyshView clyshView)
     {
         //Just a empty reference to test address memory
     }
@@ -134,14 +133,14 @@ public class ClyshSetupTests
     [Test]
     public void CreateSetupYamlDuplicatedCommandIdError()
     {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlCommandIdDuplicatedText());
+        _fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        _fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        _fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        _fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlCommandIdDuplicatedText());
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var setup = new ClyshSetup(Path, fs.Object);
+            var setup = new ClyshSetup(Path, _fs.Object);
             
         });
 
@@ -151,11 +150,11 @@ public class ClyshSetupTests
     [Test]
     public void CreateSetupFileNotExistsError()
     {
-        fs.Setup(x => x.File.Exists(Path)).Returns(false);
+        _fs.Setup(x => x.File.Exists(Path)).Returns(false);
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var setup = new ClyshSetup(Path, fs.Object);
+            var setup = new ClyshSetup(Path, _fs.Object);
             
         });
 
@@ -165,13 +164,13 @@ public class ClyshSetupTests
     [Test]
     public void CreateSetupFileExtensionInvalidError()
     {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".txt");
+        _fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        _fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        _fs.Setup(x => x.Path.GetExtension(Path)).Returns(".txt");
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var setup = new ClyshSetup(Path, fs.Object);
+            var setup = new ClyshSetup(Path, _fs.Object);
             
         });
 
@@ -181,12 +180,12 @@ public class ClyshSetupTests
     [Test]
     public void CreateSetupNoFileExtensionError()
     {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(false);
+        _fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        _fs.Setup(x => x.Path.HasExtension(Path)).Returns(false);
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var setup = new ClyshSetup(Path, fs.Object);
+            var setup = new ClyshSetup(Path, _fs.Object);
             
         });
 
@@ -196,14 +195,14 @@ public class ClyshSetupTests
     [Test]
     public void CreateSetupYamlWithoutCommandError()
     {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithoutCommandText());
+        _fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        _fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        _fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        _fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithoutCommandText());
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var setup = new ClyshSetup(Path, fs.Object);
+            var setup = new ClyshSetup(Path, _fs.Object);
             
         });
 
@@ -213,14 +212,14 @@ public class ClyshSetupTests
     [Test]
     public void CreateSetupYamlWithoutSubCommandError()
     {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithoutSubCommandText());
+        _fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        _fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        _fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        _fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithoutSubCommandText());
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var setup = new ClyshSetup(Path, fs.Object);
+            var setup = new ClyshSetup(Path, _fs.Object);
             
         });
 
@@ -231,14 +230,14 @@ public class ClyshSetupTests
     [Test]
     public void CreateSetupYamlWithoutRootCommandError()
     {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithoutRootCommandText());
+        _fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        _fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        _fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        _fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithoutRootCommandText());
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var setup = new ClyshSetup(Path, fs.Object);
+            var setup = new ClyshSetup(Path, _fs.Object);
             
         });
 
@@ -248,14 +247,14 @@ public class ClyshSetupTests
     [Test]
     public void CreateSetupYamlWithMoreThanOneRootCommandError()
     {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithMoreThanOneRootCommandText());
+        _fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        _fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        _fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        _fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithMoreThanOneRootCommandText());
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var setup = new ClyshSetup(Path, fs.Object);
+            var setup = new ClyshSetup(Path, _fs.Object);
             
         });
 
@@ -265,33 +264,32 @@ public class ClyshSetupTests
     [Test]
     public void CreateSetupYamlWithRecursiveCommandError()
     {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithRecursiveCommandText());
+        _fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        _fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        _fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        _fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithRecursiveCommandText());
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var setup = new ClyshSetup(Path, fs.Object);
-            
+            var setup = new ClyshSetup(Path, _fs.Object);
         });
         
-        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnCreateCommand);
-        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.ErrorOnCreateSubCommand);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnCreateCommand);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.ErrorOnCreateSubCommand);
         ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.ErrorOnValidateCommandId);
     }
 
     [Test]
     public void CreateSetupYamlWithDuplicatedParameterOrderError()
     {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithDuplicatedParameterOrderText());
+        _fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        _fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        _fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        _fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithDuplicatedParameterOrderText());
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var setup = new ClyshSetup(Path, fs.Object);
+            var setup = new ClyshSetup(Path, _fs.Object);
             
         });
 
@@ -301,54 +299,55 @@ public class ClyshSetupTests
     [Test]
     public void CreateSetupYamlWithParameterRequiredOrderError()
     {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithParameterRequiredOrderText());
+        _fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        _fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        _fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        _fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithParameterRequiredOrderText());
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var setup = new ClyshSetup(Path, fs.Object);
+            var setup = new ClyshSetup(Path, _fs.Object);
             
         });
         
-        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnCreateCommand);
-        ExtendedAssert.MatchMessage(exception?.InnerException?.Message, ClyshMessages.ErrorOnCreateOption);
-        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.ErrorOnValidateParameterRequiredOrder);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnCreateCommand);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.ErrorOnCreateOption);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!,
+            ClyshMessages.ErrorOnValidateParameterRequiredOrder);
     }
 
     [Test]
     public void CreateSetupYamlWithInvalidParentCommandError()
     {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithInvalidParentCommandText());
+        _fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        _fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        _fs.Setup(x => x.Path.GetExtension(Path)).Returns(".yaml");
+        _fs.Setup(x => x.File.ReadAllText(Path)).Returns(GetYamlWithInvalidParentCommandText());
 
         var exception = Assert.Throws<ClyshException>(() =>
         {
-            var setup = new ClyshSetup(Path, fs.Object);
+            var setup = new ClyshSetup(Path, _fs.Object);
             
         });
 
-        ExtendedAssert.MatchMessage(exception?.Message, ClyshMessages.ErrorOnSetupCommandsParent);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnSetupCommandsParent);
     }
 
     [Test]
     public void CreateSetupJsonNullError()
     {
-        fs.Setup(x => x.File.Exists(Path)).Returns(true);
-        fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
-        fs.Setup(x => x.Path.GetExtension(Path)).Returns(".json");
-        fs.Setup(x => x.File.ReadAllText(Path)).Returns("null");
+        _fs.Setup(x => x.File.Exists(Path)).Returns(true);
+        _fs.Setup(x => x.Path.HasExtension(Path)).Returns(true);
+        _fs.Setup(x => x.Path.GetExtension(Path)).Returns(".json");
+        _fs.Setup(x => x.File.ReadAllText(Path)).Returns("null");
 
-        var ex = Assert.Throws<ClyshException>(() =>
+        var exception = Assert.Throws<ClyshException>(() =>
         {
-            var setup = new ClyshSetup(Path, fs.Object);
+            var setup = new ClyshSetup(Path, _fs.Object);
             
         });
 
-        ExtendedAssert.MatchMessage(ex?.Message, ClyshMessages.ErrorOnSetupLoadFileJson);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnSetupLoadFileJson);
     }
 
     private string GetYamlWithInvalidGroupText()
@@ -605,7 +604,7 @@ Commands:
             MaxLength: 15
             Pattern: \w+
             Order: 0
-          - Id: c
+          - Id: cd
             Required: true
             MinLength: 1
             MaxLength: 15
@@ -639,7 +638,7 @@ Commands:
             MaxLength: 15
             Pattern: \w+
             Order: 1
-          - Id: c
+          - Id: cd
             Required: true
             MinLength: 1
             MaxLength: 15

@@ -1,5 +1,5 @@
-using System;
-
+// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedMemberInSuper.Global
 namespace Clysh.Core;
 
 /// <summary>
@@ -107,15 +107,8 @@ public interface IClyshView
     /// Print <see cref="IClyshCommand"/> help text
     /// </summary>
     /// <param name="command">The command to print help text</param>
-    void PrintHelp(IClyshCommand command);
+    void PrintHelp(ClyshCommand command);
 
-    /// <summary>
-    /// Print <see cref="IClyshCommand"/> help text
-    /// </summary>
-    /// <param name="command">The command to print help text</param>
-    /// <param name="exception">The exception to be printed with help</param>
-    void PrintHelp(IClyshCommand command, Exception exception);
-    
     /// <summary>
     /// Print CLI version on screen
     /// </summary>

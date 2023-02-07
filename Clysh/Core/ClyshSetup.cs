@@ -22,7 +22,7 @@ public class ClyshSetup : IClyshSetup
     public ClyshSetup(string path, IFileSystem fs)
     {
         _commandGlobalOptions = new Dictionary<string, List<ClyshOption>>();
-        Commands = new ClyshMap<IClyshCommand>();
+        Commands = new ClyshMap<ClyshCommand>();
         Data = new ClyshData();
         Load(fs, path);
     }
@@ -38,7 +38,7 @@ public class ClyshSetup : IClyshSetup
     /// <summary>
     /// The CLI Root command
     /// </summary>
-    public IClyshCommand RootCommand { get; private set; } = default!;
+    public ClyshCommand RootCommand { get; private set; } = default!;
 
     /// <summary>
     /// The CLI Data
@@ -48,7 +48,7 @@ public class ClyshSetup : IClyshSetup
     /// <summary>
     /// The CLI Commands
     /// </summary>
-    public ClyshMap<IClyshCommand> Commands { get; }
+    public ClyshMap<ClyshCommand> Commands { get; }
 
     private readonly Dictionary<string, List<ClyshOption>> _commandGlobalOptions;
 
@@ -57,7 +57,7 @@ public class ClyshSetup : IClyshSetup
     /// </summary>
     /// <param name="commandId">The command id</param>
     /// <param name="action">The action to be executed</param>
-    public void BindAction(string commandId, Action<IClyshCommand, IClyshView> action)
+    public void BindAction(string commandId, Action<ClyshCommand, IClyshView> action)
     {
         if (!Commands.Has(commandId))
             throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupBindAction, commandId));
@@ -103,17 +103,10 @@ public class ClyshSetup : IClyshSetup
     {
         var rootData = GetRootData();
 
-        var commandBuilder = new ClyshCommandBuilder();
-        var root = commandBuilder
-            .Id(rootData.Id)
-            .Description(rootData.Description)
-            .RequireSubcommand(rootData.RequireSubcommand)
-            .Build();
+        var commandBuilder = GetCommandBuilder(rootData);
 
-        BuildCommand(root, rootData);
+        RootCommand = BuildCommand(commandBuilder, rootData);
 
-        RootCommand = root;
-        
         ValidateCommandsParent();
     }
 
@@ -198,31 +191,35 @@ public class ClyshSetup : IClyshSetup
     /// <summary>
     /// Build a command from parent
     /// </summary>
-    /// <param name="command">The parent command</param>
-    /// <param name="commandData">The parent command data</param>
+    /// <param name="commandBuilder">The command builder</param>
+    /// <param name="commandData">The command data</param>
     /// <exception cref="ClyshException"></exception>
-    private void BuildCommand(IClyshCommand command, CommandData commandData)
+    private ClyshCommand BuildCommand(ClyshCommandBuilder commandBuilder, CommandData commandData)
     {
         try
         {
-            Commands.Add(command.Id, command);
-            BuildCommandOptions(command, commandData);
-            BuildCommandSubcommands(command);
+            BuildCommandOptions(commandBuilder, commandData);
+            BuildCommandSubcommands(commandBuilder, commandData);
+
+            var command = commandBuilder.Build();
+            Commands.Add(commandData.Id, command);
+
+            return command;
         }
         catch (Exception e)
         {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, command.Id), e);
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, commandData.Id), e);
         }
     }
 
-    private void BuildCommandSubcommands(IClyshCommand command)
+    private void BuildCommandSubcommands(ClyshCommandBuilder commandBuilder, CommandData commandData)
     {
-        var subcommands = GetSubcommands(command);
+        var subcommands = GetSubcommands(commandData);
 
         if (!subcommands.Any())
         {
-            if (command.RequireSubcommand)
-                throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupSubCommands, command.Id));
+            if (commandData.RequireSubcommand)
+                throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupSubCommands, commandData.Id));
 
             return;
         }
@@ -237,17 +234,11 @@ public class ClyshSetup : IClyshSetup
                 if (subcommandData?.Id == null)
                     throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupCommandsNotFound, subcommandId));
 
-                var commandBuilder = new ClyshCommandBuilder();
+                var subCommandBuilder = GetCommandBuilder(subcommandData);
 
-                var subCommand = commandBuilder
-                    .Id(subcommandData.Id)
-                    .Description(subcommandData.Description)
-                    .RequireSubcommand(subcommandData.RequireSubcommand)
-                    .Build();
-
-                command.AddSubCommand(subCommand);
-
-                BuildCommand(subCommand, subcommandData);
+                var subCommand = BuildCommand(subCommandBuilder, subcommandData);
+                
+                commandBuilder.SubCommand(subCommand);
             }
             catch (Exception e)
             {
@@ -256,13 +247,27 @@ public class ClyshSetup : IClyshSetup
         }
     }
 
-    private List<string> GetSubcommands(IClyshCommand command)
+    private static ClyshCommandBuilder GetCommandBuilder(CommandData commandData)
     {
-        var commandLevel = GetCommandLevel(command.Id);
+        var subCommandBuilder = new ClyshCommandBuilder();
+
+        subCommandBuilder
+            .Id(commandData.Id)
+            .Description(commandData.Description);
+        
+        if (commandData.RequireSubcommand)
+            subCommandBuilder.MarkAsAbstract();
+        
+        return subCommandBuilder;
+    }
+
+    private List<string> GetSubcommands(CommandData commandData)
+    {
+        var commandLevel = GetCommandLevel(commandData.Id);
         var nextLevel = commandLevel + 1;
 
         var subcommands = Data.Commands!.Where(c =>
-                c.Id.Contains(command.Id) &&
+                c.Id.Contains(commandData.Id) &&
                 GetCommandLevel(c.Id) == nextLevel)
             .Select(c => c.Id)
             .ToList();
@@ -275,7 +280,7 @@ public class ClyshSetup : IClyshSetup
         return commandId.Split(".", StringSplitOptions.RemoveEmptyEntries).Length - 1;
     }
 
-    private void BuildCommandOptions(IClyshCommand command, CommandData commandData)
+    private void BuildCommandOptions(ClyshCommandBuilder commandBuilder, CommandData commandData)
     {
         if (commandData.Options != null)
         {
@@ -283,37 +288,37 @@ public class ClyshSetup : IClyshSetup
             var optionBuilder = new ClyshOptionBuilder();
             var groups = new ClyshMap<ClyshGroup>();
             
-            foreach (var o in commandData.Options)
+            foreach (var optionData in commandData.Options)
             {
-                if (o.Group != null && !groups.Has(o.Group))
-                    groups.Add(groupBuilder.Id(o.Group).Build());
+                if (optionData.Group != null && !groups.Has(optionData.Group))
+                    groups.Add(groupBuilder
+                        .Id(optionData.Group)
+                        .Build());
                 
-                var option = BuildOption(optionBuilder, o, groups);
-                
-                if (option.Group != null)
-                    command.AddGroups(option.Group);
-                
-                command.AddOption(option);
+                commandBuilder.Option(BuildOption(optionBuilder, optionData, groups));
             }
         }
 
-        if (!_commandGlobalOptions.ContainsKey(command.Id)) return;
+        if (!_commandGlobalOptions.ContainsKey(commandData.Id)) return;
         
-        foreach (var option in _commandGlobalOptions[command.Id])
+        foreach (var option in _commandGlobalOptions[commandData.Id])
         {
-            if (option.Group != null)
-               command.AddGlobalGroups(option.Group);
-    
-            command.AddGlobalOption(option);
+            commandBuilder.Option(option);
         }
     }
 
-    private static ClyshOption BuildOption(ClyshOptionBuilder builder, OptionData option, ClyshMap<ClyshGroup> groups)
+    private static ClyshOption BuildOption(ClyshOptionBuilder builder,
+        OptionData option,
+        IReadOnlyDictionary<string, ClyshGroup> groups,
+        bool globalOption = false)
     {
         builder
-            .Id(option.Id!, option.Shortcut)
+            .Id(option.Id, option.Shortcut)
             .Description(option.Description);
 
+        if (globalOption)
+            builder.MarkAsGlobal();
+        
         BuildOptionGroup(builder, option, groups);
         BuildOptionParameters(builder, option);
 
@@ -335,28 +340,30 @@ public class ClyshSetup : IClyshSetup
 
         foreach (var p in parameters)
         {
+            if (p.Required)
+                parameterBuilder.MarkAsRequired();
+            
             builder.Parameter(parameterBuilder
                 .Id(p.Id)
                 .Order(p.Order)
                 .Pattern(p.Pattern)
-                .Required(p.Required)
                 .Range(p.MinLength, p.MaxLength)
                 .Build());
         }
     }
 
-    private static void BuildOptionGroup(ClyshOptionBuilder builder, OptionData option, ClyshMap<ClyshGroup> groups)
+    private static void BuildOptionGroup(ClyshOptionBuilder builder, OptionData optionData, IReadOnlyDictionary<string, ClyshGroup> groups)
     {
-        if (option.Group == null) return;
+        if (optionData.Group == null) return;
 
-        var group = groups[option.Group];
+        var group = groups[optionData.Group];
 
-        group.Options.Add(option.Id!);
+        group.Options.Add(optionData.Id);
 
         builder.Group(group);
     }
     
-    private ClyshData JsonSerializer(IFileSystem fs, string path)
+    private static ClyshData JsonSerializer(IFileSystem fs, string path)
     {
         var config = GetDataFromFilePath(fs, path);
 
@@ -368,12 +375,12 @@ public class ClyshSetup : IClyshSetup
         return data;
     }
 
-    private string GetDataFromFilePath(IFileSystem fs, string path)
+    private static string GetDataFromFilePath(IFileSystem fs, string path)
     {
         return fs.File.ReadAllText(path);
     }
 
-    private ClyshData YamlSerializer(IFileSystem fs, string path)
+    private static ClyshData YamlSerializer(IFileSystem fs, string path)
     {
         var data = GetDataFromFilePath(fs, path);
 
@@ -404,18 +411,25 @@ public class ClyshSetup : IClyshSetup
 
     private void CreateGlobalFromData()
     {
+        if (Data.GlobalOptions == null) return;
+        
         var groupBuilder = new ClyshGroupBuilder();
         var optionBuilder = new ClyshOptionBuilder();
         var groups = new ClyshMap<ClyshGroup>();
 
-        Data.GlobalOptions?.ForEach(o =>
+        foreach (var optionData in Data.GlobalOptions)
         {
-            if (o.Group != null && !groups.Has(o.Group))
-                groups.Add(groupBuilder.Id(o.Group).Build());
-            
-            var option = BuildOption(optionBuilder, o, groups);
+            if (optionData.Group != null && !groups.Has(optionData.Group))
+                groups.Add(groupBuilder
+                    .Id(optionData.Group)
+                    .Build());
 
-            foreach (var c in o.Commands!)
+            var option = BuildOption(optionBuilder, optionData, groups, true);
+
+            if (optionData.Commands == null || optionData.Commands.Count == 0)
+                throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupGlobalOptions, optionData.Id));
+
+            foreach (var c in optionData.Commands)
             {
                 if (_commandGlobalOptions.ContainsKey(c))
                     _commandGlobalOptions[c].Add(option);
@@ -425,6 +439,6 @@ public class ClyshSetup : IClyshSetup
                         option
                     });
             }
-        });
+        }
     }
 }

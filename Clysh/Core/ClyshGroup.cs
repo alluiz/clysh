@@ -5,18 +5,12 @@ namespace Clysh.Core;
 /// <summary>
 /// A simple Clysh group representation model
 /// </summary>
-public class ClyshGroup: ClyshIndexable
+public class ClyshGroup: ClyshEntity
 {
-    /// <summary>
-    /// The command of group
-    /// </summary>
-    public IClyshCommand? Command { get; set; }
-
     public List<string> Options { get; }
 
-    public ClyshGroup()
+    internal ClyshGroup(): base(10, ClyshConstants.GroupPattern)
     {
-        MaxLength = 10;
         Options = new List<string>();
     }
 

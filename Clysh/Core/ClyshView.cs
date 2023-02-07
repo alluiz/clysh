@@ -1,5 +1,4 @@
-using System;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using Clysh.Data;
 using Clysh.Helper;
 
@@ -8,10 +7,10 @@ namespace Clysh.Core;
 /// <summary>
 /// The view of <see cref="Clysh"/>
 /// </summary>
-public class ClyshView : IClyshView
+public sealed class ClyshView : IClyshView
 {
-    private readonly IClyshConsole clyshConsole;
-    private readonly bool printLineNumber;
+    private readonly IClyshConsole _clyshConsole;
+    private readonly bool _printLineNumber;
 
     /// <summary>
     /// The constructor of view
@@ -24,9 +23,9 @@ public class ClyshView : IClyshView
         ClyshData clyshData,
         bool printLineNumber = false)
     {
-        this.clyshConsole = clyshConsole;
         Data = clyshData;
-        this.printLineNumber = printLineNumber;
+        _clyshConsole = clyshConsole;
+        _printLineNumber = printLineNumber;
     }
 
     /// <summary>
@@ -34,6 +33,7 @@ public class ClyshView : IClyshView
     /// </summary>
     /// <param name="clyshData">The data to print</param>
     /// <param name="printLineNumber">Indicates if should print the line number</param>
+    [ExcludeFromCodeCoverage]
     public ClyshView(
         ClyshData clyshData,
         bool printLineNumber = false): this(new ClyshConsole(), clyshData, printLineNumber)
@@ -47,26 +47,26 @@ public class ClyshView : IClyshView
 
     public bool Debug { get; set; }
 
-    public virtual string AskFor(string title) => AskFor(title, false);
+    public string AskFor(string title) => AskFor(title, false);
 
-    public virtual string AskForSensitive(string title) => AskFor(title, true);
+    public string AskForSensitive(string title) => AskFor(title, true);
 
-    public virtual bool Confirm(string question = "Do you agree?", string yes = "Y", string no = "n")
+    public bool Confirm(string question = "Do you agree?", string yes = "Y", string no = "n")
     {
         return string.Equals(AskFor($"{question} ({yes}/{no})"), yes, StringComparison.CurrentCultureIgnoreCase);
     }
 
-    public virtual void PrintAlert(string text) => Print(text, ConsoleColor.DarkYellow);
+    public void PrintAlert(string text) => Print(text, ConsoleColor.DarkYellow);
     
-    public virtual void PrintDebug(string? text)
+    public void PrintDebug(string? text)
     {
        if (Debug)
            Print(text);
     }
 
-    public virtual void Print(string? text) => Print(text, false, false);
+    public void Print(string? text) => Print(text, false);
 
-    public virtual void Print(string? text, ConsoleColor foregroundColor, ConsoleColor backgroundColor = ConsoleColor.Black)
+    public void Print(string? text, ConsoleColor foregroundColor, ConsoleColor backgroundColor = ConsoleColor.Black)
     {
         Console.ForegroundColor = foregroundColor;
         Console.BackgroundColor = backgroundColor;
@@ -74,23 +74,17 @@ public class ClyshView : IClyshView
         Console.ResetColor();
     }
 
-    public virtual void PrintEmpty() => Print("");
+    public void PrintEmpty() => Print("");
 
-    public virtual void PrintError(string text) => Print(text, ConsoleColor.Red);
+    public void PrintError(string text) => Print(text, ConsoleColor.Red);
 
-    public virtual void PrintHelp(IClyshCommand command, Exception exception)
-    {
-        PrintException(exception);
-        PrintHelp(command);
-    }
-
-    public virtual void PrintHelp(IClyshCommand command)
+    public void PrintHelp(ClyshCommand command)
     {
         PrintVersion();
         PrintCommand(command);
     }
 
-    public virtual void PrintSeparator(string separator = "#")
+    public void PrintSeparator(string separator = "#")
     {
         var length = separator.Length;
         var count = (45 - length) / 2;
@@ -99,41 +93,38 @@ public class ClyshView : IClyshView
         Print($"{symbol}{separator}{symbol}");
     }
     
-    public virtual void PrintSuccess(string text) => Print(text, ConsoleColor.Green);
+    public void PrintSuccess(string text) => Print(text, ConsoleColor.Green);
 
-    public virtual void PrintWithoutBreak(string? text) => Print(text, false, true);
+    public void PrintWithoutBreak(string? text) => Print(text, true);
 
     private string AskFor(string title, bool sensitive)
     {
         if (string.IsNullOrWhiteSpace(title))
             throw new ArgumentException(ClyshMessages.ErrorOnValidateUserInputQuestionAnswer, nameof(title));
 
-        Print($"{title}:", false, true);
+        Print($"{title}:", true);
 
-        return sensitive ? clyshConsole.ReadSensitive() : clyshConsole.ReadLine();
+        return sensitive ? _clyshConsole.ReadSensitive() : _clyshConsole.ReadLine();
     }
 
-    private void Print(string? text, bool emptyLineAfterPrint, bool noBreak)
+    private void Print(string? text, bool noBreak)
     {
         PrintedLines++;
 
-        if (printLineNumber)
+        if (_printLineNumber)
         {
             if (noBreak)
-                clyshConsole.Write(text, PrintedLines);
+                _clyshConsole.Write(text, PrintedLines);
             else
-                clyshConsole.WriteLine(text, PrintedLines);
+                _clyshConsole.WriteLine(text, PrintedLines);
         }
         else
         {
             if (noBreak)
-                clyshConsole.Write(text);
+                _clyshConsole.Write(text);
             else
-                clyshConsole.WriteLine(text);
+                _clyshConsole.WriteLine(text);
         }
-
-        if (emptyLineAfterPrint)
-            PrintEmpty();
     }
 
     public void PrintVersion()
@@ -150,9 +141,9 @@ public class ClyshView : IClyshView
         PrintEmpty();
     }
 
-    private void PrintCommand(IClyshCommand command)
+    private void PrintCommand(ClyshCommand command)
     {
-        var hasCommands = command.HasAnySubcommand();
+        var hasCommands = command.AnySubcommand();
 
         PrintHeader(command, hasCommands);
         PrintOptions(command);
@@ -163,33 +154,26 @@ public class ClyshView : IClyshView
         }
     }
 
-    private void PrintSubCommands(IClyshCommand command)
+    private void PrintSubCommands(ClyshCommand command)
     {
         Print("[subcommands]:");
         PrintEmpty();
 
-        foreach (var item in command.SubCommands.OrderBy(obj => obj.Key)
-                     .ToDictionary(obj => obj.Key, obj => obj.Value))
+        foreach (var subCommand in command.SubCommands
+                     .OrderBy(obj => obj.Key)
+                     .Select(obj => obj.Value))
         {
-            if (item.Key != command.Id)
-            {
-                Print("".PadRight(3) + $"{item.Value.Name,-39}{item.Value.Description}");
-            }
+            Print($"{string.Empty,-3}{subCommand.Name,-39}{subCommand.Description}");
         }
 
         PrintEmpty();
     }
 
-    private void PrintOptions(IClyshCommand command)
+    private void PrintOptions(ClyshCommand command)
     {
         Print("[options]:");
         PrintEmpty();
-        Print($"" +
-              $"{string.Empty,-3}" +
-              $"{"Option",-22}" +
-              $"{"Group",-11}" +
-              $"{"Description",-35}" +
-              $"Parameters");
+        Print($"{string.Empty,-3}{"Option",-22}{"Group",-11}{"Description",-35}{"Parameters", -29}");
         PrintEmpty();
 
         foreach (var option in command.Options
@@ -216,8 +200,6 @@ public class ClyshView : IClyshView
 
         if (truncate)
             PrintDescriptionMultiline(maxDescriptionlengthPerLine, description);
-
-        //Print($"{"",-35}{description[startIndex..]}");
     }
 
     private void PrintDescriptionMultiline(int maxDescriptionlengthPerLine, string description)
@@ -236,7 +218,7 @@ public class ClyshView : IClyshView
         }
     }
 
-    private void PrintHeader(IClyshCommand command, bool hasCommands)
+    private void PrintHeader(ClyshCommand command, bool hasCommands)
     {
         var parentCommands = command.Id.Replace(".", " ");
 

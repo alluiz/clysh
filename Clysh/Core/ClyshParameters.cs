@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using Clysh.Helper;
 
@@ -12,10 +9,6 @@ namespace Clysh.Core;
 [Serializable]
 public sealed class ClyshParameters: ClyshMap<ClyshParameter>
 {
-    private ClyshParameters(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-    }
-
     /// <summary>
     /// Create an empty ClyshParameters
     /// </summary>
@@ -28,7 +21,7 @@ public sealed class ClyshParameters: ClyshMap<ClyshParameter>
     /// Indicates if all required parameters is filled
     /// </summary>
     /// <returns>The indicator</returns>
-    public bool WaitingForRequired() => Values.Any(x => x.Required && !x.Filled);
+    public bool WaitingForRequired() => Values.Any(x => x is { Required: true, Filled: false });
 
     /// <summary>
     /// Indicates if all parameters is filled

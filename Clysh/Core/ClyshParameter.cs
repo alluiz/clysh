@@ -1,4 +1,3 @@
-using System;
 using System.Text.RegularExpressions;
 using Clysh.Helper;
 
@@ -8,30 +7,27 @@ namespace Clysh.Core;
 /// The parameter for <see cref="Clysh"/>
 /// </summary>
 // ReSharper disable once ClassNeverInstantiated.Global
-public class ClyshParameter : ClyshIndexable
+public class ClyshParameter : ClyshEntity
 {
-    private const int minLengthParam = 1;
-    private const int maxLengthParam = 1000;
+    private const int MinLengthParam = 1;
+    private const int MaxLengthParam = 100;
 
-    private string data;
-    private int maxLength;
-    private int minLength;
-    private int order;
+    private string _data = string.Empty;
 
     /// <summary>
     /// Create a new parameter
     /// </summary>
-    public ClyshParameter()
+    internal ClyshParameter(): base(20, ClyshConstants.ParameterPattern)
     {
-        data = string.Empty;
+        
     }
 
     /// <summary>
     /// The parameter data
     /// </summary>
     public string Data { 
-        get => data;
-        set { Validate(value); data = value; } }
+        get => _data;
+        set { ValidateData(value); _data = value; } }
 
     /// <summary>
     /// The parameter regex
@@ -51,20 +47,12 @@ public class ClyshParameter : ClyshIndexable
     /// <summary>
     /// The parameter data minimum length
     /// </summary>
-    public int MinLength
-    {
-        get => minLength; 
-        set => minLength = ValidateMin(value);
-    }
+    public int MinLength { get; set; }
 
     /// <summary>
     /// The parameter data maximum length
     /// </summary>
-    public int MaxLength
-    {
-        get => maxLength; 
-        set => maxLength = ValidateMax(value);
-    }
+    public int MaxLength { get; set; }
 
     /// <summary>
     /// Check if parameter data is filled
@@ -74,34 +62,41 @@ public class ClyshParameter : ClyshIndexable
     /// <summary>
     /// Order of parameter
     /// </summary>
-    public int Order
+    public int Order { get; set; }
+
+    private void ValidateMin()
     {
-        get => order; 
-        set => order = ValidateOrder(value);
+        if (MinLength < MinLengthParam)
+            throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, MinLengthParam, MaxLengthParam));
     }
 
-    private int ValidateMin(int minLengthValue)
+    private void ValidateMax()
     {
-        if (minLengthValue < 1)
-            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, minLengthParam, maxLengthParam), nameof(minLengthValue));
-
-        return minLengthValue;
+        if (MaxLength > MaxLengthParam)
+            throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, MinLengthParam, MaxLengthParam));
     }
 
-    private int ValidateMax(int maxValue)
+    private void ValidateOrder()
     {
-        if (maxValue > 1000)
-            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, minLengthParam, maxLengthParam), nameof(maxValue));
-
-        return maxValue;
+        if (Order < 0)
+            throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateParameterOrder, Id));
     }
 
-    private int ValidateOrder(int orderValue)
+    private void ValidateData(string value)
     {
-        if (orderValue < 0)
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateParameterOrder, Id));
-        
-        return orderValue;
+        if (value == null || value.Trim().Length < MinLength || value.Trim().Length > MaxLength)
+            throw new ArgumentException($"Parameter {Id} must be not null or empty and between {MinLength} and {MaxLength} chars.", Id);
+
+        if (Regex != null && !Regex.IsMatch(value))
+            throw new ArgumentException($"Parameter {Id} must match the follow regex pattern: {PatternData}.", Id);
+    }
+
+    internal override void Validate()
+    {
+        base.Validate();
+        ValidateOrder();
+        ValidateMin();
+        ValidateMax();
     }
 
     /// <summary>
@@ -111,15 +106,5 @@ public class ClyshParameter : ClyshIndexable
     public override string ToString()
     {
         return Id + ":" + Data;
-    }
-
-    private void Validate(string? value)
-    {
-        if (value == null || value.Trim().Length < MinLength || value.Trim().Length > MaxLength)
-            throw new ArgumentException($"Parameter {Id} must be not null or empty and between {MinLength} and {MaxLength} chars.", Id);
-
-        if (Regex != null && !Regex.IsMatch(value))
-            throw new ArgumentException($"Parameter {Id} must match the follow regex pattern: {PatternData}.", Id);
-
     }
 }

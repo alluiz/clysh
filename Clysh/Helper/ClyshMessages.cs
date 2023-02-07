@@ -4,6 +4,7 @@ namespace Clysh.Helper;
 
 public static class ClyshMessages
 {
+    public const string ErrorOnBuildCommand = "Error on build command. Command: '{0}'";
     public const string ErrorOnCreateCommand = "Error on create command. Command: '{0}'";
     public const string ErrorOnCreateOption = "Error on create option. Option: '{0}'";
     public const string ErrorOnCreateParameter = "Error on create parameter. Parameter: '{0}'";
@@ -11,16 +12,15 @@ public static class ClyshMessages
     public const string ErrorOnGetOptionFromGroupNotFound = "Error on option from group. The group is not found. Group: '{0}'";
     public const string ErrorOnValidateCommandAction = "Error on validate command. The command does NOT have an action configured. Command: '{0}'.";
     public const string ErrorOnValidateCommandId = "Error on validate command. The ID must not have duplicated words. Command: '{0}'";
-    public const string ErrorOnValidateCommandGroupMemory = "Error on validate command. The group memory address is different between command and option. Group: '{0}'";
     public const string ErrorOnValidateCommandGroupNotFound = "Error on validate command. The group is not found. Group: '{0}'";
     public const string ErrorOnValidateCommandGroupDuplicated = "Error on validate command. The group is duplicated. Group: '{0}'";
     public const string ErrorOnValidateCommandPropertyMemory = "Error on validate command. The memory address is already related to another command. Object: '{0}'";
     public const string ErrorOnValidateCommandParent = "Error on validate command parent. The command must have only one parent. Command: '{0}'";
-    public const string ErrorOnValidateCommandSubcommands = "Error on validate command. The command does NOT have a subcommand configured. Command: '{0}'.";
+    public const string ErrorOnValidateCommandSubcommands = "Error on validate command. The ABSTRACT command does NOT have any subcommand configured. Command: '{0}'.";
     public const string ErrorOnValidateDescription = "Error on validate description. The description must be not null or empty and between {0} and {1} chars. Description: '{2}'";
     public const string ErrorOnValidateIdLength = "Error on validate ID. The ID must be less or equal than {0} chars. ID: '{1}'";
     public const string ErrorOnValidateIdPattern = "Error on validate ID. The ID must follow the pattern: '{0}'. ID: '{1}'";
-    public const string ErrorOnValidateOptionShortcut = "Error on validate option. The shortcut '{0}' is reserved to {1} shortcut. Option: '{2}'";
+    public const string ErrorOnValidateOptionShortcut = "Error on validate option. The shortcut '{0}' is reserved. Option: '{1}'";
     public const string ErrorOnValidateParameterMaxLength = "Error on validate parameter. The max length must be greater than min length. Parameter: '{0}'";
     public const string ErrorOnValidateParameterRange = "Error on validate parameter. The min and max length must be between {0} and {1}, respectively.";
     public const string ErrorOnValidateParameterOrder = "Error on validate parameter. The order must be greater than the PREVIOUS order and must be greater or equal than 0. Parameter: '{0}'";
@@ -46,12 +46,12 @@ public static class ClyshMessages
     public const string ErrorOnSetupLoadFileJson = "Error on load data. The JSON deserialization results in null object. JSON file path: '{0}'";
     public const string ErrorOnSetupLoadFilePath = "Error on load data. The CLI data file was not found. Path: '{0}'";
     public const string ErrorOnSetupSubCommands = "Error on setup subcommands. The command is configured to require subcommand. Therefore, subcommands must not be null. Command: '{0}'";
-    public const string ErrorOnSetupGlobalOptions = "Error on setup global options. The global options must have at least one command.";
+    public const string ErrorOnSetupGlobalOptions = "Error on setup global option. The global option must have at least one command. GlobalOption: '{0}'";
 
     public static bool Match(string message, string messagePattern)
     {
         var regex = new Regex("{[0-9]+}");
-        var escapeChars = new string[] { ".", "[", "]", "(", ")" };
+        var escapeChars = new[] { ".", "[", "]", "(", ")" };
 
         messagePattern = escapeChars.Aggregate(messagePattern, (current, escapeChar) => current.Replace(escapeChar, $"\\{escapeChar}"));
 
@@ -62,7 +62,7 @@ public static class ClyshMessages
         return regex.IsMatch(message);
     }
     
-    public static bool Match(string message, string messagePattern, params string[] values)
+    public static bool Match(string message, string messagePattern, params object?[] values)
     {
         var expectedMessage = string.Format(messagePattern, values);
 

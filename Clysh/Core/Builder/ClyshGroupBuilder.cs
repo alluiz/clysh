@@ -13,7 +13,15 @@ public class ClyshGroupBuilder: ClyshBuilder<ClyshGroup>
     /// <returns>An instance of <see cref="ClyshGroupBuilder"/></returns>
     public ClyshGroupBuilder Id(string id)
     {
-        Result.Id = id;
+        result.Id = id;
         return this;
+    }
+    
+    /// <summary>
+    /// Create a new instance of a type
+    /// </summary>
+    protected override void Reset()
+    {
+        result = new ClyshGroup();
     }
 }
