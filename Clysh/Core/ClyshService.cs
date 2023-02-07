@@ -15,15 +15,15 @@ public sealed class ClyshService : IClyshService
 
     private readonly Dictionary<string, string> _messages;
     
-    private readonly Dictionary<string, IClyshOption> _optionsFromGroup;
+    private readonly Dictionary<string, ClyshOption> _optionsFromGroup;
 
-    private List<IClyshCommand> _commandsToExecute;
+    private List<ClyshCommand> _commandsToExecute;
 
     private Dictionary<string, string>? _defaultMessages;
 
-    private IClyshCommand _lastCommand;
+    private ClyshCommand _lastCommand;
 
-    private IClyshOption? _lastOption;
+    private ClyshOption? _lastOption;
 
     /// <summary>
     /// The constructor of service
@@ -41,12 +41,11 @@ public sealed class ClyshService : IClyshService
     {
         _disableAudit = disableAudit;
         RootCommand = setup.RootCommand;
-        RootCommand.Order = 0;
         _lastCommand = RootCommand;
         _audits = new List<ClyshAudit>();
-        _commandsToExecute = new List<IClyshCommand>();
+        _commandsToExecute = new List<ClyshCommand>();
         View = new ClyshView(clyshConsole, setup.Data);
-        _optionsFromGroup = new Dictionary<string, IClyshOption>();
+        _optionsFromGroup = new Dictionary<string, ClyshOption>();
         FillDefaultMessages();
         _messages = _defaultMessages!;
         FillCustomMessages(setup.Data.Messages);
@@ -58,7 +57,7 @@ public sealed class ClyshService : IClyshService
     /// <param name="rootCommand">The root command to be executed</param>
     /// <param name="view">The view to output</param>
     /// <param name="disableAudit">Indicates if the service shouldn't validate production rules</param>
-    public ClyshService(IClyshCommand rootCommand, IClyshView view, bool disableAudit = false)
+    public ClyshService(ClyshCommand rootCommand, IClyshView view, bool disableAudit = false)
     {
         _disableAudit = disableAudit;
         RootCommand = rootCommand;
@@ -66,8 +65,8 @@ public sealed class ClyshService : IClyshService
         _lastCommand = RootCommand;
         View = view;
         _audits = new List<ClyshAudit>();
-        _commandsToExecute = new List<IClyshCommand>();
-        _optionsFromGroup = new Dictionary<string, IClyshOption>();
+        _commandsToExecute = new List<ClyshCommand>();
+        _optionsFromGroup = new Dictionary<string, ClyshOption>();
         FillDefaultMessages();
         _messages = _defaultMessages!;
     }
@@ -75,7 +74,7 @@ public sealed class ClyshService : IClyshService
     /// <summary>
     /// The root command
     /// </summary>
-    public IClyshCommand RootCommand { get; }
+    public ClyshCommand RootCommand { get; }
 
     /// <summary>
     /// The view
@@ -129,7 +128,7 @@ public sealed class ClyshService : IClyshService
 
     private void InitProcess()
     {
-        _commandsToExecute = new List<IClyshCommand> { _lastCommand };
+        _commandsToExecute = new List<ClyshCommand> { _lastCommand };
         View.Debug = false;
         
         AuditClysh();
@@ -231,7 +230,7 @@ public sealed class ClyshService : IClyshService
             AuditLogMessages();
     }
 
-    private void AuditRecursive(IClyshCommand cmd)
+    private void AuditRecursive(ClyshCommand cmd)
     {
         var audit = new ClyshAudit(cmd);
 
@@ -245,7 +244,7 @@ public sealed class ClyshService : IClyshService
             AuditRecursive(subCommand);
     }
 
-    private static void AuditCommand(IClyshCommand cmd, ClyshAudit audit)
+    private static void AuditCommand(ClyshCommand cmd, ClyshAudit audit)
     {
         if (cmd.RequireSubcommand)
         {

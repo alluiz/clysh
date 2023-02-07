@@ -125,7 +125,7 @@ public class ClyshSetupTests
         Assert.AreEqual(15, root.Options["test"].Parameters["ab"].MaxLength);
     }
 
-    private void EmptyAction(IClyshCommand clyshCommand, IClyshView clyshView)
+    private void EmptyAction(ClyshCommand clyshCommand, IClyshView clyshView)
     {
         //Just a empty reference to test address memory
     }
@@ -272,13 +272,11 @@ public class ClyshSetupTests
         var exception = Assert.Throws<ClyshException>(() =>
         {
             var setup = new ClyshSetup(Path, _fs.Object);
-            
         });
         
         ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnCreateCommand);
         ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.ErrorOnCreateSubCommand);
-        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.ErrorOnCreateCommand);
-        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.InnerException?.Message!, ClyshMessages.ErrorOnValidateCommandId);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.InnerException?.Message!, ClyshMessages.ErrorOnValidateCommandId);
     }
 
     [Test]
@@ -606,7 +604,7 @@ Commands:
             MaxLength: 15
             Pattern: \w+
             Order: 0
-          - Id: c
+          - Id: cd
             Required: true
             MinLength: 1
             MaxLength: 15
@@ -640,7 +638,7 @@ Commands:
             MaxLength: 15
             Pattern: \w+
             Order: 1
-          - Id: c
+          - Id: cd
             Required: true
             MinLength: 1
             MaxLength: 15

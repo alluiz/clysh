@@ -6,7 +6,7 @@ namespace Clysh.Tests;
 
 public static class ClyshDataForTest
 {
-    public static IClyshCommand CreateRootCommand()
+    public static ClyshCommand CreateRootCommand()
     {
         const string developmentOption = "development";
         const string homologOption = "homolog";
@@ -47,7 +47,7 @@ public static class ClyshDataForTest
                 .Group(group)
                 .Build())
             .Option(optionBuilder.Id(productionOption, "p")
-                .Description("Production environment option.")
+                .Description("Production environment option. Use this option only for production mode with caution")
                 .Group(group)
                 .Build())
             .SubCommand(login)
@@ -89,12 +89,12 @@ public static class ClyshDataForTest
             })
             .Option(optionBuilder.Id(appNameOption)
                 .Description("Name of the app")
-                .Parameter(parameterBuilder.Id("app-name").Range(1, 100).Required(true).Order(1).Build())
+                .Parameter(parameterBuilder.Id("APP_NAME").Range(1, 100).MarkAsRequired().Order(1).Build())
                 .Build())
             .Option(optionBuilder.Id(scopeOption)
                 .Description("Scopes of the app by comma")
-                .Parameter(parameterBuilder.Id("scope").Range(1, 1000).Required(true).Order(1).Build())
-                .Parameter(parameterBuilder.Id("tags").Range(1, 1000).Required(false).Order(2).Build())
+                .Parameter(parameterBuilder.Id("scope").Range(1, 100).MarkAsRequired().Order(1).Build())
+                .Parameter(parameterBuilder.Id("tags").Range(1, 100).Order(2).Build())
                 .Build())
             .SubCommand(CreateTestCredentialCommand())
             .Build();
@@ -114,7 +114,7 @@ public static class ClyshDataForTest
             .Action((_, _) => { })
             .Option(optionBuilder.Id(timeOption, "t")
                 .Description("time to expire in hours.")
-                .Parameter(parameterBuilder.Id("hours").Range(1, 2).Required(true).Order(1).Build())
+                .Parameter(parameterBuilder.Id("hours").Range(1, 2).MarkAsRequired().Order(1).Build())
                 .Build())
             .Build();
     }
@@ -156,7 +156,7 @@ public static class ClyshDataForTest
             .Option(optionBuilder
                 .Id(credentialsOption, "c")
                 .Description("Your username credentials path")
-                .Parameter(parameterBuilder.Id("path").Range(1, 10).Required(true).Order(1).Build())
+                .Parameter(parameterBuilder.Id("path").Range(1, 10).MarkAsRequired().Order(1).Build())
                 .Build())
             .Build();
     }

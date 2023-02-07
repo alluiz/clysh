@@ -1,6 +1,5 @@
 using Clysh.Core.Builder;
 using Clysh.Helper;
-using Microsoft.VisualBasic;
 
 // ReSharper disable ClassNeverInstantiated.Global
 
@@ -9,42 +8,50 @@ namespace Clysh.Core;
 /// <summary>
 /// The command for <see cref="Clysh"/>
 /// </summary>
-public class ClyshCommand : ClyshEntity, IClyshCommand
+public class ClyshCommand : ClyshEntity
 {
-    private readonly Dictionary<string, IClyshOption> _shortcuts;
-
     internal ClyshCommand(): base(100, ClyshConstants.CommandPattern, 10, 100)
     {
         Groups = new ClyshMap<ClyshGroup>();
-        Options = new ClyshMap<IClyshOption>();
-        SubCommands = new ClyshMap<IClyshCommand>();
+        Options = new ClyshMap<ClyshOption>();
+        SubCommands = new ClyshMap<ClyshCommand>();
         Data = new Dictionary<string, object>();
-        _shortcuts = new Dictionary<string, IClyshOption>();
+        _shortcuts = new Dictionary<string, ClyshOption>();
         AddHelpOption();
         AddVersionOption();
         AddDebugOption();
     }
 
+    private readonly Dictionary<string, ClyshOption> _shortcuts;
+    private Action<ClyshCommand, IClyshView>? _action;
+
+    #region Properties
+
+    public Action<ClyshCommand, IClyshView>? Action
+    {
+        get => _action;
+        internal set
+        {
+            if (_action != null)
+                throw new ArgumentException("The command already has a configured action.");
+            
+            _action = value;
+        }
+    }
+    public bool Executed { get; internal set; }
+    public bool RequireSubcommand { get; internal set; }
+    public ClyshMap<ClyshGroup> Groups { get; }
+    public ClyshMap<ClyshOption> Options { get; }
+    public ClyshMap<ClyshCommand> SubCommands { get; }
     public Dictionary<string, object> Data { get; }
-
-    public Action<IClyshCommand, IClyshView>? Action { get; set; }
-
-    public ClyshMap<IClyshCommand> SubCommands { get; }
-
-    public ClyshMap<ClyshGroup> Groups { get; set; }
-
-    public ClyshMap<IClyshOption> Options { get; }
-
-    public IClyshCommand? Parent { get; set; }
-
-    public int Order { get; set; }
-
-    public bool Executed { get; set; } = false;
-
-    public bool RequireSubcommand { get; set; }
-
-    public string Name { get; set; } = string.Empty;
-
+    public ClyshCommand? Parent { get; private set; }
+    public int Order { get; internal set; }
+    public string Name { get; internal set; } = string.Empty;
+    
+    #endregion
+    
+    #region Internal Methods
+    
     internal void AddOption(ClyshOption option)
     {
         if (!option.IsGlobal)
@@ -58,8 +65,50 @@ public class ClyshCommand : ClyshEntity, IClyshCommand
 
         AddSimpleOption(option);
     }
+    internal void AddSubCommand(ClyshCommand subCommand)
+    {
+        if (subCommand.Parent != null)
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandParent, subCommand.Id));
 
-    private void AddSimpleOption(IClyshOption option)
+        var splittedId = subCommand.Id.Split(".", StringSplitOptions.RemoveEmptyEntries);
+
+        if (splittedId.DistinctBy(x => x).Count() != splittedId.Length)
+            throw new ClyshException(ClyshMessages.ErrorOnValidateCommandId);
+        
+        subCommand.Parent = this;
+        SubCommands.Add(subCommand);
+    }
+
+    #endregion
+
+    #region Private Methods
+    
+    private ClyshOption? GetOptionFromGroup(ClyshGroup group)
+    {
+        return Options
+            .Values
+            .SingleOrDefault(option => option.Group != null && option.Group.Equals(group) && option.Selected);
+    }
+    private List<ClyshOption> GetAvailableOptionsFromGroup(ClyshGroup group)
+    {
+        return Options
+            .Values
+            .Where(x => x.Group != null && x.Group.Equals(group))
+            .ToList();
+    }
+    private void AddDebugOption() => AddDefaultOption("debug", "Print debug log on screen");
+    private void AddDefaultOption(string id, string description, string? shortcut = null)
+    {
+        var builder = new ClyshOptionBuilder();
+        var versionOption = builder
+            .Id(id, shortcut)
+            .Description(description)
+            .Build();
+
+        AddOption(versionOption);
+    }
+    private void AddHelpOption() => AddDefaultOption("help", "Show help on screen", "h");
+    private void AddSimpleOption(ClyshOption option)
     {
         if (Options.Has(option.Id))
             throw new EntityException($"Invalid option id. The command already has an option with id: {option.Id}.");
@@ -76,88 +125,7 @@ public class ClyshCommand : ClyshEntity, IClyshCommand
         if (option.Shortcut != null)
             _shortcuts.Add(option.Shortcut, option);
     }
-
-    internal void AddSubCommand(IClyshCommand subCommand)
-    {
-        if (subCommand.Parent != null)
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandParent, subCommand.Id));
-
-        var splittedId = subCommand.Id.Split(".", StringSplitOptions.RemoveEmptyEntries);
-
-        if (splittedId.DistinctBy(x => x).Count() != splittedId.Length)
-            throw new ClyshException(ClyshMessages.ErrorOnValidateCommandId);
-        
-        subCommand.Parent = this;
-        SubCommands.Add(subCommand);
-    }
-
-    public IClyshOption? GetOptionFromGroup(ClyshGroup group)
-    {
-        return Options
-            .Values
-            .SingleOrDefault(option => option.Group != null && option.Group.Equals(group) && option.Selected);
-    }
-
-    public IClyshOption? GetOptionFromGroup(string groupId)
-    {
-        if (!Groups.Has(groupId))
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnGetOptionFromGroupNotFound, groupId));
-            
-        return GetOptionFromGroup(Groups[groupId]);
-    }
-
-    public List<IClyshOption> GetAvailableOptionsFromGroup(ClyshGroup group)
-    {
-        return Options
-            .Values
-            .Where(x => x.Group != null && x.Group.Equals(group))
-            .ToList();
-    }
-
-    public List<IClyshOption> GetAvailableOptionsFromGroup(string groupId)
-    {
-        return GetAvailableOptionsFromGroup(Groups[groupId]);
-    }
-
-    public IClyshOption GetOption(string arg)
-    {
-        return Options.Has(arg) ? Options[arg] : _shortcuts[arg];
-    }
-
-    public bool HasOption(string key)
-    {
-        return Options.Has(key) || _shortcuts.ContainsKey(key);
-    }
-
-    public bool AnySubcommand()
-    {
-        return SubCommands.Any();
-    }
-
-    public bool AnySubcommandExecuted()
-    {
-        return SubCommands.Any(x => x.Value.Executed);
-    }
-
-    public bool HasSubcommand(string subCommandId)
-    {
-        return SubCommands.Has(subCommandId);
-    }
-
-    private void AddDebugOption() => AddDefaultOption("debug", "Print debug log on screen");
-    private void AddHelpOption() => AddDefaultOption("help", "Show help on screen", "h");
     private void AddVersionOption() => AddDefaultOption("version", "Show the CLI version", "v");
-    private void AddDefaultOption(string id, string description, string? shortcut = null)
-    {
-        var builder = new ClyshOptionBuilder();
-        var versionOption = builder
-            .Id(id, shortcut)
-            .Description(description)
-            .Build();
-
-        AddOption(versionOption);
-    }
-
     private void AddGroup(ClyshGroup group)
     {
         if (!Groups.Has(group.Id))
@@ -165,13 +133,6 @@ public class ClyshCommand : ClyshEntity, IClyshCommand
         else if (!Groups[group.Id].Equals(group))
             throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateCommandGroupDuplicated, group.Id));
     }
-
-    public override void Validate()
-    {
-        base.Validate();
-        ValidateSubcommands();
-    }
-
     private void ValidateSubcommands()
     {
         if (!RequireSubcommand)
@@ -180,4 +141,47 @@ public class ClyshCommand : ClyshEntity, IClyshCommand
         if (!AnySubcommand())
             throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateCommandSubcommands, Id));
     }
+    
+    #endregion
+
+    #region Public Methods
+    
+    public bool AnySubcommandExecuted()
+    {
+        return SubCommands.Any(x => x.Value.Executed);
+    }
+    public bool AnySubcommand()
+    {
+        return SubCommands.Any();
+    }
+    public bool HasOption(string key)
+    {
+        return Options.Has(key) || _shortcuts.ContainsKey(key);
+    }
+    public bool HasSubcommand(string subCommandId)
+    {
+        return SubCommands.Has(subCommandId);
+    }
+    public ClyshOption GetOption(string arg)
+    {
+        return Options.Has(arg) ? Options[arg] : _shortcuts[arg];
+    }
+    public ClyshOption? GetOptionFromGroup(string groupId)
+    {
+        if (!Groups.Has(groupId))
+            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnGetOptionFromGroupNotFound, groupId), nameof(groupId));
+            
+        return GetOptionFromGroup(Groups[groupId]);
+    }
+    public IEnumerable<ClyshOption> GetAvailableOptionsFromGroup(string groupId)
+    {
+        return GetAvailableOptionsFromGroup(Groups[groupId]);
+    }
+    internal override void Validate()
+    {
+        base.Validate();
+        ValidateSubcommands();
+    }
+
+    #endregion
 }

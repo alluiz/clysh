@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace Clysh.Tests;
 
-public class ClyshOptionBuilderTests
+public class ClyshOptionTests
 {
     [Test]
     public void Shortcut()

@@ -22,7 +22,7 @@ public class ClyshSetup : IClyshSetup
     public ClyshSetup(string path, IFileSystem fs)
     {
         _commandGlobalOptions = new Dictionary<string, List<ClyshOption>>();
-        Commands = new ClyshMap<IClyshCommand>();
+        Commands = new ClyshMap<ClyshCommand>();
         Data = new ClyshData();
         Load(fs, path);
     }
@@ -38,7 +38,7 @@ public class ClyshSetup : IClyshSetup
     /// <summary>
     /// The CLI Root command
     /// </summary>
-    public IClyshCommand RootCommand { get; private set; } = default!;
+    public ClyshCommand RootCommand { get; private set; } = default!;
 
     /// <summary>
     /// The CLI Data
@@ -48,7 +48,7 @@ public class ClyshSetup : IClyshSetup
     /// <summary>
     /// The CLI Commands
     /// </summary>
-    public ClyshMap<IClyshCommand> Commands { get; }
+    public ClyshMap<ClyshCommand> Commands { get; }
 
     private readonly Dictionary<string, List<ClyshOption>> _commandGlobalOptions;
 
@@ -57,7 +57,7 @@ public class ClyshSetup : IClyshSetup
     /// </summary>
     /// <param name="commandId">The command id</param>
     /// <param name="action">The action to be executed</param>
-    public void BindAction(string commandId, Action<IClyshCommand, IClyshView> action)
+    public void BindAction(string commandId, Action<ClyshCommand, IClyshView> action)
     {
         if (!Commands.Has(commandId))
             throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupBindAction, commandId));
@@ -194,7 +194,7 @@ public class ClyshSetup : IClyshSetup
     /// <param name="commandBuilder">The command builder</param>
     /// <param name="commandData">The command data</param>
     /// <exception cref="ClyshException"></exception>
-    private IClyshCommand BuildCommand(ClyshCommandBuilder commandBuilder, CommandData commandData)
+    private ClyshCommand BuildCommand(ClyshCommandBuilder commandBuilder, CommandData commandData)
     {
         try
         {
@@ -340,11 +340,13 @@ public class ClyshSetup : IClyshSetup
 
         foreach (var p in parameters)
         {
+            if (p.Required)
+                parameterBuilder.MarkAsRequired();
+            
             builder.Parameter(parameterBuilder
                 .Id(p.Id)
                 .Order(p.Order)
                 .Pattern(p.Pattern)
-                .Required(p.Required)
                 .Range(p.MinLength, p.MaxLength)
                 .Build());
         }

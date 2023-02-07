@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Clysh.Data;
 using Clysh.Helper;
 
@@ -32,6 +33,7 @@ public sealed class ClyshView : IClyshView
     /// </summary>
     /// <param name="clyshData">The data to print</param>
     /// <param name="printLineNumber">Indicates if should print the line number</param>
+    [ExcludeFromCodeCoverage]
     public ClyshView(
         ClyshData clyshData,
         bool printLineNumber = false): this(new ClyshConsole(), clyshData, printLineNumber)
@@ -62,7 +64,7 @@ public sealed class ClyshView : IClyshView
            Print(text);
     }
 
-    public void Print(string? text) => Print(text, false, false);
+    public void Print(string? text) => Print(text, false);
 
     public void Print(string? text, ConsoleColor foregroundColor, ConsoleColor backgroundColor = ConsoleColor.Black)
     {
@@ -76,13 +78,7 @@ public sealed class ClyshView : IClyshView
 
     public void PrintError(string text) => Print(text, ConsoleColor.Red);
 
-    public void PrintHelp(IClyshCommand command, Exception exception)
-    {
-        PrintException(exception);
-        PrintHelp(command);
-    }
-
-    public void PrintHelp(IClyshCommand command)
+    public void PrintHelp(ClyshCommand command)
     {
         PrintVersion();
         PrintCommand(command);
@@ -99,19 +95,19 @@ public sealed class ClyshView : IClyshView
     
     public void PrintSuccess(string text) => Print(text, ConsoleColor.Green);
 
-    public void PrintWithoutBreak(string? text) => Print(text, false, true);
+    public void PrintWithoutBreak(string? text) => Print(text, true);
 
     private string AskFor(string title, bool sensitive)
     {
         if (string.IsNullOrWhiteSpace(title))
             throw new ArgumentException(ClyshMessages.ErrorOnValidateUserInputQuestionAnswer, nameof(title));
 
-        Print($"{title}:", false, true);
+        Print($"{title}:", true);
 
         return sensitive ? _clyshConsole.ReadSensitive() : _clyshConsole.ReadLine();
     }
 
-    private void Print(string? text, bool emptyLineAfterPrint, bool noBreak)
+    private void Print(string? text, bool noBreak)
     {
         PrintedLines++;
 
@@ -129,9 +125,6 @@ public sealed class ClyshView : IClyshView
             else
                 _clyshConsole.WriteLine(text);
         }
-
-        if (emptyLineAfterPrint)
-            PrintEmpty();
     }
 
     public void PrintVersion()
@@ -148,7 +141,7 @@ public sealed class ClyshView : IClyshView
         PrintEmpty();
     }
 
-    private void PrintCommand(IClyshCommand command)
+    private void PrintCommand(ClyshCommand command)
     {
         var hasCommands = command.AnySubcommand();
 
@@ -161,7 +154,7 @@ public sealed class ClyshView : IClyshView
         }
     }
 
-    private void PrintSubCommands(IClyshCommand command)
+    private void PrintSubCommands(ClyshCommand command)
     {
         Print("[subcommands]:");
         PrintEmpty();
@@ -176,7 +169,7 @@ public sealed class ClyshView : IClyshView
         PrintEmpty();
     }
 
-    private void PrintOptions(IClyshCommand command)
+    private void PrintOptions(ClyshCommand command)
     {
         Print("[options]:");
         PrintEmpty();
@@ -194,7 +187,7 @@ public sealed class ClyshView : IClyshView
         PrintEmpty();
     }
 
-    private void PrintParameter(IClyshOption option)
+    private void PrintParameter(ClyshOption option)
     {
         const int maxDescriptionlengthPerLine = 30;
 
@@ -207,8 +200,6 @@ public sealed class ClyshView : IClyshView
 
         if (truncate)
             PrintDescriptionMultiline(maxDescriptionlengthPerLine, description);
-
-        //Print($"{"",-35}{description[startIndex..]}");
     }
 
     private void PrintDescriptionMultiline(int maxDescriptionlengthPerLine, string description)
@@ -227,7 +218,7 @@ public sealed class ClyshView : IClyshView
         }
     }
 
-    private void PrintHeader(IClyshCommand command, bool hasCommands)
+    private void PrintHeader(ClyshCommand command, bool hasCommands)
     {
         var parentCommands = command.Id.Replace(".", " ");
 

@@ -33,7 +33,7 @@ public sealed class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
         result.Description = description.Trim();
         return this;
     }
-    
+
     /// <summary>
     /// Set the command require subcommand flag
     /// </summary>
@@ -60,17 +60,10 @@ public sealed class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     /// </summary>
     /// <param name="subCommand">The subcommand of the command</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
-    public ClyshCommandBuilder SubCommand(IClyshCommand subCommand)
+    public ClyshCommandBuilder SubCommand(ClyshCommand subCommand)
     {
-        try
-        {
-            result.AddSubCommand(subCommand);
-            return this;
-        }
-        catch (Exception e)
-        {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, result.Id), e);
-        }
+        result.AddSubCommand(subCommand);
+        return this;
     }
 
     /// <summary>
@@ -78,19 +71,12 @@ public sealed class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     /// </summary>
     /// <param name="action">The action of the command</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
-    public ClyshCommandBuilder Action(Action<IClyshCommand, IClyshView> action)
+    public ClyshCommandBuilder Action(Action<ClyshCommand, IClyshView> action)
     {
-        try
-        {
-            result.Action = action;
-            return this;
-        }
-        catch (Exception e)
-        {
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnCreateCommand, result.Id), e);
-        }
+        result.Action = action;
+        return this;
     }
-    
+
     /// <summary>
     /// Create a new instance of a type
     /// </summary>

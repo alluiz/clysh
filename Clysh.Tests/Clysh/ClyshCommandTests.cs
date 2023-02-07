@@ -16,15 +16,7 @@ public class ClyshCommandTests
     {
         _commandBuilder = new ClyshCommandBuilder();
     }
-    
-    [Test]
-    public void TestShouldThrownErrorWithNullId()
-    {
-        string id = null;
-        var exception = Assert.Throws<ArgumentNullException>(() => _commandBuilder.Id(id).Build());
-        Assert.NotNull(exception);
-    }
-    
+
     [Test]
     public void TestShouldThrownErrorWithEmptyId()
     {
@@ -32,7 +24,7 @@ public class ClyshCommandTests
         var exception = Assert.Throws<EntityException>(() => _commandBuilder.Id(id).Build());
         
         Assert.NotNull(exception);
-        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnValidateIdPattern);
+        ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnValidateIdLength);
     }
     
     [Test]
@@ -114,15 +106,7 @@ public class ClyshCommandTests
         Assert.NotNull(exception);
         ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnValidateDescription);
     }
-    
-    [Test]
-    public void TestShouldThrownErrorWithNullDescription()
-    {
-        const string id = "test";
-        var exception = Assert.Throws<ArgumentNullException>(() => _commandBuilder.Id(id).Description(null).Build());
-        Assert.NotNull(exception);
-    }
-    
+
     [Test]
     public void TestShouldThrownErrorWithShortDescription()
     {

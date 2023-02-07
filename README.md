@@ -24,6 +24,7 @@ Create your **own CLI on .NET 6+** with simple steps.
 - 1.4.1 - Some code refactoring and fix example
 - 2.0.0 - New Feature: Global Options
 - 2.0.1 - BugFix: Ignore 'Groups' deprecated field on YAML deserialize
+- 3.0.0-beta - Remove command interface and protect fields from external manipulation. Builder pattern data handling improvement.
 
 ## What is?
 

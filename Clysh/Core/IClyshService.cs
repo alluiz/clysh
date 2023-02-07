@@ -11,7 +11,7 @@ public interface IClyshService
     /// The root command of the service. You can only read it.
     /// </summary>
     /// <seealso cref="IClyshCommand"/>
-    IClyshCommand RootCommand { get; }
+    ClyshCommand RootCommand { get; }
 
     /// <summary>
     /// The view used to interact with user. Like a front-end.

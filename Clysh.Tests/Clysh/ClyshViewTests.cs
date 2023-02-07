@@ -203,17 +203,7 @@ public class ClyshViewTests
         var command = ClyshDataForTest.CreateRootCommand();
         view.PrintHelp(command);
 
-        _consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine($"{_metadata.Title}. Version: {_metadata.Version}", 2), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("Usage: auth2 [options] [subcommands]", 4), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine(command.Description, 6), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("[options]:", 8), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("", 9), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Option".PadRight(22) + "Group".PadRight(11) + "Description".PadRight(35) + "Parameters".PadRight(29), 10), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
+        VerifyHelpHeaders(command);
 
         var i = 0;
 
@@ -223,8 +213,38 @@ public class ClyshViewTests
                      .Select(z => z.Value))
         {
             var i1 = i;
-            _consoleMock.Verify(x => x.WriteLine("".PadRight(3) + $"{option,-22}{option.Group,-11}{option.Description,-35}{option.Parameters}", 12 + i1), Times.Once);
+            
+            const int maxDescriptionlengthPerLine = 30;
+
+            var description = option.Description;
+
+            var truncate = description.Length > maxDescriptionlengthPerLine;
+
+            var firstDescriptionLine = truncate ? description[..maxDescriptionlengthPerLine] : description;
+            
+            _consoleMock.Verify(x => x.WriteLine($"{"",-3}{option,-22}{option.Group,-11}{firstDescriptionLine,-35}{option.Parameters}", 12 + i1), Times.Once);
+
             i++;
+
+            if (!truncate) 
+                continue;
+            
+            var startIndex = maxDescriptionlengthPerLine;
+
+            var numberOfLines = description.Length / maxDescriptionlengthPerLine;
+
+            for (var line = 1; line <= numberOfLines; line++)
+            {
+                var index = startIndex;
+                
+                _consoleMock.Verify(x => x.WriteLine((description.Substring(index).Length < maxDescriptionlengthPerLine
+                    ? $"{string.Empty,-36}{description.Substring(index)}"
+                    : $"{string.Empty,-36}{description.Substring(index, maxDescriptionlengthPerLine)}"), 12 + i1 + line), Times.Once);
+
+                startIndex = maxDescriptionlengthPerLine * (line + 1);
+                
+                i++;
+            }
         }
 
         //i=4
@@ -248,7 +268,26 @@ public class ClyshViewTests
 
         _consoleMock.Verify(x => x.WriteLine("", 14 + j), Times.Once);
 
-        Assert.AreEqual(23, view.PrintedLines);
+        Assert.AreEqual(25, view.PrintedLines);
+    }
+
+    private void VerifyHelpHeaders(ClyshCommand command)
+    {
+        var subcommandsText = command.AnySubcommand()?" [subcommands]":"";
+        
+        _consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
+        _consoleMock.Verify(x => x.WriteLine($"{_metadata.Title}. Version: {_metadata.Version}", 2), Times.Once);
+        _consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
+        _consoleMock.Verify(x => x.WriteLine($"Usage: {command.Id.Replace(".", " ")} [options]{subcommandsText}", 4), Times.Once);
+        _consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
+        _consoleMock.Verify(x => x.WriteLine(command.Description, 6), Times.Once);
+        _consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
+        _consoleMock.Verify(x => x.WriteLine("[options]:", 8), Times.Once);
+        _consoleMock.Verify(x => x.WriteLine("", 9), Times.Once);
+        _consoleMock.Verify(
+            x => x.WriteLine($"{"",-3}{"Option",-22}{"Group",-11}{"Description",-35}{"Parameters",-29}", 10),
+            Times.Once);
+        _consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
     }
 
     [Test]
@@ -256,20 +295,10 @@ public class ClyshViewTests
     {
         IClyshView view = new ClyshView(_consoleMock.Object, _metadata, true);
 
-        IClyshCommand command = ClyshDataForTest.CreateRootCommand().SubCommands["auth2.credential"];
+        var command = ClyshDataForTest.CreateRootCommand().SubCommands["auth2.credential"];
         view.PrintHelp(command);
 
-        _consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine($"{_metadata.Title}. Version: {_metadata.Version}", 2), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("Usage: auth2 credential [options] [subcommands]", 4), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine(command.Description, 6), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("[options]:", 8), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("", 9), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Option".PadRight(22) + "Group".PadRight(11) + "Description".PadRight(35) + "Parameters".PadRight(29), 10), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
+        VerifyHelpHeaders(command);
 
         var i = 0;
 
@@ -311,20 +340,10 @@ public class ClyshViewTests
     {
         IClyshView view = new ClyshView(_consoleMock.Object, _metadata, true);
 
-        IClyshCommand command = ClyshDataForTest.CreateRootCommand().SubCommands["auth2.credential"].SubCommands["auth2.credential.test"];
+        var command = ClyshDataForTest.CreateRootCommand().SubCommands["auth2.credential"].SubCommands["auth2.credential.test"];
         view.PrintHelp(command);
 
-        _consoleMock.Verify(x => x.WriteLine("", 1), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine($"{_metadata.Title}. Version: {_metadata.Version}", 2), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("", 3), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("Usage: auth2 credential test [options]", 4), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("", 5), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine(command.Description, 6), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("", 7), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("[options]:", 8), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("", 9), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("".PadRight(3) + "Option".PadRight(22) + "Group".PadRight(11) + "Description".PadRight(35) + "Parameters".PadRight(29), 10), Times.Once);
-        _consoleMock.Verify(x => x.WriteLine("", 11), Times.Once);
+        VerifyHelpHeaders(command);
 
         var i = 0;
 
@@ -392,6 +411,88 @@ public class ClyshViewTests
         view.PrintWithoutBreak(question);
 
         _consoleMock.Verify(x => x.Write(question), Times.Once);
+
+        Assert.AreEqual(1, view.PrintedLines);
+    }
+
+    [Test]
+    public void ShouldPrintAlert()
+    {
+        IClyshView view = new ClyshView(_consoleMock.Object, _metadata);
+
+        const string text = "my text";
+        
+        view.PrintAlert(text);
+
+        _consoleMock.Verify(x => x.WriteLine(text), Times.Once);
+
+        Assert.AreEqual(1, view.PrintedLines);
+    }
+    
+    [Test]
+    public void ShouldPrintDebug()
+    {
+        IClyshView view = new ClyshView(_consoleMock.Object, _metadata);
+        view.Debug = true;
+
+        const string text = "my debug text";
+        
+        view.PrintDebug(text);
+
+        _consoleMock.Verify(x => x.WriteLine(text), Times.Once);
+
+        Assert.AreEqual(1, view.PrintedLines);
+    }
+    
+    [Test]
+    public void ShouldNotPrintDebug()
+    {
+        IClyshView view = new ClyshView(_consoleMock.Object, _metadata);
+        view.Debug = false;
+
+        const string text = "my debug text";
+        
+        view.PrintDebug(text);
+
+        _consoleMock.Verify(x => x.WriteLine(text), Times.Never);
+
+        Assert.AreEqual(0, view.PrintedLines);
+    }
+    
+    [Test]
+    public void ShouldPrintSeparator()
+    {
+        IClyshView view = new ClyshView(_consoleMock.Object, _metadata);
+
+        view.PrintSeparator();
+
+        _consoleMock.Verify(x => x.WriteLine(It.IsRegex("#+")), Times.Once);
+
+        Assert.AreEqual(1, view.PrintedLines);
+    }
+    
+    [Test]
+    public void ShouldPrintSeparatorWithCustomChar()
+    {
+        IClyshView view = new ClyshView(_consoleMock.Object, _metadata);
+
+        view.PrintSeparator("$");
+
+        _consoleMock.Verify(x => x.WriteLine(It.IsRegex("$+")), Times.Once);
+
+        Assert.AreEqual(1, view.PrintedLines);
+    }
+    
+    [Test]
+    public void ShouldPrintSuccess()
+    {
+        IClyshView view = new ClyshView(_consoleMock.Object, _metadata);
+
+        const string text = "my text";
+        
+        view.PrintSuccess(text);
+
+        _consoleMock.Verify(x => x.WriteLine(text), Times.Once);
 
         Assert.AreEqual(1, view.PrintedLines);
     }

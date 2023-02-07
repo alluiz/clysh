@@ -6,7 +6,7 @@ namespace Clysh.Core.Builder;
 /// The builders base
 /// </summary>
 /// <typeparam name="T">The type to be builded</typeparam>
-public abstract class ClyshBuilder<T> where T: IClyshEntity
+public abstract class ClyshBuilder<T> where T: ClyshEntity
 {
     protected ClyshBuilder()
     {

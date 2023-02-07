@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace Clysh.Core;
@@ -30,6 +31,7 @@ public class ClyshException : InvalidOperationException
     /// </summary>
     /// <param name="info">The serialization info</param>
     /// <param name="context">The streaming context</param>
+    [ExcludeFromCodeCoverage]
     protected ClyshException(SerializationInfo info,
         StreamingContext context): base(info, context)
     {

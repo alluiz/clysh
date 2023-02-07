@@ -10,14 +10,14 @@ namespace Clysh.Core;
 public class ClyshParameter : ClyshEntity
 {
     private const int MinLengthParam = 1;
-    private const int MaxLengthParam = 1000;
+    private const int MaxLengthParam = 100;
 
     private string _data = string.Empty;
 
     /// <summary>
     /// Create a new parameter
     /// </summary>
-    internal ClyshParameter(): base(20)
+    internal ClyshParameter(): base(20, ClyshConstants.ParameterPattern)
     {
         
     }
@@ -66,20 +66,20 @@ public class ClyshParameter : ClyshEntity
 
     private void ValidateMin()
     {
-        if (MinLength < 1)
-            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, MinLengthParam, MaxLengthParam), nameof(MinLength));
+        if (MinLength < MinLengthParam)
+            throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, MinLengthParam, MaxLengthParam));
     }
 
     private void ValidateMax()
     {
-        if (MaxLength > 1000)
-            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, MinLengthParam, MaxLengthParam), nameof(MaxLength));
+        if (MaxLength > MaxLengthParam)
+            throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateParameterRange, MinLengthParam, MaxLengthParam));
     }
 
     private void ValidateOrder()
     {
         if (Order < 0)
-            throw new ClyshException(string.Format(ClyshMessages.ErrorOnValidateParameterOrder, Id));
+            throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateParameterOrder, Id));
     }
 
     private void ValidateData(string value)
@@ -91,7 +91,7 @@ public class ClyshParameter : ClyshEntity
             throw new ArgumentException($"Parameter {Id} must match the follow regex pattern: {PatternData}.", Id);
     }
 
-    public override void Validate()
+    internal override void Validate()
     {
         base.Validate();
         ValidateOrder();

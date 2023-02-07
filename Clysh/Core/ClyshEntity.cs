@@ -79,7 +79,7 @@ public abstract class ClyshEntity: IClyshEntity
     /// <exception cref="ArgumentException">The ID is invalid.</exception>
     private void ValidateId()
     {
-        if (_idMaxLength > 0 && Id.Length > _idMaxLength)
+        if (Id.IsEmpty() || _idMaxLength > 0 && Id.Length > _idMaxLength)
             throw new EntityException(string.Format(ClyshMessages.ErrorOnValidateIdLength, _idMaxLength, Id));
 
         //No validation if no pattern was provided before.
@@ -104,7 +104,7 @@ public abstract class ClyshEntity: IClyshEntity
                 Description));
     }
 
-    public virtual void Validate()
+    internal virtual void Validate()
     {
         ValidateId();
         ValidateDescription();

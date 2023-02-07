@@ -9,6 +9,4 @@ public interface IClyshEntity
     /// The identifier
     /// </summary>
     public string Id { get; }
-
-    public void Validate();
 }

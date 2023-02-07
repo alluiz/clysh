@@ -6,7 +6,7 @@ namespace Clysh.Core;
 /// <summary>
 /// The option for <see cref="Clysh"/>
 /// </summary>
-public class ClyshOption : ClyshEntity, IClyshOption
+public class ClyshOption : ClyshEntity
 {
     private const int MinShortcut = 1;
     private const int MaxShortcut = 1;
@@ -29,17 +29,17 @@ public class ClyshOption : ClyshEntity, IClyshOption
     /// <summary>
     /// The parameters
     /// </summary>
-    public ClyshParameters Parameters { get; set; }
+    public ClyshParameters Parameters { get; }
 
     /// <summary>
     /// The shortcut
     /// </summary>
-    public string? Shortcut { get; set; }
+    public string? Shortcut { get; internal set; }
 
     /// <summary>
     /// The status of option
     /// </summary>
-    public bool Selected { get; set; }
+    public bool Selected { get; internal set; }
 
     /// <summary>
     /// The group
@@ -49,9 +49,9 @@ public class ClyshOption : ClyshEntity, IClyshOption
     /// <summary>
     /// The command owner
     /// </summary>
-    public IClyshCommand? Command { get; set; }
+    public ClyshCommand? Command { get; internal set; }
 
-    public bool IsGlobal { get; set; }
+    public bool IsGlobal { get; internal set; }
 
     /// <summary>
     /// Check the optionId
@@ -103,7 +103,7 @@ public class ClyshOption : ClyshEntity, IClyshOption
         return $"{(Shortcut == null ? "" : "-" + Shortcut + ","),-4}--{Id}";
     }
 
-    public override void Validate()
+    internal override void Validate()
     {
         base.Validate();
         ValidateShortcut();
