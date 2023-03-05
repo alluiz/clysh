@@ -4,7 +4,7 @@ namespace Clysh.Sample;
 
 public abstract class CalcAction: IClyshAction
 {
-    protected static void CalcOperation(ClyshCommand cmd, IClyshView view, Func<int, int, int> operation)
+    protected static void CalcOperation(IClyshCommand cmd, IClyshView view, Func<int, int, int> operation)
     {
         var color = cmd.GetOptionFromGroup("color");
         var values = cmd.Options["values"];
@@ -52,5 +52,5 @@ public abstract class CalcAction: IClyshAction
         return Convert.ToInt32(value);
     }
 
-    public abstract void Execute(ClyshCommand cmd, IClyshView view);
+    public abstract void Execute(IClyshCommand cmd, IClyshView view);
 }

@@ -50,7 +50,7 @@ public class ClyshServiceTests
         const string name = "new";
         const string description = "new command for test";
 
-        ClyshCommand command = _builder
+        IClyshCommand command = _builder
             .Id(name)
             .Description(description)
             .Action(EmptyAction)
@@ -58,10 +58,10 @@ public class ClyshServiceTests
 
         Assert.AreEqual(name, command.Id);
         Assert.AreEqual(description, command.Description);
-        Assert.AreEqual((Action<ClyshCommand, IClyshView>)EmptyAction, command.Action);
+        Assert.AreEqual((Action<IClyshCommand, IClyshView>)EmptyAction, command.Action);
     }
 
-    private void EmptyAction(ClyshCommand clyshCommand, IClyshView clyshView)
+    private void EmptyAction(IClyshCommand clyshCommand, IClyshView clyshView)
     {
         _executed = true;
     }
@@ -157,7 +157,7 @@ public class ClyshServiceTests
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void Action(ClyshCommand command, IClyshView view)
+        void Action(IClyshCommand command, IClyshView view)
         {
             expectedOptions = command.Options;
             expectedCliFront = view;
@@ -204,7 +204,7 @@ public class ClyshServiceTests
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void Action(ClyshCommand command, IClyshView view)
+        void Action(IClyshCommand command, IClyshView view)
         {
             expectedOptions = command.Options;
             expectedCliFront = view;
@@ -255,7 +255,7 @@ public class ClyshServiceTests
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void Action(ClyshCommand command, IClyshView view)
+        void Action(IClyshCommand command, IClyshView view)
         {
             expectedOptions = command.Options;
             expectedCliFront = view;
@@ -302,7 +302,7 @@ public class ClyshServiceTests
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void Action(ClyshCommand command, IClyshView view)
+        void Action(IClyshCommand command, IClyshView view)
         {
             expectedOptions = command.Options;
             expectedCliFront = view;
@@ -353,7 +353,7 @@ public class ClyshServiceTests
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void Action(ClyshCommand command, IClyshView view)
+        void Action(IClyshCommand command, IClyshView view)
         {
             expectedOptions = command.Options;
             expectedCliFront = view;
@@ -404,7 +404,7 @@ public class ClyshServiceTests
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void Action(ClyshCommand command, IClyshView view)
+        void Action(IClyshCommand command, IClyshView view)
         {
             expectedOptions = command.Options;
             expectedCliFront = view;
@@ -455,7 +455,7 @@ public class ClyshServiceTests
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void Action(ClyshCommand command, IClyshView view)
+        void Action(IClyshCommand command, IClyshView view)
         {
             expectedOptions = command.Options;
             expectedCliFront = view;
@@ -508,7 +508,7 @@ public class ClyshServiceTests
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void Action(ClyshCommand command, IClyshView view)
+        void Action(IClyshCommand command, IClyshView view)
         {
             expectedOptions = command.Options;
             expectedCliFront = view;
@@ -570,7 +570,7 @@ public class ClyshServiceTests
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void Action(ClyshCommand command, IClyshView view)
+        void Action(IClyshCommand command, IClyshView view)
         {
             expectedOptions = command.Options;
             expectedCliFront = view;
@@ -809,7 +809,7 @@ public class ClyshServiceTests
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void Action(ClyshCommand command, IClyshView view)
+        void Action(IClyshCommand command, IClyshView view)
         {
             expectedOptions = command.Options;
             expectedCliFront = view;
@@ -1066,7 +1066,7 @@ public class ClyshServiceTests
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void Action(ClyshCommand command, IClyshView view)
+        void Action(IClyshCommand command, IClyshView view)
         {
             expectedOptions = command.Options;
             expectedCliFront = view;
@@ -1122,7 +1122,7 @@ public class ClyshServiceTests
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void Action(ClyshCommand command, IClyshView view)
+        void Action(IClyshCommand command, IClyshView view)
         {
             expectedOptions = command.Options;
             expectedCliFront = view;
@@ -1179,7 +1179,7 @@ public class ClyshServiceTests
         IClyshView? expectedCliFront = null;
         ClyshOption? selectedOptionFromGroup = null;
 
-        void Action(ClyshCommand command, IClyshView view)
+        void Action(IClyshCommand command, IClyshView view)
         {
             expectedOptions = command.Options;
             expectedCliFront = view;
@@ -1236,7 +1236,7 @@ public class ClyshServiceTests
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void Action(ClyshCommand command, IClyshView view)
+        void Action(IClyshCommand command, IClyshView view)
         {
             expectedOptions = command.Options;
             expectedCliFront = view;
@@ -1294,7 +1294,7 @@ public class ClyshServiceTests
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
 
-        void Action(ClyshCommand command, IClyshView view)
+        void Action(IClyshCommand command, IClyshView view)
         {
             expectedOptions = command.Options;
             expectedCliFront = view;

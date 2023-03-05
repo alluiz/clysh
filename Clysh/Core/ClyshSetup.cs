@@ -57,7 +57,7 @@ public class ClyshSetup : IClyshSetup
     /// </summary>
     /// <param name="commandId">The command id</param>
     /// <param name="action">The action to be executed</param>
-    public void BindAction(string commandId, Action<ClyshCommand, IClyshView> action)
+    public void BindAction(string commandId, Action<IClyshCommand, IClyshView> action)
     {
         if (!Commands.Has(commandId))
             throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupBindAction, commandId));
@@ -467,9 +467,4 @@ public class ClyshSetup : IClyshSetup
             }
         }
     }
-}
-
-public interface IClyshAction
-{
-    void Execute(ClyshCommand cmd, IClyshView view);
 }

@@ -8,7 +8,7 @@ namespace Clysh.Core;
 /// <summary>
 /// The command for <see cref="Clysh"/>
 /// </summary>
-public class ClyshCommand : ClyshEntity
+public class ClyshCommand : ClyshEntity, IClyshCommand
 {
     internal ClyshCommand(): base(100, ClyshConstants.CommandPattern, 10, 100)
     {
@@ -23,11 +23,11 @@ public class ClyshCommand : ClyshEntity
     }
 
     private readonly Dictionary<string, ClyshOption> _shortcuts;
-    private Action<ClyshCommand, IClyshView>? _action;
+    private Action<IClyshCommand, IClyshView>? _action;
 
     #region Properties
 
-    public Action<ClyshCommand, IClyshView>? Action
+    public Action<IClyshCommand, IClyshView>? Action
     {
         get => _action;
         internal set

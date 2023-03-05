@@ -125,7 +125,7 @@ public class ClyshSetupTests
         Assert.AreEqual(15, root.Options["test"].Parameters["ab"].MaxLength);
     }
 
-    private void EmptyAction(ClyshCommand clyshCommand, IClyshView clyshView)
+    private void EmptyAction(IClyshCommand clyshCommand, IClyshView clyshView)
     {
         //Just a empty reference to test address memory
     }
