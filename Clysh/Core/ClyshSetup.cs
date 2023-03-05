@@ -65,6 +65,16 @@ public class ClyshSetup : IClyshSetup
         var command = Commands[commandId];
         command.Action = action;
     }
+    
+    /// <summary>
+    /// Bind your command action
+    /// </summary>
+    /// <param name="commandId">The command id</param>
+    /// <param name="action">The action that implements the IClyshAction interface</param>
+    public void BindAction<T>(string commandId, T action) where T: IClyshAction
+    {
+        BindAction(commandId, action.Execute);
+    }
 
     private void ExtractDataFromFileSystem(IFileSystem fs, string path)
     {
@@ -258,6 +268,9 @@ public class ClyshSetup : IClyshSetup
         if (commandData.RequireSubcommand)
             subCommandBuilder.MarkAsAbstract();
         
+        if (commandData.IgnoreParents)
+            subCommandBuilder.IgnoreParents();
+        
         return subCommandBuilder;
     }
 
@@ -299,9 +312,15 @@ public class ClyshSetup : IClyshSetup
             }
         }
 
-        if (!_commandGlobalOptions.ContainsKey(commandData.Id)) return;
+        AddGlobalOptions(commandBuilder, commandData.Id);
+        AddGlobalOptions(commandBuilder, "all");
+    }
+
+    private void AddGlobalOptions(ClyshCommandBuilder commandBuilder, string id)
+    {
+        if (!_commandGlobalOptions.ContainsKey(id)) return;
         
-        foreach (var option in _commandGlobalOptions[commandData.Id])
+        foreach (var option in _commandGlobalOptions[id])
         {
             commandBuilder.Option(option);
         }
@@ -426,19 +445,31 @@ public class ClyshSetup : IClyshSetup
 
             var option = BuildOption(optionBuilder, optionData, groups, true);
 
-            if (optionData.Commands == null || optionData.Commands.Count == 0)
-                throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupGlobalOptions, optionData.Id));
+            optionData.Commands ??= new List<string>();
 
-            foreach (var c in optionData.Commands)
+            var commands = optionData.Commands;
+            
+            if (commands.Count == 0) 
+                commands.Add("all");
+
+            if (commands.Contains("all") && commands.Count > 1)
+                throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupGlobalOptionsAll, optionData.Id));
+ 
+            foreach (var command in commands.Select(c => c.ToLower()))
             {
-                if (_commandGlobalOptions.ContainsKey(c))
-                    _commandGlobalOptions[c].Add(option);
+                if (_commandGlobalOptions.ContainsKey(command))
+                    _commandGlobalOptions[command].Add(option);
                 else
-                    _commandGlobalOptions.Add(c, new List<ClyshOption>
+                    _commandGlobalOptions.Add(command, new List<ClyshOption>
                     {
                         option
                     });
             }
         }
     }
+}
+
+public interface IClyshAction
+{
+    void Execute(ClyshCommand cmd, IClyshView view);
 }

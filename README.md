@@ -25,6 +25,7 @@ Create your **own CLI on .NET 6+** with simple steps.
 - 2.0.0 - New Feature: Global Options
 - 2.0.1 - BugFix: Ignore 'Groups' deprecated field on YAML deserialize
 - 2.1.0 - Remove command interface and protect fields from external manipulation. Builder pattern data handling improvement.
+- 2.2.0 - NEW: IgnoreParent action execution flag AND introduce IClyshAction interface
 
 ## What is?
 
@@ -49,90 +50,4 @@ To use Clysh you need to install the package from NuGet.
 
 > dotnet add package clysh
 
-Then, to start create a _clidata.yml_ with the content below:
-
-``` yaml
-Title: MyCLI with only test command
-Version: 1.0
-Commands:
-  - Id: mycli
-    Description: My own CLI
-    Options:
-      - Id: test
-        Description: Test option
-        Shortcut: T
-        Parameters:
-          - Id: value
-            Required: true
-            MinLength: 1
-            MaxLength: 15
-        Group: foo
-      - Id: dummy
-        Description: Dummy option      
-        Shortcut: d
-        Parameters:
-          - Id: value
-            Required: true
-            MinLength: 1
-            MaxLength: 15
-        Group: foo
-    Root: true
-  - Id: mycli.mychild
-    Description: My child for tests
-```
-
-To use this create a new **Console Application**, then in your **Program.cs** write this:
-
-``` csharp
-using Clysh.Core;
-
-var setup = new ClyshSetup("clidata.yml");
-
-setup.BindAction("mycli", (cmd, view) =>
-{
-    view.Print(cmd.Options["test"].Selected ? "mycli with test option" : "mycli without test option");
-
-    if (cmd.Options["test"].Selected)
-    {
-        var option = cmd.Options["test"];
-
-        var data = option.Parameters["value"].Data;
-
-        view.Print(data);
-    }
-});
-
-var cli = new ClyshService(setup, true);
-
-cli.Execute(args);
-```
-
-Run the console and you will see the **magic**. If you need some help, pass the argument **--help** to your app.
-
-The expected output:
-
-> mycli without test option
-
-With **--help** argument
-
-```
-MyCLI with only test command. Version: 1.0
-
-Usage: mycli [options] [commands]
-
-My own CLI
-
-[options]:
-
-   Option       Group          Description             Parameters
-
-   -h, --help                  Show help on screen
-   -d, --dummy  foo            Test option             <value:Required>
-   -T, --test   foo            Test option             <value:Required>
-
-[commands]:
-
-   mychild                                My child  
-```
-
-**Note: The project of example app is available on ./Samples/Clysh.Sample folder**
+**The project of example app is available on [GitHub](https://github.com/alluiz/clysh/tree/master/Samples/Clysh.Sample)**

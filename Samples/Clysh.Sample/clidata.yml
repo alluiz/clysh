@@ -1,6 +1,5 @@
 Title: MyCalc CLI                                                         #The CLI Title
 Version: 1.0                                                              #The CLI Version
-
 Messages:                                                                 #The CustomMessages to show when some validation error occurs. It can be useful to language custom output.
   InvalidOption: "The option '{0}' is invalid."
   
@@ -20,20 +19,19 @@ Commands:                                                                 #The C
         Group: input-mode
   - Id: calc.sub
     Description: Subtract values "a" and "b". Its a greatest feature for break line on CLI view
-    Groups:
-      - a
+    IgnoreParents: true                                                   #It indicates that when this command is executed the parents rules is ignored. Your children is not affected.
 
 GlobalOptions:
   - Id: values
     Shortcut: V
     Description: Values to be added                                       #The parameters can have some input validation like: Min and Max Length and Regex Pattern
     Parameters:
-      - Id: a
+      - Id: VALUE_A
         Required: true                                                    #Indicates that this option needs this parameter input  
         MinLength: 1
         MaxLength: 10
         Order: 0                                                          #The order of parameter input. Must be different than than the parameter 'b' order.
-      - Id: b
+      - Id: VALUE_B
         Required: true
         MinLength: 1
         MaxLength: 10
@@ -53,20 +51,6 @@ GlobalOptions:
     Commands:
       - calc.add
       - calc.sub
-  - Id: colorizedoption
+  - Id: green
     Description: Green color output
-    Group: colorizedi
-    Commands:
-      - calc.add
-      - calc.sub
-  - Id: color
-    Description: Custom color output
-    Parameters:
-      - Id: COLOR_ID
-        Required: true
-        MinLength: 1
-        MaxLength: 5
-        Order: 0
-    Commands:
-      - calc.add
-      - calc.sub
+    Group: color

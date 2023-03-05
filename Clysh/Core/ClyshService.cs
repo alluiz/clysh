@@ -174,7 +174,7 @@ public sealed class ClyshService : IClyshService
             ExecuteVersion();
         else
         {
-            _lastCommand.Executed = true;
+            _lastCommand.Inputed = true;
             CheckGroups();
             CheckLastCommandStatus();
             CheckLastOptionStatus();
@@ -309,7 +309,7 @@ public sealed class ClyshService : IClyshService
 
     private void CheckLastCommandStatus()
     {
-        var waitingForAnySubcommand = _lastCommand.RequireSubcommand && !_lastCommand.AnySubcommandExecuted();
+        var waitingForAnySubcommand = _lastCommand.RequireSubcommand && !_lastCommand.AnySubcommandInputed();
         
         if (waitingForAnySubcommand)
             ShowErrorMessage("InvalidSubcommand", _lastCommand.Id);
@@ -391,12 +391,23 @@ public sealed class ClyshService : IClyshService
     private void SetCommandToExecute(string arg)
     {
         _lastOption = null;
-        _lastCommand.Executed = true;
+        _lastCommand.Inputed = true;
         
-        var order = _lastCommand.Order + 1;
-        _lastCommand = _lastCommand.SubCommands[GetCommandId(arg)];
-        _lastCommand.Order = order;
-        _commandsToExecute.Add(_lastCommand);
+        var actualCommand = _lastCommand.SubCommands[GetCommandId(arg)];
+
+        if (actualCommand.IgnoreParents)
+        {
+            actualCommand.Order = 0;
+            _commandsToExecute.ForEach(c => c.Order=-1);
+            _commandsToExecute.Clear();
+        }
+        else
+        {
+            actualCommand.Order = _lastCommand.Order + 1;
+        }
+        
+        _commandsToExecute.Add(actualCommand);
+        _lastCommand = actualCommand;
     }
 
     private void ExecuteHelp(Exception? exception = null)

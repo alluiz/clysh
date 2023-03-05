@@ -711,6 +711,89 @@ public class ClyshServiceTests
         Assert.AreEqual(0, cli.RootCommand.Order);
         Assert.AreEqual(1, customCommand.Order);
     }
+    
+    [Test]
+    public void SuccessfulExecuteRootWithRebelCustomCommandAndMultiOptionAndMultiOptionalAndRequiredParameter()
+    {
+        const string someOption = "some-option";
+        const string someOptionDescription = "awesome option";
+        const string someOptionWithDashes = $"--{someOption}";
+
+        const string someOption2 = "some-option2";
+        const string someOptionDescription2 = "awesome option2";
+        const string someOptionWithDashes2 = $"--{someOption2}";
+
+        var args = new[]
+        {
+            someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "test", someOptionWithDashes2,
+            "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5"
+        };
+
+        ClyshMap<ClyshOption>? expectedOptions = null;
+        IClyshView? expectedCliFront = null;
+
+        ClyshMap<ClyshOption>? expectedOptionsCustom = null;
+        IClyshView? expectedCliFrontCustom = null;
+
+
+        var customCommand = _builder
+            .Id("root.test")
+            .Description("test command description")
+            .IgnoreParents()
+            .Action((command, view) =>
+            {
+                expectedOptionsCustom = command.Options;
+                expectedCliFrontCustom = view;
+            })
+            .Option(_optionBuilder
+                .Id(someOption2)
+                .Description(someOptionDescription2)
+                .Parameter(_parameterBuilder.Id("testarg5").Range(6, 10).MarkAsRequired().Order(0).Build())
+                .Parameter(_parameterBuilder.Id("testarg3").Range(6, 10).Order(1).Build())
+                .Parameter(_parameterBuilder.Id("testarg4").Range(6, 10).Order(2).Build())
+                .Build())
+            .Build();
+
+        var rootCommand = _builder
+            .Id("root")
+            .Description("root command")
+            .Action((command, view) =>
+            {
+                //This code MUST BE not executed
+                //Then, the expectedOptions is null
+                expectedOptions = command.Options;
+                expectedCliFront = view;
+            })
+            .Option(_optionBuilder
+                .Id(someOption)
+                .Description(someOptionDescription)
+                .Parameter(_parameterBuilder.Id("testarg2").Range(6, 10).Order(0).MarkAsRequired().Build())
+                .Parameter(_parameterBuilder.Id("testarg").Range(6, 10).Order(1).Build())
+                .Build())
+            .SubCommand(customCommand)
+            .Build();
+
+        IClyshService cli = new ClyshService(rootCommand, _viewMock.Object);
+
+        cli.Execute(args);
+
+        Assert.Null(expectedCliFront);
+        Assert.Null(expectedOptions);
+
+        Assert.AreEqual(1, expectedOptionsCustom?.Count(x => x.Value.Selected));
+        Assert.IsTrue(expectedOptionsCustom?.Has(someOption2));
+
+        Assert.AreEqual(someOption2, expectedOptionsCustom?[someOption2].Id);
+        Assert.AreEqual(someOptionDescription2, expectedOptionsCustom?[someOption2].Description);
+        Assert.AreEqual("mytest3", expectedOptionsCustom?[someOption2].Parameters["testarg3"].Data);
+        Assert.AreEqual("mytest4", expectedOptionsCustom?[someOption2].Parameters["testarg4"].Data);
+        Assert.AreEqual("mytest5", expectedOptionsCustom?[someOption2].Parameters["testarg5"].Data);
+
+        Assert.AreEqual(cli.View, expectedCliFrontCustom);
+
+        Assert.AreEqual(-1, cli.RootCommand.Order);
+        Assert.AreEqual(0, customCommand.Order);
+    }
 
     [Test]
     public void SuccessfulExecuteRootWithSomeAbbrevOption()
