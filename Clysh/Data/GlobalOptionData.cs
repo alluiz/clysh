@@ -11,5 +11,5 @@ public class GlobalOptionData: OptionData
     /// The CLI Commands list
     /// </summary>
     [Required]
-    public List<string> Commands { get; set; }
+    public List<string>? Commands { get; set; }
 }

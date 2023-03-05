@@ -51,20 +51,6 @@ GlobalOptions:
     Commands:
       - calc.add
       - calc.sub
-  - Id: colorizedoption
+  - Id: green
     Description: Green color output
-    Group: colorizedi
-    Commands:
-      - calc.add
-      - calc.sub
-  - Id: color
-    Description: Custom color output
-    Parameters:
-      - Id: COLOR_ID
-        Required: true
-        MinLength: 1
-        MaxLength: 5
-        Order: 0
-    Commands:
-      - calc.add
-      - calc.sub
+    Group: color
