@@ -6,26 +6,8 @@ Create your **own CLI on .NET 6+** with simple steps.
 
 ## Release Notes
 
-- 1.0.2 - Initial release
-- 1.0.3 - Parameters creation using builder pattern
-- 1.0.4 - XML docs for all public classes
-- 1.0.5 - More production safety validations
-- 1.0.6 - Simplify option check id
-- 1.0.7 - Order parameter by property and introduce filled property to parameter model
-- 1.0.8 - BugFix: Lastcommand executed flag fix
-- 1.0.9 - Some improvements to order parameters and increase max description to 100 chars
-- 1.1.0 - BugFix: Parameter filled order
-- 1.2.0 - Make action by command path
-- 1.3.1 - BugFix: Debug mode
-- 1.3.4 - Data transfer between comands and description breakline after each 50 chars
-- 1.3.5 - Improvements to exception handling
-- 1.3.6 - Custom error messages and Colorized Console messages
-- 1.4.0 - Removed option parameter from action interface
-- 1.4.1 - Some code refactoring and fix example
-- 2.0.0 - New Feature: Global Options
-- 2.0.1 - BugFix: Ignore 'Groups' deprecated field on YAML deserialize
-- 2.1.0 - Remove command interface and protect fields from external manipulation. Builder pattern data handling improvement.
 - 2.2.0 - NEW: IgnoreParent action execution flag AND introduce IClyshAction interface
+- 2.3.0 - NEW: Introduce IClyshCommand interface for unit tests again
 
 ## What is?
 
