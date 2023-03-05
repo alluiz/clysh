@@ -268,6 +268,9 @@ public class ClyshSetup : IClyshSetup
         if (commandData.RequireSubcommand)
             subCommandBuilder.MarkAsAbstract();
         
+        if (commandData.IgnoreParents)
+            subCommandBuilder.IgnoreParents();
+        
         return subCommandBuilder;
     }
 

@@ -43,6 +43,16 @@ public sealed class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
         result.RequireSubcommand = true;
         return this;
     }
+    
+    /// <summary>
+    /// Set the command single flag
+    /// </summary>
+    /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
+    public ClyshCommandBuilder IgnoreParents()
+    {
+        result.IgnoreParents = true;
+        return this;
+    }
 
     /// <summary>
     /// Build the command option

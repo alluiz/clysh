@@ -6,6 +6,7 @@ public class CalcRootAction: CalcAction
 {
     public override void Execute(ClyshCommand cmd, IClyshView view)
     {
-        cmd.Data.Add("root", new Root() { Message="Thanks for using my calc!" });
+        view.Print("The root action is executed!");
+        cmd.Data.Add("message", "Thanks for using my calc!");
     }
 }

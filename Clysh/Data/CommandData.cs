@@ -37,4 +37,9 @@ public class CommandData
     /// Indicates if require subcommand
     /// </summary>
     public bool RequireSubcommand { get; set; }
+
+    /// <summary>
+    /// Indicates if the command must ignore parents execution.
+    /// </summary>
+    public bool IgnoreParents { get; set; }
 }

@@ -38,7 +38,8 @@ public class ClyshCommand : ClyshEntity
             _action = value;
         }
     }
-    public bool Executed { get; internal set; }
+    public bool Inputed { get; internal set; }
+    public bool IgnoreParents { get; internal set; }
     public bool RequireSubcommand { get; internal set; }
     public ClyshMap<ClyshGroup> Groups { get; }
     public ClyshMap<ClyshOption> Options { get; }
@@ -47,7 +48,7 @@ public class ClyshCommand : ClyshEntity
     public ClyshCommand? Parent { get; private set; }
     public int Order { get; internal set; }
     public string Name { get; internal set; } = string.Empty;
-    
+
     #endregion
     
     #region Internal Methods
@@ -146,9 +147,9 @@ public class ClyshCommand : ClyshEntity
 
     #region Public Methods
     
-    public bool AnySubcommandExecuted()
+    public bool AnySubcommandInputed()
     {
-        return SubCommands.Any(x => x.Value.Executed);
+        return SubCommands.Any(x => x.Value.Inputed);
     }
     public bool AnySubcommand()
     {

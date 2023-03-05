@@ -9,8 +9,8 @@ public class CalcAddAction: CalcAction
         CalcOperation(cmd, view, (a, b) => a + b);
                 
         //Get data from parent
-        var root = (Root) cmd.Parent!.Data["root"];
+        var message = (string) cmd.Parent!.Data["message"];
 
-        view.Print($"={root.Message}");
+        view.Print($"={message}");
     }
 }
