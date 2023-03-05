@@ -65,6 +65,16 @@ public class ClyshSetup : IClyshSetup
         var command = Commands[commandId];
         command.Action = action;
     }
+    
+    /// <summary>
+    /// Bind your command action
+    /// </summary>
+    /// <param name="commandId">The command id</param>
+    /// <param name="action">The action that implements the IClyshAction interface</param>
+    public void BindAction<T>(string commandId, T action) where T: IClyshAction
+    {
+        BindAction(commandId, action.Execute);
+    }
 
     private void ExtractDataFromFileSystem(IFileSystem fs, string path)
     {
@@ -441,4 +451,9 @@ public class ClyshSetup : IClyshSetup
             }
         }
     }
+}
+
+public interface IClyshAction
+{
+    void Execute(ClyshCommand cmd, IClyshView view);
 }

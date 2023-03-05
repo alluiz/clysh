@@ -1,25 +1,10 @@
-﻿using Clysh.Core;
+using Clysh.Core;
 
 namespace Clysh.Sample;
 
-public static class CliActions
+public abstract class CalcAction: IClyshAction
 {
-    public static void CalcOperationAdd(ClyshCommand cmd, IClyshView view)
-    {
-        CalcOperation(cmd, view, (a, b) => a + b);
-        
-        //Get data from parent
-        var root = (Root) cmd.Parent!.Data["root"];
-
-        view.Print($"={root.Message}");
-    }
-    
-    public static void CalcOperationSub(ClyshCommand cmd, IClyshView view)
-    {
-        CalcOperation(cmd, view, (a, b) => a - b);
-    }
-    
-    private static void CalcOperation(ClyshCommand cmd, IClyshView view, Func<int, int, int> operation)
+    protected static void CalcOperation(ClyshCommand cmd, IClyshView view, Func<int, int, int> operation)
     {
         var color = cmd.GetOptionFromGroup("color");
         var values = cmd.Options["values"];
@@ -64,11 +49,8 @@ public static class CliActions
 
     private static int GetValue(string value)
     {
-       return Convert.ToInt32(value);
+        return Convert.ToInt32(value);
     }
 
-    public static void CalcRoot(ClyshCommand cmd, IClyshView view)
-    {
-        cmd.Data.Add("root", new Root() { Message="Thanks for using my calc!" });
-    }
+    public abstract void Execute(ClyshCommand cmd, IClyshView view);
 }

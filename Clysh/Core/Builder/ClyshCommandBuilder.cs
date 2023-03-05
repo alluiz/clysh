@@ -84,4 +84,14 @@ public sealed class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     {
         result = new ClyshCommand();
     }
+
+    /// <summary>
+    /// Build the action
+    /// </summary>
+    /// <param name="action">The action of the command</param>
+    /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
+    public ClyshCommandBuilder Action(IClyshAction action)
+    {
+        return Action(action.Execute);
+    }
 }

@@ -13,7 +13,7 @@ public class CompiledCmdLineApp: CmdLineApp
         var commandBuilder = new ClyshCommandBuilder();
         var optionBuilder = new ClyshOptionBuilder();
         var parameterBuilder = new ClyshParameterBuilder();
-
+        
         var addOperationCommand = commandBuilder
             .Id("calc.add")
             .Description("Add some values")
@@ -33,7 +33,7 @@ public class CompiledCmdLineApp: CmdLineApp
                     .Order(1)
                     .Build())
                 .Build())
-            .Action(CliActions.CalcOperationAdd)
+            .Action(new CalcAddAction())
             .Build();
         
         var subOperationCommand = commandBuilder
@@ -55,7 +55,7 @@ public class CompiledCmdLineApp: CmdLineApp
                     .Order(1)
                     .Build())
                 .Build())
-            .Action(CliActions.CalcOperationSub)
+            .Action(new CalcSubAction())
             .Build();
         
         var rootCommand = commandBuilder

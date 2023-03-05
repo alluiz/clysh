@@ -11,10 +11,13 @@ public class DeclarativeCmdLineApp: CmdLineApp
     protected override IClyshService GetCli()
     {
         var setup = new ClyshSetup("clidata.yml");
+        var rootAction = new CalcRootAction();
+        var addAction = new CalcAddAction();
+        var subAction = new CalcSubAction();
         
-        setup.BindAction("calc", CliActions.CalcRoot);
-        setup.BindAction("calc.add", CliActions.CalcOperationAdd);
-        setup.BindAction("calc.sub", CliActions.CalcOperationSub);
+        setup.BindAction("calc", rootAction);
+        setup.BindAction("calc.add", addAction);
+        setup.BindAction("calc.sub", subAction);
 
         return new ClyshService(setup);
     }
