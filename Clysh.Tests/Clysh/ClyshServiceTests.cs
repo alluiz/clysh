@@ -919,7 +919,7 @@ public class ClyshServiceTests
         _viewMock.Verify(
             x => x.PrintException(
                 It.Is<ValidationException>(y => ClyshMessages.Match(y.Message,
-                    ClyshMessages.ErrorOnValidateUserInputRequiredParameters, arg, someOption, "<null>"))),
+                    ClyshMessages.ErrorOnValidateUserInputRequiredParameters, arg, someOption, "<no_shortcut>"))),
             Times.Once);
     }
 
