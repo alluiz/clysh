@@ -107,7 +107,7 @@ public interface IClyshView
     /// Print <see cref="IClyshCommand"/> help text
     /// </summary>
     /// <param name="command">The command to print help text</param>
-    void PrintHelp(ClyshCommand command);
+    void PrintHelp(IClyshCommand command);
 
     /// <summary>
     /// Print CLI version on screen
