@@ -78,7 +78,7 @@ public sealed class ClyshView : IClyshView
 
     public void PrintError(string text) => Print(text, ConsoleColor.Red);
 
-    public void PrintHelp(ClyshCommand command)
+    public void PrintHelp(IClyshCommand command)
     {
         PrintVersion();
         PrintCommand(command);
@@ -141,7 +141,7 @@ public sealed class ClyshView : IClyshView
         PrintEmpty();
     }
 
-    private void PrintCommand(ClyshCommand command)
+    private void PrintCommand(IClyshCommand command)
     {
         var hasCommands = command.AnySubcommand();
 
@@ -154,7 +154,7 @@ public sealed class ClyshView : IClyshView
         }
     }
 
-    private void PrintSubCommands(ClyshCommand command)
+    private void PrintSubCommands(IClyshCommand command)
     {
         Print("[subcommands]:");
         PrintEmpty();
@@ -169,7 +169,7 @@ public sealed class ClyshView : IClyshView
         PrintEmpty();
     }
 
-    private void PrintOptions(ClyshCommand command)
+    private void PrintOptions(IClyshCommand command)
     {
         Print("[options]:");
         PrintEmpty();
@@ -218,7 +218,7 @@ public sealed class ClyshView : IClyshView
         }
     }
 
-    private void PrintHeader(ClyshCommand command, bool hasCommands)
+    private void PrintHeader(IClyshCommand command, bool hasCommands)
     {
         var parentCommands = command.Id.Replace(".", " ");
 
