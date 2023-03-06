@@ -4,11 +4,6 @@
 
 Create your **own CLI on .NET 6+** with simple steps.
 
-## Release Notes
-
-- 2.2.0 - NEW: IgnoreParent action execution flag AND introduce IClyshAction interface
-- 2.3.0 - NEW: Introduce IClyshCommand interface for unit tests again
-
 ## What is?
 
 **Clysh** is a library to create a .NET _Command Line Interface_ (CLI). The main goal is to create your own CLI with **only business code**.
