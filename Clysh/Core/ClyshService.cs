@@ -234,7 +234,7 @@ public sealed class ClyshService : IClyshService
 
     private static void AuditCommand(ClyshCommand cmd, ClyshAudit audit)
     {
-        if (cmd.Action == null)
+        if (cmd.Action == null && !cmd.Abstract)
             audit.Messages.Add(string.Format(ClyshMessages.ErrorOnValidateCommandAction, cmd.Id));
     }
 
@@ -289,7 +289,7 @@ public sealed class ClyshService : IClyshService
 
     private void CheckLastCommandStatus()
     {
-        var waitingForAnySubcommand = _lastCommand.RequireSubcommand && !_lastCommand.AnySubcommandInputed();
+        var waitingForAnySubcommand = _lastCommand.Abstract && !_lastCommand.AnySubcommandInputed();
         
         if (waitingForAnySubcommand)
             ShowErrorMessage("InvalidSubcommand", _lastCommand.Id);
@@ -365,8 +365,8 @@ public sealed class ClyshService : IClyshService
         {
             if (command.Action != null)
                 command.Action(command, View);
-            else if (!command.RequireSubcommand)
-                throw new ClyshException($"Action null (NOT READY TO PRODUCTION). Command: {command.Id}");
+            else if (!command.Abstract)
+                throw new ClyshException($"Action is null (NOT READY TO PRODUCTION). Command: {command.Id}");
         }
     }
 

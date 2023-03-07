@@ -39,7 +39,7 @@ public class ClyshSetupTests
         Assert.AreEqual(6, root.Options.Count);
         Assert.AreEqual(1, root.SubCommands.Count);
         Assert.IsNotNull(root.Action);
-        Assert.IsFalse(root.RequireSubcommand);
+        Assert.IsFalse(root.Abstract);
 
         Assert.AreEqual("Test option", root.Options["test"].Description);
         Assert.AreEqual("T", root.Options["test"].Shortcut);
@@ -77,7 +77,7 @@ public class ClyshSetupTests
         Assert.AreEqual(6, root.Options.Count);
         Assert.AreEqual(1, root.SubCommands.Count);
         Assert.IsNotNull(root.Action);
-        Assert.IsFalse(root.RequireSubcommand);
+        Assert.IsFalse(root.Abstract);
 
         Assert.AreEqual("Test option", root.Options["test"].Description);
         Assert.AreEqual("T", root.Options["test"].Shortcut);
@@ -224,7 +224,7 @@ public class ClyshSetupTests
         });
 
         ExtendedAssert.MatchMessage(exception?.Message!, ClyshMessages.ErrorOnCreateCommand);
-        ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.ErrorOnSetupSubCommands);
+        ExtendedAssert.MatchMessage(exception?.InnerException?.Message!, ClyshMessages.ErrorOnValidateCommandSubcommands);
     }
 
     [Test]
@@ -576,7 +576,7 @@ Commands:
             Pattern: \w+
             Order: 1
     Root: true
-    RequireSubcommand: true";
+    Abstract: true";
     }
 
     private string GetYamlWithDuplicatedParameterOrderText()

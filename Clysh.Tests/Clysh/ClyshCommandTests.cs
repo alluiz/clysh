@@ -153,7 +153,7 @@ public class ClyshCommandTests
         Assert.AreEqual(id, command.Id);
         Assert.AreEqual(name, command.Name);
         Assert.AreEqual(description, command.Description);
-        Assert.IsFalse(command.RequireSubcommand);
+        Assert.IsFalse(command.Abstract);
     }
     
     [Test]
@@ -217,7 +217,7 @@ public class ClyshCommandTests
         var command = _commandBuilder.Id(id).Description(description).MarkAsAbstract().SubCommand(subCommand).Build();
         
         Assert.NotNull(command);
-        Assert.IsTrue(command.RequireSubcommand);
+        Assert.IsTrue(command.Abstract);
         Assert.IsTrue(command.AnySubcommand());
     }
 

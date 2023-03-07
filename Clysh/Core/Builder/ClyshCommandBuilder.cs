@@ -40,7 +40,7 @@ public sealed class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
     public ClyshCommandBuilder MarkAsAbstract()
     {
-        result.RequireSubcommand = true;
+        result.Abstract = true;
         return this;
     }
     
