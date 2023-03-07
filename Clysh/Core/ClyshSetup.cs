@@ -257,7 +257,7 @@ public class ClyshSetup : IClyshSetup
             .Id(commandData.Id)
             .Description(commandData.Description);
         
-        if (commandData.RequireSubcommand)
+        if (commandData.Abstract)
             subCommandBuilder.MarkAsAbstract();
         
         if (commandData.IgnoreParents)
