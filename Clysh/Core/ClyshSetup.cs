@@ -225,15 +225,7 @@ public class ClyshSetup : IClyshSetup
     private void BuildCommandSubcommands(ClyshCommandBuilder commandBuilder, CommandData commandData)
     {
         var subcommands = GetSubcommands(commandData);
-
-        if (!subcommands.Any())
-        {
-            if (commandData.RequireSubcommand)
-                throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupSubCommands, commandData.Id));
-
-            return;
-        }
-
+        
         foreach (var subcommandId in subcommands)
         {
             try

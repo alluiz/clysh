@@ -34,9 +34,9 @@ public class CommandData
     public List<OptionData>? Options { get; set; }
 
     /// <summary>
-    /// Indicates if require subcommand
+    /// Indicates if command is abstract
     /// </summary>
-    public bool RequireSubcommand { get; set; }
+    public bool Abstract { get; set; }
 
     /// <summary>
     /// Indicates if the command must ignore parents execution.

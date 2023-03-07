@@ -40,7 +40,9 @@ public class ClyshCommand : ClyshEntity, IClyshCommand
     }
     public bool Inputed { get; internal set; }
     public bool IgnoreParents { get; internal set; }
+    [Obsolete("RequireSubcommand is deprecated, please use Abstract instead. It's not working.")]
     public bool RequireSubcommand { get; internal set; }
+    public bool Abstract { get; internal set; }
     public ClyshMap<ClyshGroup> Groups { get; }
     public ClyshMap<ClyshOption> Options { get; }
     public ClyshMap<ClyshCommand> SubCommands { get; }
@@ -136,7 +138,7 @@ public class ClyshCommand : ClyshEntity, IClyshCommand
     }
     private void ValidateSubcommands()
     {
-        if (!RequireSubcommand)
+        if (!Abstract)
             return;
 
         if (!AnySubcommand())
