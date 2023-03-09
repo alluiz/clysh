@@ -1,4 +1,5 @@
 ﻿using Clysh.Core;
+using Microsoft.Extensions.Logging;
 
 namespace Clysh.Sample;
 
@@ -10,7 +11,17 @@ public class DeclarativeCmdLineApp: CmdLineApp
     /// <returns>CLI service</returns>
     protected override IClyshService GetCli()
     {
-        var setup = new ClyshSetup("clidata.yml");
+        using var loggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder
+                .AddFilter("Microsoft", LogLevel.Warning)
+                .AddFilter("System", LogLevel.Warning)
+                .AddFilter("Clysh.Core", LogLevel.Debug)
+                .AddConsole();
+        });
+        
+        var setup = new ClyshSetup("clidata.yml", loggerFactory.CreateLogger<ClyshSetup>());
+        
         var rootAction = new CalcRootAction();
         var addAction = new CalcAddAction();
         var subAction = new CalcSubAction();
@@ -19,6 +30,6 @@ public class DeclarativeCmdLineApp: CmdLineApp
         setup.BindAction("calc.add", addAction);
         setup.BindAction("calc.sub", subAction);
 
-        return new ClyshService(setup);
+        return new ClyshService(setup, logger: loggerFactory.CreateLogger<ClyshService>());
     }
 }

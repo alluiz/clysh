@@ -1,6 +1,7 @@
 ﻿using Clysh.Core;
 using Clysh.Core.Builder;
 using Clysh.Data;
+using Microsoft.Extensions.Logging;
 
 namespace Clysh.Sample;
 
@@ -66,6 +67,15 @@ public class CompiledCmdLineApp: CmdLineApp
             .SubCommand(subOperationCommand)
             .Build();
 
-        return new ClyshService(rootCommand, new ClyshView(data));
+        using var loggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder
+                .AddFilter("Microsoft", LogLevel.Warning)
+                .AddFilter("System", LogLevel.Warning)
+                .AddFilter("Clysh.Core", LogLevel.Debug)
+                .AddConsole();
+        });
+        
+        return new ClyshService(rootCommand, new ClyshView(data), logger: loggerFactory.CreateLogger<ClyshService>());
     }
 }
