@@ -54,5 +54,5 @@ public class ClyshData
     /// The Global Options list
     /// </summary>
     [Required]
-    public List<GlobalOptionData>? GlobalOptions { get; set; }
+    public List<GlobalOptionData>? Options { get; set; }
 }

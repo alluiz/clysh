@@ -10,10 +10,7 @@ public abstract class CmdLineApp
 
     public void Execute(string[] args)
     {
-        if (_cli == null) {
-            _cli = GetCli();
-        }
-        
+        _cli = GetCli();
         _cli.Execute(args);
     }
 }

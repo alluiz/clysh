@@ -1,6 +1,6 @@
 Title: MyCalc CLI                                                         #The CLI Title
 Version: 1.0                                                              #The CLI Version
-Messages:                                                                 #The CustomMessages to show when some validation error occurs. It can be useful to language custom output.
+Messages:                                                                 #The messages to show when some validation error occurs. It can be useful to custom language output.
   InvalidOption: "The option '{0}' is invalid."
   
 Commands:                                                                 #The CLI commands declaration. Here you are able to create a chain of commands.
@@ -21,7 +21,7 @@ Commands:                                                                 #The C
     Description: Subtract values "a" and "b". Its a greatest feature for break line on CLI view
     IgnoreParents: true                                                   #It indicates that when this command is executed the parents rules is ignored. Your children is not affected.
 
-GlobalOptions:
+Options:
   - Id: values
     Shortcut: V
     Description: Values to be added                                       #The parameters can have some input validation like: Min and Max Length and Regex Pattern
@@ -54,3 +54,6 @@ GlobalOptions:
   - Id: green
     Description: Green color output
     Group: color
+  - Id: other
+    Description: Other option
+    Group: input-mode
