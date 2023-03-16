@@ -7,7 +7,7 @@ namespace Clysh.Sample;
 
 public class CompiledCmdLineApp: CmdLineApp
 {
-    protected override IClyshService GetCli()
+    protected override IQuickClysh GetCli()
     {
         var data = new ClyshData("MyCalc CLI", "1.0");
 
@@ -76,6 +76,6 @@ public class CompiledCmdLineApp: CmdLineApp
                 .AddConsole();
         });
         
-        return new ClyshService(rootCommand, new ClyshView(data), logger: loggerFactory.CreateLogger<ClyshService>());
+        return new QuickCompiledClysh(rootCommand, data, loggerFactory);
     }
 }

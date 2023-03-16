@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Clysh.Data;
 using Clysh.Helper;
+using Microsoft.Extensions.Logging;
 
 namespace Clysh.Core;
 
@@ -18,10 +19,11 @@ public sealed class ClyshView : IClyshView
     /// <param name="clyshConsole">The console to output</param>
     /// <param name="clyshData">The data to print</param>
     /// <param name="printLineNumber">Indicates if should print the line number</param>
-    public ClyshView(
-        IClyshConsole clyshConsole,
+    /// <param name="logger">The logger of the system</param>
+    public ClyshView(IClyshConsole clyshConsole,
         ClyshData clyshData,
-        bool printLineNumber = false)
+        bool printLineNumber = false,
+        ILogger<ClyshView>? logger = null)
     {
         Data = clyshData;
         _clyshConsole = clyshConsole;
@@ -31,12 +33,13 @@ public sealed class ClyshView : IClyshView
     /// <summary>
     /// The constructor of view
     /// </summary>
-    /// <param name="clyshData">The data to print</param>
+    /// <param name="clyshData">The data to print</param
     /// <param name="printLineNumber">Indicates if should print the line number</param>
+    /// <param name="logger">The logger of the system</param>
     [ExcludeFromCodeCoverage]
-    public ClyshView(
-        ClyshData clyshData,
-        bool printLineNumber = false): this(new ClyshConsole(), clyshData, printLineNumber)
+    public ClyshView(ClyshData clyshData,
+        bool printLineNumber = false, 
+        ILogger<ClyshView>? logger = null): this(new ClyshConsole(), clyshData, printLineNumber, logger)
     {
         
     }

@@ -15,10 +15,11 @@ public sealed class ClyshService : IClyshService
     /// </summary>
     /// <param name="setup">The setup of <see cref="Clysh"/></param>
     /// <param name="logger">The logger of the system</param>
+    /// <param name="view">The view to output</param>
     /// <param name="disableAudit">Indicates if the service shouldn't validate production rules</param>
     [ExcludeFromCodeCoverage]
-    public ClyshService(IClyshSetup setup, bool disableAudit = false, ILogger<ClyshService>? logger = null) : this(setup, new ClyshConsole(),
-        disableAudit, logger)
+    public ClyshService(IClyshSetup setup, IClyshView view, bool disableAudit = false, ILogger<ClyshService>? logger = null) : this(setup.RootCommand, view,
+        disableAudit, setup.Data.Messages, logger)
     {
     }
 
@@ -40,11 +41,6 @@ public sealed class ClyshService : IClyshService
         _disableAudit = disableAudit;
 
         LoadMessages(customMessages);
-    }
-
-    [ExcludeFromCodeCoverage]
-    private ClyshService(IClyshSetup setup, IClyshConsole clyshConsole, bool disableAudit, ILogger<ClyshService>? logger): this(setup.RootCommand, new ClyshView(clyshConsole, setup.Data), disableAudit, setup.Data.Messages, logger)
-    {
     }
     
     private readonly bool _disableAudit;
