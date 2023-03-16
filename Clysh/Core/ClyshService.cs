@@ -441,7 +441,7 @@ public sealed class ClyshService : IClyshService
             ShowErrorMessage("InvalidArgument", arg);
         }
 
-        var parameter = arg.Split(":");
+        var parameter = arg.Split(":=");
 
         var id = parameter[0];
         _logger?.LogDebug("Parameter ID: '{id}'.", id);
@@ -484,7 +484,7 @@ public sealed class ClyshService : IClyshService
 
     private static bool ArgIsParameterById(string arg)
     {
-        return arg.Contains(':');
+        return arg.Contains(":=");
     }
 
     private void ExecuteCommands()
