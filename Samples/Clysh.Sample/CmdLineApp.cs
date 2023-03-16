@@ -4,11 +4,11 @@ namespace Clysh.Sample;
 
 public abstract class CmdLineApp
 {
-    private IClyshService? _cli;
+    private IQuickClysh? _cli;
 
-    protected abstract IClyshService GetCli(); 
+    protected abstract IQuickClysh GetCli(); 
 
-    public void Execute(string[] args)
+    public void Execute(IEnumerable<string> args)
     {
         _cli = GetCli();
         _cli.Execute(args);

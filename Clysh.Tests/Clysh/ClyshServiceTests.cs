@@ -199,7 +199,7 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        var args = new[] { someOptionWithDashes, "testarg:mytest" };
+        var args = new[] { someOptionWithDashes, "testarg:=mytest" };
 
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
@@ -297,7 +297,7 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        var args = new[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3" };
+        var args = new[] { someOptionWithDashes, "testarg:=mytest", "testarg2:=mytest2", "testarg3:=mytest3" };
 
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
@@ -348,7 +348,7 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        var args = new[] { someOptionWithDashes, "testarg:mytest" };
+        var args = new[] { someOptionWithDashes, "testarg:=mytest" };
 
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
@@ -399,7 +399,7 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        var args = new[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3" };
+        var args = new[] { someOptionWithDashes, "testarg:=mytest", "testarg2:=mytest2", "testarg3:=mytest3" };
 
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
@@ -450,7 +450,7 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        var args = new[] { someOptionWithDashes, "testarg:mytest", "testarg2:mytest2" };
+        var args = new[] { someOptionWithDashes, "testarg:=mytest", "testarg2:=mytest2" };
 
         ClyshMap<ClyshOption>? expectedOptions = null;
         IClyshView? expectedCliFront = null;
@@ -501,8 +501,8 @@ public class ClyshServiceTests
 
         var args = new[]
         {
-            someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "testarg3:mytest3", "testarg4:mytest4",
-            "testarg5:mytest5"
+            someOptionWithDashes, "testarg:=mytest", "testarg2:=mytest2", "testarg3:=mytest3", "testarg4:=mytest4",
+            "testarg5:=mytest5"
         };
 
         ClyshMap<ClyshOption>? expectedOptions = null;
@@ -563,8 +563,8 @@ public class ClyshServiceTests
 
         var args = new[]
         {
-            someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", someOptionWithDashes2, "testarg3:mytest3",
-            "testarg4:mytest4", "testarg5:mytest5"
+            someOptionWithDashes, "testarg:=mytest", "testarg2:=mytest2", someOptionWithDashes2, "testarg3:=mytest3",
+            "testarg4:=mytest4", "testarg5:=mytest5"
         };
 
         ClyshMap<ClyshOption>? expectedOptions = null;
@@ -636,8 +636,8 @@ public class ClyshServiceTests
 
         var args = new[]
         {
-            someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "test", someOptionWithDashes2,
-            "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5"
+            someOptionWithDashes, "testarg:=mytest", "testarg2:=mytest2", "test", someOptionWithDashes2,
+            "testarg3:=mytest3", "testarg4:=mytest4", "testarg5:=mytest5"
         };
 
         ClyshMap<ClyshOption>? expectedOptions = null;
@@ -725,8 +725,8 @@ public class ClyshServiceTests
 
         var args = new[]
         {
-            someOptionWithDashes, "testarg:mytest", "testarg2:mytest2", "test", someOptionWithDashes2,
-            "testarg3:mytest3", "testarg4:mytest4", "testarg5:mytest5"
+            someOptionWithDashes, "testarg:=mytest", "testarg2:=mytest2", "test", someOptionWithDashes2,
+            "testarg3:=mytest3", "testarg4:=mytest4", "testarg5:=mytest5"
         };
 
         ClyshMap<ClyshOption>? expectedOptions = null;
@@ -968,7 +968,7 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        var args = new[] { someOptionWithDashes, "testarg:mytest" };
+        var args = new[] { someOptionWithDashes, "testarg:=mytest" };
         
         var option = _optionBuilder
             .Id(someOption)
@@ -1032,7 +1032,7 @@ public class ClyshServiceTests
 
         const string someOptionWithDashes = $"--{someOption}";
 
-        var args = new[] { someOptionWithDashes, "mytest", "testarg:mytest" };
+        var args = new[] { someOptionWithDashes, "mytest", "testarg:=mytest" };
 
 
         ClyshCommand rootCommand = _builder

@@ -4,9 +4,9 @@ namespace Clysh.Sample;
 
 public class CalcRootAction: CalcAction
 {
-    public override void Execute(IClyshCommand cmd, IClyshView view)
+    public override void Execute(ICly cly)
     {
-        view.Print("The root action is executed!");
-        cmd.Data.Add("message", "Thanks for using my calc!");
+        cly.View.Print("The root action is executed!");
+        cly.Command.Data.Add("message", "Thanks for using my calc!");
     }
 }

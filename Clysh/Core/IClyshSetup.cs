@@ -33,5 +33,12 @@ public interface IClyshSetup
     /// </summary>
     /// <param name="commandId">The command id</param>
     /// <param name="action">The action that implements the IClyshAction interface</param>
-    public void BindAction<T>(string commandId, T action) where T : IClyshAction;
+    void BindAction(string commandId, IClyshAction action);
+    
+    /// <summary>
+    /// Bind your command action
+    /// </summary>
+    /// <param name="commandId">The command id</param>
+    /// <param name="action">The action that implements the IClyshActionV2 interface</param>
+    public void BindAction(string commandId, IClyshActionV2 action);
 }

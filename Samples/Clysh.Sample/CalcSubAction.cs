@@ -4,8 +4,8 @@ namespace Clysh.Sample;
 
 public class CalcSubAction: CalcAction
 {
-    public override void Execute(IClyshCommand cmd, IClyshView view)
+    public override void Execute(ICly cly)
     {
-        CalcOperation(cmd, view, (a, b) => a - b);
+        CalcOperation(cly, (a, b) => a - b);
     }
 }

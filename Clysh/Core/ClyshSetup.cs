@@ -64,6 +64,20 @@ public class ClyshSetup : IClyshSetup
     /// </summary>
     /// <param name="commandId">The command id</param>
     /// <param name="action">The action to be executed</param>
+    private void BindAction(string commandId, Action<ICly> action)
+    {
+        if (!Commands.Has(commandId))
+            throw new ClyshException(string.Format(ClyshMessages.ErrorOnSetupBindAction, commandId));
+
+        var command = Commands[commandId];
+        command.ActionV2 = action;
+    }
+    
+    /// <summary>
+    /// Bind your command action
+    /// </summary>
+    /// <param name="commandId">The command id</param>
+    /// <param name="action">The action to be executed</param>
     public void BindAction(string commandId, Action<IClyshCommand, IClyshView> action)
     {
         if (!Commands.Has(commandId))
@@ -78,7 +92,17 @@ public class ClyshSetup : IClyshSetup
     /// </summary>
     /// <param name="commandId">The command id</param>
     /// <param name="action">The action that implements the IClyshAction interface</param>
-    public void BindAction<T>(string commandId, T action) where T: IClyshAction
+    public void BindAction(string commandId, IClyshAction action)
+    {
+        BindAction(commandId, action.Execute);
+    }
+    
+    /// <summary>
+    /// Bind your command action
+    /// </summary>
+    /// <param name="commandId">The command id</param>
+    /// <param name="action">The action that implements the IClyshAction interface</param>
+    public void BindAction(string commandId, IClyshActionV2 action)
     {
         BindAction(commandId, action.Execute);
     }

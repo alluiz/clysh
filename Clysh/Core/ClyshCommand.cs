@@ -23,7 +23,9 @@ public class ClyshCommand : ClyshEntity, IClyshCommand
     }
 
     private readonly Dictionary<string, ClyshOption> _shortcuts;
+
     private Action<IClyshCommand, IClyshView>? _action;
+    private Action<ICly>? _actionV2;
 
     #region Properties
 
@@ -32,12 +34,24 @@ public class ClyshCommand : ClyshEntity, IClyshCommand
         get => _action;
         internal set
         {
-            if (_action != null)
+            if (_action != null || _actionV2 != null)
                 throw new ArgumentException("The command already has a configured action.");
             
             _action = value;
         }
     }
+    public Action<ICly>? ActionV2
+    {
+        get => _actionV2;
+        internal set
+        {
+            if (_actionV2 != null || _action != null)
+                throw new ArgumentException("The command already has a configured action.");
+            
+            _actionV2 = value;
+        }
+    }
+    
     public bool Inputed { get; internal set; }
     public bool IgnoreParents { get; internal set; }
     [Obsolete("RequireSubcommand is deprecated, please use Abstract instead. It's not working.")]
@@ -178,6 +192,9 @@ public class ClyshCommand : ClyshEntity, IClyshCommand
     }
     public IEnumerable<ClyshOption> GetAvailableOptionsFromGroup(string groupId)
     {
+        if (!Groups.Has(groupId))
+            throw new ArgumentException(string.Format(ClyshMessages.ErrorOnGetOptionFromGroupNotFound, groupId), nameof(groupId));
+        
         return GetAvailableOptionsFromGroup(Groups[groupId]);
     }
     internal override void Validate()

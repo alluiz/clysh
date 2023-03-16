@@ -9,7 +9,7 @@ public class DeclarativeCmdLineApp: CmdLineApp
     /// Get a CLI using declarative YAML (or JSON) file
     /// </summary>
     /// <returns>CLI service</returns>
-    protected override IClyshService GetCli()
+    protected override IQuickClysh GetCli()
     {
         using var loggerFactory = LoggerFactory.Create(builder =>
         {
@@ -20,16 +20,12 @@ public class DeclarativeCmdLineApp: CmdLineApp
                 .AddConsole();
         });
         
-        var setup = new ClyshSetup("clidata.yml", loggerFactory.CreateLogger<ClyshSetup>());
-        
-        var rootAction = new CalcRootAction();
-        var addAction = new CalcAddAction();
-        var subAction = new CalcSubAction();
-        
-        setup.BindAction("calc", rootAction);
-        setup.BindAction("calc.add", addAction);
-        setup.BindAction("calc.sub", subAction);
+        var cli = new QuickClysh("clidata.yml", loggerFactory);
 
-        return new ClyshService(setup, logger: loggerFactory.CreateLogger<ClyshService>());
+        cli.BindAction("calc", new CalcRootAction());
+        cli.BindAction("calc.add", new CalcAddAction());
+        cli.BindAction("calc.sub", new CalcSubAction());
+
+        return cli;
     }
 }

@@ -15,10 +15,11 @@ public sealed class ClyshService : IClyshService
     /// </summary>
     /// <param name="setup">The setup of <see cref="Clysh"/></param>
     /// <param name="logger">The logger of the system</param>
+    /// <param name="view">The view to output</param>
     /// <param name="disableAudit">Indicates if the service shouldn't validate production rules</param>
     [ExcludeFromCodeCoverage]
-    public ClyshService(IClyshSetup setup, bool disableAudit = false, ILogger<ClyshService>? logger = null) : this(setup, new ClyshConsole(),
-        disableAudit, logger)
+    public ClyshService(IClyshSetup setup, IClyshView view, bool disableAudit = false, ILogger<ClyshService>? logger = null) : this(setup.RootCommand, view,
+        disableAudit, setup.Data.Messages, logger)
     {
     }
 
@@ -40,11 +41,6 @@ public sealed class ClyshService : IClyshService
         _disableAudit = disableAudit;
 
         LoadMessages(customMessages);
-    }
-
-    [ExcludeFromCodeCoverage]
-    private ClyshService(IClyshSetup setup, IClyshConsole clyshConsole, bool disableAudit, ILogger<ClyshService>? logger): this(setup.RootCommand, new ClyshView(clyshConsole, setup.Data), disableAudit, setup.Data.Messages, logger)
-    {
     }
     
     private readonly bool _disableAudit;
@@ -441,7 +437,7 @@ public sealed class ClyshService : IClyshService
             ShowErrorMessage("InvalidArgument", arg);
         }
 
-        var parameter = arg.Split(":");
+        var parameter = arg.Split(":=");
 
         var id = parameter[0];
         _logger?.LogDebug("Parameter ID: '{id}'.", id);
@@ -484,7 +480,7 @@ public sealed class ClyshService : IClyshService
 
     private static bool ArgIsParameterById(string arg)
     {
-        return arg.Contains(':');
+        return arg.Contains(":=");
     }
 
     private void ExecuteCommands()
@@ -498,6 +494,12 @@ public sealed class ClyshService : IClyshService
                 _logger?.LogInformation("Executing action of '{commandId}'...", command.Id);
                 command.Action(command, View);
                 _logger?.LogInformation("Command '{commandId}' action was executed.", command.Id);
+            } 
+            else if (command.ActionV2 != null)
+            {
+                _logger?.LogInformation("Executing action V2 of '{commandId}'...", command.Id);
+                command.ActionV2(new Cly(command, View));
+                _logger?.LogInformation("Command '{commandId}' action V2 was executed.", command.Id);
             }
             else if (!command.Abstract)
             {

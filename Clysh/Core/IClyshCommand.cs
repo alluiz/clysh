@@ -5,6 +5,7 @@ namespace Clysh.Core;
 public interface IClyshCommand
 {
     Action<IClyshCommand, IClyshView>? Action { get; }
+    Action<ICly>? ActionV2 { get; }
     bool Inputed { get; }
     bool IgnoreParents { get; }
     bool RequireSubcommand { get; }
