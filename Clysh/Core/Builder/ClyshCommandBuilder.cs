@@ -86,6 +86,17 @@ public sealed class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
         result.Action = action;
         return this;
     }
+    
+    /// <summary>
+    /// Build the action
+    /// </summary>
+    /// <param name="action">The action of the command</param>
+    /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
+    public ClyshCommandBuilder Action(Action<ICly> action)
+    {
+        result.ActionV2 = action;
+        return this;
+    }
 
     /// <summary>
     /// Create a new instance of a type
@@ -101,6 +112,16 @@ public sealed class ClyshCommandBuilder : ClyshBuilder<ClyshCommand>
     /// <param name="action">The action of the command</param>
     /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
     public ClyshCommandBuilder Action(IClyshAction action)
+    {
+        return Action(action.Execute);
+    }
+    
+    /// <summary>
+    /// Build the action
+    /// </summary>
+    /// <param name="action">The action of the command</param>
+    /// <returns>An instance of <see cref="ClyshCommandBuilder"/></returns>
+    public ClyshCommandBuilder Action(IClyshActionV2 action)
     {
         return Action(action.Execute);
     }

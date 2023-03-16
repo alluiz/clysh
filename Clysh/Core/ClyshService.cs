@@ -498,6 +498,12 @@ public sealed class ClyshService : IClyshService
                 _logger?.LogInformation("Executing action of '{commandId}'...", command.Id);
                 command.Action(command, View);
                 _logger?.LogInformation("Command '{commandId}' action was executed.", command.Id);
+            } 
+            else if (command.ActionV2 != null)
+            {
+                _logger?.LogInformation("Executing action V2 of '{commandId}'...", command.Id);
+                command.ActionV2(new Cly(command, View));
+                _logger?.LogInformation("Command '{commandId}' action V2 was executed.", command.Id);
             }
             else if (!command.Abstract)
             {

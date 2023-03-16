@@ -2,46 +2,46 @@ using Clysh.Core;
 
 namespace Clysh.Sample;
 
-public abstract class CalcAction: IClyshAction
+public abstract class CalcAction: IClyshActionV2
 {
-    protected static void CalcOperation(IClyshCommand cmd, IClyshView view, Func<int, int, int> operation)
+    protected static void CalcOperation(ICly cly, Func<int, int, int> operation)
     {
-        var color = cmd.GetOptionFromGroup("color");
-        var values = cmd.Options["values"];
+        var color = cly.Command.GetOptionFromGroup("color");
+        var values = cly.Command.Options["values"];
         
-        var a = GetValue(values.Selected? values.Parameters["a"].Data: view.AskFor("value (a)"));
-        var b = GetValue(values.Selected? values.Parameters["b"].Data: view.AskFor("value (b)"));
+        var a = GetValue(values.Selected? values.Parameters["a"].Data: cly.View.AskFor("value (a)"));
+        var b = GetValue(values.Selected? values.Parameters["b"].Data: cly.View.AskFor("value (b)"));
 
         var result = operation(a, b);
         
         if (color != null)
         {
             if (color.Is("red"))
-                view.Print($"={result}", ConsoleColor.Red);
+                cly.View.Print($"={result}", ConsoleColor.Red);
 
             if (color.Is("blue"))
-                view.Print($"={result}", ConsoleColor.Blue);
+                cly.View.Print($"={result}", ConsoleColor.Blue);
             
             if (color.Is("green"))
-                view.Print($"={result}", ConsoleColor.Green);
+                cly.View.Print($"={result}", ConsoleColor.Green);
         }
         else
         {
-            var colorId = cmd.Options["color"].Parameters["COLOR_ID"].Data;
+            var colorId = cly.Command.Options["color"].Parameters["COLOR_ID"].Data;
             
             switch (colorId)
             {
                 case "RED":
-                    view.Print($"={result}", ConsoleColor.Red);
+                    cly.View.Print($"={result}", ConsoleColor.Red);
                     break;
                 case "BLUE":
-                    view.Print($"={result}", ConsoleColor.Blue);
+                    cly.View.Print($"={result}", ConsoleColor.Blue);
                     break;
                 case "GREEN":
-                    view.Print($"={result}", ConsoleColor.Green);
+                    cly.View.Print($"={result}", ConsoleColor.Green);
                     break;
                 default:
-                    view.Print($"={result}");
+                    cly.View.Print($"={result}");
                     break;
             }
         }
@@ -52,5 +52,5 @@ public abstract class CalcAction: IClyshAction
         return Convert.ToInt32(value);
     }
 
-    public abstract void Execute(IClyshCommand cmd, IClyshView view);
+    public abstract void Execute(ICly cly);
 }

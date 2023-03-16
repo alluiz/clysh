@@ -4,13 +4,13 @@ namespace Clysh.Sample;
 
 public class CalcAddAction: CalcAction
 {
-    public override void Execute(IClyshCommand cmd, IClyshView view)
+    public override void Execute(ICly cly)
     {
-        CalcOperation(cmd, view, (a, b) => a + b);
+        CalcOperation(cly, (a, b) => a + b);
                 
         //Get data from parent
-        var message = (string) cmd.Parent!.Data["message"];
+        var message = (string) cly.Command.Parent!.Data["message"];
 
-        view.Print($"={message}");
+        cly.View.Print($"={message}");
     }
 }
