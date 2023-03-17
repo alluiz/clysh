@@ -36,6 +36,15 @@ public interface IClyshView
     string AskFor(string title);
 
     /// <summary>
+    /// A input prompt.
+    /// </summary>
+    /// <param name="title">The title. Like: "Input your age"</param>
+    /// <param name="validationCallback">The function to validate user input. Must return true only if the value is valid.</param>
+    /// <param name="validationErrorMessage">The validation error message to show if callback returns false</param>
+    /// <returns>The answer</returns>
+    string AskFor(string title, Func<string, bool> validationCallback, string validationErrorMessage = "The input is invalid.");
+
+    /// <summary>
     /// A input prompt for sensitive data.
     /// </summary>
     /// <param name="title">The title. Like: "Input your password"</param>

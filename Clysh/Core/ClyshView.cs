@@ -52,6 +52,18 @@ public sealed class ClyshView : IClyshView
 
     public string AskFor(string title) => AskFor(title, false);
 
+    public string AskFor(string title, Func<string, bool> validationCallback, string validationErrorMessage = "The input is invalid.")
+    {
+        while (true)
+        {
+            var value = AskFor(title);
+
+            if (validationCallback(value)) return value;
+
+            PrintError(validationErrorMessage);
+        }
+    }
+
     public string AskForSensitive(string title) => AskFor(title, true);
 
     public bool Confirm(string question = "Do you agree?", string yes = "Y", string no = "n")
