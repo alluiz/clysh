@@ -189,7 +189,7 @@ public class ClyshParameterTests
         Assert.AreEqual(100, parameter.MaxLength);
         Assert.AreEqual(1, parameter.Order);
         Assert.AreEqual(myData, parameter.Data);
-        Assert.AreEqual($"{parameter.Id}:{parameter.Data}", parameter.ToString());
+        Assert.AreEqual(parameter.Data, parameter.ToString());
         Assert.IsFalse(parameter.Required);
     }
     
