@@ -105,6 +105,6 @@ public class ClyshParameter : ClyshEntity
     /// <returns>The parameter formatted</returns>
     public override string ToString()
     {
-        return Id + ":" + Data;
+        return Data;
     }
 }
