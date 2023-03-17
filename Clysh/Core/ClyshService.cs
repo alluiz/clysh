@@ -289,7 +289,7 @@ public sealed class ClyshService : IClyshService
     {
         _logger?.LogInformation("Auditing command '{commandId}'...", cmd.Id);
 
-        if (cmd.Action != null || cmd.Abstract) return;
+        if (cmd.Action != null || cmd.ActionV2 != null || cmd.Abstract) return;
         
         audit.Messages.Add(string.Format(ClyshMessages.ErrorOnValidateCommandAction, cmd.Id));
         _logger?.LogDebug("Command action is NULL.");
